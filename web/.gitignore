@@ -1,0 +1,6 @@
+# Bỏ qua file cấu hình NetBeans
+nbproject/
+nbproject/private/
+*.xml
+*.properties
+
