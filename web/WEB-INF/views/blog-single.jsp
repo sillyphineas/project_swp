@@ -95,8 +95,8 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href=""><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
@@ -124,14 +124,14 @@
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#" class="active">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL" class="active">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
+                                            <li><a href="BlogURL">Blog List</a></li>
                                             <li><a href="blog-single.html" class="active">Blog Single</a></li>
                                         </ul>
                                     </li> 

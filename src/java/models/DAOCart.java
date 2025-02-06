@@ -248,23 +248,24 @@ public class DAOCart extends DBConnection {
 
     public static void main(String[] args) {
         DAOCart dao = new DAOCart();
-        System.out.println(dao.getCartByCustomerID(8));
-        Cart cart = dao.getCartByCustomerID(8);
-        System.out.println(cart);
-        List<CartItem> list = dao.getCartItemsByCartID(cart.getCartID());
-        for (CartItem cartItem : list) {
-            System.out.println(cartItem);
-        }
-//  
-//        Cart cart = new Cart();
-//        cart.setCartID(1); // ID của giỏ hàng
-//        cart.setCustomerID(8); // ID của khách hàng
-//        cart.setCartStatus("Active"); // Trạng thái của giỏ hàng
-//        cart.setTotalPrice(250.75); // Tổng giá trị giỏ hàng
-//        cart.setCreatedAt("2025-02-05 10:30:00"); // Thời gian tạo giỏ hàng
-//        cart.setUpdatedAt("2025-02-05 11:00:00"); // Thời gia
-//        dao.addCart(cart);
 //        System.out.println(dao.getCartByCustomerID(8));
+//        Cart cart = dao.getCartByCustomerID(8);
+//        System.out.println(cart);
+//        List<CartItem> list = dao.getCartItemsByCartID(cart.getCartID());
+//        for (CartItem cartItem : list) {
+//            System.out.println(cartItem);
+//        }
+//  
+        Cart cart = new Cart();
+        cart.setCartID(1); // ID của giỏ hàng
+        cart.setCustomerID(1); // ID của khách hàng
+        cart.setCartStatus("Active"); // Trạng thái của giỏ hàng
+        cart.setTotalPrice(250.75); // Tổng giá trị giỏ hàng
+        cart.setCreatedAt("2025-02-05 10:30:00"); // Thời gian tạo giỏ hàng
+        cart.setUpdatedAt("2025-02-05 11:00:00"); // Thời gia
+//        dao.addCart(cart);
+//        System.out.println(dao.addCart(cart));
+        System.out.println(dao.getCartByCustomerID(8));
 
     }
 }
