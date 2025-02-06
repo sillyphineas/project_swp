@@ -90,7 +90,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -157,7 +157,7 @@
                                     <li><a href="HomePageController">Home</a></li>
                                     <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController" class="active">Products</a></li>
+                                            <li><a href="shop.html" class="active">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="cart.html">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
@@ -175,8 +175,12 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -206,26 +210,48 @@
                                 </div>
                             </div><!--/brands_products-->
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
+                            <div class="price-range">
+                                <h2>Filter by Price</h2>
                                 <div class="well">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b>$ 0</b> <b class="pull-right">$ 600</b>
+                                    <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                        <label for="minPrice">Min Price ($)</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <label for="maxPrice">Max Price ($)</label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
+                                    </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div>
 
-                            <div class="shipping text-center"><!--shipping-->
-                                <img src="images/home/shipping.jpg" alt="" />
-                            </div><!--/shipping-->
 
+
+                            <div class="latest-products">
+
+                                <c:if test="${not empty latestProduct}">
+                                    <div class="latest-product">
+                                        <h2>Newest Product</h2>
+                                        <div class="product-item">
+                                            <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
+                                            <h3>${latestProduct.name}</h3>
+                                            <p>${latestProduct.description}</p>
+                                            <p><strong>Price:</strong> $${latestProduct.price}</p>
+<!--                                            <a href="product-details.jsp?id=${latestProduct.id}" class="btn btn-primary">View Details</a>-->
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-sm-9 padding-right">
                         <div class="features_items"><!--features_items-->
                             <h2 class="title text-center">Features Items</h2>
-                            <c:forEach var="product" items="${productList}">
-                                <div class="col-sm-4">
+
+                            <c:set var="sortedProductList" value="${productList}" />
+                            <c:forEach var="product" items="${sortedProductList}">
+                                <div class="col-sm-4">  
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
                                             <div class="productinfo text-center">
@@ -235,25 +261,39 @@
                                                 <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                 <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                             </div>
-                                            <div class="product-overlay">
-                                                <div class="overlay-content">
-                                                    <h2>${product.price}</h2>
-                                                    <p>${product.price}</p>
-                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                    <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="choose">
-                                            <ul class="nav nav-pills nav-justified">
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                                                <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                            </ul>
                                         </div>
                                     </div>
                                 </div>
                             </c:forEach>
 
+                            <!--                                <div class="col-sm-4">  
+                                                                <div class="product-image-wrapper">
+                                                                    <div class="single-products">
+                                                                        <div class="productinfo text-center">
+                                                                            <img src="${product.imageURL}" alt="" />
+                                                                            <h2>${product.price}</h2>
+                                                                            <p>${product.name}</p>
+                                                                            <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                                            <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
+                                                                        </div>
+                                                                        <div class="product-overlay">
+                                                                            <div class="overlay-content">
+                                                                                <h2>${product.price}</h2>
+                                                                                <p>${product.price}</p>
+                                                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                                                <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="choose">
+                                                                        <ul class="nav nav-pills nav-justified">
+                                                                            <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+                                                                            <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>-->
+                            <div class ="text-center">
                             <div class="pagination">
                                 <c:if test="${currentPage > 1}">
                                     <a href="?page=${currentPage-1}" class="pre">Previous</a>
@@ -265,6 +305,8 @@
                                     <a href="?page=${currentPage+1}" class="next">Next</a>
                                 </c:if>
                             </div>
+                                </div>
+                            <!--                            </div>-->
                         </div><!--features_items-->
                     </div>
                 </div>
