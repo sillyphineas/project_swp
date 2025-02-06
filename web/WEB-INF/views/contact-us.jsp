@@ -13,11 +13,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Contact | E-Shopper</title>
-    <link href="/project_swp/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/project_swp/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/project_swp/css/prettyPhoto.css" rel="stylesheet">
-    <link href="/project_swp/css/price-range.css" rel="stylesheet">
-    <link href="/project_swp/css/animate.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/prettyPhoto.css" rel="stylesheet">
+    <link href="/css/price-range.css" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
 	<link href="/project_swp/css/main.css" rel="stylesheet">
 	<link href="/project_swp/css/responsive.css" rel="stylesheet">
     <!--[if lt IE 9]>
