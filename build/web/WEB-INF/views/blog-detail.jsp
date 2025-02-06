@@ -1,4 +1,5 @@
 
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="entities.User"%>
@@ -11,7 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | E-Shopper</title>
+        <title>Blog Detail</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -28,6 +29,8 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        
+
     </head><!--/head-->
 
     <body>
@@ -67,210 +70,52 @@
                             </div>
 
                         </div>
-                        <div class="col-sm-8">
-                            <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
-                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!--/header-middle-->
 
-            <div class="header-bottom"><!--header-bottom-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div><!--/header-bottom-->
+            </div>
         </header><!--/header-->
 
-        <section id="slider">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#slider-carousel" data-slide-to="1"></li>
-                                <li data-target="#slider-carousel" data-slide-to="2"></li>
-                            </ol>
+        <div class="container blog-detail-container">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <!-- Kiểm tra xem có thông báo lỗi hay không -->
+                    <c:if test="${not empty errorMessage}">
+                        <div class="alert alert-danger">
+                            <p>${errorMessage}</p>
+                        </div>
+                    </c:if>
 
-                            <div class="carousel-inner">
-                                <!-- Hiển thị 3 bài viết đầu tiên -->
-                                <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
-                                    <div class="item ${status.index == 0 ? 'active' : ''}">
-                                        <div class="col-sm-6">
-                                            <h1><span>E</span>-SHOPPER</h1>
-                                            <h2>${blog.title}</h2>
-                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
-                                            <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
-                                            Read More
-                                        </a>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
-                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
-                                        </div>
-                                    </div>
-                                </c:forEach>
+                    <!-- Kiểm tra xem có blog hay không -->
+                    <c:if test="${not empty blog}">
+                        <div class="card blog-detail-card">
+                            <div class="card-header">
+                                <div class="text-center mb-3">
+                                    <img class="img-fluid rounded" src="${blog.imageURL}" ">
+                                </div>
+                                <h1 class="card-title mb-0">${blog.title}</h1>
                             </div>
+                            <div class="card-body">
+                                <p><strong>Author:</strong> ${authorName}</p>
+                                <p><strong>Post time:</strong> ${blog.postTime}</p>
+                                
+                                <div>
 
-                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
+                                    <p>${blog.content}</p>
+                                </div>
+                                <c:if test="${blog.isDisabled}">
+                                    <p class="text-danger">This blog is disabled.</p>
+                                </c:if>
+                            </div>
                         </div>
-                    </div>
+                    </c:if>
                 </div>
             </div>
-        </section>
+        </div>
 
 
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
-                                <div class="brands-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <!-- Lặp qua danh sách các thương hiệu -->
-                                        <c:forEach var="brand" items="${brands}">
-                                            <li><a href="#"> <span class="pull-right"></span>${brand.name}</a></li>
-                                                </c:forEach>
-                                    </ul>
-                                </div>
-                            </div><!--/brands_products-->
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
-                                <div class="well text-center">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
-                                </div>
-                            </div><!--/price-range-->
 
-                        </div>
-                    </div>
-
-                    <div class="col-sm-9 padding-right">
-                        <div class="features_items"><!--features_items-->
-                            <h2 class="title text-center">Features Items</h2>                             
-                            <c:forEach var="product" items="${products}">
-                                <div class="col-sm-4">
-                                    <div class="product-image-wrapper">
-                                        <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <img src="${product.imageURL}" alt="Product Image" />
-                                                <h2>${product.price}</h2>
-                                                <p>${product.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i> Add to cart
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div><!--features_items-->
-
-                        <!-- Phân trang -->
-                        <div class="text-center">
-                            <c:if test="${currentPage > 1}">
-                                <a href="?page=${currentPage - 1}" class="btn btn-default">Previous</a>
-                            </c:if>
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="?page=${i}" class="btn btn-default">${i}</a>
-                            </c:forEach>
-                            <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage + 1}" class="btn btn-default">Next</a>
-                            </c:if>
-                        </div>
-                        <div class="blog_items">
-                            <h2 class="title text-center">Blogs</h2>
-                            
-                            <c:forEach var="blog" items="${recentBlogs}">
-                                <div class="single-blog-post" style="margin-bottom: 30px;">
-                                    
-                                    <div class="col-sm-4">
-                                        <img src="${blog.imageURL}" alt="Blog Image" class="img-responsive" />
-                                    </div>
-
-                                    
-                                    <div class="col-sm-8">
-                                        <h3 style="margin-top: 0;">${blog.title}</h3>
-                                        
-                                        <p>${fn:substring(blog.content, 0, 200)}...</p>
-                                        
-                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
-                                            Read More
-                                        </a>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </c:forEach>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
