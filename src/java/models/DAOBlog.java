@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +48,22 @@ public class DAOBlog extends DBConnection {
         }
 
         return n;
+    }
+
+    public String getAuthorNameById(int authorId) {
+        String authorName = "";
+        String query = "SELECT name FROM Users WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, authorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    authorName = rs.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return authorName;
     }
 
     public int UpdateBlogs(Blog other) {
@@ -125,6 +143,64 @@ public class DAOBlog extends DBConnection {
         return vector;
     }
 
+    public List<Blog> getPaginatedBlogs(int page, int pageSize) throws SQLException {
+        String sql = "SELECT * FROM Blogs WHERE isDisabled = 0 ORDER BY postTime DESC LIMIT ? OFFSET ?";
+        List<Blog> blogs = new ArrayList<>();
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, pageSize);
+            pre.setInt(2, (page - 1) * pageSize);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+        }
+        return blogs;
+    }
+
+    public int getTotalBlogs() throws SQLException {
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Blogs";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        }
+        return total;
+    }
+
+    public List<Blog> searchBlogs(String query) throws SQLException {
+        String sql = "SELECT * FROM Blogs WHERE title LIKE ? AND isDisabled = 0";
+        List<Blog> blogs = new ArrayList<>();
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, "%" + query + "%");
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+        }
+        return blogs;
+    }
+
     public int delete(int id) {
         int n = 0;
         String sql = "DELETE FROM [dbo].[Blogs]\n"
@@ -140,5 +216,20 @@ public class DAOBlog extends DBConnection {
     }
 
     public static void main(String[] args) {
-    }
+        DAOBlog dao = new DAOBlog();
+        System.out.println(dao.getAuthorNameById(1));
+//        try {
+//            //        try {
+////            System.out.println(dao.getTotalBlogs());
+////        } catch (SQLException ex) {
+////            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+//            List<Blog> list = dao.getPaginatedBlogs(1, 3);
+//            for (Blog blog : list) {
+//                System.out.println(blog);
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+   }
 }
