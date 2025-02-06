@@ -1,10 +1,5 @@
-<%-- 
-    Document   : cart
-    Created on : Jan 18, 2025, 1:12:59 PM
-    Author     : HP
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,13 +8,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Cart | E-Shopper</title>
-        <link href="/Project_SWP391/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/price-range.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/animate.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/main.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/responsive.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/price-range.css" rel="stylesheet">
+        <link href="css/animate.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -30,7 +25,32 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
+    <script type="text/javascript">
+        function updateQuantity(cartItemID, price, delta) {
+            // Lấy giá trị số lượng hiện tại từ ô input
+            var quantityInput = document.getElementById("quantity_" + cartItemID);
+            var currentQuantity = parseInt(quantityInput.value);
 
+            // Tính toán số lượng mới
+            var newQuantity = currentQuantity + delta;
+
+            // Kiểm tra nếu số lượng nhỏ hơn 1 thì không giảm thêm nữa
+            if (newQuantity < 1) {
+                alert("Số lượng phải lớn hơn 0.");
+                return;
+            }
+
+            // Cập nhật số lượng mới vào input
+            quantityInput.value = newQuantity;
+
+            // Gửi thông tin mới đến server (nếu cần)
+            // Có thể sử dụng Ajax để gửi thông tin mà không cần tải lại trang
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "updateCart.jsp", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("cartItemID=" + cartItemID + "&quantity=" + newQuantity);
+        }
+    </script>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -95,7 +115,7 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
@@ -131,16 +151,26 @@
                                     <li><a href="HomePageController">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="shop.html">Products</a></li>
                                             <li><a href="product-details.html">Product Details</a></li> 
-                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="checkout.jsp">Checkout</a></li> 
                                             <li><a href="cart.html" class="active">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
+
+                                            <%
+                                            if(user==null){
+                                            %>
+                                            <div class="header__top__right__auth">
+                                                <a href="login.jsp"><i class="fa fa-user"></i> Login</a>
+                                            </div>
+                                            <%}else{%>
+                                            <span style="color:red">Welcome:<%=user.getName()%></span>
+                                            <a href="#"><i class="fa fa-user"></i> Logout</a>
+                                            <%}%> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
+                                            <li><a href="BlogURL">Blog List</a></li>
                                             <li><a href="blog-single.html">Blog Single</a></li>
                                         </ul>
                                     </li> 
@@ -151,7 +181,11 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                                <form  action="CartURL" method="get">
+                                    <input type="hidden" value="search" name="service">
+                                    <input type="text" name="query" placeholder="Search" >
+                                    <button type="submit" >Search</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -163,7 +197,7 @@
             <div class="container">
                 <div class="breadcrumbs">
                     <ol class="breadcrumb">
-                        <li><a href="#">Home</a></li>
+                        <li><a href="HomePageController">Home</a></li>
                         <li class="active">Shopping Cart</li>
                     </ol>
                 </div>
@@ -179,83 +213,82 @@
                                 <td></td>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td class="cart_product">
-                                    <a href=""><img src="images/cart/one.png" alt=""></a>
-                                </td>
-                                <td class="cart_description">
-                                    <h4><a href="">Colorblock Scuba</a></h4>
-                                    <p>Web ID: 1089772</p>
-                                </td>
-                                <td class="cart_price">
-                                    <p>$59</p>
-                                </td>
-                                <td class="cart_quantity">
-                                    <div class="cart_quantity_button">
-                                        <a class="cart_quantity_up" href=""> + </a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-                                        <a class="cart_quantity_down" href=""> - </a>
-                                    </div>
-                                </td>
-                                <td class="cart_total">
-                                    <p class="cart_total_price">$59</p>
-                                </td>
-                                <td class="cart_delete">
-                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-                                </td>
-                            </tr>
 
-                            <tr>
-                                <td class="cart_product">
-                                    <a href=""><img src="images/cart/two.png" alt=""></a>
-                                </td>
-                                <td class="cart_description">
-                                    <h4><a href="">Colorblock Scuba</a></h4>
-                                    <p>Web ID: 1089772</p>
-                                </td>
-                                <td class="cart_price">
-                                    <p>$59</p>
-                                </td>
-                                <td class="cart_quantity">
-                                    <div class="cart_quantity_button">
-                                        <a class="cart_quantity_up" href=""> + </a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-                                        <a class="cart_quantity_down" href=""> - </a>
-                                    </div>
-                                </td>
-                                <td class="cart_total">
-                                    <p class="cart_total_price">$59</p>
-                                </td>
-                                <td class="cart_delete">
-                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="cart_product">
-                                    <a href=""><img src="images/cart/three.png" alt=""></a>
-                                </td>
-                                <td class="cart_description">
-                                    <h4><a href="">Colorblock Scuba</a></h4>
-                                    <p>Web ID: 1089772</p>
-                                </td>
-                                <td class="cart_price">
-                                    <p>$59</p>
-                                </td>
-                                <td class="cart_quantity">
-                                    <div class="cart_quantity_button">
-                                        <a class="cart_quantity_up" href=""> + </a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-                                        <a class="cart_quantity_down" href=""> - </a>
-                                    </div>
-                                </td>
-                                <td class="cart_total">
-                                    <p class="cart_total_price">$59</p>
-                                </td>
-                                <td class="cart_delete">
-                                    <a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-                                </td>
-                            </tr>
+                        <tbody>
+                            <%
+                            String message = (String) request.getAttribute("message");
+                            String error = (String) request.getAttribute("error");
+                            if (message != null) {
+                            %>
+                        <div style="color: red; font-weight: bold;text-align: center;">
+                            <%= message %>
+                        </div>
+                        <%
+                            }
+                        %>
+                        <%
+                            if (error != null) {
+                        %>
+                        <div style="color: red; font-weight: bold;text-align: center;">
+                            <%= error %>
+                        </div>
+                        <%
+                            }
+                        %>
+                        <% 
+                            String show = (String) request.getAttribute("showMessage");
+                            if (show != null) { 
+                        %>
+                        <p><%= show %></p>
+                        <% } %>
+                        <%
+                            List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
+                            if (cartItems != null && !cartItems.isEmpty()) { 
+                            for (CartItem item : cartItems) {
+                            Product product = item.getProduct();
+                        %>
+                        <tr>
+                            <td class="cart_product">
+                                <a href=""><img src="<%=product.getImageURL()%>" alt=""></a>
+                            </td>
+                            <td class="cart_description">
+                                <h4><a href=""><%=product.getName()%></a></h4>
+                            </td>
+                            <td class="cart_price">
+                                <p><%=product.getPrice()%></p>
+                            </td>
+                            <td class="cart_quantity">
+                                <div class="cart_quantity_button">
+                                    <!-- Form cập nhật số lượng -->
+                                    <form action="CartURL" method="post" style="display: inline-block;">
+                                        <!-- Truyền thông tin cartItemId -->
+                                        <input type="hidden" name="cartItemId" value="<%= item.getCartItemID() %>">
+
+                                        <!-- Input số lượng sản phẩm -->
+                                        <input class="cart_quantity_input" id="quantity_<%= item.getCartItemID() %>" 
+                                               type="number" name="newQuantity" 
+                                               value="<%= item.getQuantity() %>" 
+                                               min="1" step="1" 
+                                               style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
+
+                                        <!-- Nút Update -->
+                                        <button type="submit" name="service" value="updateQuantity" 
+                                                style="margin-left: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                            Update
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="cart_total">
+                                <p class="cart_total_price" id="total_<%= item.getCartItemID() %>">$<%= item.getTotalPrice() %></p>
+                            </td>
+                            <td class="cart_delete">
+                                <a class="cart_quantity_delete" href="CartURL?service=removeItem&cartItemId=<%=item.getCartItemID()%>"><i class="fa fa-times"></i></a>
+                            </td>
+                        </tr>
+                        <% }
+                         }  
+                        %>
                         </tbody>
                     </table>
                 </div>
@@ -326,13 +359,11 @@
                     <div class="col-sm-6">
                         <div class="total_area">
                             <ul>
-                                <li>Cart Sub Total <span>$59</span></li>
-                                <li>Eco Tax <span>$2</span></li>
+                                <li>Cart Sub Total <span>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></span></li>
                                 <li>Shipping Cost <span>Free</span></li>
-                                <li>Total <span>$61</span></li>
+                                <li>Total <span>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></span></li>
                             </ul>
-                            <a class="btn btn-default update" href="">Update</a>
-                            <a class="btn btn-default check_out" href="">Check Out</a>
+                            <a class="btn btn-default check_out" href="CartURL?service=checkOut">Check Out</a>
                         </div>
                     </div>
                 </div>
