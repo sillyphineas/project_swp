@@ -72,7 +72,7 @@ public class ProductController extends HttpServlet {
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
         double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : 2000;
 
-        int itemsPerPage = 5;
+        int itemsPerPage = 9;
         int currentPage = 1;
 
         String pageStr = request.getParameter("page");
