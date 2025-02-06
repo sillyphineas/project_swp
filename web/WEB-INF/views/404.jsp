@@ -13,13 +13,13 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Home | E-Shopper</title>
-    <link href="/Project_SWP391/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/Project_SWP391/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/Project_SWP391/css/prettyPhoto.css" rel="stylesheet">
-    <link href="/Project_SWP391/css/price-range.css" rel="stylesheet">
-    <link href="/Project_SWP391/css/animate.css" rel="stylesheet">
-	<link href="/Project_SWP391/css/main.css" rel="stylesheet">
-	<link href="/Project_SWP391/css/responsive.css" rel="stylesheet">
+    <link href="/project_swp/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/project_swp/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/project_swp/css/prettyPhoto.css" rel="stylesheet">
+    <link href="/project_swp/css/price-range.css" rel="stylesheet">
+    <link href="/project_swp/css/animate.css" rel="stylesheet">
+	<link href="/project_swp/css/main.css" rel="stylesheet">
+	<link href="/project_swp/css/responsive.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
@@ -34,7 +34,7 @@
 <body>
 	<div class="container text-center">
 		<div class="logo-404">
-			<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+			<a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
 		</div>
 		<div class="content-404">
 			<img src="images/404/404.png" class="img-responsive" alt="" />
