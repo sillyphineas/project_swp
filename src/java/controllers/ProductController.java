@@ -64,31 +64,63 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
-        //  int page = Integer.parseInt(request.getParameter("page") == null ? "1" : request.getParameter("page"));
-        int page = 1;
+
+        String searchQuery = request.getParameter("search");
+        String minPriceStr = request.getParameter("minPrice");
+        String maxPriceStr = request.getParameter("maxPrice");
+
+        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
+        double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : 2000;
+
+        int itemsPerPage = 5;
+        int currentPage = 1;
+
         String pageStr = request.getParameter("page");
         if (pageStr != null && !pageStr.isEmpty()) {
             try {
-                page = Integer.parseInt(pageStr);
+                currentPage = Integer.parseInt(pageStr);
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
             } catch (NumberFormatException e) {
-                page = 1;
+                currentPage = 1;
             }
         }
-        int itemsPerPage = 9;
-        Vector<Product> productList = dao.getProductsWithPaginationAndSorting(page, itemsPerPage);
+
+        Vector<Product> productList = new Vector<>();
+
+//    
+//        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+//            productList = dao.searchProductsByName(searchQuery);
+//        } else {
+//            productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
+//        }
+        if (minPriceStr != null && maxPriceStr != null) {
+            productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
+        } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            productList = dao.searchProductsByName(searchQuery);
+        } else {
+            productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
+        }
+
         Vector<Brand> brandList = daoBrand.getAllBrands();
+
         int totalProducts = dao.getTotalProducts();
         int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
+        totalPages = Math.max(totalPages, 1); // Đảm bảo totalPages >= 1
+        Product latestProduct = dao.getLatestProduct();
+        request.setAttribute("latestProduct", latestProduct);
 
         request.setAttribute("productList", productList);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("currentPage", currentPage);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);
 
-        Vector<Product> latestProducts = dao.getProductsWithPaginationAndSorting(1, 5); // 
+        Vector<Product> latestProducts = dao.getProductsWithPaginationAndSorting(1, 3);
         request.setAttribute("latestProducts", latestProducts);
 
         request.getRequestDispatcher("WEB-INF/views/shop.jsp").forward(request, response);
+
     }
 
     /**

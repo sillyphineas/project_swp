@@ -4,6 +4,8 @@
  */
 package entities;
 
+import java.util.Date;
+
 /**
  *
  * @author HP
@@ -31,11 +33,13 @@ public class Product {
     private String os;
     private String simType;
     private String connectivity;
+    private Date createAt;
+    private int createdBy;
 
     public Product() {
     }
 
-    public Product(int id, int brandID, String name, double price, int stock, String description, boolean isDisabled, int feedbackCount, String status, String imageURL, String chipset, int ram, int storage, double screenSize, String screenType, String resolution, int batteryCapacity, String cameraSpecs, String os, String simType, String connectivity) {
+    public Product(int id, int brandID, String name, double price, int stock, String description, boolean isDisabled, int feedbackCount, String status, String imageURL, String chipset, int ram, int storage, double screenSize, String screenType, String resolution, int batteryCapacity, String cameraSpecs, String os, String simType, String connectivity, Date createAt, int createdBy) {
         this.id = id;
         this.brandID = brandID;
         this.name = name;
@@ -57,6 +61,8 @@ public class Product {
         this.os = os;
         this.simType = simType;
         this.connectivity = connectivity;
+        this.createAt = createAt;
+        this.createdBy = createdBy;
     }
 
     public int getId() {
@@ -227,9 +233,29 @@ public class Product {
         this.connectivity = connectivity;
     }
 
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
+    }
+
     @Override
     public String toString() {
-        return "Product{" + "id=" + id + ", brandID=" + brandID + ", name=" + name + ", price=" + price + ", stock=" + stock + ", description=" + description + ", isDisabled=" + isDisabled + ", feedbackCount=" + feedbackCount + ", status=" + status + ", imageURL=" + imageURL + ", chipset=" + chipset + ", ram=" + ram + ", storage=" + storage + ", screenSize=" + screenSize + ", screenType=" + screenType + ", resolution=" + resolution + ", batteryCapacity=" + batteryCapacity + ", cameraSpecs=" + cameraSpecs + ", os=" + os + ", simType=" + simType + ", connectivity=" + connectivity + '}';
+        return "Product{" + "id=" + id + ", brandID=" + brandID + ", name=" + name + ", price=" + price + ", stock=" + stock + ", description=" + description + ", isDisabled=" + isDisabled + ", feedbackCount=" + feedbackCount + ", status=" + status + ", imageURL=" + imageURL + ", chipset=" + chipset + ", ram=" + ram + ", storage=" + storage + ", screenSize=" + screenSize + ", screenType=" + screenType + ", resolution=" + resolution + ", batteryCapacity=" + batteryCapacity + ", cameraSpecs=" + cameraSpecs + ", os=" + os + ", simType=" + simType + ", connectivity=" + connectivity + ", createAt=" + createAt + ", createdBy=" + createdBy + '}';
     }
+
+    
+
+    
 
 }

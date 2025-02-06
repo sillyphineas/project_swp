@@ -5,6 +5,7 @@
 package models;
 
 import entities.Product;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class DAOProduct extends DBConnection {
                 + "           ,[simType]\n"
                 + "           ,[connectivity])\n"
                 + "     VALUES\n"
-                + "           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                + "           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getBrandID());
@@ -62,6 +63,8 @@ public class DAOProduct extends DBConnection {
             pre.setString(18, other.getOs());
             pre.setString(19, other.getSimType());
             pre.setString(20, other.getConnectivity());
+            pre.setDate(21, (Date) other.getCreateAt());
+            pre.setInt(22, other.getCreatedBy());
 
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -94,6 +97,8 @@ public class DAOProduct extends DBConnection {
                 + "      ,[os] = ?\n"
                 + "      ,[simType] = ?\n"
                 + "      ,[connectivity] = ?\n"
+                + "      ,[createAt] = ?\n"
+                + "      ,[CreatedBy] = ?\n"
                 + " WHERE <id = ?>";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
@@ -118,6 +123,8 @@ public class DAOProduct extends DBConnection {
             pre.setString(19, other.getSimType());
             pre.setString(20, other.getConnectivity());
             pre.setInt(21, other.getId());
+            pre.setDate(22, (Date) other.getCreateAt());
+            pre.setInt(23, other.getCreatedBy());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -154,7 +161,9 @@ public class DAOProduct extends DBConnection {
                         rs.getString("cameraSpecs"),
                         rs.getString("os"),
                         rs.getString("simType"),
-                        rs.getString("connectivity")
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
                 );
             }
         } catch (SQLException ex) {
@@ -190,7 +199,9 @@ public class DAOProduct extends DBConnection {
                         rs.getString("cameraSpecs"),
                         rs.getString("os"),
                         rs.getString("simType"),
-                        rs.getString("connectivity")
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
                 );
                 vector.add(product);
             }
@@ -251,7 +262,10 @@ public class DAOProduct extends DBConnection {
                         rs.getString("cameraSpecs"),
                         rs.getString("os"),
                         rs.getString("simType"),
-                        rs.getString("connectivity")
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                        
                 );
                 productList.add(product);
             }
@@ -285,15 +299,140 @@ public class DAOProduct extends DBConnection {
     public static void main(String[] args) {
 
     }
+
     public Vector<Product> getProductsWithPaginationAndSorting(int page, int itemsPerPage) {
+        Vector<Product> productList = new Vector<>();
+        int startIndex = (page - 1) * itemsPerPage;
+        String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY createAt DESC LIMIT ?, ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, startIndex);
+            pre.setInt(2, itemsPerPage);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getInt("storage"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                );
+                productList.add(product);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+
+    public Vector<Product> searchProductsByName(String searchQuery) {
+        Vector<Product> productList = new Vector<>();
+        String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0";
+
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, "%" + searchQuery + "%");
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getInt("storage"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                );
+                productList.add(product);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return productList;
+    }
+public Product getLatestProduct() {
+    String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY createAt DESC LIMIT 1";
+    Product latestProduct = null;
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        ResultSet rs = pre.executeQuery();
+        if (rs.next()) {
+            latestProduct = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getInt("storage"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return latestProduct;
+}
+public Vector<Product> getProductsSortedByDate(int page, int itemsPerPage) {
     Vector<Product> productList = new Vector<>();
     int startIndex = (page - 1) * itemsPerPage;
-    String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY name DESC LIMIT ?, ?";
+    String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY createAt DESC LIMIT ?, ?";
+    
     try {
         PreparedStatement pre = conn.prepareStatement(sql);
         pre.setInt(1, startIndex);
         pre.setInt(2, itemsPerPage);
         ResultSet rs = pre.executeQuery();
+        
         while (rs.next()) {
             Product product = new Product(
                     rs.getInt("id"),
@@ -316,7 +455,55 @@ public class DAOProduct extends DBConnection {
                     rs.getString("cameraSpecs"),
                     rs.getString("os"),
                     rs.getString("simType"),
-                    rs.getString("connectivity")
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+            productList.add(product);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return productList;
+}
+public Vector<Product> getProductsByPriceRange(double minPrice, double maxPrice, int page, int itemsPerPage) {
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (page - 1) * itemsPerPage;
+    String sql = "SELECT * FROM Products WHERE isDisabled = 0 AND price BETWEEN ? AND ? ORDER BY price ASC LIMIT ?, ?";
+    
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setDouble(1, minPrice);
+        pre.setDouble(2, maxPrice);
+        pre.setInt(3, startIndex);
+        pre.setInt(4, itemsPerPage);
+        ResultSet rs = pre.executeQuery();
+
+        while (rs.next()) {
+            Product product = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getInt("storage"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
             );
             productList.add(product);
         }
@@ -326,4 +513,6 @@ public class DAOProduct extends DBConnection {
     return productList;
 }
 
+
+    
 }
