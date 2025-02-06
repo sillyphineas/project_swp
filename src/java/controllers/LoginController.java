@@ -4,6 +4,7 @@
  */
 package controllers;
 
+import entities.User;
 import helper.Validate;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -79,12 +80,13 @@ public class LoginController extends HttpServlet {
         DAOUser daouser = new DAOUser();
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-
+        User user = daouser.getUserByEmail(email);
+        
         if (Validate.checkLoginValidUser(email, password)) {
             HttpSession session = request.getSession(true);
             session.setAttribute("isLoggedIn", true);
             session.setAttribute("user", daouser.getUserByEmail(email));
-            
+            session.setAttribute("userID", user.getId());
             response.getWriter().write("success:" + daouser.getUserByEmail(email).getRoleId());
         } else {
             response.getWriter().write("Invalid email or password");

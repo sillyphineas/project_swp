@@ -3,10 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package models;
+
 import entities.Order;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author HP
@@ -16,26 +18,39 @@ public class DAOOrder extends DBConnection {
     // Add a new order
     public int addOrder(Order order) {
         int result = 0;
-        String sql = "INSERT INTO Orders (buyerID, status, orderTime, orderStatus, shippingDate, shippingAddress, " +
-                     "totalPrice, discountedPrice, paymentMethod, isDisabled, voucherID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders (buyerID, status, orderTime, orderStatus, shippingDate, shippingAddress, "
+                + "totalPrice, discountedPrice, paymentMethod, isDisabled, voucherID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
+
             preparedStatement.setInt(1, order.getBuyerID());
             preparedStatement.setByte(2, order.getStatus());
+
             preparedStatement.setTimestamp(3, new Timestamp(order.getOrderTime().getTime()));
+
             preparedStatement.setString(4, order.getOrderStatus());
+
             preparedStatement.setDate(5, order.getShippingDate() != null ? new java.sql.Date(order.getShippingDate().getTime()) : null);
+
             preparedStatement.setString(6, order.getShippingAddress());
             preparedStatement.setDouble(7, order.getTotalPrice());
             preparedStatement.setDouble(8, order.getDiscountedPrice());
             preparedStatement.setByte(9, order.getPaymentMethod());
             preparedStatement.setBoolean(10, order.isDisabled());
-            preparedStatement.setInt(11, order.getVoucherID() != null ? order.getVoucherID() : null);
+
+            if (order.getVoucherID() != null) {
+                preparedStatement.setInt(11, order.getVoucherID());
+            } else {
+                preparedStatement.setNull(11, java.sql.Types.INTEGER);  // Set null for Integer type
+            }
 
             result = preparedStatement.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 
@@ -103,8 +118,8 @@ public class DAOOrder extends DBConnection {
     // Update an order
     public int updateOrder(Order order) {
         int result = 0;
-        String sql = "UPDATE Orders SET buyerID = ?, status = ?, orderTime = ?, orderStatus = ?, shippingDate = ?, " +
-                     "shippingAddress = ?, totalPrice = ?, discountedPrice = ?, paymentMethod = ?, isDisabled = ?, voucherID = ? WHERE id = ?";
+        String sql = "UPDATE Orders SET buyerID = ?, status = ?, orderTime = ?, orderStatus = ?, shippingDate = ?, "
+                + "shippingAddress = ?, totalPrice = ?, discountedPrice = ?, paymentMethod = ?, isDisabled = ?, voucherID = ? WHERE id = ?";
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, order.getBuyerID());
@@ -143,17 +158,21 @@ public class DAOOrder extends DBConnection {
 
     // Test the DAOOrder
     public static void main(String[] args) {
-//        DAOOrder daoOrder = new DAOOrder();
-//
+        DAOOrder daoOrder = new DAOOrder();
+        Date cuDate = new Date(2025, 12, 11);
+        Order order = new Order(1, 8, (byte) 1, cuDate, "Pending", null, "123 Main St", 100.0, 90.0, (byte) 1, true, 1);
+        int x = daoOrder.addOrder(order);
+        System.out.println(x);
+
 //        // Add a new order
 //        Order order = new Order(0, 1, (byte) 1, new Date(), "Processing", null, "123 Street, City", 500.00, 450.00, (byte) 1, false, null);
 //        daoOrder.addOrder(order);
 //
 //        // Get all orders
-//        List<Order> orders = daoOrder.getAllOrders();
-//        for (Order o : orders) {
-//            System.out.println(o);
-//        }
+        List<Order> orders = daoOrder.getAllOrders();
+        for (Order o : orders) {
+            System.out.println(o);
+        }
 //
 //        // Update an order
 //        order.setStatus((byte) 2);
