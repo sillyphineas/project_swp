@@ -13,13 +13,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Blog Single | E-Shopper</title>
-        <link href="/Project_SWP391/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/price-range.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/animate.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/main.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/responsive.css" rel="stylesheet">
+        <link href="/project_swp/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/project_swp/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/project_swp/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/project_swp/css/price-range.css" rel="stylesheet">
+        <link href="/project_swp/css/animate.css" rel="stylesheet">
+        <link href="/project_swp/css/main.css" rel="stylesheet">
+        <link href="/project_swp/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -126,7 +126,6 @@
                                             <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="cart.html">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="#" class="active">Blog<i class="fa fa-angle-down"></i></a>
