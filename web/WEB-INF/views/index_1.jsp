@@ -28,7 +28,12 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-
+<% if (session.getAttribute("checkoutMessage") != null) { %>
+    <script type="text/javascript">
+        alert("<%= session.getAttribute("checkoutMessage") %>");
+        session.removeAttribute("checkoutMessage");
+    </script>
+    <% } %>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -71,7 +76,7 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
@@ -109,7 +114,7 @@
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
                                             <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
@@ -242,7 +247,7 @@
                                                 <img src="${product.imageURL}" alt="Product Image" />
                                                 <h2>${product.price}</h2>
                                                 <p>${product.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
+                                                <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart">
                                                     <i class="fa fa-shopping-cart"></i> Add to cart
                                                 </a>
                                             </div>

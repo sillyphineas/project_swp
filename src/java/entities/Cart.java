@@ -4,6 +4,8 @@
  */
 package entities;
 
+import java.util.List;
+
 /**
  *
  * @author HP
@@ -15,6 +17,7 @@ public class Cart {
 	private double TotalPrice  ;
 	private String CreatedAt ,            
 	UpdatedAt               ; 
+    private List<CartItem> cartItems;
 
     public Cart(int CartID, int CustomerID, String CartStatus, double TotalPrice, String CreatedAt, String UpdatedAt) {
         this.CartID = CartID;
@@ -80,6 +83,10 @@ public class Cart {
     public String toString() {
         return "Cart{" + "CartID=" + CartID + ", CustomerID=" + CustomerID + ", CartStatus=" + CartStatus + ", TotalPrice=" + TotalPrice + ", CreatedAt=" + CreatedAt + ", UpdatedAt=" + UpdatedAt + '}';
     }
-        
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
+    }
+
         
 }
