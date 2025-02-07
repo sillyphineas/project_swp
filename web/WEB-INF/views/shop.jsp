@@ -175,10 +175,10 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="pull-right">
+                            <div class="pulql-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
-
+                                    
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
@@ -199,19 +199,24 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
+                            <div class="brands_products">
+                                <h2>Brands</h2> 
                                 <div class="brands-name">
-                                    <c:forEach var="brand" items="${brands}">
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#"> <span class="pull-right"></span>${brand.name}</a></li>
-                                        </ul>
-                                    </c:forEach>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li> 
+                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                        </li> 
+                                        <c:forEach var="brand" items="${brands}">
+                                            <li> 
+                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                                            </li> 
+                                        </c:forEach> 
+                                    </ul> 
                                 </div>
-                            </div><!--/brands_products-->
+                            </div>
 
                             <div class="price-range">
-                                <h2>Filter by Price</h2>
+                                <h2>Range Price</h2>
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                         <label for="minPrice">Min Price ($)</label>
@@ -265,7 +270,7 @@
                                     </div>
                                 </div>
                             </c:forEach>
-
+                        </div>
                             <!--                                <div class="col-sm-4">  
                                                                 <div class="product-image-wrapper">
                                                                     <div class="single-products">
@@ -293,20 +298,20 @@
                                                                     </div>
                                                                 </div>
                                                             </div>-->
-                            <div class ="text-center">
-                            <div class="pagination">
-                                <c:if test="${currentPage > 1}">
-                                    <a href="?page=${currentPage-1}" class="pre">Previous</a>
-                                </c:if>
-                                <c:forEach begin="1" end="${totalPages}" var="i">
-                                    <a href="?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                                </c:forEach>
-                                <c:if test="${currentPage < totalPages}">
-                                    <a href="?page=${currentPage+1}" class="next">Next</a>
-                                </c:if>
-                            </div>
-                                </div>
-                            <!--                            </div>-->
+
+
+                           <div class="text-center">
+                            <c:if test="${currentPage > 1}">
+                                <a href="?page=${currentPage - 1}" class="btn btn-default">Previous</a>
+                            </c:if>
+                            <c:forEach var="i" begin="1" end="${totalPages}">
+                                <a href="?page=${i}" class="btn btn-default">${i}</a>
+                            </c:forEach>
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="?page=${currentPage + 1}" class="btn btn-default">Next</a>
+                            </c:if>
+                        </div>
+<!--                            </div>-->
                         </div><!--features_items-->
                     </div>
                 </div>
