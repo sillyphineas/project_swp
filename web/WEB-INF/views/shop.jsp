@@ -15,13 +15,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Shop | E-Shopper</title>
-        <link href="/Project_SWP391/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/price-range.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/animate.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/main.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/responsive.css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -96,7 +96,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -163,16 +163,14 @@
                                     <li><a href="HomePageController">Home</a></li>
                                     <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="shop.html" class="active">Products</a></li>
+                                            <li><a href="ProductController" class="active">Products</a></li>
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>

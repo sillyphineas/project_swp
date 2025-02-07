@@ -13,13 +13,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Blog Single | E-Shopper</title>
-        <link href="/Project_SWP391/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/price-range.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/animate.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/main.css" rel="stylesheet">
-        <link href="/Project_SWP391/css/responsive.css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -123,16 +123,13 @@
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL" class="active">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL">Blog List</a></li>
-                                            <li><a href="blog-single.html" class="active">Blog Single</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>

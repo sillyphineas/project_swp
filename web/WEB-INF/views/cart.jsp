@@ -152,26 +152,13 @@
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL" class="active">Cart</a></li> 
-
-                                            <%
-                                            if(user==null){
-                                            %>
-                                            <div class="header__top__right__auth">
-                                                <a href="login.jsp"><i class="fa fa-user"></i> Login</a>
-                                            </div>
-                                            <%}else{%>
-                                            <span style="color:red">Welcome:<%=user.getName()%></span>
-                                            <a href="#"><i class="fa fa-user"></i> Logout</a>
-                                            <%}%> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>
