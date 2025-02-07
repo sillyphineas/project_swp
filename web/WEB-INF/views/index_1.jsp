@@ -115,7 +115,6 @@
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
-                                            <li><a href="login.html">Login</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>

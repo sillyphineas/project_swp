@@ -151,7 +151,7 @@
                                     <li><a href="HomePageController">Home</a></li>
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="shop.html">Products</a></li>
+                                            <li><a href="ProductController">Products</a></li>
                                             <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL" class="active">Cart</a></li> 
