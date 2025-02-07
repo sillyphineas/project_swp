@@ -2,7 +2,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="entities.User"%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@page import="java.util.List,entities.Blog,jakarta.servlet.http.HttpSession,entities.User,models.DAOBlog" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -28,12 +29,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-<% if (session.getAttribute("checkoutMessage") != null) { %>
-    <script type="text/javascript">
-        alert("<%= session.getAttribute("checkoutMessage") %>");
-        session.removeAttribute("checkoutMessage");
-    </script>
-    <% } %>
+
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -67,17 +63,19 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
 
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+
                                     <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -113,13 +111,13 @@
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
+                                            <li><a href="blog.html">Blog List</a></li>
                                             <li><a href="blog-single.html">Blog Single</a></li>
                                         </ul>
                                     </li> 
@@ -130,7 +128,10 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -138,7 +139,7 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="slider"><!--slider-->
+        <section id="slider">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -150,44 +151,23 @@
                             </ol>
 
                             <div class="carousel-inner">
-                                <div class="item active">
-                                    <div class="col-sm-6">
-                                        <h1><span>E</span>-SHOPPER</h1>
-                                        <h2>Free E-Commerce Template</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                                        <button type="button" class="btn btn-default get">Get it now</button>
+                                <!-- Hiển thị 3 bài viết đầu tiên -->
+                                <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
+                                    <div class="item ${status.index == 0 ? 'active' : ''}">
+                                        <div class="col-sm-6">
+                                            <h1><span>E</span>-SHOPPER</h1>
+                                            <h2>${blog.title}</h2>
+                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
+                                            <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                            Read More
+                                        </a>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
+                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
+                                        </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <img src="images/home/girl1.jpg" class="girl img-responsive" alt="" />
-                                        <img src="images/home/pricing.png"  class="pricing" alt="" />
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span>E</span>-SHOPPER</h1>
-                                        <h2>100% Responsive Design</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <img src="images/home/girl2.jpg" class="girl img-responsive" alt="" />
-                                        <img src="images/home/pricing.png"  class="pricing" alt="" />
-                                    </div>
-                                </div>
-
-                                <div class="item">
-                                    <div class="col-sm-6">
-                                        <h1><span>E</span>-SHOPPER</h1>
-                                        <h2>Free Ecommerce Template</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-                                        <button type="button" class="btn btn-default get">Get it now</button>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <img src="images/home/girl3.jpg" class="girl img-responsive" alt="" />
-                                        <img src="images/home/pricing.png" class="pricing" alt="" />
-                                    </div>
-                                </div>
-
+                                </c:forEach>
                             </div>
 
                             <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
@@ -197,11 +177,11 @@
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </div>
-
                     </div>
                 </div>
             </div>
-        </section><!--/slider-->
+        </section>
+
 
         <section>
             <div class="container">
@@ -215,7 +195,7 @@
                                         <!-- Lặp qua danh sách các thương hiệu -->
                                         <c:forEach var="brand" items="${brands}">
                                             <li><a href="#"> <span class="pull-right"></span>${brand.name}</a></li>
-                                        </c:forEach>
+                                                </c:forEach>
                                     </ul>
                                 </div>
                             </div><!--/brands_products-->
@@ -227,10 +207,6 @@
                                     <b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
                                 </div>
                             </div><!--/price-range-->
-
-                            <!--                            <div class="shipping text-center">shipping
-                                                            <img src="images/home/shipping.jpg" alt="" />
-                                                        </div>/shipping-->
 
                         </div>
                     </div>
@@ -246,7 +222,7 @@
                                                 <img src="${product.imageURL}" alt="Product Image" />
                                                 <h2>${product.price}</h2>
                                                 <p>${product.name}</p>
-                                                <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart">
+                                                <a href="#" class="btn btn-default add-to-cart">
                                                     <i class="fa fa-shopping-cart"></i> Add to cart
                                                 </a>
                                             </div>
@@ -267,6 +243,30 @@
                             <c:if test="${currentPage < totalPages}">
                                 <a href="?page=${currentPage + 1}" class="btn btn-default">Next</a>
                             </c:if>
+                        </div>
+                        <div class="blog_items">
+                            <h2 class="title text-center">Blogs</h2>
+                            
+                            <c:forEach var="blog" items="${recentBlogs}">
+                                <div class="single-blog-post" style="margin-bottom: 30px;">
+                                    
+                                    <div class="col-sm-4">
+                                        <img src="${blog.imageURL}" alt="Blog Image" class="img-responsive" />
+                                    </div>
+
+                                    
+                                    <div class="col-sm-8">
+                                        <h3 style="margin-top: 0;">${blog.title}</h3>
+                                        
+                                        <p>${fn:substring(blog.content, 0, 200)}...</p>
+                                        
+                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                            Read More
+                                        </a>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
