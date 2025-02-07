@@ -21,7 +21,7 @@ public class Order {
     private byte paymentMethod;        // TINYINT NOT NULL
     private boolean isDisabled;        // BIT NOT NULL
     private Integer voucherID;         // FOREIGN KEY REFERENCES Vouchers(id)
-
+    private String message;
     public Order() {
     }
 
@@ -154,5 +154,9 @@ public class Order {
                 ", isDisabled=" + isDisabled +
                 ", voucherID=" + voucherID +
                 '}';
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

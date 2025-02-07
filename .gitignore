@@ -1,1 +1,14 @@
-/dist/
+
+# Các file cấu hình của NetBeans
+.nb-gradle/
+nbproject/
+
+# Các file log
+*.log
+
+# Các file hệ thống của macOS
+.DS_Store
+
+# Các file hệ thống của Windows
+Thumbs.db
+
