@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -224,8 +225,7 @@ public class DAOProduct extends DBConnection {
         }
         return n;
     }
-
-    public Vector<Product> getProductsWithPagination(int page, int itemsPerPage) {
+public Vector<Product> getProductsWithPagination(int page, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
 
         // Tính toán chỉ mục bắt đầu cho phân trang
@@ -241,7 +241,7 @@ public class DAOProduct extends DBConnection {
 
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
-                Product product = new Product(
+                  Product product = new Product(
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
@@ -265,7 +265,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("connectivity"),
                         rs.getDate("createAt"),
                         rs.getInt("createdBy")
-                        
                 );
                 productList.add(product);
             }
@@ -275,7 +274,7 @@ public class DAOProduct extends DBConnection {
 
         return productList;
     }
-
+    
     public int getTotalProducts() {
         int totalItems = 0;
 
@@ -296,9 +295,7 @@ public class DAOProduct extends DBConnection {
         return totalItems;
     }
 
-    public static void main(String[] args) {
-
-    }
+   
 
     public Vector<Product> getProductsWithPaginationAndSorting(int page, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
@@ -512,7 +509,62 @@ public Vector<Product> getProductsByPriceRange(double minPrice, double maxPrice,
     }
     return productList;
 }
+   public Vector<Product> getProductsByBrand(int brandID, int currentPage, int itemsPerPage) {
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (currentPage - 1) * itemsPerPage;
+
+    String sql = "SELECT * FROM Products \n" +
+"WHERE brandID = ? \n" +
+"ORDER BY createAt DESC \n" +
+"LIMIT ? OFFSET ?;";
+
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, brandID);
+        ps.setInt(2, itemsPerPage);
+        ps.setInt(3, startIndex);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            productList.add(new Product(
+                rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getInt("storage"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            ));
+        }
+    } catch (SQLException e) {
+        System.out.println(e.getErrorCode());
+        e.printStackTrace();
+    }
+    return productList;
+}
 
 
-    
+    public static void main(String[] args) {
+//        DAOProduct dao=new DAOProduct();
+//        Vector<Product> list=dao.getProductsByBrand(1, 1, 5);
+//        for(Product item:list){
+//            System.out.println(item.getName());
+//        }
+    }
 }
