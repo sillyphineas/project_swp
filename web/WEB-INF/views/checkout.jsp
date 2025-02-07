@@ -203,7 +203,6 @@
                                     <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="product-details.html">Product Details</a></li> 
                                             <li><a href="CartURL?service=checkOut" class="active">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
@@ -211,7 +210,6 @@
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>

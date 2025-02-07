@@ -269,11 +269,12 @@ public class CartController extends HttpServlet {
             }
 
             if (service.equals("add2cart")) {
-                
+
                 int productID = Integer.parseInt(request.getParameter("productID"));
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
 
                 Cart cart = dao.getCartByCustomerID(customerID);
+                System.out.println(cart);
 
                 if (cart == null) {
                     System.out.println("Creating new cart for CustomerID: " + customerID);
@@ -282,6 +283,7 @@ public class CartController extends HttpServlet {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
+                    cart.setCartStatus("active");  // Thêm giá trị cho CartStatus
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
                 }
