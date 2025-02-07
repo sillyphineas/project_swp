@@ -127,8 +127,8 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -164,14 +164,13 @@
                                     <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController" class="active">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="cart.html">Cart</a></li> 
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="blog.html">Blog List</a></li>
-                                            <li><a href="blog-single.html">Blog Single</a></li>
+                                            <li><a href="BlogURL">Blog List</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>
@@ -263,7 +262,7 @@
                                                 <img src="${product.imageURL}" alt="" />
                                                 <h2>${product.price}</h2>
                                                 <p>${product.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                 <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                             </div>
                                         </div>
