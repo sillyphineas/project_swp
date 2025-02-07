@@ -160,11 +160,12 @@ public class DAOUser extends DBConnection {
     
     public static void main(String[] args) {
         DAOUser dao = new DAOUser();
-        User user = dao.getUserById(2);
-        if (user != null) {
-            System.out.println(user);
-        } else {
-            System.out.println("User not found.");
-        }
+//        User user = dao.getUserById(2);
+//        if (user != null) {
+//            System.out.println(user);
+//        } else {
+//            System.out.println("User not found.");
+//        }
+        System.out.println(dao.getUserByEmail("nguyenhoainam1@gmail.com"));
     }
 }

@@ -269,15 +269,14 @@ public class CartController extends HttpServlet {
             }
 
             if (service.equals("add2cart")) {
-                // Lấy ID sản phẩm và số lượng từ request
+                
                 int productID = Integer.parseInt(request.getParameter("productID"));
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-                // Lấy giỏ hàng của người dùng dựa trên customerID
                 Cart cart = dao.getCartByCustomerID(customerID);
 
                 if (cart == null) {
-                    // Nếu giỏ hàng chưa tồn tại, tạo mới giỏ hàng cho người dùng
+                    System.out.println("Creating new cart for CustomerID: " + customerID);
                     cart = new Cart();
                     cart.setCustomerID(customerID);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
