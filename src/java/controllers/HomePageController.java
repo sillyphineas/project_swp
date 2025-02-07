@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -5,6 +6,7 @@
 
 package controllers;
 
+import entities.Blog;
 import entities.Brand;
 import entities.Product;
 import entities.User;
@@ -18,7 +20,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import models.DAOBlog;
 import models.DAOBrand;
 import models.DAOProduct;
 
@@ -66,9 +73,10 @@ public class HomePageController extends HttpServlet {
     throws ServletException, IOException {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+        DAOBlog daoBlog = new DAOBlog();
 
         // Số sản phẩm mỗi trang
-        int itemsPerPage = 9;
+        int itemsPerPage = 6;
 
         // Lấy số trang từ request, mặc định là trang 1
         int page = 1;
@@ -90,13 +98,27 @@ public class HomePageController extends HttpServlet {
 
         // Lấy danh sách thương hiệu
         Vector<Brand> brandList = daoBrand.getAllBrands();
-
+        
+        java.util.List<Blog> latestBlogs = null;
+        try {
+            latestBlogs = daoBlog.getPaginatedBlogs(1, 3);
+        } catch (SQLException ex) {
+            Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        java.util.List<Blog> recentBlogs = null;
+        try {
+            recentBlogs = daoBlog.getPaginatedBlogs(1, 3);
+        } catch (SQLException ex) {
+            Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         // Gửi thông tin vào JSP
         request.setAttribute("products", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
-
+        request.setAttribute("latestBlogs", latestBlogs);
+        
+        request.setAttribute("recentBlogs", recentBlogs);
         //Authorize and forward
         HttpSession session = request.getSession(false);
         User user = null;
@@ -112,7 +134,7 @@ public class HomePageController extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/404.jsp");
             rd.forward(request, response);
         }
-    }
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
