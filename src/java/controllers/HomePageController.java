@@ -71,6 +71,17 @@ public class HomePageController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/HomePageController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
+        
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         DAOBlog daoBlog = new DAOBlog();
@@ -119,21 +130,9 @@ public class HomePageController extends HttpServlet {
         request.setAttribute("latestBlogs", latestBlogs);
         
         request.setAttribute("recentBlogs", recentBlogs);
-        //Authorize and forward
-        HttpSession session = request.getSession(false);
-        User user = null;
-
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-
-        if (Authorize.isAccepted(user, "/HomePageController")) {
-            RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/index_1.jsp");
-            rd.forward(request, response);
-        } else {
-            RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/404.jsp");
-            rd.forward(request, response);
-        }
+        
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/index_1.jsp");
+        rd.forward(request, response);
     } 
 
     /** 

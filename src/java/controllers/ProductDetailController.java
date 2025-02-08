@@ -7,6 +7,8 @@ package controllers;
 
 import entities.Brand;
 import entities.Product;
+import entities.User;
+import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import models.DAOBrand;
 import models.DAOProduct;
@@ -60,6 +63,16 @@ public class ProductDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+                //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/ProductDetailController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         Vector productList = new Vector();
