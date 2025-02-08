@@ -327,7 +327,7 @@ public class CartController extends HttpServlet {
                         return;
                     }
                 }
-                session.setAttribute("cartMessage", "Product addFed to cart successfully!");
+                session.setAttribute("cartMessage", "Product added to cart successfully!");
                 response.sendRedirect("ProductController");
             }
 

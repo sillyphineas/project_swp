@@ -368,6 +368,7 @@
                                 </a>
                                 <p><%=blog.getContent()%></p>
                                 <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
+
                             </div>
                             <%}
                             }   
