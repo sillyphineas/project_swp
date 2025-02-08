@@ -126,9 +126,10 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
+                            <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
+
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
@@ -187,25 +188,36 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
+                            <div class="brands_products">
+                                <h2>Brands</h2> 
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <!-- Lặp qua danh sách các thương hiệu -->
+                                        <li> 
+                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                        </li> 
                                         <c:forEach var="brand" items="${brands}">
-                                            <li><a href="#"> <span class="pull-right"></span>${brand.name}</a></li>
-                                                </c:forEach>
-                                    </ul>
+                                            <li> 
+                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                                            </li> 
+                                        </c:forEach> 
+                                    </ul> 
                                 </div>
-                            </div><!--/brands_products-->
+                            </div>
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
-                                <div class="well text-center">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
+                            <div class="price-range">
+                                <h2>Filter by Price</h2>
+                                <div class="well">
+                                    <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                        <label for="minPrice">Min Price ($)</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <label for="maxPrice">Max Price ($)</label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
+                                    </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div>
 
                         </div>
                     </div>
