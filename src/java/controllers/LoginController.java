@@ -62,6 +62,15 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (user != null) {
+            response.sendRedirect("HomePageController");
+            return;
+        }
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/login.jsp");
         rd.forward(request, response);
     }
@@ -81,7 +90,7 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         User user = daouser.getUserByEmail(email);
-        
+
         if (Validate.checkLoginValidUser(email, password)) {
             HttpSession session = request.getSession(true);
             session.setAttribute("isLoggedIn", true);

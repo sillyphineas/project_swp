@@ -278,28 +278,36 @@
                                 </div>
                             </div><!--/category-products-->
 
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
+                            <div class="brands_products">
+                                <h2>Brands</h2> 
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li><a href=""> <span class="pull-right">(50)</span>Acne</a></li>
-                                        <li><a href=""> <span class="pull-right">(56)</span>Grüne Erde</a></li>
-                                        <li><a href=""> <span class="pull-right">(27)</span>Albiro</a></li>
-                                        <li><a href=""> <span class="pull-right">(32)</span>Ronhill</a></li>
-                                        <li><a href=""> <span class="pull-right">(5)</span>Oddmolly</a></li>
-                                        <li><a href=""> <span class="pull-right">(9)</span>Boudestijn</a></li>
-                                        <li><a href=""> <span class="pull-right">(4)</span>Rösch creative culture</a></li>
-                                    </ul>
+                                        <li> 
+                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                        </li> 
+                                        <c:forEach var="brand" items="${brands}">
+                                            <li> 
+                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                                            </li> 
+                                        </c:forEach> 
+                                    </ul> 
                                 </div>
-                            </div><!--/brands_products-->
+                            </div>
 
-                            <div class="price-range"><!--price-range-->
-                                <h2>Price Range</h2>
+                            <div class="price-range">
+                                <h2>Filter by Price</h2>
                                 <div class="well">
-                                    <input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600" data-slider-step="5" data-slider-value="[250,450]" id="sl2" ><br />
-                                    <b>$ 0</b> <b class="pull-right">$ 600</b>
+                                    <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                        <label for="minPrice">Min Price ($)</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <label for="maxPrice">Max Price ($)</label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+
+                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
+                                    </form>
                                 </div>
-                            </div><!--/price-range-->
+                            </div>
 
                             <div class="shipping text-center"><!--shipping-->
                                 <img src="images/home/shipping.jpg" alt="" />
@@ -359,7 +367,9 @@
                                     <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi">
                                 </a>
                                 <p><%=blog.getContent()%></p>
-                                <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Blog Detail</a>
+
+                                <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
+
                             </div>
                             <%}
                             }   

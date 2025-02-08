@@ -11,11 +11,11 @@ import entities.User;
  * @author HP
  */
 public class Authorize {
-    private static final String[] PUBLIC_ENDPOINTS = {"/HomePageController", "/"};
-    private static final String[] CUSTOMER_ENDPOINTS = {"/HomePageController", "/CartController", "/OrderDetails"};
-    private static final String[] ADMIN_ENDPOINTS = {"/", "/"};
-    private static final String[] SALES_ENDPOINTS = {"/", "/"};
-    private static final String[] MARKETING_ENDPOINTS = {"/", "/"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/HomePageController", "/ProductController", "/BlogURL", "/BlogDetailServlet", "/LoginController", "/ProductDetailController", "/RegisterController"};
+    private static final String[] CUSTOMER_ENDPOINTS = {"/HomePageController", "/CartURL", "/LogoutController", "/ProductController", "/ProductDetailController", "/UserProfileServlet", "/BlogURL", "/BlogDetailServlet",};
+    private static final String[] ADMIN_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
+    private static final String[] SALES_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
+    private static final String[] MARKETING_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
 
     public static boolean isAccepted(User user, String link) {
         if (user == null) {
