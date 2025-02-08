@@ -62,6 +62,8 @@ public class ProductDetailController extends HttpServlet {
     throws ServletException, IOException {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+        Vector productList = new Vector();
+        Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));
         Product product = dao.getProductById(productID);
         Vector<Brand> brandList = daoBrand.getAllBrands();
@@ -71,6 +73,7 @@ public class ProductDetailController extends HttpServlet {
         }
         request.setAttribute("product",product);
         request.setAttribute("brands", brandList);
+         request.setAttribute("latestProduct", latestProduct);
         request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
     } 
 
