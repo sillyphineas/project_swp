@@ -203,16 +203,21 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                            <div class="brands_products"><!--brands_products-->
-                                <h2>Brands</h2>
+                              <div class="brands_products">
+                                <h2>Brands</h2> 
                                 <div class="brands-name">
-                                    <c:forEach var="brand" items="${brands}">
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#"> <span class="pull-right"></span>${brand.name}</a></li>
-                                        </ul>
-                                    </c:forEach>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li> 
+                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                        </li> 
+                                        <c:forEach var="brand" items="${brands}">
+                                            <li> 
+                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                                            </li> 
+                                        </c:forEach> 
+                                    </ul> 
                                 </div>
-                            </div><!--/brands_products-->
+                            </div>
 
                             <div class="price-range">
                                 <h2>Filter by Price</h2>
@@ -269,6 +274,7 @@
                                     </div>
                                 </div>
                             </c:forEach>
+                        </div>
 
                             <!--                                <div class="col-sm-4">  
                                                                 <div class="product-image-wrapper">
