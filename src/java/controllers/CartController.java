@@ -9,6 +9,8 @@ import entities.CartItem;
 import entities.Order;
 import entities.OrderDetail;
 import entities.Product;
+import entities.User;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -49,8 +51,17 @@ public class CartController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/CartURL")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
         Integer customerID = (Integer) session.getAttribute("userID");
         DAOCart dao = new DAOCart();
         DAOCartItem daoItem = new DAOCartItem();
@@ -63,11 +74,11 @@ public class CartController extends HttpServlet {
             if (service == null) {
                 service = "showCart";
             }
-            if (customerID == null || customerID == 0) {
-                request.setAttribute("error", "You need to be logged in to view your cart.");
-                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-                return;
-            }
+//            if (customerID == null || customerID == 0) {
+//                request.setAttribute("error", "You need to be logged in to view your cart.");
+//                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
+//                return;
+//            }
 //            if (service.equals("search")) {
 //                String query = request.getParameter("query");
 //
@@ -327,7 +338,7 @@ public class CartController extends HttpServlet {
                         return;
                     }
                 }
-                session.setAttribute("cartMessage", "Product addFed to cart successfully!");
+                session.setAttribute("cartMessage", "Product added to cart successfully!");
                 response.sendRedirect("ProductController");
             }
 

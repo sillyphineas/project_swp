@@ -367,7 +367,9 @@
                                     <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi">
                                 </a>
                                 <p><%=blog.getContent()%></p>
+
                                 <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
+
                             </div>
                             <%}
                             }   
