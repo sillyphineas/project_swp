@@ -5,6 +5,9 @@
 package controllers;
 
 import entities.Blog;
+import entities.User;
+import helper.Authorize;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +40,17 @@ public class BlogController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/BlogURL")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
+        
         response.setContentType("text/html;charset=UTF-8");
         DAOBlog dao = new DAOBlog();
         try (PrintWriter out = response.getWriter()) {
@@ -52,7 +67,6 @@ public class BlogController extends HttpServlet {
                 int totalBlogs = dao.getTotalBlogs();
                 int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
 
-               
                 request.setAttribute("blogs", blogs);
                 request.setAttribute("totalPages", totalPages);
                 request.setAttribute("currentPage", page);
@@ -64,7 +78,6 @@ public class BlogController extends HttpServlet {
                 if (query == null || query.trim().isEmpty()) {
                     request.setAttribute("error", "Please enter a search!!");
                     request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
-                    return;
                 }
 
                 List<Blog> blogs = dao.searchBlogs(query);

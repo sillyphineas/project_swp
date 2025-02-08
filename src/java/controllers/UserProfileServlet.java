@@ -6,6 +6,7 @@
 package controllers;
 
 import entities.User;
+import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -59,17 +60,17 @@ public class UserProfileServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
         // Kiểm tra session để xác nhận người dùng đã đăng nhập chưa
+                //Authorize
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            // Nếu chưa đăng nhập, chuyển đến trang login
-            response.sendRedirect("LoginController");
-//            request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/UserProfileServlet")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
 
-        // Nếu đã đăng nhập, lấy thông tin user từ session
-        User user = (User) session.getAttribute("user");
-        
         // Lấy thông tin user từ DAOUser và hiển thị
         DAOUser daoUser = new DAOUser();
         User profile = daoUser.getUserById(user.getId());

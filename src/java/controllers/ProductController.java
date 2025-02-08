@@ -6,6 +6,9 @@ package controllers;
 
 import entities.Brand;
 import entities.Product;
+import entities.User;
+import helper.Authorize;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import models.DAOBrand;
 import models.DAOProduct;
@@ -62,6 +66,17 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/ProductController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
+        
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         String brandIDStr = request.getParameter("brandID");
@@ -75,18 +90,16 @@ public class ProductController extends HttpServlet {
         int itemsPerPage = 7;
         int currentPage = 1;
         int brandID = -1;
-        if(brandIDStr != null && !brandIDStr.isEmpty()){
-            try{
+        if (brandIDStr != null && !brandIDStr.isEmpty()) {
+            try {
                 brandID = Integer.parseInt(brandIDStr);
-            }
-            catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 brandID = -1;
             }
-} 
-        if(brandID==-1){
-            brandID=0;
         }
-
+        if (brandID == -1) {
+            brandID = 0;
+        }
 
         String pageStr = request.getParameter("page");
         if (pageStr != null && !pageStr.isEmpty()) {
@@ -108,8 +121,8 @@ public class ProductController extends HttpServlet {
 //        } else {
 //            productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
 //        }
- Vector<Product> productListBrand = new Vector<>();
-    if(brandID != -1){
+        Vector<Product> productListBrand = new Vector<>();
+        if (brandID != -1) {
             productListBrand = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
         }
         if (minPriceStr != null && maxPriceStr != null) {
@@ -120,22 +133,22 @@ public class ProductController extends HttpServlet {
             productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
         }
 
-       Vector<Brand> brandList = daoBrand.getAllBrands();
+        Vector<Brand> brandList = daoBrand.getAllBrands();
 
         int totalProducts = dao.getTotalProducts();
         int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
         totalPages = Math.max(totalPages, 1); // Đảm bảo totalPages >= 1
         Product latestProduct = dao.getLatestProduct();
         request.setAttribute("latestProduct", latestProduct);
-        if(productListBrand!=null){
+        if (productListBrand != null) {
             request.setAttribute("productList", productListBrand);
-        }else{
+        } else {
             request.setAttribute("productList", productList);
         }
-        if(brandID==0){
+        if (brandID == 0) {
             request.setAttribute("productList", productList);
         }
-        
+
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);
@@ -143,7 +156,8 @@ public class ProductController extends HttpServlet {
         Vector<Product> latestProducts = dao.getProductsWithPaginationAndSorting(1, 3);
         request.setAttribute("latestProducts", latestProducts);
 
-        request.getRequestDispatcher("WEB-INF/views/shop.jsp").forward(request, response);
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
+        rd.forward(request, response);
 
     }
 
