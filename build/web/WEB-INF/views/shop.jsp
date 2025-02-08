@@ -60,9 +60,12 @@
     <% if (session.getAttribute("cartMessage") != null) { %>
     <script type="text/javascript">
         alert("<%= session.getAttribute("cartMessage") %>");
-        session.removeAttribute("cartMessage");
     </script>
-    <% } %>
+    <% 
+        session.removeAttribute("cartMessage"); 
+    %>
+<% } %>
+
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
