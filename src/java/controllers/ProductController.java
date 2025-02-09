@@ -10,179 +10,82 @@ import entities.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Vector;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.Vector;
 import models.DAOBrand;
 import models.DAOProduct;
 
 /**
- *
- * @author HP
+ * ProductController Servlet
  */
 @WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
 public class ProductController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProductController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProductController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
+
+        // Kiểm tra quyền truy cập
         HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
         if (!Authorize.isAccepted(user, "/ProductController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        
+
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+
+        // Lấy tham số từ request
         String brandIDStr = request.getParameter("brandID");
         String searchQuery = request.getParameter("search");
         String minPriceStr = request.getParameter("minPrice");
         String maxPriceStr = request.getParameter("maxPrice");
-
-        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
-        double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : 2000;
-
-        int itemsPerPage = 9;
-        int currentPage = 1;
-        int brandID = -1;
-        if (brandIDStr != null && !brandIDStr.isEmpty()) {
-            try {
-                brandID = Integer.parseInt(brandIDStr);
-            } catch (NumberFormatException e) {
-                brandID = -1;
-            }
-        }
-        if (brandID == -1) {
-            brandID = 0;
-        }
-
         String pageStr = request.getParameter("page");
-        if (pageStr != null && !pageStr.isEmpty()) {
-            try {
-                currentPage = Integer.parseInt(pageStr);
-                if (currentPage < 1) {
-                    currentPage = 1;
-                }
-            } catch (NumberFormatException e) {
-                currentPage = 1;
-            }
-        }
 
-        Vector<Product> productList = new Vector<>();
+        // Mặc định nếu không có giá trị
+        int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
+        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
+        double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
+        int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
+        int itemsPerPage = 9;
 
-//    
-//        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-//            productList = dao.searchProductsByName(searchQuery);
-//        } else {
-//            productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
-//        }
-        Vector<Product> productListBrand = new Vector<>();
-        if (brandID != -1) {
-            productListBrand = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
-        }
-        if (minPriceStr != null && maxPriceStr != null) {
-            productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
+        // Lấy tổng số sản phẩm theo brand hoặc toàn bộ
+        int totalProducts = (brandID > 0) ? dao.getTotalProductsByBrand(brandID) : dao.getTotalProducts();
+        int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
+        totalPages = Math.max(totalPages, 1);
+
+        // Lọc sản phẩm dựa trên bộ lọc
+        Vector<Product> productList;
+        if (brandID > 0) {
+            productList = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
         } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             productList = dao.searchProductsByName(searchQuery);
+        } else if (minPriceStr != null && maxPriceStr != null) {
+            productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
         } else {
             productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
         }
 
+        // Lấy danh sách thương hiệu
         Vector<Brand> brandList = daoBrand.getAllBrands();
-
-        int totalProducts = dao.getTotalProducts();
-        int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
-        totalPages = Math.max(totalPages, 1); // Đảm bảo totalPages >= 1
         Product latestProduct = dao.getLatestProduct();
-        request.setAttribute("latestProduct", latestProduct);
-        if (productListBrand != null) {
-            request.setAttribute("productList", productListBrand);
-        } else {
-            request.setAttribute("productList", productList);
-        }
-        if (brandID == 0) {
-            request.setAttribute("productList", productList);
-        }
 
-        request.setAttribute("currentPage", currentPage);
+        // Đưa dữ liệu vào request
+        request.setAttribute("productList", productList);
         request.setAttribute("brands", brandList);
+        request.setAttribute("latestProduct", latestProduct);
+        request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("brandID", brandID);
 
-        Vector<Product> latestProducts = dao.getProductsWithPaginationAndSorting(1, 3);
-        request.setAttribute("latestProducts", latestProducts);
-
+        // Chuyển hướng tới trang shop.jsp
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
         rd.forward(request, response);
-
     }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

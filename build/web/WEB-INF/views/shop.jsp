@@ -309,15 +309,16 @@
                     <div class ="text-center">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-                                <a href="?page=${currentPage-1}" class="pre">Previous</a>
+                                <a href="?page=${currentPage-1}&brandID=${brandID}" class="pre">Previous</a>
                             </c:if>
                             <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                <a href="?page=${i}&brandID=${brandID}" class="${i == currentPage ? 'active' : ''}">${i}</a>
                             </c:forEach>
                             <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage+1}" class="next">Next</a>
+                                <a href="?page=${currentPage+1}&brandID=${brandID}" class="next">Next</a>
                             </c:if>
                         </div>
+
                     </div>
                     <!--                            </div>-->
                 </div><!--features_items-->
