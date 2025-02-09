@@ -255,6 +255,8 @@
                                 <a href="?page=${currentPage + 1}" class="btn btn-default">Next</a>
                             </c:if>
                         </div>
+                        <br/>
+                        <br/>
                         <div class="blog_items">
                             <h2 class="title text-center">Blogs</h2>
                             

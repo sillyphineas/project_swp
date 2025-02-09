@@ -6,8 +6,6 @@ package controllers;
 
 import entities.User;
 import helper.Authorize;
-import helper.EmailUtil;
-import helper.Validate;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,16 +15,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.Random;
 import models.DAOUser;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "RegisterController", urlPatterns = {"/RegisterController"})
-public class RegisterController extends HttpServlet {
+    @WebServlet(name = "VerifyAccountController", urlPatterns = {"/VerifyAccountController"})
+public class VerifyAccountController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +41,10 @@ public class RegisterController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RegisterController</title>");
+            out.println("<title>Servlet VerifyAccountController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RegisterController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet VerifyAccountController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -72,9 +68,19 @@ public class RegisterController extends HttpServlet {
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
-        if (!Authorize.isAccepted(user, "/RegisterController")) {
+        if (!Authorize.isAccepted(user, "/VerifyAccountController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
+        }
+        String service = request.getParameter("service");
+        if (service.equals("forward")) {
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/verify-account.jsp");
+            rd.forward(request, response);
+        }
+        
+        if (service.equals("confirmRegister")) {
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/success-registered.jsp");
+            rd.forward(request, response);
         }
     }
 
@@ -89,44 +95,33 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DAOUser daouser = new DAOUser();
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
+        HttpSession session = request.getSession();
+        String enteredCode = request.getParameter("code");
+        String storedCode = (String) session.getAttribute("verificationCode");
+        String email = (String) session.getAttribute("email");
+        String hashedPassword = (String) session.getAttribute("password");
 
-        response.setContentType("text/plain"); // Định dạng phản hồi
-        if (Validate.checkRegisterExistedEmail(email)) {
-            if (Validate.checkRegisterPasswordLength(password)) {
-                if (Validate.checkRegisterEqualPassword(password, confirmPassword)) {
-//                    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-//                    User user = new User();
-//                    user.setEmail(email);
-//                    user.setPassHash(hashedPassword);
-//                    user.setRoleId(2);
-//                    user.setDisabled(false);
-//                    int isRegistered = daouser.addUser(user);
-//                    if (isRegistered != 0) {
-//                        response.getWriter().write("Register successfully!");
-//                    } else {
-//                        response.getWriter().write("Error registering user.");
-//                    }
-                    String verificationCode = String.format("%06d", new Random().nextInt(999999));
-                    EmailUtil.sendMail(email, verificationCode);
+        response.setContentType("text/plain");
 
-                    HttpSession session = request.getSession();
-                    session.setAttribute("email", email);
-                    session.setAttribute("password", BCrypt.hashpw(password, BCrypt.gensalt()));
-                    session.setAttribute("verificationCode", verificationCode);
+        if (enteredCode != null && enteredCode.equals(storedCode)) {
+            DAOUser daoUser = new DAOUser();
+            User user = new User();
+            user.setEmail(email);
+            user.setPassHash(hashedPassword);
+            user.setRoleId(2);
+            user.setDisabled(false);
 
-                    response.getWriter().write("redirect");
-                } else {
-                    response.getWriter().write("Passwords do not match!");
-                }
+            if (daoUser.addUser(user) != 0) {
+                session.removeAttribute("verificationCode");
+
+                response.sendRedirect("VerifyAccountController?service=confirmRegister");
             } else {
-                response.getWriter().write("You need to enter a password at least 6 characters!");
+                response.sendRedirect("/WEB-INF/views/404.jsp");
             }
         } else {
-            response.getWriter().write("Email was existed!");
+            request.setAttribute("error", "Invalid code");
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/verify-account.jsp");
+            rd.forward(request, response);
         }
     }
 
