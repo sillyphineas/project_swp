@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controllers;
 
 import entities.Brand;
@@ -53,19 +49,30 @@ public class ProductController extends HttpServlet {
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
         double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
         int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
-        int itemsPerPage = 9;
+        int itemsPerPage = 4; // Hiển thị 4 sản phẩm trên mỗi trang
 
-        // Lấy tổng số sản phẩm theo brand hoặc toàn bộ
-        int totalProducts = (brandID > 0) ? dao.getTotalProductsByBrand(brandID) : dao.getTotalProducts();
+        // Tính lại tổng số sản phẩm theo bộ lọc
+        int totalProducts = 0;
+        if (brandID > 0) {
+            totalProducts = dao.getTotalProductsByBrand(brandID);
+        } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            totalProducts = dao.getTotalProductsBySearch(searchQuery);
+        } else if (minPriceStr != null && maxPriceStr != null) {
+            totalProducts = dao.getTotalProductsByPriceRange(minPrice, maxPrice);
+        } else {
+            totalProducts = dao.getTotalProducts();
+        }
+
+        // Tính số trang chính xác theo số sản phẩm lọc được
         int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
-        totalPages = Math.max(totalPages, 1);
+        totalPages = Math.max(totalPages, 1); // Đảm bảo ít nhất có 1 trang
 
         // Lọc sản phẩm dựa trên bộ lọc
         Vector<Product> productList;
         if (brandID > 0) {
             productList = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
         } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            productList = dao.searchProductsByName(searchQuery);
+            productList = dao.searchProductsByName(searchQuery, currentPage, itemsPerPage);
         } else if (minPriceStr != null && maxPriceStr != null) {
             productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
         } else {
