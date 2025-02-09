@@ -58,7 +58,7 @@ public class CartController extends HttpServlet {
             user = (User) session.getAttribute("user");
         }
         if (!Authorize.isAccepted(user, "/CartURL")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
         response.setContentType("text/html;charset=UTF-8");

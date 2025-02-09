@@ -1,6 +1,6 @@
 <%-- 
-    Document   : login
-    Created on : Jan 18, 2025, 1:13:47 PM
+    Document   : verify-account
+    Created on : Feb 9, 2025, 8:31:23 PM
     Author     : HP
 --%>
 
@@ -12,7 +12,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Login | E-Shopper</title>
+        <title>Verify Account | E-Shopper</title>
+
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/font-awesome.min.css" rel="stylesheet">
         <link href="/css/prettyPhoto.css" rel="stylesheet">
@@ -20,93 +21,14 @@
         <link href="/css/animate.css" rel="stylesheet">
         <link href="/css/main.css" rel="stylesheet">
         <link href="/css/responsive.css" rel="stylesheet">
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
-        <link rel="shortcut icon" href="images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script type="text/javascript">
-            function register() {
-                let form = document.registerForm;
-                let email = form.email.value;
-                let password = form.password.value;
-                let confirmPassword = form.confirmPassword.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("msg").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.trim() === "redirect") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
-                        } else {
-                            document.getElementById("msg").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/RegisterController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password +
-                        "&confirmPassword=" + confirmPassword);
-            }
-
-            function login() {
-                let form = document.loginForm;
-                let email = form.email.value;
-                let password = form.password.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("error").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.startsWith("success")) {
-                            console.log(xhttp.responseText);
-                            let roleId = xhttp.responseText.split(":")[1];
-                            console.log(roleId);
-                            if (roleId == 1) {
-                                window.location.href = "<%= request.getContextPath() %>/views/adminDashboard.jsp";
-                            } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
-                            } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/shipperDashboard.jsp";
-                            } else if (roleId == 4) {
-                                window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
-                            } else if (roleId == 5) {
-                                window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
-                            }
-                        } else {
-                            document.getElementById("error").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/LoginController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password);
-            }
-        </script>
-
-
-    </head><!--/head-->
+    </head>
 
     <body>
-        <header id="header"><!--header-->
-            <div class="header_top"><!--header_top-->
+
+        <%-- BẮT ĐẦU HEADER --%>
+        <header id="header">
+            <div class="header_top">
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-6">
@@ -130,37 +52,14 @@
                         </div>
                     </div>
                 </div>
-            </div><!--/header_top-->
+            </div>
 
-            <div class="header-middle"><!--header-middle-->
+            <div class="header-middle">
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt=""/></a>
                             </div>
                         </div>
                         <div class="col-sm-8">
@@ -169,96 +68,37 @@
                                     <li><a href=""><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="${pageContext.request.contextPath}/login.jsp" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!--/header-middle-->
+            </div>
+        </header>
+        <%-- KẾT THÚC HEADER --%>
 
-            <div class="header-bottom"><!--header-bottom-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
-                            </div>
-                            <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!--/header-bottom-->
-        </header><!--/header-->
-
-        <section id="form"><!--form-->
+        <%-- FORM NHẬP MÃ XÁC THỰC --%>
+        <section id="form">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4 col-sm-offset-1">
-                        <div class="login-form"><!--login form-->
-                            <h2>Login to your account</h2>
-                            <form name="loginForm">
-                                <input type="email" name="email" placeholder="Email"  required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <div id="error" style="color: red; font-style: italic;"></div>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
-                                <button type="button" class="btn btn-default" onclick="login()">Login</button>
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <div class="signup-form">
+                            <h2>Verify your account</h2>
+                            <form action="VerifyAccountController" method="POST">
+                                <input type="text" name="code" placeholder="Enter code" required maxlength="6"/>
+                                <p style="color: red; font-style: italic;">
+                                    <%= (request.getAttribute("error") != null) ? request.getAttribute("error") : "" %>
+                                </p>
+                                <br/>
+                                <button type="submit" class="btn btn-default">Submit</button>
                             </form>
                         </div>
-
-                    </div>
-                    <div class="col-sm-1">
-                        <h2 class="or">OR</h2>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="signup-form"><!--sign up form-->
-                            <h2>New User Signup!</h2>
-                            <form name="registerForm">
-                                <input type="email" name="email" placeholder="Email" required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <input type="password" name="confirmPassword" placeholder="Confirm Password" required/>
-                                <p id="msg" style="color: red; font-style: italic;"></p>
-                                <button type="button" class="btn btn-default" onclick="register()">Register</button>
-
-                            </form>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </section><!--/form-->
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -419,8 +259,6 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
@@ -429,3 +267,4 @@
         <script src="js/main.js"></script>
     </body>
 </html>
+
