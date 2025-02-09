@@ -167,11 +167,11 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <form  action="CartURL" method="get">
-                                    <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" >
-                                    <button type="submit" >Search</button>
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                         %>
                         <tr>
                             <td class="cart_product">
-                                <a href=""><img src="<%=product.getImageURL()%>" alt=""></a>
+                                <a href=""><img src="<%=product.getImageURL()%>" alt="ảnh sản phẩm"></a>
                             </td>
                             <td class="cart_description">
                                 <h4><a href=""><%=product.getName()%></a></h4>

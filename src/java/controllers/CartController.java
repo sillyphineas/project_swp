@@ -133,46 +133,33 @@ public class CartController extends HttpServlet {
 //            }
             if (service != null && service.equals("updateQuantity")) {
                 try {
-                    // Lấy tham số từ request
+                  
                     int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
                     int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
 
-                    // Kiểm tra số lượng mới hợp lệ
                     if (newQuantity > 0) {
-                        // Lấy CartItem từ cơ sở dữ liệu
                         CartItem cartItem = daoItem.getCartItemById(cartItemId);
 
                         if (cartItem != null) {
-                            // Cập nhật số lượng và tổng giá trị
                             cartItem.setQuantity(newQuantity);
                             double newTotalPrice = cartItem.getPrice() * newQuantity;
                             cartItem.setTotalPrice(newTotalPrice);
 
-                            // Cập nhật vào cơ sở dữ liệu
                             daoItem.updateCartItem(cartItem);
                             response.sendRedirect("CartURL?service=showCart");
                         }
                     }
-
-                    // Lấy thông tin giỏ hàng của khách hàng (giả sử customerID đã biết, ví dụ: 1)
                     Cart cart = dao.getCartByCustomerID(customerID);
                     List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-
-                    // Tính tổng giá trị đơn hàng
                     double totalOrderPrice = cartItems.stream()
                             .mapToDouble(CartItem::getTotalPrice)
                             .sum();
-
-                    // Gửi dữ liệu đến JSP
                     request.setAttribute("totalOrderPrice", totalOrderPrice);
                     request.setAttribute("cartItems", cartItems);
-
-                    // Forward đến trang giỏ hàng
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/cart.jsp");
                     dispatcher.forward(request, response);
 
                 } catch (Exception e) {
-                    // Xử lý lỗi
                     response.getWriter().write("Error: " + e.getMessage());
                 }
             }
@@ -199,38 +186,30 @@ public class CartController extends HttpServlet {
             if (service.equals("updateQuantity")) {
 
                 try {
-                    // Lấy tham số từ request
                     int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
                     int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
 
-                    // Kiểm tra số lượng mới
                     if (newQuantity > 0) {
-                        // Lấy CartItem theo cartItemId
                         CartItem cartItem = daoItem.getCartItemById(cartItemId);
 
                         if (cartItem != null) {
-                            // Cập nhật số lượng và tính lại giá
                             cartItem.setQuantity(newQuantity);
                             double newTotalPrice = cartItem.getPrice() * newQuantity;
                             cartItem.setTotalPrice(newTotalPrice);
 
-                            // Cập nhật CartItem vào database
                             daoItem.updateCartItem(cartItem);
                             response.sendRedirect("CartURL?service=showCart");
                         }
                     }
 
-                    // Lấy giỏ hàng của người dùng theo customerID
                     Cart cart = dao.getCartByCustomerID(customerID);
 
-                    // Tính lại tổng giá trị đơn hàng
                     List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
                     double totalOrderPrice = 0.0;
                     for (CartItem item : cartItems) {
                         totalOrderPrice += item.getTotalPrice();
                     }
 
-                    // Gửi tổng giá trị đơn hàng dưới dạng text về client
                     response.getWriter().write(String.format("%.2f", totalOrderPrice));
                 } catch (NumberFormatException e) {
                     response.getWriter().write("Invalid input.");
@@ -294,7 +273,7 @@ public class CartController extends HttpServlet {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
-                    cart.setCartStatus("active");  // Thêm giá trị cho CartStatus
+                    cart.setCartStatus("active"); 
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
                 }
@@ -304,35 +283,32 @@ public class CartController extends HttpServlet {
                 int existingQuantity = (existingItem != null) ? existingItem.getQuantity() : 0;
                 request.setAttribute("existingQuantity", existingQuantity);
                 if (existingItem != null) {
-                    // Nếu sản phẩm đã có trong giỏ, cập nhật số lượng và tổng giá
-                    int newQuantity = existingItem.getQuantity() + quantity;  // Cộng thêm số lượng mới vào số lượng hiện tại
+
+                    int newQuantity = existingItem.getQuantity() + quantity;  
 
                     if (newQuantity > 0) {
                         // Nếu số lượng mới hợp lệ (>= 1), cập nhật giỏ hàng
                         existingItem.setQuantity(newQuantity);
-                        existingItem.setTotalPrice(existingItem.getPrice() * newQuantity);  // Cập nhật tổng giá
-                        daoItem.updateCartItem(existingItem);  // Cập nhật giỏ hàng trong cơ sở dữ liệu
+                        existingItem.setTotalPrice(existingItem.getPrice() * newQuantity); 
+                        daoItem.updateCartItem(existingItem); 
                     } else {
                         try {
-                            // Nếu số lượng mới <= 0, không cập nhật, có thể xóa sản phẩm khỏi giỏ hàng (tuỳ chọn)
                             daoItem.removeCartItem(existingItem.getCartItemID());
                         } catch (SQLException ex) {
                             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 } else {
-                    // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới sản phẩm vào giỏ
                     Product product = daoPro.getProductById(productID);
                     if (product != null) {
                         CartItem newItem = new CartItem();
                         newItem.setCartID(cart.getCartID());
                         newItem.setProductID(productID);
-                        newItem.setQuantity(quantity);  // Sử dụng số lượng từ request
+                        newItem.setQuantity(quantity); 
                         newItem.setPrice(product.getPrice());
-                        newItem.setTotalPrice(product.getPrice() * quantity);  // Tính tổng giá cho sản phẩm
-                        daoItem.addCartItem(newItem);  // Thêm sản phẩm vào giỏ hàng trong cơ sở dữ liệu
+                        newItem.setTotalPrice(product.getPrice() * quantity); 
+                        daoItem.addCartItem(newItem);
                     } else {
-                        // Nếu không tìm thấy sản phẩm trong cơ sở dữ liệu, hiển thị lỗi
                         request.setAttribute("error", "Product not found!");
                         request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                         return;
