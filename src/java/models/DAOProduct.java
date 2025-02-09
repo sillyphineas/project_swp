@@ -343,11 +343,27 @@ public class DAOProduct extends DBConnection {
     }
 
     public int getTotalProductsByBrand(int brandID) {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Products WHERE brandID = ? AND isDisabled = 0";
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, brandID);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            total = rs.getInt(1);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return total;
+}
+
+    public int getTotalProductsBySearch(String searchQuery) {
         int total = 0;
-        String sql = "SELECT COUNT(*) FROM Product WHERE brandID = ?";
+        String sql = "SELECT COUNT(*) FROM Product WHERE name LIKE ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, brandID);
+            ps.setString(1, "%" + searchQuery + "%");
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 total = rs.getInt(1);
@@ -358,13 +374,33 @@ public class DAOProduct extends DBConnection {
         return total;
     }
 
-    public Vector<Product> searchProductsByName(String searchQuery) {
+    public int getTotalProductsByPriceRange(double minPrice, double maxPrice) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Product WHERE price BETWEEN ? AND ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDouble(1, minPrice);
+            ps.setDouble(2, maxPrice);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public Vector<Product> searchProductsByName(String searchQuery, int currentPage, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
-        String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0";
+        String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0 LIMIT ?, ?";
 
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, "%" + searchQuery + "%");
+            pre.setInt(2, (currentPage - 1) * itemsPerPage); // Tính offset
+            pre.setInt(3, itemsPerPage); // Số lượng sản phẩm mỗi trang
+
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 Product product = new Product(
@@ -532,53 +568,49 @@ public class DAOProduct extends DBConnection {
     }
 
     public Vector<Product> getProductsByBrand(int brandID, int currentPage, int itemsPerPage) {
-        Vector<Product> productList = new Vector<>();
-        int startIndex = (currentPage - 1) * itemsPerPage;
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (currentPage - 1) * itemsPerPage;
 
-        String sql = "SELECT * FROM Products \n"
-                + "WHERE brandID = ? \n"
-                + "ORDER BY createAt DESC \n"
-                + "LIMIT ? OFFSET ?;";
+    String sql = "SELECT * FROM Products WHERE brandID = ? AND isDisabled = 0 ORDER BY createAt DESC LIMIT ? OFFSET ?";
 
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, brandID);
-            ps.setInt(2, itemsPerPage);
-            ps.setInt(3, startIndex);
-            ResultSet rs = ps.executeQuery();
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, brandID);
+        ps.setInt(2, itemsPerPage);
+        ps.setInt(3, startIndex);
+        ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
-                productList.add(new Product(
-                        rs.getInt("id"),
-                        rs.getInt("brandID"),
-                        rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("description"),
-                        rs.getBoolean("isDisabled"),
-                        rs.getInt("feedbackCount"),
-                        rs.getString("status"),
-                        rs.getString("imageURL"),
-                        rs.getString("chipset"),
-                        rs.getInt("ram"),
-                        rs.getInt("storage"),
-                        rs.getDouble("screenSize"),
-                        rs.getString("screenType"),
-                        rs.getString("resolution"),
-                        rs.getInt("batteryCapacity"),
-                        rs.getString("cameraSpecs"),
-                        rs.getString("os"),
-                        rs.getString("simType"),
-                        rs.getString("connectivity"),
-                        rs.getDate("createAt"),
-                        rs.getInt("createdBy")
-                ));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getErrorCode());
-            e.printStackTrace();
+        while (rs.next()) {
+            productList.add(new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getInt("storage"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            ));
         }
-        return productList;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return productList;
+}
 
 }
