@@ -5,6 +5,7 @@
 package controllers;
 
 import entities.Blog;
+import entities.Brand;
 import entities.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -18,9 +19,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.DAOBlog;
+import models.DAOBrand;
 
 /**
  *
@@ -50,12 +53,16 @@ public class BlogController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        
+
         response.setContentType("text/html;charset=UTF-8");
         DAOBlog dao = new DAOBlog();
+        DAOBrand daoBrand = new DAOBrand();
+
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
+            Vector<Brand> brandList = daoBrand.getAllBrands();
+            request.setAttribute("brands", brandList);
             if (service == null) {
                 service = "listAllBlogs";
             }
