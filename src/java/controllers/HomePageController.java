@@ -87,7 +87,7 @@ public class HomePageController extends HttpServlet {
         DAOBlog daoBlog = new DAOBlog();
 
         // Số sản phẩm mỗi trang
-        int itemsPerPage = 6;
+        int itemsPerPage = 9;
 
         // Lấy số trang từ request, mặc định là trang 1
         int page = 1;
