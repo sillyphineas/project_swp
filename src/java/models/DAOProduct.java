@@ -342,6 +342,22 @@ public class DAOProduct extends DBConnection {
         return productList;
     }
 
+    public int getTotalProductsByBrand(int brandID) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Product WHERE brandID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, brandID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
     public Vector<Product> searchProductsByName(String searchQuery) {
         Vector<Product> productList = new Vector<>();
         String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0";
