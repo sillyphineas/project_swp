@@ -10,3 +10,9 @@ nbproject/
 
 # Các file hệ thống của Windows
 Thumbs.db
+
+# Ignore tất cả các tệp .properties
+*.properties
+
+# Ignore tất cả các tệp .xml
+*.xml

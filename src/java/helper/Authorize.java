@@ -11,7 +11,7 @@ import entities.User;
  * @author HP
  */
 public class Authorize {
-    private static final String[] PUBLIC_ENDPOINTS = {"/HomePageController", "/ProductController", "/BlogURL", "/BlogDetailServlet", "/LoginController", "/ProductDetailController", "/RegisterController"};
+    private static final String[] PUBLIC_ENDPOINTS = {"/HomePageController", "/ProductController", "/BlogURL", "/BlogDetailServlet", "/LoginController", "/ProductDetailController", "/RegisterController", "/VerifyAccountController"};
     private static final String[] CUSTOMER_ENDPOINTS = {"/HomePageController", "/CartURL", "/LogoutController", "/ProductController", "/ProductDetailController", "/UserProfileServlet", "/BlogURL", "/BlogDetailServlet",};
     private static final String[] ADMIN_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
     private static final String[] SALES_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};

@@ -45,7 +45,11 @@
 
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        document.getElementById("msg").innerHTML = xhttp.responseText;
+                        if (xhttp.responseText.trim() === "redirect") {
+                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
+                        } else {
+                            document.getElementById("msg").innerHTML = xhttp.responseText;
+                        }
                     }
                 };
 
@@ -162,10 +166,10 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="${pageContext.request.contextPath}/login.jsp" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
