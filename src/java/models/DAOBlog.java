@@ -180,10 +180,11 @@ public class DAOBlog extends DBConnection {
     }
 
     public List<Blog> searchBlogs(String query) throws SQLException {
-        String sql = "SELECT * FROM Blogs WHERE title LIKE ? AND isDisabled = 0";
+        String sql = "SELECT * FROM Blogs WHERE (title LIKE ? OR content LIKE ?) AND isDisabled = 0;";
         List<Blog> blogs = new ArrayList<>();
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, "%" + query + "%");
+            pre.setString(2, "%" + query + "%");
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 blogs.add(new Blog(
