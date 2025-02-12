@@ -26,7 +26,6 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Kiểm tra quyền truy cập
         HttpSession session = request.getSession(false);
         User user = (session != null) ? (User) session.getAttribute("user") : null;
         if (!Authorize.isAccepted(user, "/ProductController")) {
@@ -37,21 +36,18 @@ public class ProductController extends HttpServlet {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
 
-        // Lấy tham số từ request
         String brandIDStr = request.getParameter("brandID");
         String searchQuery = request.getParameter("search");
         String minPriceStr = request.getParameter("minPrice");
         String maxPriceStr = request.getParameter("maxPrice");
         String pageStr = request.getParameter("page");
-
-        // Mặc định nếu không có giá trị
+        
         int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
         double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
         int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
-        int itemsPerPage = 4; // Hiển thị 4 sản phẩm trên mỗi trang
+        int itemsPerPage = 6; 
 
-        // Tính lại tổng số sản phẩm theo bộ lọc
         int totalProducts = 0;
         if (brandID > 0) {
             totalProducts = dao.getTotalProductsByBrand(brandID);
@@ -63,11 +59,9 @@ public class ProductController extends HttpServlet {
             totalProducts = dao.getTotalProducts();
         }
 
-        // Tính số trang chính xác theo số sản phẩm lọc được
         int totalPages = (int) Math.ceil((double) totalProducts / itemsPerPage);
-        totalPages = Math.max(totalPages, 1); // Đảm bảo ít nhất có 1 trang
+        totalPages = Math.max(totalPages, 1);
 
-        // Lọc sản phẩm dựa trên bộ lọc
         Vector<Product> productList;
         if (brandID > 0) {
             productList = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
@@ -79,11 +73,9 @@ public class ProductController extends HttpServlet {
             productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
         }
 
-        // Lấy danh sách thương hiệu
         Vector<Brand> brandList = daoBrand.getAllBrands();
         Product latestProduct = dao.getLatestProduct();
 
-        // Đưa dữ liệu vào request
         request.setAttribute("productList", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("latestProduct", latestProduct);
@@ -91,7 +83,6 @@ public class ProductController extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("brandID", brandID);
 
-        // Chuyển hướng tới trang shop.jsp
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
         rd.forward(request, response);
     }
