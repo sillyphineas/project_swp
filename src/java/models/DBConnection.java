@@ -29,7 +29,7 @@ public class DBConnection {
     public DBConnection() {
         // Change URL, username, and password to match your MySQL server
 
-        this("jdbc:mysql://localhost:3306/proj_swp391", "root", "123456");
+        this("jdbc:mysql://localhost:3306/proj_swp391", "root", "123456789");
 
     }
 

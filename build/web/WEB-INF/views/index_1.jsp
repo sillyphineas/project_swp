@@ -158,7 +158,7 @@
                                             <h1><span>E</span>-SHOPPER</h1>
                                             <h2>${blog.title}</h2>
                                             <p>${fn:substring(blog.content, 0, 200)}...</p>
-                                            <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                            <a href="${blog.backlinks}" class="btn btn-primary">
                                             Read More
                                         </a>
                                         </div>
