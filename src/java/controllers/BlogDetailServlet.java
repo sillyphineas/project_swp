@@ -5,6 +5,7 @@
 package controllers;
 
 import entities.Blog;
+import entities.Product;
 import entities.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -16,7 +17,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import models.DAOBlog;
+import models.DAOProduct;
 
 /**
  *
@@ -63,7 +69,6 @@ public class BlogDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
         HttpSession session = request.getSession(false);
         User user = null;
         if (session != null) {
@@ -73,33 +78,38 @@ public class BlogDetailServlet extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        // Lấy ID bài viết từ tham số URL
+
         String blogIdParam = request.getParameter("id");
         if (blogIdParam != null) {
             try {
                 int blogId = Integer.parseInt(blogIdParam);
                 DAOBlog daoBlog = new DAOBlog();
-
-                // Lấy thông tin bài viết từ cơ sở dữ liệu
                 Blog blog = daoBlog.getBlogById(blogId);
 
                 if (blog != null) {
-                    // Lấy tên tác giả từ authorID
                     String authorName = daoBlog.getAuthorNameById(blog.getAuthorID());
-
-                    // Chuyển thông tin bài viết và tên tác giả đến trang JSP
                     request.setAttribute("blog", blog);
                     request.setAttribute("authorName", authorName);
+
+                    // Lấy các bài blog mới nhất
+                    List<Blog> newBlogs = daoBlog.getPaginatedBlogs(1, 5);  // Lấy 5 bài blog mới nhất
+                    request.setAttribute("newBlogs", newBlogs);
+
+                    // Lấy các sản phẩm mới nhất
+                    DAOProduct daoProduct = new DAOProduct();
+                    List<Product> newProducts = daoProduct.getProductsWithPagination(1, 5);  // Lấy 5 sản phẩm mới nhất
+                    request.setAttribute("newProducts", newProducts);
+
                 } else {
-                    // Nếu không tìm thấy bài viết, tạo thông báo lỗi
                     request.setAttribute("errorMessage", "Bài viết không tồn tại.");
                 }
 
-                // Chuyển tiếp đến trang JSP hiển thị chi tiết bài viết
                 request.getRequestDispatcher("WEB-INF/views/blog-detail.jsp").forward(request, response);
             } catch (NumberFormatException e) {
                 request.setAttribute("errorMessage", "ID không hợp lệ.");
                 request.getRequestDispatcher("WEB-INF/views/blog-detail.jsp").forward(request, response);
+            } catch (SQLException ex) {
+                Logger.getLogger(BlogDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             request.setAttribute("errorMessage", "Không tìm thấy bài viết.");

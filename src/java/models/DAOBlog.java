@@ -29,19 +29,21 @@ public class DAOBlog extends DBConnection {
                 + "           ,[title]\n"
                 + "           ,[content]\n"
                 + "           ,[imageURL]\n"
+                + "           ,[backlinks]\n"
                 + "           ,[status]\n"
                 + "           ,[isDisabled])\n"
                 + "     VALUES\n"
-                + "           (?,?,?,?,?,?,?)";
+                + "           (?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getAuthorID());
             pre.setString(2, other.getPostTime());
             pre.setString(3, other.getTitle());
             pre.setString(4, other.getContent());
-            pre.setString(5, other.getContent());
-            pre.setString(6, other.getImageURL());
-            pre.setBoolean(7, other.isIsDisabled());
+            pre.setString(5, other.getImageURL());
+            pre.setString(6, other.getBacklinks());
+            pre.setString(7, other.getStatus());
+            pre.setBoolean(8, other.isIsDisabled());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -74,6 +76,7 @@ public class DAOBlog extends DBConnection {
                 + "      ,[title] = ?\n"
                 + "      ,[content] = ?\n"
                 + "      ,[imageURL] = ?\n"
+                + "      ,[backlinks] = ?\n"
                 + "      ,[status] = ?\n"
                 + "      ,[isDisabled] = ?\n"
                 + " WHERE <id = ?>";
@@ -84,9 +87,10 @@ public class DAOBlog extends DBConnection {
             pre.setString(3, other.getTitle());
             pre.setString(4, other.getContent());
             pre.setString(5, other.getImageURL());
-            pre.setString(6, other.getStatus());
-            pre.setBoolean(7, other.isIsDisabled());
-            pre.setInt(8, other.getId());
+            pre.setString(6, other.getBacklinks());
+            pre.setString(7, other.getStatus());
+            pre.setBoolean(8, other.isIsDisabled());
+            pre.setInt(9, other.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -109,6 +113,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isDisabled")
                 );
@@ -132,6 +137,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isDisabled")
                 );
@@ -158,6 +164,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isDisabled")
                 ));
@@ -193,6 +200,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isDisabled")
                 ));

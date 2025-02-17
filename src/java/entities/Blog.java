@@ -16,16 +16,18 @@ public class Blog {
     title                   ,
     content                 ,
     imageURL                ,
+    backlinks               ,
     status                  ;
     private boolean isDisabled  ;   
 
-    public Blog(int id, int authorID, String postTime, String title, String content, String imageURL, String status, boolean isDisabled) {
+    public Blog(int id, int authorID, String postTime, String title, String content, String imageURL, String backlinks, String status, boolean isDisabled) {
         this.id = id;
         this.authorID = authorID;
         this.postTime = postTime;
         this.title = title;
-        this.content = content;
+        this.content = content;      
         this.imageURL = imageURL;
+        this.backlinks = backlinks;
         this.status = status;
         this.isDisabled = isDisabled;
     }
@@ -73,6 +75,14 @@ public class Blog {
         this.content = content;
     }
 
+    public String getBacklinks() {
+        return backlinks;
+    }
+
+    public void setBacklinks(String backlinks) {
+        this.backlinks = backlinks;
+    }
+
     public String getImageURL() {
         return imageURL;
     }
@@ -99,8 +109,10 @@ public class Blog {
 
     @Override
     public String toString() {
-        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", status=" + status + ", isDisabled=" + isDisabled + '}';
+        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", backlinks=" + backlinks + ", status=" + status + ", isDisabled=" + isDisabled + '}';
     }
+
+    
     
     
 }
