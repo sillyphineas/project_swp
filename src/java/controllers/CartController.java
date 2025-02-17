@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.DAOCart;
@@ -68,9 +69,13 @@ public class CartController extends HttpServlet {
         DAOProduct daoPro = new DAOProduct();
         DAOOrder daoOrder = new DAOOrder();
         DAOOrderDetail daoOD = new DAOOrderDetail();
+
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
+            Vector<Product> listpro = daoPro.getLatestProducts();
+            request.setAttribute("listpro", listpro);
+//            request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
             if (service == null) {
                 service = "showCart";
             }
@@ -131,39 +136,55 @@ public class CartController extends HttpServlet {
 //
 //                request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
 //            }
-            if (service != null && service.equals("updateQuantity")) {
+//            if (service != null && service.equals("updateQuantity")) {
+//                try {
+//                    int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
+//                    int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
+//
+//                    // Cập nhật số lượng nếu số lượng mới hợp lệ
+//                    if (newQuantity > 0) {
+//                        CartItem cartItem = daoItem.getCartItemById(cartItemId);
+//                        cartItem.setQuantity(newQuantity);
+//                        double newTotalPrice = cartItem.getPrice() * newQuantity;  // Tính lại tổng giá trị của sản phẩm
+//                        cartItem.setTotalPrice(newTotalPrice);
+//
+//                        daoItem.updateCartItem(cartItem);  // Cập nhật trong cơ sở dữ liệu
+//                    }
+//
+//                    // Lấy tất cả các item trong giỏ hàng của khách hàng
+//                    Cart cart = dao.getCartByCustomerID(1);  // Giả sử bạn đã có customerID
+//                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
+//
+//                    // Tính tổng giá trị của giỏ hàng
+//                    double totalOrderPrice = 0.0;
+//                    for (CartItem item : cartItems) {
+//                        totalOrderPrice += item.getTotalPrice();
+//                    }
+//
+//                    // Lưu tổng giá của giỏ hàng vào request
+//                    request.setAttribute("totalOrderPrice", totalOrderPrice);
+//                    request.setAttribute("cartItems", cartItems);
+//
+//                    // Forward đến trang giỏ hàng để cập nhật thông tin giỏ hàng mới
+//                    RequestDispatcher dispatcher = request.getRequestDispatcher("cart.jsp");
+//                    dispatcher.forward(request, response);
+//
+//                } catch (Exception e) {
+//                    response.getWriter().write("Error: " + e.getMessage());
+//                }
+//            }
+            if (service.equals("updateQuantity")) {
+                int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
+                int quantity = Integer.parseInt(request.getParameter("quantity"));
+                CartItem cartItem = daoItem.getCartItemById(cartItemId);
                 try {
-                  
-                    int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
-                    int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
-
-                    if (newQuantity > 0) {
-                        CartItem cartItem = daoItem.getCartItemById(cartItemId);
-
-                        if (cartItem != null) {
-                            cartItem.setQuantity(newQuantity);
-                            double newTotalPrice = cartItem.getPrice() * newQuantity;
-                            cartItem.setTotalPrice(newTotalPrice);
-
-                            daoItem.updateCartItem(cartItem);
-                            response.sendRedirect("CartURL?service=showCart");
-                        }
-                    }
-                    Cart cart = dao.getCartByCustomerID(customerID);
-                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-                    double totalOrderPrice = cartItems.stream()
-                            .mapToDouble(CartItem::getTotalPrice)
-                            .sum();
-                    request.setAttribute("totalOrderPrice", totalOrderPrice);
-                    request.setAttribute("cartItems", cartItems);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/cart.jsp");
-                    dispatcher.forward(request, response);
-
+                    dao.updateCartItemQuantity(cartItem, quantity);
+                    response.setStatus(HttpServletResponse.SC_OK);
                 } catch (Exception e) {
-                    response.getWriter().write("Error: " + e.getMessage());
+                    e.printStackTrace();
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             }
-
             if (service.equals("showCart")) {
                 Cart cart = dao.getCartByCustomerID(customerID);
                 if (cart != null) {
@@ -273,7 +294,7 @@ public class CartController extends HttpServlet {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
-                    cart.setCartStatus("active"); 
+                    cart.setCartStatus("active");
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
                 }
@@ -284,13 +305,13 @@ public class CartController extends HttpServlet {
                 request.setAttribute("existingQuantity", existingQuantity);
                 if (existingItem != null) {
 
-                    int newQuantity = existingItem.getQuantity() + quantity;  
+                    int newQuantity = existingItem.getQuantity() + quantity;
 
                     if (newQuantity > 0) {
                         // Nếu số lượng mới hợp lệ (>= 1), cập nhật giỏ hàng
                         existingItem.setQuantity(newQuantity);
-                        existingItem.setTotalPrice(existingItem.getPrice() * newQuantity); 
-                        daoItem.updateCartItem(existingItem); 
+                        existingItem.setTotalPrice(existingItem.getPrice() * newQuantity);
+                        daoItem.updateCartItem(existingItem);
                     } else {
                         try {
                             daoItem.removeCartItem(existingItem.getCartItemID());
@@ -304,9 +325,9 @@ public class CartController extends HttpServlet {
                         CartItem newItem = new CartItem();
                         newItem.setCartID(cart.getCartID());
                         newItem.setProductID(productID);
-                        newItem.setQuantity(quantity); 
+                        newItem.setQuantity(quantity);
                         newItem.setPrice(product.getPrice());
-                        newItem.setTotalPrice(product.getPrice() * quantity); 
+                        newItem.setTotalPrice(product.getPrice() * quantity);
                         daoItem.addCartItem(newItem);
                     } else {
                         request.setAttribute("error", "Product not found!");

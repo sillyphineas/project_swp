@@ -150,7 +150,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                             <div class="pull-right">
+                            <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
 
@@ -169,7 +169,7 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
-                             <div class="brands_products">
+                            <div class="brands_products">
                                 <h2>Brands</h2> 
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
@@ -185,7 +185,7 @@
                                 </div>
                             </div>
 
-                           <div class="price-range">
+                            <div class="price-range">
                                 <h2>Filter by Price</h2>
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
@@ -201,7 +201,7 @@
                             </div>
 
 
-                              <div class="latest-products">
+                            <div class="latest-products">
 
                                 <c:if test="${not empty latestProduct}">
                                     <div class="latest-product">
@@ -270,8 +270,9 @@
                                         <label>Quantity:</label>
                                         <input type="text" value="3" />
                                         <button type="button" class="btn btn-fefault cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            Add to cart
+                                            <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
+                                                <i class="fa fa-shopping-cart"></i> Add to cart
+                                            </a>
                                         </button>
                                     </span>
                                     <p><b>Availability:</b> In Stock</p>
@@ -728,12 +729,17 @@
         </footer><!--/Footer-->
 
 
-
+        <!-- Thông báo giỏ hàng -->
+        <div id="cart-notification" class="hidden">
+            <span class="checkmark">✔</span>
+            <p>Product added to cart successfully!</p>
+        </div>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
     </body>
 </html>

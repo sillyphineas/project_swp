@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +16,7 @@
         <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
         <link href="css/responsive.css" rel="stylesheet">
+        <link href="css/cart.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -25,32 +27,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-    <script type="text/javascript">
-        function updateQuantity(cartItemID, price, delta) {
-            // Lấy giá trị số lượng hiện tại từ ô input
-            var quantityInput = document.getElementById("quantity_" + cartItemID);
-            var currentQuantity = parseInt(quantityInput.value);
 
-            // Tính toán số lượng mới
-            var newQuantity = currentQuantity + delta;
-
-            // Kiểm tra nếu số lượng nhỏ hơn 1 thì không giảm thêm nữa
-            if (newQuantity < 1) {
-                alert("Số lượng phải lớn hơn 0.");
-                return;
-            }
-
-            // Cập nhật số lượng mới vào input
-            quantityInput.value = newQuantity;
-
-            // Gửi thông tin mới đến server (nếu cần)
-            // Có thể sử dụng Ajax để gửi thông tin mà không cần tải lại trang
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "updateCart.jsp", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("cartItemID=" + cartItemID + "&quantity=" + newQuantity);
-        }
-    </script>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -180,182 +157,98 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="cart_items">
-            <div class="container">
+        <section id="shopping_cart">
+            <div class="cart-container">
                 <div class="breadcrumbs">
                     <ol class="breadcrumb">
                         <li><a href="HomePageController">Home</a></li>
                         <li class="active">Shopping Cart</li>
                     </ol>
                 </div>
-                <div class="table-responsive cart_info">
-                    <table class="table table-condensed">
+                <div class="cart-header">
+                    <h3>🛒 Giỏ hàng của bạn</h3>
+                </div>
+                <div class="cart-content">
+                    <table class="cart-table">
                         <thead>
-                            <tr class="cart_menu">
-                                <td class="image">Item</td>
-                                <td class="description"></td>
-                                <td class="price">Price</td>
-                                <td class="quantity">Quantity</td>
-                                <td class="total">Total</td>
-                                <td></td>
+                            <tr>
+                                <th><input type="checkbox" id="select_all"></th>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Remove</th>
                             </tr>
                         </thead>
-
                         <tbody>
-                            <%
-                            String message = (String) request.getAttribute("message");
-                            String error = (String) request.getAttribute("error");
-                            if (message != null) {
+                            <% 
+                                List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
+                                if (cartItems != null && !cartItems.isEmpty()) { 
+                                    for (CartItem item : cartItems) {
+                                    Product product = item.getProduct();
                             %>
-                        <div style="color: red; font-weight: bold;text-align: center;">
-                            <%= message %>
-                        </div>
-                        <%
-                            }
-                        %>
-                        <%
-                            if (error != null) {
-                        %>
-                        <div style="color: red; font-weight: bold;text-align: center;">
-                            <%= error %>
-                        </div>
-                        <%
-                            }
-                        %>
-                        <% 
-                            String show = (String) request.getAttribute("showMessage");
-                            if (show != null) { 
-                        %>
-                        <p><%= show %></p>
-                        <% } %>
-                        <%
-                            List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
-                            if (cartItems != null && !cartItems.isEmpty()) { 
-                            for (CartItem item : cartItems) {
-                            Product product = item.getProduct();
-                        %>
-                        <tr>
-                            <td class="cart_product">
-                                <a href=""><img src="<%=product.getImageURL()%>" alt="ảnh sản phẩm"></a>
-                            </td>
-                            <td class="cart_description">
-                                <h4><a href=""><%=product.getName()%></a></h4>
-                            </td>
-                            <td class="cart_price">
-                                <p><%=product.getPrice()%></p>
-                            </td>
-                            <td class="cart_quantity">
-                                <div class="cart_quantity_button">
-                                    <!-- Form cập nhật số lượng -->
-                                    <form action="CartURL" method="post" style="display: inline-block;">
-                                        <!-- Truyền thông tin cartItemId -->
-                                        <input type="hidden" name="cartItemId" value="<%= item.getCartItemID() %>">
-
-                                        <!-- Input số lượng sản phẩm -->
-                                        <input class="cart_quantity_input" id="quantity_<%= item.getCartItemID() %>" 
-                                               type="number" name="newQuantity" 
-                                               value="<%= item.getQuantity() %>" 
-                                               min="1" step="1" 
-                                               style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 5px;">
-
-                                        <!-- Nút Update -->
-                                        <button type="submit" name="service" value="updateQuantity" 
-                                                style="margin-left: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                            Update
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                            <td class="cart_total">
-                                <p class="cart_total_price" id="total_<%= item.getCartItemID() %>">$<%= item.getTotalPrice() %></p>
-                            </td>
-                            <td class="cart_delete">
-                                <a class="cart_quantity_delete" href="CartURL?service=removeItem&cartItemId=<%=item.getCartItemID()%>"><i class="fa fa-times"></i></a>
-                            </td>
-                        </tr>
-                        <% }
-                         }  
-                        %>
+                            <tr class="cart-row" id="row_<%= item.getCartItemID() %>">
+                                <td><input type="checkbox" class="product-checkbox" data-id="<%= item.getCartItemID() %>"></td>
+                                <td class="cart-product">
+                                    <div class="cart-product-content">
+                                        <img src="<%= product.getImageURL() %>" alt="Sản phẩm" class="product-img">
+                                        <span class="product-name"><%= product.getName() %></span>
+                                    </div>
+                                </td>
+                                <td class="cart-price">₫<%= product.getPrice() %></td>
+                                <td class="cart-quantity">
+                                    <button class="quantity-btn minus-btn" onclick="updateQuantity(-1, <%= item.getCartItemID() %>)">−</button>
+                                    <input class="cart-quantity-input" id="quantity_<%= item.getCartItemID() %>" 
+                                           type="number" value="<%= item.getQuantity() %>" min="1" readonly>
+                                    <button class="quantity-btn plus-btn" onclick="updateQuantity(1, <%= item.getCartItemID() %>)">+</button>
+                                </td>
+                                <td class="cart-total-price" id="total_<%= item.getCartItemID() %>">₫<%= item.getTotalPrice() %></td>
+                                <td class="cart-action">
+                                    <a class="cart-delete" href="javascript:void(0)" onclick="removeItem(<%= item.getCartItemID() %>)">
+                                        🗑️
+                                    </a>
+                                </td>
+                            </tr>
+                            <% } } %>
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </section> <!--/#cart_items-->
 
-        <section id="do_action">
-            <div class="container">
-                <div class="heading">
-                    <h3>What would you like to do next?</h3>
-                    <p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="chose_area">
-                            <ul class="user_option">
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Use Coupon Code</label>
-                                </li>
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Use Gift Voucher</label>
-                                </li>
-                                <li>
-                                    <input type="checkbox">
-                                    <label>Estimate Shipping & Taxes</label>
-                                </li>
-                            </ul>
-                            <ul class="user_info">
-                                <li class="single_field">
-                                    <label>Country:</label>
-                                    <select>
-                                        <option>United States</option>
-                                        <option>Bangladesh</option>
-                                        <option>UK</option>
-                                        <option>India</option>
-                                        <option>Pakistan</option>
-                                        <option>Ucrane</option>
-                                        <option>Canada</option>
-                                        <option>Dubai</option>
-                                    </select>
-
-                                </li>
-                                <li class="single_field">
-                                    <label>Region / State:</label>
-                                    <select>
-                                        <option>Select</option>
-                                        <option>Dhaka</option>
-                                        <option>London</option>
-                                        <option>Dillih</option>
-                                        <option>Lahore</option>
-                                        <option>Alaska</option>
-                                        <option>Canada</option>
-                                        <option>Dubai</option>
-                                    </select>
-
-                                </li>
-                                <li class="single_field zip-field">
-                                    <label>Zip Code:</label>
-                                    <input type="text">
-                                </li>
-                            </ul>
-                            <a class="btn btn-default update" href="">Get Quotes</a>
-                            <a class="btn btn-default check_out" href="">Continue</a>
-                        </div>
+                <div class="cart-footer">
+                    <div class="cart-options">
+                        <label><input type="checkbox" id="select_all_footer"> Select All</label>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="total_area">
-                            <ul>
-                                <li>Cart Sub Total <span>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></span></li>
-                                <li>Shipping Cost <span>Free</span></li>
-                                <li>Total <span>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></span></li>
-                            </ul>
-                            <a class="btn btn-default check_out" href="CartURL?service=checkOut">Check Out</a>
-                        </div>
-                    </div>
+                    <span id="total-price"> Total Price: ₫0</span>
+                    <button class="btn-cart-checkout" onclick="checkoutSelectedItems()">Mua Hàng</button>
                 </div>
             </div>
-        </section><!--/#do_action-->
+        </section>
+
+
+
+        <div class="recommended-products">
+            <div class="header">
+                <h2>You May Also Like</h2>
+                <a href="ProductController" class="view-all">View ALL ></a>
+            </div>
+
+            <div class="product-grid">
+                <c:forEach var="product" items="${listpro}" varStatus="status">
+                    <div class="product-item">
+                        <div class="product-image">
+                            <img src="${product.imageURL}" alt="${product.name}">
+                        </div>
+                        <div class="product-info">
+                            <p class="product-name">${product.name}</p>
+                            <p class="product-price">đ${product.price}</p>
+                            <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
+                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                            </a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -515,12 +408,17 @@
 
         </footer><!--/Footer-->
 
-
+        <div id="cart-notification" class="hidden">
+            <span class="checkmark">✔</span>
+            <p>Product added to cart successfully!</p>
+        </div>
 
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
+        <script src="js/updateQuantity.js"></script>
     </body>
 </html>
