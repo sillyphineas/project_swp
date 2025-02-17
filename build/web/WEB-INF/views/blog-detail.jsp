@@ -29,7 +29,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        
+
 
     </head><!--/head-->
 
@@ -78,7 +78,7 @@
 
         <div class="container blog-detail-container">
             <div class="row justify-content-center">
-                <div class="col-md-12">
+                <div class="col-md-9">
                     <!-- Kiểm tra xem có thông báo lỗi hay không -->
                     <c:if test="${not empty errorMessage}">
                         <div class="alert alert-danger">
@@ -98,7 +98,7 @@
                             <div class="card-body">
                                 <p><strong>Author:</strong> ${authorName}</p>
                                 <p><strong>Post time:</strong> ${blog.postTime}</p>
-                                
+
                                 <div>
 
                                     <p>${blog.content}</p>
@@ -109,6 +109,38 @@
                             </div>
                         </div>
                     </c:if>
+                </div>
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Newest Blogs</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <c:forEach var="newBlog" items="${newBlogs}">
+                                    <li class="list-group-item">
+                                        <a href="BlogDetailServlet?id=${newBlog.id}">${newBlog.title}</a>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h3>Newest Products</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <c:forEach var="newProduct" items="${newProducts}">
+                                    <li class="list-group-item">
+                                        <a href="ProductDetailServlet?id=${newProduct.id}">${newProduct.name}</a> - $${newProduct.price}
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
