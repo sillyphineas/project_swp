@@ -67,7 +67,7 @@ public class UserProfileServlet extends HttpServlet {
             user = (User) session.getAttribute("user");
         }
         if (!Authorize.isAccepted(user, "/UserProfileServlet")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 
