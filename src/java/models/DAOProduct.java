@@ -45,26 +45,23 @@ public class DAOProduct extends DBConnection {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getBrandID());
             pre.setString(2, other.getName());
-            pre.setDouble(3, other.getPrice());
-            pre.setInt(4, other.getStock());
-            pre.setString(5, other.getDescription());
-            pre.setBoolean(6, other.isIsDisabled());
-            pre.setInt(7, other.getFeedbackCount());
-            pre.setString(8, other.getStatus());
-            pre.setString(9, other.getImageURL());
-            pre.setString(10, other.getChipset());
-            pre.setInt(11, other.getRam());
-            pre.setInt(12, other.getStorage());
-            pre.setDouble(13, other.getScreenSize());
-            pre.setString(14, other.getScreenType());
-            pre.setString(15, other.getResolution());
-            pre.setInt(16, other.getBatteryCapacity());
-            pre.setString(17, other.getCameraSpecs());
-            pre.setString(18, other.getOs());
-            pre.setString(19, other.getSimType());
-            pre.setString(20, other.getConnectivity());
-            pre.setDate(21, (Date) other.getCreateAt());
-            pre.setInt(22, other.getCreatedBy());
+            pre.setString(3, other.getDescription());
+            pre.setBoolean(4, other.isIsDisabled());
+            pre.setInt(5, other.getFeedbackCount());
+            pre.setString(6, other.getStatus());
+            pre.setString(7, other.getImageURL());
+            pre.setString(8, other.getChipset());
+            pre.setInt(9, other.getRam());
+            pre.setDouble(10, other.getScreenSize());
+            pre.setString(11, other.getScreenType());
+            pre.setString(12, other.getResolution());
+            pre.setInt(13, other.getBatteryCapacity());
+            pre.setString(14, other.getCameraSpecs());
+            pre.setString(15, other.getOs());
+            pre.setString(16, other.getSimType());
+            pre.setString(17, other.getConnectivity());
+            pre.setDate(18, (Date) other.getCreateAt());
+            pre.setInt(19, other.getCreatedBy());
 
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -104,27 +101,24 @@ public class DAOProduct extends DBConnection {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getBrandID());
             pre.setString(2, other.getName());
-            pre.setDouble(3, other.getPrice());
-            pre.setInt(4, other.getStock());
-            pre.setString(5, other.getDescription());
-            pre.setBoolean(6, other.isIsDisabled());
-            pre.setInt(7, other.getFeedbackCount());
-            pre.setString(8, other.getStatus());
-            pre.setString(9, other.getImageURL());
-            pre.setString(10, other.getChipset());
-            pre.setInt(11, other.getRam());
-            pre.setInt(12, other.getStorage());
-            pre.setDouble(13, other.getScreenSize());
-            pre.setString(14, other.getScreenType());
-            pre.setString(15, other.getResolution());
-            pre.setInt(16, other.getBatteryCapacity());
-            pre.setString(17, other.getCameraSpecs());
-            pre.setString(18, other.getOs());
-            pre.setString(19, other.getSimType());
-            pre.setString(20, other.getConnectivity());
-            pre.setInt(21, other.getId());
-            pre.setDate(22, (Date) other.getCreateAt());
-            pre.setInt(23, other.getCreatedBy());
+            pre.setString(3, other.getDescription());
+            pre.setBoolean(4, other.isIsDisabled());
+            pre.setInt(5, other.getFeedbackCount());
+            pre.setString(6, other.getStatus());
+            pre.setString(7, other.getImageURL());
+            pre.setString(8, other.getChipset());
+            pre.setInt(9, other.getRam());
+            pre.setDouble(10, other.getScreenSize());
+            pre.setString(11, other.getScreenType());
+            pre.setString(12, other.getResolution());
+            pre.setInt(13, other.getBatteryCapacity());
+            pre.setString(14, other.getCameraSpecs());
+            pre.setString(15, other.getOs());
+            pre.setString(16, other.getSimType());
+            pre.setString(17, other.getConnectivity());
+            pre.setInt(18, other.getId());
+            pre.setDate(19, (Date) other.getCreateAt());
+            pre.setInt(20, other.getCreatedBy());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -133,7 +127,11 @@ public class DAOProduct extends DBConnection {
     }
 
     public Product getProductById(int id) {
-        String sql = "Select * From Products where id = ?";
+        String sql = "SELECT p.*, MIN(v.price) as minPrice "
+                + "FROM Products p "
+                + "LEFT JOIN ProductVariants v ON p.id = v.productID "
+                + "WHERE p.id = ? "
+                + "GROUP BY p.id";
         Product product = null;
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
@@ -144,8 +142,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -153,7 +149,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -165,11 +160,28 @@ public class DAOProduct extends DBConnection {
                         rs.getDate("createAt"),
                         rs.getInt("createdBy")
                 );
+                // Không còn `price` trong Product nữa
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return product;
+    }
+
+    public double getMinPriceForProduct(int productId) {
+        double minPrice = 0;
+        String sql = "SELECT MIN(price) as minPrice FROM ProductVariants WHERE productID = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, productId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                minPrice = rs.getDouble("minPrice");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return minPrice;
     }
 
     public Vector<Product> getProducts(String sql) {
@@ -182,8 +194,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -191,7 +201,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -245,8 +254,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -254,7 +261,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -313,8 +319,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -322,7 +326,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -343,20 +346,20 @@ public class DAOProduct extends DBConnection {
     }
 
     public int getTotalProductsByBrand(int brandID) {
-    int total = 0;
-    String sql = "SELECT COUNT(*) FROM Products WHERE brandID = ? AND isDisabled = 0";
-    try {
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, brandID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            total = rs.getInt(1);
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Products WHERE brandID = ? AND isDisabled = 0";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, brandID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return total;
     }
-    return total;
-}
 
     public int getTotalProductsBySearch(String searchQuery) {
         int total = 0;
@@ -407,8 +410,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -416,7 +417,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -447,8 +447,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -456,7 +454,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -491,8 +488,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -500,7 +495,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -538,8 +532,6 @@ public class DAOProduct extends DBConnection {
                         rs.getInt("id"),
                         rs.getInt("brandID"),
                         rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
                         rs.getString("description"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("feedbackCount"),
@@ -547,7 +539,6 @@ public class DAOProduct extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("chipset"),
                         rs.getInt("ram"),
-                        rs.getInt("storage"),
                         rs.getDouble("screenSize"),
                         rs.getString("screenType"),
                         rs.getString("resolution"),
@@ -568,49 +559,46 @@ public class DAOProduct extends DBConnection {
     }
 
     public Vector<Product> getProductsByBrand(int brandID, int currentPage, int itemsPerPage) {
-    Vector<Product> productList = new Vector<>();
-    int startIndex = (currentPage - 1) * itemsPerPage;
+        Vector<Product> productList = new Vector<>();
+        int startIndex = (currentPage - 1) * itemsPerPage;
 
-    String sql = "SELECT * FROM Products WHERE brandID = ? AND isDisabled = 0 ORDER BY createAt DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Products WHERE brandID = ? AND isDisabled = 0 ORDER BY createAt DESC LIMIT ? OFFSET ?";
 
-    try {
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, brandID);
-        ps.setInt(2, itemsPerPage);
-        ps.setInt(3, startIndex);
-        ResultSet rs = ps.executeQuery();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, brandID);
+            ps.setInt(2, itemsPerPage);
+            ps.setInt(3, startIndex);
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            productList.add(new Product(
-                    rs.getInt("id"),
-                    rs.getInt("brandID"),
-                    rs.getString("name"),
-                    rs.getDouble("price"),
-                    rs.getInt("stock"),
-                    rs.getString("description"),
-                    rs.getBoolean("isDisabled"),
-                    rs.getInt("feedbackCount"),
-                    rs.getString("status"),
-                    rs.getString("imageURL"),
-                    rs.getString("chipset"),
-                    rs.getInt("ram"),
-                    rs.getInt("storage"),
-                    rs.getDouble("screenSize"),
-                    rs.getString("screenType"),
-                    rs.getString("resolution"),
-                    rs.getInt("batteryCapacity"),
-                    rs.getString("cameraSpecs"),
-                    rs.getString("os"),
-                    rs.getString("simType"),
-                    rs.getString("connectivity"),
-                    rs.getDate("createAt"),
-                    rs.getInt("createdBy")
-            ));
+            while (rs.next()) {
+                productList.add(new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return productList;
     }
-    return productList;
-}
 
 }

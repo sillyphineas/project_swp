@@ -15,8 +15,6 @@ public class Product {
     private int id;
     private int brandID;
     private String name;
-    private double price;
-    private int stock;
     private String description;
     private boolean isDisabled;
     private int feedbackCount;
@@ -24,7 +22,6 @@ public class Product {
     private String imageURL;
     private String chipset;
     private int ram;
-    private int storage;
     private double screenSize;
     private String screenType;
     private String resolution;
@@ -39,12 +36,10 @@ public class Product {
     public Product() {
     }
 
-    public Product(int id, int brandID, String name, double price, int stock, String description, boolean isDisabled, int feedbackCount, String status, String imageURL, String chipset, int ram, int storage, double screenSize, String screenType, String resolution, int batteryCapacity, String cameraSpecs, String os, String simType, String connectivity, Date createAt, int createdBy) {
+    public Product(int id, int brandID, String name, String description, boolean isDisabled, int feedbackCount, String status, String imageURL, String chipset, int ram, double screenSize, String screenType, String resolution, int batteryCapacity, String cameraSpecs, String os, String simType, String connectivity, Date createAt, int createdBy) {
         this.id = id;
         this.brandID = brandID;
         this.name = name;
-        this.price = price;
-        this.stock = stock;
         this.description = description;
         this.isDisabled = isDisabled;
         this.feedbackCount = feedbackCount;
@@ -52,7 +47,6 @@ public class Product {
         this.imageURL = imageURL;
         this.chipset = chipset;
         this.ram = ram;
-        this.storage = storage;
         this.screenSize = screenSize;
         this.screenType = screenType;
         this.resolution = resolution;
@@ -87,22 +81,6 @@ public class Product {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
     }
 
     public String getDescription() {
@@ -159,14 +137,6 @@ public class Product {
 
     public void setRam(int ram) {
         this.ram = ram;
-    }
-
-    public int getStorage() {
-        return storage;
-    }
-
-    public void setStorage(int storage) {
-        this.storage = storage;
     }
 
     public double getScreenSize() {
@@ -251,11 +221,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" + "id=" + id + ", brandID=" + brandID + ", name=" + name + ", price=" + price + ", stock=" + stock + ", description=" + description + ", isDisabled=" + isDisabled + ", feedbackCount=" + feedbackCount + ", status=" + status + ", imageURL=" + imageURL + ", chipset=" + chipset + ", ram=" + ram + ", storage=" + storage + ", screenSize=" + screenSize + ", screenType=" + screenType + ", resolution=" + resolution + ", batteryCapacity=" + batteryCapacity + ", cameraSpecs=" + cameraSpecs + ", os=" + os + ", simType=" + simType + ", connectivity=" + connectivity + ", createAt=" + createAt + ", createdBy=" + createdBy + '}';
+        return "Product{" + "id=" + id + ", brandID=" + brandID + ", name=" + name + ", description=" + description + ", isDisabled=" + isDisabled + ", feedbackCount=" + feedbackCount + ", status=" + status + ", imageURL=" + imageURL + ", chipset=" + chipset + ", ram=" + ram + ", screenSize=" + screenSize + ", screenType=" + screenType + ", resolution=" + resolution + ", batteryCapacity=" + batteryCapacity + ", cameraSpecs=" + cameraSpecs + ", os=" + os + ", simType=" + simType + ", connectivity=" + connectivity + ", createAt=" + createAt + ", createdBy=" + createdBy + '}';
     }
-
-    
-
-    
 
 }

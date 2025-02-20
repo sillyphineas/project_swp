@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controllers;
 
 import entities.Blog;
@@ -33,36 +32,39 @@ import models.DAOProduct;
  *
  * @author HP
  */
-@WebServlet(name="HomePageController", urlPatterns={"/HomePageController"})
+@WebServlet(name = "HomePageController", urlPatterns = {"/HomePageController"})
 public class HomePageController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet HomePageController</title>");  
+            out.println("<title>Servlet HomePageController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet HomePageController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet HomePageController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -70,7 +72,7 @@ public class HomePageController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         //Authorize
         HttpSession session = request.getSession(false);
         User user = null;
@@ -81,7 +83,7 @@ public class HomePageController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        
+
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         DAOBlog daoBlog = new DAOBlog();
@@ -109,7 +111,7 @@ public class HomePageController extends HttpServlet {
 
         // Lấy danh sách thương hiệu
         Vector<Brand> brandList = daoBrand.getAllBrands();
-        
+
         java.util.List<Blog> latestBlogs = null;
         try {
             latestBlogs = daoBlog.getPaginatedBlogs(1, 3);
@@ -123,20 +125,26 @@ public class HomePageController extends HttpServlet {
             Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
         }
         // Gửi thông tin vào JSP
+        for (Product product : productList) {
+            double minPrice = dao.getMinPriceForProduct(product.getId());
+            request.setAttribute("minPrice_" + product.getId(), minPrice);
+        }
+
         request.setAttribute("products", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("latestBlogs", latestBlogs);
-        
+
         request.setAttribute("recentBlogs", recentBlogs);
-        
+
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/index_1.jsp");
         rd.forward(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -144,12 +152,13 @@ public class HomePageController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

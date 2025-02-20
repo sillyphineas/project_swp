@@ -10,16 +10,16 @@ package entities;
  */
 public class OrderDetail {
     private int orderID;               // Foreign Key to Orders table
-    private int productID;             // Foreign Key to Products table
+    private int ProductVariantID;             // Foreign Key to Products table
     private int quantity;              // Quantity of the product in the order
     private double productPrice;       // Price of the product at the time of order
 
     public OrderDetail() {
     }
 
-    public OrderDetail(int orderID, int productID, int quantity, double productPrice) {
+    public OrderDetail(int orderID, int ProductVariantID, int quantity, double productPrice) {
         this.orderID = orderID;
-        this.productID = productID;
+        this.ProductVariantID = ProductVariantID;
         this.quantity = quantity;
         this.productPrice = productPrice;
     }
@@ -33,12 +33,12 @@ public class OrderDetail {
         this.orderID = orderID;
     }
 
-    public int getProductID() {
-        return productID;
+    public int getProductVariantID() {
+        return ProductVariantID;
     }
 
-    public void setProductID(int productID) {
-        this.productID = productID;
+    public void setProductVariantID(int ProductVariantID) {
+        this.ProductVariantID = ProductVariantID;
     }
 
     public int getQuantity() {
@@ -61,7 +61,7 @@ public class OrderDetail {
     public String toString() {
         return "OrderDetail{" +
                 "orderID=" + orderID +
-                ", productID=" + productID +
+                ", ProductVariantID=" + ProductVariantID +
                 ", quantity=" + quantity +
                 ", productPrice=" + productPrice +
                 '}';
