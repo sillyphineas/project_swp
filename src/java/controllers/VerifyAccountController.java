@@ -108,7 +108,7 @@ public class VerifyAccountController extends HttpServlet {
             User user = new User();
             user.setEmail(email);
             user.setPassHash(hashedPassword);
-            user.setRoleId(2);
+            user.setRoleId(4);
             user.setDisabled(false);
 
             if (daoUser.addUser(user) != 0) {

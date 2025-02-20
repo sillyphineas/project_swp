@@ -29,7 +29,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        
+
 
     </head><!--/head-->
 
@@ -68,9 +68,95 @@
                             <div class="logo pull-left">
                                 <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
+                            <div class="btn-group pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        USA
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
+                                    </ul>
+                                </div>
 
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        DOLLAR
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-sm-8">
+                            <div class="shop-menu pull-right">
+                                <ul class="nav navbar-nav">
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/header-middle-->
 
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="HomePageController">Home</a></li>
+                                    <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="ProductController" class="active">Products</a></li>
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
+                                        </ul>
+                                    </li> 
+                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="BlogURL">Blog List</a></li>
+                                        </ul>
+                                    </li> 
+                                    <li><a href="404.html">404</a></li>
+                                    <li><a href="contact-us.html">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,7 +164,7 @@
 
         <div class="container blog-detail-container">
             <div class="row justify-content-center">
-                <div class="col-md-12">
+                <div class="col-md-9">
                     <!-- Kiểm tra xem có thông báo lỗi hay không -->
                     <c:if test="${not empty errorMessage}">
                         <div class="alert alert-danger">
@@ -98,7 +184,7 @@
                             <div class="card-body">
                                 <p><strong>Author:</strong> ${authorName}</p>
                                 <p><strong>Post time:</strong> ${blog.postTime}</p>
-                                
+
                                 <div>
 
                                     <p>${blog.content}</p>
@@ -109,6 +195,38 @@
                             </div>
                         </div>
                     </c:if>
+                </div>
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Newest Blogs</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <c:forEach var="newBlog" items="${newBlogs}">
+                                    <li class="list-group-item">
+                                        <a href="BlogDetailServlet?id=${newBlog.id}">${newBlog.title}</a>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h3>Newest Products</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group">
+                                <c:forEach var="newProduct" items="${newProducts}">
+                                    <li class="list-group-item">
+                                        <a href="ProductDetailServlet?id=${newProduct.id}">${newProduct.name}</a> - $${newProduct.price}
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

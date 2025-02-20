@@ -57,6 +57,16 @@
         </style>
     </head><!--/head-->
 </head><!--/head-->
+
+<% if (session.getAttribute("cartMessage") != null) { %>
+<script type="text/javascript">
+    alert("<%= session.getAttribute("cartMessage") %>");
+</script>
+<% 
+    session.removeAttribute("cartMessage"); 
+%>
+<% } %>
+
 <body>
     <header id="header"><!--header-->
         <div class="header_top"><!--header_top-->
@@ -119,7 +129,9 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-                                <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+
+                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+
                                 <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                 <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                 <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
@@ -261,9 +273,11 @@
                                             <img src="${product.imageURL}" alt="" />
                                             <h2>${product.price}</h2>
                                             <p>${product.name}</p>
+
                                             <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
                                                 <i class="fa fa-shopping-cart"></i> Add to cart
                                             </a>
+
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                         </div>
                                     </div>
@@ -302,6 +316,7 @@
                     <div class ="text-center">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
+
                                 <a href="?page=${currentPage-1}" class="pre">Previous</a>
                             </c:if>
                             <c:forEach begin="1" end="${totalPages}" var="i">
@@ -311,6 +326,7 @@
                                 <a href="?page=${currentPage+1}" class="next">Next</a>
                             </c:if>
                         </div>
+
                     </div>
                     <!--                            </div>-->
                 </div><!--features_items-->
@@ -475,6 +491,8 @@
         </div>
     </div>
 
+
+
 </footer><!--/Footer-->
 
 <!-- Thông báo giỏ hàng -->
@@ -489,6 +507,8 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.prettyPhoto.js"></script>
 <script src="js/main.js"></script>
+
 <script src="js/cart.js"></script>
+
 </body>
 </html>

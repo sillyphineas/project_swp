@@ -338,54 +338,65 @@ public class DAOProduct extends DBConnection {
         return productList;
     }
 
-    public Vector<Product> getLatestProducts() {
-        Vector<Product> productList = new Vector<>();
-        String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY createAt DESC LIMIT 12";
-
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                Product product = new Product(
-                        rs.getInt("id"),
-                        rs.getInt("brandID"),
-                        rs.getString("name"),
-                        rs.getDouble("price"),
-                        rs.getInt("stock"),
-                        rs.getString("description"),
-                        rs.getBoolean("isDisabled"),
-                        rs.getInt("feedbackCount"),
-                        rs.getString("status"),
-                        rs.getString("imageURL"),
-                        rs.getString("chipset"),
-                        rs.getInt("ram"),
-                        rs.getInt("storage"),
-                        rs.getDouble("screenSize"),
-                        rs.getString("screenType"),
-                        rs.getString("resolution"),
-                        rs.getInt("batteryCapacity"),
-                        rs.getString("cameraSpecs"),
-                        rs.getString("os"),
-                        rs.getString("simType"),
-                        rs.getString("connectivity"),
-                        rs.getDate("createAt"),
-                        rs.getInt("createdBy")
-                );
-                productList.add(product);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+    public int getTotalProductsByBrand(int brandID) {
+    int total = 0;
+    String sql = "SELECT COUNT(*) FROM Products WHERE brandID = ? AND isDisabled = 0";
+    try {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, brandID);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            total = rs.getInt(1);
         }
-        return productList;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return total;
+}
+
+    public int getTotalProductsBySearch(String searchQuery) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Product WHERE name LIKE ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + searchQuery + "%");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
     }
 
-    public Vector<Product> searchProductsByName(String searchQuery) {
+    public int getTotalProductsByPriceRange(double minPrice, double maxPrice) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) FROM Product WHERE price BETWEEN ? AND ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDouble(1, minPrice);
+            ps.setDouble(2, maxPrice);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public Vector<Product> searchProductsByName(String searchQuery, int currentPage, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
-        String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0";
+        String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0 LIMIT ?, ?";
 
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, "%" + searchQuery + "%");
+            pre.setInt(2, (currentPage - 1) * itemsPerPage); // Tính offset
+            pre.setInt(3, itemsPerPage); // Số lượng sản phẩm mỗi trang
+
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 Product product = new Product(
@@ -556,11 +567,11 @@ public class DAOProduct extends DBConnection {
         Vector<Product> productList = new Vector<>();
         int startIndex = (currentPage - 1) * itemsPerPage;
 
+
         String sql = "SELECT * FROM Products \n"
                 + "WHERE brandID = ? \n"
                 + "ORDER BY createAt DESC \n"
                 + "LIMIT ? OFFSET ?;";
-
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, brandID);
@@ -606,3 +617,4 @@ public class DAOProduct extends DBConnection {
     }
   
 }
+

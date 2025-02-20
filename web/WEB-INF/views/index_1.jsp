@@ -161,6 +161,7 @@
                                             <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
                                                 Read More
                                             </a>
+
                                         </div>
                                         <div class="col-sm-6">
                                             <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
