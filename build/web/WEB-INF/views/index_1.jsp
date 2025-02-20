@@ -76,11 +76,11 @@
                                     <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
 
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -159,8 +159,8 @@
                                             <h2>${blog.title}</h2>
                                             <p>${fn:substring(blog.content, 0, 200)}...</p>
                                             <a href="${blog.backlinks}" class="btn btn-primary">
-                                            Read More
-                                        </a>
+                                                Read More
+                                            </a>
                                         </div>
                                         <div class="col-sm-6">
                                             <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
@@ -231,7 +231,8 @@
                                         <div class="single-products">
                                             <div class="productinfo text-center">
                                                 <img src="${product.imageURL}" alt="Product Image" />
-                                                <h2>${product.price}</h2>
+                                                <c:set var="minPriceKey" value="minPrice_${product.id}" />
+                                                <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
                                                 <p>${product.name}</p>
                                                 <a href="#" class="btn btn-default add-to-cart">
                                                     <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
@@ -259,20 +260,20 @@
                         <br/>
                         <div class="blog_items">
                             <h2 class="title text-center">Blogs</h2>
-                            
+
                             <c:forEach var="blog" items="${recentBlogs}">
                                 <div class="single-blog-post" style="margin-bottom: 30px;">
-                                    
+
                                     <div class="col-sm-4">
                                         <img src="${blog.imageURL}" alt="Blog Image" class="img-responsive" />
                                     </div>
 
-                                    
+
                                     <div class="col-sm-8">
                                         <h3 style="margin-top: 0;">${blog.title}</h3>
-                                        
+
                                         <p>${fn:substring(blog.content, 0, 200)}...</p>
-                                        
+
                                         <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
                                             Read More
                                         </a>

@@ -98,18 +98,6 @@ public class RegisterController extends HttpServlet {
         if (Validate.checkRegisterExistedEmail(email)) {
             if (Validate.checkRegisterPasswordLength(password)) {
                 if (Validate.checkRegisterEqualPassword(password, confirmPassword)) {
-//                    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-//                    User user = new User();
-//                    user.setEmail(email);
-//                    user.setPassHash(hashedPassword);
-//                    user.setRoleId(2);
-//                    user.setDisabled(false);
-//                    int isRegistered = daouser.addUser(user);
-//                    if (isRegistered != 0) {
-//                        response.getWriter().write("Register successfully!");
-//                    } else {
-//                        response.getWriter().write("Error registering user.");
-//                    }
                     String verificationCode = String.format("%06d", new Random().nextInt(999999));
                     EmailUtil.sendMail(email, verificationCode);
 

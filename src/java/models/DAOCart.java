@@ -183,7 +183,7 @@ public class DAOCart extends DBConnection {
                 CartItem item = new CartItem();
                 item.setCartItemID(rs.getInt("CartItemID"));
                 item.setCartID(rs.getInt("CartID"));
-                item.setProductID(rs.getInt("ProductID"));
+                item.setProductVariantID(rs.getInt("ProductVariantID"));
                 item.setPrice(rs.getDouble("Price"));
                 item.setQuantity(rs.getInt("Quantity"));
                 item.setDiscountAmount(rs.getDouble("DiscountAmount"));
