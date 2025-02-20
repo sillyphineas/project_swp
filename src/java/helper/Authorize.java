@@ -16,6 +16,7 @@ public class Authorize {
     private static final String[] ADMIN_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
     private static final String[] SALES_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
     private static final String[] MARKETING_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
+    private static final String[] SHIPPER_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
 
     public static boolean isAccepted(User user, String link) {
         if (user == null) {
@@ -26,9 +27,11 @@ public class Authorize {
                 return isLinkAllowed(link, ADMIN_ENDPOINTS);
             case 2: // Customer
                 return isLinkAllowed(link, CUSTOMER_ENDPOINTS);
-            case 3: // Sales
+            case 3: // Shippers
+                return isLinkAllowed(link, SHIPPER_ENDPOINTS);
+            case 4: // Sales
                 return isLinkAllowed(link, SALES_ENDPOINTS);
-            case 4: // Marketing
+            case 5: // Marketing
                 return isLinkAllowed(link, MARKETING_ENDPOINTS);
             default: // Public access
                 return isLinkAllowed(link, PUBLIC_ENDPOINTS);

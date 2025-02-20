@@ -20,7 +20,6 @@ public class User {
     private String phoneNumber;    // Số điện thoại
     private String resetToken;     // Mã reset mật khẩu
     private Date resetTokenExpired;// Ngày hết hạn mã reset
-    private String address;        // Địa chỉ
     private Date dateOfBirth;      // Ngày sinh
     private int roleId;            // Vai trò (role ID)
     private boolean isDisabled;    // Trạng thái vô hiệu hóa
@@ -30,8 +29,8 @@ public class User {
     }
 
     // Constructor đầy đủ tham số
-    public User(int id, String name, String email, String passHash, boolean gender, String phoneNumber, String resetToken, 
-                 Date resetTokenExpired, String address, Date dateOfBirth, int roleId, boolean isDisabled) {
+
+    public User(int id, String name, String email, String passHash, boolean gender, String phoneNumber, String resetToken, Date resetTokenExpired, Date dateOfBirth, int roleId, boolean isDisabled) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -40,11 +39,11 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.resetToken = resetToken;
         this.resetTokenExpired = resetTokenExpired;
-        this.address = address;
         this.dateOfBirth = dateOfBirth;
         this.roleId = roleId;
         this.isDisabled = isDisabled;
     }
+
 
     // Getters và Setters cho từng thuộc tính
     public int getId() {
@@ -111,14 +110,6 @@ public class User {
         this.resetTokenExpired = resetTokenExpired;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public Date getDateOfBirth() {
         return dateOfBirth;
     }
@@ -155,7 +146,6 @@ public class User {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", resetToken='" + resetToken + '\'' +
                 ", resetTokenExpired=" + resetTokenExpired +
-                ", address='" + address + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", roleId=" + roleId +
                 ", isDisabled=" + isDisabled +

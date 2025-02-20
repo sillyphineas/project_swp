@@ -11,7 +11,7 @@ package entities;
 public class CartItem {
     	private int CartItemID  ,
 	CartID                  ,
-	ProductID               ;
+	ProductVariantID;
 	private Double Price    ;
 	private int Quantity;
 	private double DiscountAmount,
@@ -19,10 +19,10 @@ public class CartItem {
         private boolean  isDisabled  ;
     private Product product;
 
-    public CartItem(int CartItemID, int CartID, int ProductID, Double Price, int Quantity, double DiscountAmount, double TotalPrice, boolean isDisabled) {
+    public CartItem(int CartItemID, int CartID, int ProductVariantID, Double Price, int Quantity, double DiscountAmount, double TotalPrice, boolean isDisabled) {
         this.CartItemID = CartItemID;
         this.CartID = CartID;
-        this.ProductID = ProductID;
+        this.ProductVariantID = ProductVariantID;
         this.Price = Price;
         this.Quantity = Quantity;
         this.DiscountAmount = DiscountAmount;
@@ -30,9 +30,9 @@ public class CartItem {
         this.isDisabled = isDisabled;
     }
 
-    public CartItem(int CartItemID, int ProductID, Double Price, int Quantity, double TotalPrice) {
+    public CartItem(int CartItemID, int ProductVariantID, Double Price, int Quantity, double TotalPrice) {
         this.CartItemID = CartItemID;
-        this.ProductID = ProductID;
+        this.ProductVariantID = ProductVariantID;
         this.Price = Price;
         this.Quantity = Quantity;
         this.TotalPrice = TotalPrice;
@@ -58,12 +58,12 @@ public class CartItem {
         this.CartID = CartID;
     }
 
-    public int getProductID() {
-        return ProductID;
+    public int getProductVariantID() {
+        return ProductVariantID;
     }
 
-    public void setProductID(int ProductID) {
-        this.ProductID = ProductID;
+    public void setProductVariantID(int ProductVariantID) {
+        this.ProductVariantID = ProductVariantID;
     }
 
     public Double getPrice() {
@@ -114,7 +114,7 @@ public class CartItem {
     }
     @Override
     public String toString() {
-        return "CartItem{" + "CartItemID=" + CartItemID + ", CartID=" + CartID + ", ProductID=" + ProductID + ", Price=" + Price + ", Quantity=" + Quantity + ", DiscountAmount=" + DiscountAmount + ", TotalPrice=" + TotalPrice + ", isDisabled=" + isDisabled + '}';
+        return "CartItem{" + "CartItemID=" + CartItemID + ", CartID=" + CartID + ", ProductVariantID=" + ProductVariantID + ", Price=" + Price + ", Quantity=" + Quantity + ", DiscountAmount=" + DiscountAmount + ", TotalPrice=" + TotalPrice + ", isDisabled=" + isDisabled + '}';
     }
 
     public void setDisabled(boolean isDisabled) {
