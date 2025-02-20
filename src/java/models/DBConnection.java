@@ -31,6 +31,7 @@ public class DBConnection {
 
         this("jdbc:mysql://localhost:3306/proj_swp3912", "root", "123456");
 
+
     }
 
     public ResultSet getData(String sql) {
