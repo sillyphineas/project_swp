@@ -28,7 +28,7 @@ public class DAOCartItem extends DBConnection {
         String sql = "INSERT INTO CartItem (CartID, ProductID, Price, Quantity, TotalPrice, isDisabled) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, cartItem.getCartID());
-            pre.setInt(2, cartItem.getProductID());
+            pre.setInt(2, cartItem.getProductVariantID());
             pre.setDouble(3, cartItem.getPrice());
             pre.setInt(4, cartItem.getQuantity());
             pre.setDouble(5, cartItem.getTotalPrice());
@@ -55,7 +55,7 @@ public class DAOCartItem extends DBConnection {
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getCartID());
-            pre.setInt(2, other.getProductID());
+            pre.setInt(2, other.getProductVariantID());
             pre.setDouble(3, other.getPrice());
             pre.setInt(4, other.getQuantity());
             pre.setDouble(5, other.getDiscountAmount());
@@ -228,7 +228,7 @@ public class DAOCartItem extends DBConnection {
                     // Thiết lập thông tin CartItem
                     cartItem.setCartItemID(rs.getInt("CartItemID"));
                     cartItem.setCartID(rs.getInt("CartID"));
-                    cartItem.setProductID(rs.getInt("ProductID"));
+                    cartItem.setProductVariantID(rs.getInt("ProductID"));
                     cartItem.setQuantity(rs.getInt("Quantity"));
                     cartItem.setPrice(rs.getDouble("CartItemPrice"));
                     cartItem.setDiscountAmount(rs.getDouble("DiscountAmount"));
@@ -240,8 +240,7 @@ public class DAOCartItem extends DBConnection {
                     product.setId(rs.getInt("id"));
                     product.setBrandID(rs.getInt("brandID"));
                     product.setName(rs.getString("name"));
-                    product.setPrice(rs.getDouble("ProductPrice"));
-                    product.setStock(rs.getInt("stock"));
+
                     product.setDescription(rs.getString("description"));
                     product.setIsDisabled(rs.getBoolean("ProductDisabled"));
                     product.setFeedbackCount(rs.getInt("feedbackCount"));
@@ -249,7 +248,7 @@ public class DAOCartItem extends DBConnection {
                     product.setImageURL(rs.getString("imageURL"));
                     product.setChipset(rs.getString("chipset"));
                     product.setRam(rs.getInt("ram"));
-                    product.setStorage(rs.getInt("storage"));
+
                     product.setScreenSize(rs.getDouble("screenSize"));
                     product.setScreenType(rs.getString("screenType"));
                     product.setResolution(rs.getString("resolution"));

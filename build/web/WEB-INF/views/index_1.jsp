@@ -159,8 +159,8 @@
                                             <h2>${blog.title}</h2>
                                             <p>${fn:substring(blog.content, 0, 200)}...</p>
                                             <a href="${blog.backlinks}" class="btn btn-primary">
-                                            Read More
-                                        </a>
+                                                Read More
+                                            </a>
                                         </div>
                                         <div class="col-sm-6">
                                             <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
@@ -231,7 +231,8 @@
                                         <div class="single-products">
                                             <div class="productinfo text-center">
                                                 <img src="${product.imageURL}" alt="Product Image" />
-                                                <h2>${product.price}</h2>
+                                                <c:set var="minPriceKey" value="minPrice_${product.id}" />
+                                                <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
                                                 <p>${product.name}</p>
                                                 <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
                                                     <i class="fa fa-shopping-cart"></i> Add to cart

@@ -47,7 +47,6 @@ public class DAOUser extends DBConnection {
                     rs.getString("phoneNumber"),
                     rs.getString("resetToken"),
                     rs.getDate("resetTokenExpired"),
-                    rs.getString("Address"),
                     rs.getDate("DateOfBirth"),
                     rs.getInt("roleId"),
                     rs.getBoolean("isDisabled")
@@ -77,7 +76,6 @@ public class DAOUser extends DBConnection {
                     rs.getString("phoneNumber"),
                     rs.getString("resetToken"),
                     rs.getDate("resetTokenExpired"),
-                    rs.getString("Address"),
                     rs.getDate("DateOfBirth"),
                     rs.getInt("roleId"),
                     rs.getBoolean("isDisabled")
@@ -106,7 +104,6 @@ public class DAOUser extends DBConnection {
                     rs.getString("phoneNumber"),
                     rs.getString("resetToken"),
                     rs.getDate("resetTokenExpired"),
-                    rs.getString("Address"),
                     rs.getDate("DateOfBirth"),
                     rs.getInt("roleId"),
                     rs.getBoolean("isDisabled")
@@ -132,11 +129,10 @@ public class DAOUser extends DBConnection {
             pre.setString(5, user.getPhoneNumber());
             pre.setString(6, user.getResetToken());
             pre.setDate(7, user.getResetTokenExpired());
-            pre.setString(8, user.getAddress());
-            pre.setDate(9, user.getDateOfBirth());
-            pre.setInt(10, user.getRoleId());
-            pre.setBoolean(11, user.isDisabled());
-            pre.setInt(12, user.getId());
+            pre.setDate(8, user.getDateOfBirth());
+            pre.setInt(9, user.getRoleId());
+            pre.setBoolean(10, user.isDisabled());
+            pre.setInt(11, user.getId());
             
             n = pre.executeUpdate();
         } catch (SQLException ex) {

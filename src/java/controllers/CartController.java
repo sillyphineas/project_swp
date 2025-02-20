@@ -191,7 +191,7 @@ public class CartController extends HttpServlet {
                     List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
                     Double totalOrderPrice = 0.0;
                     for (CartItem item : cartItems) {
-                        Product product = daoPro.getProductById(item.getProductID());
+                        Product product = daoPro.getProductById(item.getProductVariantID());
                         item.setProduct(product);
                         totalOrderPrice += item.getTotalPrice();
                     }
@@ -255,7 +255,7 @@ public class CartController extends HttpServlet {
                     double totalOrderPrice = 0.0;
 
                     for (CartItem item : cartItems) {
-                        Product product = daoPro.getProductById(item.getProductID());
+                        Product product = daoPro.getProductById(item.getProductVariantID());
                         item.setProduct(product);
                         totalOrderPrice += item.getTotalPrice();
                     }
@@ -324,8 +324,9 @@ public class CartController extends HttpServlet {
                     if (product != null) {
                         CartItem newItem = new CartItem();
                         newItem.setCartID(cart.getCartID());
-                        newItem.setProductID(productID);
-                        newItem.setQuantity(quantity);
+
+                        newItem.setProductVariantID(productID);
+                        newItem.setQuantity(quantity); 
                         newItem.setPrice(product.getPrice());
                         newItem.setTotalPrice(product.getPrice() * quantity);
                         daoItem.addCartItem(newItem);
