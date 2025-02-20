@@ -19,7 +19,7 @@ public class DAOOrderDetail extends DBConnection{
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, orderDetail.getOrderID());
-            preparedStatement.setInt(2, orderDetail.getProductID());
+            preparedStatement.setInt(2, orderDetail.getProductVariantID());
             preparedStatement.setInt(3, orderDetail.getQuantity());
             preparedStatement.setDouble(4, orderDetail.getProductPrice());
 
@@ -81,7 +81,7 @@ public class DAOOrderDetail extends DBConnection{
             preparedStatement.setInt(1, orderDetail.getQuantity());
             preparedStatement.setDouble(2, orderDetail.getProductPrice());
             preparedStatement.setInt(3, orderDetail.getOrderID());
-            preparedStatement.setInt(4, orderDetail.getProductID());
+            preparedStatement.setInt(4, orderDetail.getProductVariantID());
 
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
