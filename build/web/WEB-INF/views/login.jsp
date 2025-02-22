@@ -80,13 +80,13 @@
                             if (roleId == 1) {
                                 window.location.href = "<%= request.getContextPath() %>/views/adminDashboard.jsp";
                             } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
-                            } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/shipperDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
                             } else if (roleId == 4) {
+                                window.location.href = "<%= request.getContextPath() %>/views/shipperDashboard.jsp";
+                            } else if (roleId == 3) {
                                 window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
                             } else if (roleId == 5) {
-                                window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
                             }
                         } else {
                             document.getElementById("error").innerHTML = xhttp.responseText;
