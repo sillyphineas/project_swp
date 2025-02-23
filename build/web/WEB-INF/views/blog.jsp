@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@page import="java.util.List,entities.Blog,jakarta.servlet.http.HttpSession,entities.User,models.DAOBlog" %>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>

@@ -4,8 +4,8 @@
  */
 package helper;
 
-import entities.User;
-import models.DAOUser;
+import entity.User;
+import model.DAOUser;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**

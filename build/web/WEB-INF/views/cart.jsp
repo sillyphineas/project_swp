@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User" %>
+<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
