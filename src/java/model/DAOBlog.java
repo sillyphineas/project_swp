@@ -225,19 +225,26 @@ public class DAOBlog extends DBConnection {
 
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();
-        System.out.println(dao.getAuthorNameById(1));
-//        try {
-//            //        try {
-////            System.out.println(dao.getTotalBlogs());
-////        } catch (SQLException ex) {
-////            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
-////        }
-//            List<Blog> list = dao.getPaginatedBlogs(1, 3);
-//            for (Blog blog : list) {
-//                System.out.println(blog);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-   }
+
+        // Test function getBlogById with a specific id
+        int testBlogId = 1;  // Bạn có thể thay đổi ID blog tại đây
+        Blog blog = dao.getBlogById(testBlogId);
+
+        // Kiểm tra nếu blog tồn tại và in ra thông tin của blog
+        if (blog != null) {
+            System.out.println("Blog found: ");
+            System.out.println("ID: " + blog.getId());
+            System.out.println("Author ID: " + blog.getAuthorID());
+            System.out.println("Post Time: " + blog.getPostTime());
+            System.out.println("Title: " + blog.getTitle());
+            System.out.println("Content: " + blog.getContent());
+            System.out.println("Image URL: " + blog.getImageURL());
+            System.out.println("Backlinks: " + blog.getBacklinks());
+            System.out.println("Status: " + blog.getStatus());
+            System.out.println("Is Disabled: " + blog.isIsDisabled());
+        } else {
+            System.out.println("Blog with ID " + testBlogId + " not found.");
+        }
+    }
+
 }
