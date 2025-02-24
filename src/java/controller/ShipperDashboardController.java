@@ -5,11 +5,7 @@
 
 package controller;
 
-import entity.Brand;
-import entity.Product;
-import entity.ProductVariant;
-import entity.User;
-import helper.Authorize;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,19 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.Vector;
-import model.DAOBrand;
-import model.DAOProduct;
-import model.DAOProductVariants;
-
 
 /**
  *
  * @author HP
  */
-@WebServlet(name="ProductDetailController", urlPatterns={"/ProductDetailController"})
-public class ProductDetailController extends HttpServlet {
+@WebServlet(name="ShipperDashboardController", urlPatterns={"/ShipperDashboardController"})
+public class ShipperDashboardController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -46,10 +36,10 @@ public class ProductDetailController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductDetailController</title>");  
+            out.println("<title>Servlet ShipperDashboardController</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ProductDetailController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet ShipperDashboardController at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,39 +56,8 @@ public class ProductDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-                //Authorize
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-        if (!Authorize.isAccepted(user, "/ProductDetailController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
-            return;
-        }
-       DAOProduct dao = new DAOProduct();
-        DAOBrand daoBrand = new DAOBrand();
-        DAOProductVariants daoProductVariants = new DAOProductVariants();
-        Vector productList = new Vector();
-        Product latestProduct = dao.getLatestProduct();
-        int productID = Integer.parseInt(request.getParameter("id"));
-        Product product = dao.getProductById(productID);
-        Vector<Brand> brandList = daoBrand.getAllBrands();
-        Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
-            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
-
-       
-        if(product == null){
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,"Product not found");
-            return;
-        }
-        Vector<ProductVariant> productVariants = daoProductVariants.getVariantsByProductId(productID);
-        request.setAttribute("variants", variants);
-        request.setAttribute("minPrice", minPrice);
-        request.setAttribute("brands", brandList);
-        request.setAttribute("product", product);
-        request.setAttribute("latestProduct", latestProduct);
-        request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shipperDashboard.jsp");
+        rd.forward(request, response);
     } 
 
     /** 

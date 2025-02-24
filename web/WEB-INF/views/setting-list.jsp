@@ -1,10 +1,13 @@
 <%-- 
-    Document   : login
-    Created on : Jan 18, 2025, 1:13:47 PM
+    Document   : index
+    Created on : Jan 18, 2025, 1:13:24 PM
     Author     : HP
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.User"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,7 +15,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Login | E-Shopper</title>
+        <title>Home | E-Shopper</title>
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/font-awesome.min.css" rel="stylesheet">
         <link href="/css/prettyPhoto.css" rel="stylesheet">
@@ -29,79 +32,47 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script type="text/javascript">
-            function register() {
-                let form = document.registerForm;
-                let email = form.email.value;
-                let password = form.password.value;
-                let confirmPassword = form.confirmPassword.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("msg").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.trim() === "redirect") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
-                        } else {
-                            document.getElementById("msg").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/RegisterController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password +
-                        "&confirmPassword=" + confirmPassword);
+        <style>
+            /* Cập nhật cho trạng thái Inactive và Active */
+            .inactive-status {
+                color: red;
+                font-weight: bold;
             }
 
-            function login() {
-                let form = document.loginForm;
-                let email = form.email.value;
-                let password = form.password.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("error").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.startsWith("success")) {
-                            console.log(xhttp.responseText);
-                            let roleId = xhttp.responseText.split(":")[1];
-                            console.log(roleId);
-                            if (roleId == 1) {
-                                window.location.href = "<%= request.getContextPath() %>/AdminDashboardController";
-                            } else if (roleId == 5) {
-                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
-                            } else if (roleId == 4) {
-                                window.location.href = "<%= request.getContextPath() %>/views/shipperDashboard.jsp";
-                            } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
-                            } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
-                            }
-                        } else {
-                            document.getElementById("error").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/LoginController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password);
+            .active-status {
+                color: green;
+                font-weight: bold;
             }
-        </script>
 
+            /* Cập nhật cho phần d-flex */
+            /* Cập nhật để căn chỉnh nút Add Setting với lề phải */
+            .d-flex {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
 
+            /* Sửa cho nút Add Setting thẳng với lề phải */
+            .add-setting-button {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+            /* Cập nhật chiều cao của dropdown để hiển thị đầy đủ */
+            .form-control {
+                width: 300px; /* Đảm bảo dropdown đủ rộng */
+                font-size: 16px; /* Tăng kích thước font chữ */
+                padding: 10px; /* Thêm padding để dropdown rộng hơn */
+                height: 40px; /* Điều chỉnh chiều cao của dropdown để hiển thị đầy đủ chữ */
+            }
+
+            /* Cập nhật cho các tùy chọn trong dropdown */
+            .form-control option {
+                white-space: nowrap; /* Đảm bảo nội dung không bị xuống dòng */
+                height: auto; /* Đảm bảo chiều cao của các tùy chọn đủ để hiển thị */
+            }
+
+        </style>
     </head><!--/head-->
 
     <body>
@@ -112,19 +83,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -137,7 +108,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -146,8 +117,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
+                                        <li><a href="#">Canada</a></li>
+                                        <li><a href="#">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -157,8 +128,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
+                                        <li><a href="#">Canadian Dollar</a></li>
+                                        <li><a href="#">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -166,11 +137,20 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
+                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/login.jsp" class="active"><i class="fa fa-lock"></i> Login</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -192,21 +172,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -220,45 +187,100 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="form"><!--form-->
+        <section id="settings-section">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4 col-sm-offset-1">
-                        <div class="login-form"><!--login form-->
-                            <h2>Login to your account</h2>
-                            <form name="loginForm">
-                                <input type="email" name="email" placeholder="Email"  required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <div id="error" style="color: red; font-style: italic;"></div>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
-                                <button type="button" class="btn btn-default" onclick="login()">Login</button>
-                            </form>
+                    <div class="col-sm-12">
+                        <h2>Settings List</h2>
+                        <div class="container">
+                            <div class="row d-flex justify-content-between align-items-center">
+                                <!-- Sort By & Order Dropdowns, Sort button -->
+                                <div class="col-auto d-flex">
+                                    <div class="form-group mb-0 mr-2">
+                                        <label for="sortBy" class="mr-2">Sort By:</label>
+                                        <select id="sortBy" name="sortBy" class="form-control d-inline-block">
+                                            <option value="id">ID</option>
+                                            <option value="type">Type</option>
+                                            <option value="keyName">Key Name</option>
+                                            <option value="value">Value</option>
+                                            <option value="status">Status</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-0 mr-2">
+                                        <label for="sortOrder" class="mr-2">Order:</label>
+                                        <select id="sortOrder" name="sortOrder" class="form-control d-inline-block">
+                                            <option value="asc">Ascending</option>
+                                            <option value="desc">Descending</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">Sort</button>
+                                </div>
+
+                                <!-- Thêm nút Add Setting căn thẳng với lề phải của bảng -->
+                                <div class="col-sm-12 d-flex justify-content-end mt-2">
+                                    <a href="SettingController?service=addSetting" class="btn btn-success">Add Setting</a>
+                                </div>
+                            </div>
                         </div>
 
-                    </div>
-                    <div class="col-sm-1">
-                        <h2 class="or">OR</h2>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="signup-form"><!--sign up form-->
-                            <h2>New User Signup!</h2>
-                            <form name="registerForm">
-                                <input type="email" name="email" placeholder="Email" required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <input type="password" name="confirmPassword" placeholder="Confirm Password" required/>
-                                <p id="msg" style="color: red; font-style: italic;"></p>
-                                <button type="button" class="btn btn-default" onclick="register()">Register</button>
 
-                            </form>
-                        </div>
 
+
+
+                        <hr>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Key Name</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Created At</th>
+                                    <th>Updated At</th>
+                                    <th>Activate</th>
+                                    <th>Deactivate</th>
+                                    <th>Update</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Iterating through the list of settings -->
+                                <c:forEach var="setting" items="${settingList}">
+                                    <tr>
+                                        <td>${setting.id}</td>
+                                        <td>${setting.type}</td>
+                                        <td>${setting.keyName}</td>
+                                        <td>${setting.value}</td>
+                                        <td>${setting.description}</td>
+                                        <td class="${setting.status == 'Inactive' ? 'inactive-status' : 'active-status'}">
+                                            ${setting.status == 'Inactive' ? 'Inactive' : 'Active'}
+                                        </td>
+
+                                        <td>${setting.createdAt}</td>
+                                        <td>${setting.updatedAt}</td>
+                                        <!-- Add buttons for Activate, Update, Delete -->
+                                        <td>
+                                            <a href="SettingController?service=activate&settingId=${setting.id}" class="btn btn-primary">Activate</a>
+                                        </td>
+                                        <td>
+                                            <a href="SettingController?service=deactivate&settingId=${setting.id}" class="btn btn-primary">Deactivate</a>
+                                        </td>
+                                        <td>
+                                            <a href="SettingController?service=updateSetting&settingId=${setting.id}" class="btn btn-primary">Update</a>
+                                        </td>
+                                        <td>
+                                            <a href="SettingController?service=deleteSetting&settingId=${setting.id}" class="btn btn-primary">Delete</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </section><!--/form-->
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -348,11 +370,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Online Help</a></li>
-                                    <li><a href="">Contact Us</a></li>
-                                    <li><a href="">Order Status</a></li>
-                                    <li><a href="">Change Location</a></li>
-                                    <li><a href="">FAQ’s</a></li>
+                                    <li><a href="#">Online Help</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Order Status</a></li>
+                                    <li><a href="#">Change Location</a></li>
+                                    <li><a href="#">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -360,11 +382,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">T-Shirt</a></li>
-                                    <li><a href="">Mens</a></li>
-                                    <li><a href="">Womens</a></li>
-                                    <li><a href="">Gift Cards</a></li>
-                                    <li><a href="">Shoes</a></li>
+                                    <li><a href="#">T-Shirt</a></li>
+                                    <li><a href="#">Mens</a></li>
+                                    <li><a href="#">Womens</a></li>
+                                    <li><a href="#">Gift Cards</a></li>
+                                    <li><a href="#">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -372,11 +394,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Terms of Use</a></li>
-                                    <li><a href="">Privecy Policy</a></li>
-                                    <li><a href="">Refund Policy</a></li>
-                                    <li><a href="">Billing System</a></li>
-                                    <li><a href="">Ticket System</a></li>
+                                    <li><a href="#">Terms of Use</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
+                                    <li><a href="#">Refund Policy</a></li>
+                                    <li><a href="#">Billing System</a></li>
+                                    <li><a href="#">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -384,11 +406,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Company Information</a></li>
-                                    <li><a href="">Careers</a></li>
-                                    <li><a href="">Store Location</a></li>
-                                    <li><a href="">Affillate Program</a></li>
-                                    <li><a href="">Copyright</a></li>
+                                    <li><a href="#">Company Information</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Store Location</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
+                                    <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -397,8 +419,7 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit"
-                                            class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
                                     <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
@@ -422,9 +443,9 @@
 
 
         <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
     </body>

@@ -79,6 +79,7 @@ public class HomePageController extends HttpServlet {
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
+        System.out.println(user);
         if (!Authorize.isAccepted(user, "/HomePageController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
