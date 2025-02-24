@@ -87,6 +87,7 @@
                                 window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
                             } else if (roleId == 2) {
                                 window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
+
                             }
                         } else {
                             document.getElementById("error").innerHTML = xhttp.responseText;
