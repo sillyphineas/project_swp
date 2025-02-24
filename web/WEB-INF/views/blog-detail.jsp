@@ -2,7 +2,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="entities.User"%>
+<%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page import="java.util.List,entities.Blog,jakarta.servlet.http.HttpSession,entities.User,models.DAOBlog" %>
 <!DOCTYPE html>
