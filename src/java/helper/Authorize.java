@@ -25,13 +25,13 @@ public class Authorize {
         switch (user.getRoleId()) {
             case 1: // Admin
                 return isLinkAllowed(link, ADMIN_ENDPOINTS);
-            case 2: // Customer
+            case 5: // Customer
                 return isLinkAllowed(link, CUSTOMER_ENDPOINTS);
-            case 3: // Shippers
+            case 4: // Shippers
                 return isLinkAllowed(link, SHIPPER_ENDPOINTS);
-            case 4: // Sales
+            case 3: // Sales
                 return isLinkAllowed(link, SALES_ENDPOINTS);
-            case 5: // Marketing
+            case 2: // Marketing
                 return isLinkAllowed(link, MARKETING_ENDPOINTS);
             default: // Public access
                 return isLinkAllowed(link, PUBLIC_ENDPOINTS);

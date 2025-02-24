@@ -33,7 +33,6 @@ public class ProductController extends HttpServlet {
             return;
         }
 
-        
             DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
 
@@ -47,6 +46,7 @@ public class ProductController extends HttpServlet {
         Vector<Double> screenSizeList = dao.getDistinctScreenSize();
 
         // Lấy tham số từ request
+
         String brandIDStr = request.getParameter("brandID");
         String searchQuery = request.getParameter("search");
         String minPriceStr = request.getParameter("minPrice");
@@ -92,6 +92,7 @@ public class ProductController extends HttpServlet {
         request.setAttribute("screenTypeList", screenTypeList);
         request.setAttribute("batteryCapacityList", batteryCapacityList);
         request.setAttribute("screenSizeList", screenSizeList);
+
         request.setAttribute("latestProduct", latestProduct);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
@@ -105,8 +106,8 @@ public class ProductController extends HttpServlet {
         request.setAttribute("minPrice", minPrice);
         request.setAttribute("maxPrice", maxPrice);
 
+
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
         rd.forward(request, response);
     }
-
 }
