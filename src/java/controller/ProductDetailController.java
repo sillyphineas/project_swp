@@ -7,6 +7,7 @@ package controller;
 
 import entity.Brand;
 import entity.Product;
+import entity.ProductVariant;
 import entity.User;
 import helper.Authorize;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
+import model.DAOProductVariants;
+
 
 /**
  *
@@ -73,20 +76,28 @@ public class ProductDetailController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        DAOProduct dao = new DAOProduct();
+       DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+        DAOProductVariants daoProductVariants = new DAOProductVariants();
         Vector productList = new Vector();
         Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));
         Product product = dao.getProductById(productID);
         Vector<Brand> brandList = daoBrand.getAllBrands();
+        Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
+            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+
+       
         if(product == null){
             response.sendError(HttpServletResponse.SC_NOT_FOUND,"Product not found");
             return;
         }
-        request.setAttribute("product",product);
+        Vector<ProductVariant> productVariants = daoProductVariants.getVariantsByProductId(productID);
+        request.setAttribute("variants", variants);
+        request.setAttribute("minPrice", minPrice);
         request.setAttribute("brands", brandList);
-         request.setAttribute("latestProduct", latestProduct);
+        request.setAttribute("product", product);
+        request.setAttribute("latestProduct", latestProduct);
         request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
     } 
 

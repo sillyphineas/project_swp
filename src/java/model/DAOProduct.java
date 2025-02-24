@@ -600,5 +600,196 @@ public class DAOProduct extends DBConnection {
         }
         return productList;
     }
+    public int getTotalProductsByFilters(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
+            String connectivity, int ram, String screenType) {
+        String sql = "SELECT COUNT(*) FROM Products WHERE isDisabled = 0";
+
+        if (brandID > 0) {
+            sql += " AND brandID = " + brandID;
+        }
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            sql += " AND name LIKE '%" + searchQuery + "%'";
+        }
+        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
+            sql += " AND price BETWEEN " + minPrice + " AND " + maxPrice;
+        }
+        if (os != null && !os.isEmpty()) {
+            sql += " AND os = '" + os + "'";
+        }
+        if (connectivity != null && !connectivity.isEmpty()) {
+            sql += " AND connectivity = '" + connectivity + "'";
+        }
+        if (ram > 0) {
+            sql += " AND ram = " + ram;
+        }
+        if (screenType != null && !screenType.isEmpty()) {
+            sql += " AND screenType = '" + screenType + "'";
+        }
+        if (screenSize >0) {
+            sql += " AND screenSize = " + screenSize ;
+        }
+        if (batteryCapacity > 0) {
+            sql += " AND batteryCapacity = " + batteryCapacity;
+        }
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public Vector<Product> getProductsByFilters(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
+            String connectivity, int ram, String screenType, int currentPage, int itemsPerPage) {
+        Vector<Product> productList = new Vector<>();
+        int startIndex = (currentPage - 1) * itemsPerPage;
+
+        String sql = "SELECT * FROM Products WHERE isDisabled = 0";
+        if (brandID > 0) {
+            sql += " AND brandID = " + brandID;
+        }
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            sql += " AND name LIKE '%" + searchQuery + "%'";
+        }
+        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
+            sql += " AND price BETWEEN " + minPrice + " AND " + maxPrice;
+        }
+        if (os != null && !os.isEmpty()) {
+            sql += " AND os = '" + os + "'";
+        }
+        if (connectivity != null && !connectivity.isEmpty()) {
+            sql += " AND connectivity = '" + connectivity + "'";
+        }
+        if (ram > 0) {
+            sql += " AND ram = " + ram;
+        }
+        if (screenType != null && !screenType.isEmpty()) {
+            sql += " AND screenType = '" + screenType + "'";
+        }
+        if (screenSize >0) {
+            sql += " AND screenSize = " + screenSize ;
+        }
+        if (batteryCapacity > 0) {
+            sql += " AND batteryCapacity = " + batteryCapacity;
+        }
+        sql += " ORDER BY createAt DESC LIMIT " + itemsPerPage + " OFFSET " + startIndex;
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                productList.add(new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                ));
+            };
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    
+}
+    
+    public Vector<String> getDistinctOS() {
+        Vector<String> osList = new Vector<>();
+        String sql = "SELECT DISTINCT os FROM Products WHERE os IS NOT NULL AND os <> ''";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                osList.add(rs.getString("os"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return osList;
+    }
+
+    public Vector<String> getDistinctConnectivity() {
+        Vector<String> connectivityList = new Vector<>();
+        String sql = "SELECT DISTINCT connectivity FROM Products WHERE connectivity IS NOT NULL AND connectivity <> ''";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                connectivityList.add(rs.getString("connectivity"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connectivityList;
+    }
+
+    public Vector<Integer> getDistinctRAM() {
+        Vector<Integer> ramList = new Vector<>();
+        String sql = "SELECT DISTINCT ram FROM Products WHERE ram IS NOT NULL ORDER BY ram ASC";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                ramList.add(rs.getInt("ram"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ramList;
+    }
+
+    public Vector<String> getDistinctScreenType() {
+        Vector<String> screenTypeList = new Vector<>();
+        String sql = "SELECT DISTINCT screenType FROM Products WHERE screenType IS NOT NULL AND screenType <> ''";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                screenTypeList.add(rs.getString("screenType"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return screenTypeList;
+    }
+   
+
+    public Vector<Integer> getDistinctBatteryCapacity() {
+        Vector<Integer> batteryCapacityList = new Vector<>();
+        String sql = "SELECT DISTINCT batteryCapacity FROM Products WHERE batteryCapacity IS NOT NULL ORDER BY batteryCapacity ASC";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                batteryCapacityList.add(rs.getInt("batteryCapacity"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return batteryCapacityList;
+    }
+
+    public Vector<Double> getDistinctScreenSize() {
+        Vector<Double> screenSizeList = new Vector<>();
+        String sql = "SELECT DISTINCT screenSize FROM Products WHERE screenSize IS NOT NULL ORDER BY screenSize ASC";
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                screenSizeList.add(rs.getDouble("screenSize"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return screenSizeList;
+    }
 
 }

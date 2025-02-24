@@ -54,6 +54,37 @@
                 background-color: #0056b3;
                 color: white;
             }
+            .brand-filter {
+                margin-bottom: 20px;
+            }
+
+            .brand-list {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .brand-list a {
+                padding: 10px 15px;
+                font-size: 15px;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+                text-align: center;
+                width: 100px; /* Đảm bảo tất cả có cùng chiều rộng */
+                display: inline-block;
+                background-color: orange;
+                color: white;
+                border: none;
+            }
+
+            .brand-list a:hover {
+                background-color: #ff8c00;
+                color: white;
+            }
+
+
         </style>
     </head><!--/head-->
 </head><!--/head-->
@@ -206,22 +237,67 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div class="left-sidebar">
-                        <div class="brands_products">
-                            <h2>Brands</h2> 
-                            <div class="brands-name">
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li> 
-                                        <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
-                                    </li> 
-                                    <c:forEach var="brand" items="${brands}">
-                                        <li> 
-                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
-                                        </li> 
-                                    </c:forEach> 
-                                </ul> 
-                            </div>
-                        </div>
 
+                        <div class="filter-box">
+                            <h2>Filter Products</h2>
+                            <form action="${pageContext.request.contextPath}/ProductController" method="get">
+
+                                <label for="brandID">Brand</label>
+                                <select id="brandID" name="brandID" class="form-control">
+                                    <option value="0">All Brands</option>
+                                    <c:forEach var="brand" items="${brands}">
+                                        <option value="${brand.id}" ${brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <!-- Lọc theo hệ điều hành -->
+                                <label for="os">Operating System</label>
+                                <select id="os" name="os" class="form-control">
+                                    <option value="">All</option>
+                                    <c:forEach var="osItem" items="${osList}">
+                                        <option value="${osItem}" ${os == osItem ? 'selected' : ''}>${osItem}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <!-- Lọc theo kết nối -->
+                                <label for="connectivity">Connectivity</label>
+                                <select id="connectivity" name="connectivity" class="form-control">
+                                    <option value="">All</option>
+                                    <c:forEach var="connect" items="${connectivityList}">
+                                        <option value="${connect}" ${connectivity == connect ? 'selected' : ''}>${connect}</option>
+                                    </c:forEach>
+                                </select>
+
+                                <!-- Lọc theo RAM -->
+                                <label for="ram">RAM (GB)</label>
+                                <select id="ram" name="ram" class="form-control">
+                                    <option value="0">All</option>
+                                    <c:forEach var="ramItem" items="${ramList}">
+                                        <option value="${ramItem}" ${ram == ramItem ? 'selected' : ''}>${ramItem} GB</option>
+                                    </c:forEach>
+                                </select>
+                                <label for="batteryCapacity">Battery Capacity (mAh)</label>
+                                <select id="batteryCapacity" name="batteryCapacity" class="form-control">
+                                    <option value="0">All</option>
+                                    <c:forEach var="capacity" items="${batteryCapacityList}">
+                                        <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
+                                    </c:forEach>
+                                </select>
+
+                                <!-- Lọc theo Screen Size -->
+                                <label for="screenSize">Screen Size (inches)</label>
+                                <select id="screenSize" name="screenSize" class="form-control">
+                                    <option value="0">All</option>
+                                    <c:forEach var="size" items="${screenSizeList}">
+                                        <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
+                                    </c:forEach>
+                                </select>
+
+
+                                <!-- Nút Lọc -->
+                                <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
+                            </form>
+                        </div>
                         <div class="price-range">
                             <h2>Filter by Price</h2>
                             <div class="well">
@@ -248,7 +324,6 @@
                                         <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
                                         <h3>${latestProduct.name}</h3>
                                         <p>${latestProduct.description}</p>
-                                        <p><strong>Price:</strong> $${latestProduct.price}</p>
 <!--                                            <a href="product-details.jsp?id=${latestProduct.id}" class="btn btn-primary">View Details</a>-->
                                     </div>
                                 </div>
@@ -258,25 +333,33 @@
                 </div>
 
                 <div class="col-sm-9 padding-right">
+                    <div class="brand-filter text-center">
+
+                        <div class="brand-list">
+                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0" class="btn btn-primary">All Brands</a>
+                            <c:forEach var="brand" items="${brands}">
+                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}" class="btn btn-primary">${brand.name}</a>
+                            </c:forEach>
+                        </div>
+                    </div>
                     <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">Features Items</h2>
-
-                        <c:set var="sortedProductList" value="${productList}" />
-                        <c:forEach var="product" items="${sortedProductList}">
-                            <div class="col-sm-4">  
+                        <c:forEach var="product" items="${productList}">
+                            <div class="col-sm-4">
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-                                            <img src="${product.imageURL}" alt="" />
-                                            <h2>${product.price}</h2>
+                                            <img src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
-                                            <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                            <c:set var="minPriceKey" value="minPrice_${product.id}" />
+                                            <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </c:forEach>
+
                     </div>
 
                     <!--                                <div class="col-sm-4">  
@@ -284,15 +367,15 @@
                                                             <div class="single-products">
                                                                 <div class="productinfo text-center">
                                                                     <img src="${product.imageURL}" alt="" />
-                                                                    <h2>${product.price}</h2>
+                                                                    <h2></h2>
                                                                     <p>${product.name}</p>
                                                                     <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                                     <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                                                 </div>
                                                                 <div class="product-overlay">
                                                                     <div class="overlay-content">
-                                                                        <h2>${product.price}</h2>
-                                                                        <p>${product.price}</p>
+                                                                        <h2></h2>
+                                                                        <p></p>
                                                                         <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                                         <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                                                     </div>
@@ -307,18 +390,19 @@
                                                         </div>
                                                     </div>-->
                     <div class ="text-center">
-                        <div class="pagination">
-                            <c:if test="${currentPage > 1}">
-                                <a href="?page=${currentPage-1}&brandID=${brandID}" class="pre">Previous</a>
-                            </c:if>
-                            <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="?page=${i}&brandID=${brandID}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                            </c:forEach>
-                            <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage+1}&brandID=${brandID}" class="next">Next</a>
-                            </c:if>
-                        </div>
-
+                       <div class="pagination">
+    <c:if test="${currentPage > 1}">
+        <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
+    </c:if>
+    
+    <c:forEach begin="1" end="${totalPages}" var="i">
+        <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+    </c:forEach>
+    
+    <c:if test="${currentPage < totalPages}">
+        <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
+    </c:if>
+</div>
 
 
                     </div>
