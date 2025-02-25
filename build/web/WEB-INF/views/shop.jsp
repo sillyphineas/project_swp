@@ -57,7 +57,6 @@
         </style>
     </head><!--/head-->
 </head><!--/head-->
-
 <% if (session.getAttribute("cartMessage") != null) { %>
 <script type="text/javascript">
     alert("<%= session.getAttribute("cartMessage") %>");
@@ -129,9 +128,7 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-
                                 <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-
                                 <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                 <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                 <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
@@ -251,7 +248,6 @@
                                         <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
                                         <h3>${latestProduct.name}</h3>
                                         <p>${latestProduct.description}</p>
-                                        <p><strong>Price:</strong> $${latestProduct.price}</p>
 <!--                                            <a href="product-details.jsp?id=${latestProduct.id}" class="btn btn-primary">View Details</a>-->
                                     </div>
                                 </div>
@@ -271,9 +267,9 @@
                                     <div class="single-products">
                                         <div class="productinfo text-center">
                                             <img src="${product.imageURL}" alt="" />
-                                            <h2>${product.price}</h2>
                                             <p>${product.name}</p>
-
+                                            <c:set var="minPriceKey" value="minPrice_${product.id}" />
+                                            <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                         </div>
@@ -288,15 +284,15 @@
                                                             <div class="single-products">
                                                                 <div class="productinfo text-center">
                                                                     <img src="${product.imageURL}" alt="" />
-                                                                    <h2>${product.price}</h2>
+                                                                    <h2></h2>
                                                                     <p>${product.name}</p>
                                                                     <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                                     <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                                                 </div>
                                                                 <div class="product-overlay">
                                                                     <div class="overlay-content">
-                                                                        <h2>${product.price}</h2>
-                                                                        <p>${product.price}</p>
+                                                                        <h2></h2>
+                                                                        <p></p>
                                                                         <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
                                                                         <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                                                     </div>
@@ -313,16 +309,17 @@
                     <div class ="text-center">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
-
-                                <a href="?page=${currentPage-1}" class="pre">Previous</a>
+                                <a href="?page=${currentPage-1}&brandID=${brandID}" class="pre">Previous</a>
                             </c:if>
                             <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                <a href="?page=${i}&brandID=${brandID}" class="${i == currentPage ? 'active' : ''}">${i}</a>
                             </c:forEach>
                             <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage+1}" class="next">Next</a>
+                                <a href="?page=${currentPage+1}&brandID=${brandID}" class="next">Next</a>
                             </c:if>
                         </div>
+
+
 
                     </div>
                     <!--                            </div>-->
@@ -490,11 +487,7 @@
 
 </footer><!--/Footer-->
 
-<!-- Thông báo giỏ hàng -->
-<div id="cart-notification" class="hidden">
-    <span class="checkmark">✔</span>
-    <p>Product added to cart successfully!</p>
-</div>
+
 
 <script src="js/jquery.js"></script>
 <script src="js/price-range.js"></script>
@@ -502,8 +495,7 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.prettyPhoto.js"></script>
 <script src="js/main.js"></script>
-
-<script src="js/cart.js"></script>
-
 </body>
 </html>
+
+

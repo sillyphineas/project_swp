@@ -2674,6 +2674,53 @@ h2.title {
     background: #e64a19;
 }
 
+/* Kiểu dáng của hộp thoại thông báo khi không chọn sản phẩm */
+.alert-box-error {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 0, 0, 0.8); /* Nền đỏ */
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    width: 300px;
+    text-align: center;
+}
+
+.alert-message-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.alert-message-error span {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.close-alert-error {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.close-alert-error:hover {
+    background-color: #e55d4f;
+}
+
+.alert-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: white;
+}
+
 
 
 

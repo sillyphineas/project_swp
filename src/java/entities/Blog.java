@@ -9,28 +9,33 @@ package entities;
  * @author HP
  */
 public class Blog {
-    private int id           ;
-    private int authorID   ;
- 
-    private String postTime  ,
-    title                   ,
-    content                 ,
-    imageURL                ,
-    backlinks               ,
-    status                  ;
-    private boolean isDisabled  ;   
 
-    public Blog(int id, int authorID, String postTime, String title, String content, String imageURL, String backlinks, String status, boolean isDisabled) {
+    private int id;
+    private int authorID;
+
+    private String postTime,
+            title,
+            content,
+            backlinks,
+            imageURL,
+            status;
+    private boolean isSlider;
+    private boolean isDisabled;
+
+    public Blog(int id, int authorID, String postTime, String title, String content, String backlinks, String imageURL, String status, boolean isSlider, boolean isDisabled) {
         this.id = id;
         this.authorID = authorID;
         this.postTime = postTime;
         this.title = title;
-        this.content = content;      
-        this.imageURL = imageURL;
+        this.content = content;
         this.backlinks = backlinks;
+        this.imageURL = imageURL;
         this.status = status;
+        this.isSlider = isSlider;
         this.isDisabled = isDisabled;
     }
+    
+   
 
     public Blog() {
     }
@@ -112,7 +117,4 @@ public class Blog {
         return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", backlinks=" + backlinks + ", status=" + status + ", isDisabled=" + isDisabled + '}';
     }
 
-    
-    
-    
 }

@@ -9,6 +9,7 @@ package entities;
  * @author HP
  */
 public class Address {
+
     private int id;
     private int userId;
     private String address;
@@ -17,6 +18,13 @@ public class Address {
     private boolean isDefault;
 
     public Address() {
+    }
+
+    public Address(int id, String address, String city, String district) {
+        this.id = id;
+        this.address = address;
+        this.city = city;
+        this.district = district;
     }
 
     public Address(int id, int userId, String address, String city, String district, boolean isDefault) {
@@ -78,14 +86,17 @@ public class Address {
 
     @Override
     public String toString() {
-        return "Address{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", district='" + district + '\'' +
-                ", isDefault=" + isDefault +
-                '}';
+        return "Address{"
+                + "id=" + id
+                + ", userId=" + userId
+                + ", address='" + address + '\''
+                + ", city='" + city + '\''
+                + ", district='" + district + '\''
+                + ", isDefault=" + isDefault
+                + '}';
+    }
+
+    public String getFullAddress() {
+        return address + ", " + district + ", " + city;
     }
 }
-

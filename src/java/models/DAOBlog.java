@@ -115,6 +115,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
+                        rs.getBoolean("isSider"),
                         rs.getBoolean("isDisabled")
                 );
             }
@@ -139,6 +140,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
+                        rs.getBoolean("isSider"),
                         rs.getBoolean("isDisabled")
                 );
                 vector.add(blog);
@@ -166,13 +168,14 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
+                        rs.getBoolean("isSider"),
                         rs.getBoolean("isDisabled")
                 ));
             }
         }
         return blogs;
     }
-
+    
     public int getTotalBlogs() throws SQLException {
         int total = 0;
         String sql = "SELECT COUNT(*) FROM Blogs";
@@ -203,6 +206,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
+                        rs.getBoolean("isSider"),
                         rs.getBoolean("isDisabled")
                 ));
             }

@@ -38,12 +38,12 @@ public class ProductController extends HttpServlet {
 
         String brandIDStr = request.getParameter("brandID");
         String searchQuery = request.getParameter("search");
-        String minPriceStr = request.getParameter("minPrice");
+        
         String maxPriceStr = request.getParameter("maxPrice");
         String pageStr = request.getParameter("page");
         
         int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
-        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
+//        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0;
         double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
         int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
         int itemsPerPage = 6; 
@@ -53,8 +53,8 @@ public class ProductController extends HttpServlet {
             totalProducts = dao.getTotalProductsByBrand(brandID);
         } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             totalProducts = dao.getTotalProductsBySearch(searchQuery);
-        } else if (minPriceStr != null && maxPriceStr != null) {
-            totalProducts = dao.getTotalProductsByPriceRange(minPrice, maxPrice);
+//        } else if (minPriceStr != null && maxPriceStr != null) {
+//            totalProducts = dao.getTotalProductsByPriceRange(minPrice, maxPrice);
         } else {
             totalProducts = dao.getTotalProducts();
         }
@@ -67,15 +67,20 @@ public class ProductController extends HttpServlet {
             productList = dao.getProductsByBrand(brandID, currentPage, itemsPerPage);
         } else if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             productList = dao.searchProductsByName(searchQuery, currentPage, itemsPerPage);
-        } else if (minPriceStr != null && maxPriceStr != null) {
-            productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
+//        } else if (minPriceStr != null && maxPriceStr != null) {
+//            productList = dao.getProductsByPriceRange(minPrice, maxPrice, currentPage, itemsPerPage);
         } else {
             productList = dao.getProductsSortedByDate(currentPage, itemsPerPage);
         }
 
         Vector<Brand> brandList = daoBrand.getAllBrands();
         Product latestProduct = dao.getLatestProduct();
-
+          for (Product product : productList) {
+            double minPrice = dao.getMinPriceForProduct(product.getId());
+            request.setAttribute("minPrice_" + product.getId(), minPrice);
+            
+          }
+        
         request.setAttribute("productList", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("latestProduct", latestProduct);
@@ -86,4 +91,6 @@ public class ProductController extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
         rd.forward(request, response);
     }
+    
 }
+

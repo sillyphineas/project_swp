@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -8,6 +9,7 @@ package controllers;
 import entities.Brand;
 import entities.Product;
 import entities.User;
+import entities.ProductVariant;
 import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +22,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import models.DAOBrand;
 import models.DAOProduct;
+import models.DAOProductVariant;
 
 /**
  *
@@ -75,18 +78,26 @@ public class ProductDetailController extends HttpServlet {
         }
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+        DAOProductVariant daoProductVariants = new DAOProductVariant();
         Vector productList = new Vector();
         Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));
         Product product = dao.getProductById(productID);
         Vector<Brand> brandList = daoBrand.getAllBrands();
+        Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
+            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+
+       
         if(product == null){
             response.sendError(HttpServletResponse.SC_NOT_FOUND,"Product not found");
             return;
         }
-        request.setAttribute("product",product);
+        Vector<ProductVariant> productVariants = daoProductVariants.getVariantsByProductId(productID);
+        request.setAttribute("variants", variants);
+        request.setAttribute("minPrice", minPrice);
         request.setAttribute("brands", brandList);
-         request.setAttribute("latestProduct", latestProduct);
+        request.setAttribute("product", product);
+        request.setAttribute("latestProduct", latestProduct);
         request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
     } 
 

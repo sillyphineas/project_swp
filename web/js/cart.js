@@ -1,45 +1,51 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
- */
+function addToCart() {
+    let productId = document.getElementById("productID").value;
+    let color = document.getElementById("colorSelector").value;
+    let storage = document.getElementById("storageSelector").value;
+    let quantity = document.getElementById("quantity").value;
 
-
-function addToCart(productId) {
-    fetch(`CartURL?service=add2cart&productID=${productId}&quantity=1`, {
-        method: 'GET'
-    })
-    .then(response => {
-        if (response.ok) {
-            showNotification("Sản phẩm đã được thêm vào Giỏ hàng");
-        } else {
-            showNotification("Lỗi khi thêm sản phẩm!", true);
-        }
-    })
-    .catch(error => {
-        console.error("Lỗi:", error);
-        showNotification("Lỗi kết nối đến server!", true);
-    });
-}
-
-function showNotification(message) {
-    let notification = document.getElementById("cart-notification");
-    if (!notification) {
-        console.error("Không tìm thấy #cart-notification trong HTML!");
+    // Kiểm tra nếu productId không hợp lệ, không dùng alert mà gọi thông báo tùy chỉnh
+    if (!productId || productId === "undefined") {
+        console.error("ERROR: productID is null or undefined in JavaScript!");
+        showCartNotification("Có lỗi xảy ra, vui lòng kiểm tra lại thông tin sản phẩm.");
         return;
     }
 
-    notification.classList.remove("hidden");
-    notification.style.display = "block";
-    notification.style.opacity = "1";
-    notification.style.visibility = "visible";
-
-    notification.querySelector("p").innerText = message;
-
-    setTimeout(() => {
-        notification.style.opacity = "0";
-        notification.style.visibility = "hidden";
-        notification.style.display = "none";
-    }, 1000);
+    fetch(`CartURL?service=add2cart&productID=${productId}&color=${encodeURIComponent(color)}&storage=${storage}&quantity=${quantity}`, {
+        method: "POST",
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Kiểm tra kết quả trả về từ server
+        if (data.status === "success") {
+            showCartNotification("Sản phẩm đã được thêm vào giỏ hàng thành công!");
+            updateCartDisplay();
+        } else {
+            showCartNotification(data.message);
+        }
+    })
+    .catch(error => {
+        console.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng:", error);
+        showCartNotification("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
+    });
 }
 
+// Hàm hiển thị thông báo giỏ hàng tùy chỉnh
+function showCartNotification(message) {
+    let notification = document.getElementById("cart-notification");
+    notification.querySelector("p").textContent = message;  // Cập nhật nội dung thông báo
+    notification.classList.add("show");  // Hiển thị thông báo
 
+    setTimeout(() => {
+        notification.classList.remove("show");  // Ẩn thông báo sau 3 giây
+    }, 3000);
+}
+
+function updateCartDisplay() {
+    console.log("Giỏ hàng đã được cập nhật!");
+}

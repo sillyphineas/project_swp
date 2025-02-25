@@ -1,6 +1,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User" %>
+<%@ page import="java.math.BigDecimal" %>
+
+<%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User,entities.ProductVariant" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -27,7 +29,93 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
+    <style>
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
+        .pagination-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .active-page {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .pagination-btn:focus {
+            outline: none;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #ccc;
+            color: #999;
+            pointer-events: none;
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            width: 30px; /* Đặt lại kích thước nhỏ hơn */
+            height: 30px; /* Đặt lại kích thước nhỏ hơn */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px; /* Giảm kích thước chữ */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background-color: #ff6600; /* Màu cam khi hover */
+            color: white;
+        }
+
+        .active-page {
+            background-color: #ff6600; /* Màu cam khi ở trang hiện tại */
+            color: white;
+            font-weight: bold;
+        }
+
+        .pagination-btn:focus {
+            outline: none;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #ccc;
+            color: #999;
+            pointer-events: none;
+        }
+
+    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -92,7 +180,7 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="OrderController"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
@@ -166,89 +254,122 @@
                     </ol>
                 </div>
                 <div class="cart-header">
-                    <h3>🛒 Giỏ hàng của bạn</h3>
+                    <h3>🛒 Your Shopping Cart</h3>
                 </div>
                 <div class="cart-content">
-                    <table class="cart-table">
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select_all"></th>
-                                <th>Item</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total</th>
-                                <th>Remove</th>
+                    <form id="checkoutForm" action="CartURL" method="POST">
+                        <input type="hidden" name="service" value="checkOut">
+                        <table class="cart-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="select_all"></th>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
+                                    int currentPage = (int) request.getAttribute("currentPage");
+                                    int totalPages = (int) request.getAttribute("totalPages");
+                                    if (cartItems != null && !cartItems.isEmpty()) { 
+                                        for (CartItem item : cartItems) {
+                                            Product product = item.getProduct();
+                                            ProductVariant productVariant = item.getProductVariant();
+                                %>
+                                <tr class="cart-row" id="row_<%= item.getCartItemID() %>">
+                                    <td><input type="checkbox" class="product-checkbox" name="selectedItems" value="<%= item.getCartItemID() %>"></td>
+                                    <td class="cart-product">
+                                        <div class="cart-product-content">
+                                            <img src="<%= product.getImageURL() %>" class="product-img">
+                                            <div class="product-info">
+                                                <span class="product-name" style="display: block; font-size: 16px; font-weight: bold; text-align: left;">
+                                                    <%= product.getName() %>
+                                                </span>
+                                                <span class="product-variant" style="display: block; font-size: 14px; text-align: left; margin-top: -20px;">
+                                                    <%= productVariant.getColor() %> / <%= productVariant.getStorage() %>GB
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="cart-price">₫<%= String.format("%,.0f", productVariant.getPrice()) %></td>
+                                    <td class="cart-quantity">
+                                        <button type="button" class="quantity-btn minus-btn" onclick="updateQuantity(-1, <%= item.getCartItemID() %>, event)">−</button>
+                                        <input class="cart-quantity-input" id="quantity_<%= item.getCartItemID() %>" type="number" value="<%= item.getQuantity() %>" min="1" max ="<%=productVariant.getStock()%>" readonly>
+                                        <button type="button" class="quantity-btn plus-btn" onclick="updateQuantity(+1, <%= item.getCartItemID() %>, event)">+</button>
+                                    </td>
+                                    <td class="cart-total-price" id="total_<%= item.getCartItemID() %>">
+                                        ₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %>
+                                    </td>
+                                    <td class="cart-action">
+                                        <a class="cart-delete" href="javascript:void(0)" onclick="removeItem(<%= item.getCartItemID() %>, event)">🗑️</a>
+                                    </td>
+                            <input type="hidden" name="cartItemId_<%= item.getCartItemID() %>" value="<%= item.getCartItemID() %>">
+                            <!-- Cập nhật input hidden để gửi quantity mới -->
+                            <input type="hidden" name="quantity_<%= item.getCartItemID() %>" value="<%= item.getQuantity() %>">
                             </tr>
-                        </thead>
-                        <tbody>
-                            <% 
-                                List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
-                                if (cartItems != null && !cartItems.isEmpty()) { 
-                                    for (CartItem item : cartItems) {
-                                    Product product = item.getProduct();
-                            %>
-                            <tr class="cart-row" id="row_<%= item.getCartItemID() %>">
-                                <td><input type="checkbox" class="product-checkbox" data-id="<%= item.getCartItemID() %>"></td>
-                                <td class="cart-product">
-                                    <div class="cart-product-content">
-                                        <img src="<%= product.getImageURL() %>" alt="Sản phẩm" class="product-img">
-                                        <span class="product-name"><%= product.getName() %></span>
-                                    </div>
-                                </td>
-                                <td class="cart-price">₫<%= product.getPrice() %></td>
-                                <td class="cart-quantity">
-                                    <button class="quantity-btn minus-btn" onclick="updateQuantity(-1, <%= item.getCartItemID() %>)">−</button>
-                                    <input class="cart-quantity-input" id="quantity_<%= item.getCartItemID() %>" 
-                                           type="number" value="<%= item.getQuantity() %>" min="1" readonly>
-                                    <button class="quantity-btn plus-btn" onclick="updateQuantity(1, <%= item.getCartItemID() %>)">+</button>
-                                </td>
-                                <td class="cart-total-price" id="total_<%= item.getCartItemID() %>">₫<%= item.getTotalPrice() %></td>
-                                <td class="cart-action">
-                                    <a class="cart-delete" href="javascript:void(0)" onclick="removeItem(<%= item.getCartItemID() %>)">
-                                        🗑️
-                                    </a>
-                                </td>
-                            </tr>
-                            <% } } %>
-                        </tbody>
-                    </table>
-                </div>
+                            <% } } else { %>
+                            <tr><td colspan="6">Your cart is empty!</td></tr>
+                            <% } %>
+                            </tbody>
+                        </table>
 
-                <div class="cart-footer">
-                    <div class="cart-options">
-                        <label><input type="checkbox" id="select_all_footer"> Select All</label>
-                    </div>
-                    <span id="total-price"> Total Price: ₫0</span>
-                    <button class="btn-cart-checkout" onclick="checkoutSelectedItems()">Mua Hàng</button>
+                        <!-- Pagination -->
+                        <div class="pagination-container">
+                            <% if (totalPages > 1) { %>
+                            <% for (int i = 1; i <= totalPages; i++) { %>
+                            <a href="CartURL?service=showCart&page=<%= i %>" class="pagination-btn <%= (i == currentPage) ? "active-page" : "" %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                            <% } %>
+                        </div>
+
+                        <div class="cart-footer">
+                            <div class="cart-options">
+                                <label><input type="checkbox" id="select_all_footer"> Select All</label>
+                            </div>
+                            <span id="total-price"> Total Price: ₫<%= String.format("%,.0f", ((BigDecimal) request.getAttribute("totalOrderPrice")).doubleValue()) %>
+                            </span>
+                            <button class="btn-cart-checkout" type="submit">Checkout</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </section>
 
 
 
-        <div class="recommended-products">
-            <div class="header">
-                <h2>You May Also Like</h2>
-                <a href="ProductController" class="view-all">View ALL ></a>
+
+
+        <div class="recommended-products" style="margin-top: 20px;">
+            <div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="font-size: 22px; font-weight: bold;">You May Also Like</h2>
+                <a href="ProductController" class="view-all" style="color: #e67e22; font-weight: bold; text-decoration: none;">View ALL ></a>
             </div>
 
-            <div class="product-grid">
+            <div class="product-grid" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
                 <c:forEach var="product" items="${listpro}" varStatus="status">
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="${product.imageURL}" alt="${product.name}">
+                    <div class="product-item" style="width: 220px; background: white; padding: 12px; border-radius: 8px; box-shadow: 0px 2px 6px rgba(0,0,0,0.1); text-align: center;">
+                        <div class="product-image" style="width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="${product.imageURL}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain;">
                         </div>
-                        <div class="product-info">
-                            <p class="product-name">${product.name}</p>
-                            <p class="product-price">đ${product.price}</p>
-                            <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
-                                <i class="fa fa-shopping-cart"></i> Thêm vào giỏ
+                        <div class="product-info" style="margin-top: 10px;">
+                            <p class="product-name" style="font-weight: bold; font-size: 16px; color: #333; margin-bottom: 5px;">${product.name}</p>
+                            <p class="product-price" style="font-weight: bold; color: #e74c3c; font-size: 16px; margin-bottom: 10px;">₫${String.format("%,.0f", product.variantPrice)}</p>
+                            <a href="javascript:void(0);" onclick="addToCart(${product.id})"
+                               style="display: block; background-color: #e67e22; color: white; padding: 8px; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                                <i class="fa fa-shopping-cart"></i> Add to Cart
                             </a>
                         </div>
                     </div>
                 </c:forEach>
             </div>
         </div>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -412,7 +533,9 @@
             <span class="checkmark">✔</span>
             <p>Product added to cart successfully!</p>
         </div>
+        <script>
 
+        </script>
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
