@@ -8,8 +8,10 @@ package controller;
 
 import entity.Brand;
 import entity.Product;
+
 import entity.User;
 import entity.ProductVariant;
+
 import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,7 +24,9 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
+
 import model.DAOProductVariant;
+
 
 /**
  *
@@ -76,9 +80,11 @@ public class ProductDetailController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        DAOProduct dao = new DAOProduct();
+       DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
+
         DAOProductVariant daoProductVariants = new DAOProductVariant();
+
         Vector productList = new Vector();
         Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));

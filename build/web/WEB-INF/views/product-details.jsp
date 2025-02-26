@@ -315,6 +315,7 @@
 
                             </div>
                             <div class="col-sm-7">
+
                                 <form action="CartURL" method="POST" onsubmit="event.preventDefault(); addToCart();">
                                     <input type="hidden" id="productID" name="productID" value="${product.id}">
                                     <input type="hidden" name="service" value="add2cart">
@@ -329,11 +330,11 @@
                                                 <c:forEach var="variant" items="${variants}">
                                                     <option value="${variant.storage}" data-price="${variant.price}" data-color="${variant.color}">
                                                         ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
+
                                                     </option>
                                                 </c:forEach>
                                             </select>
                                         </p>
-
                                         <p><b>Color:</b>
                                             <select id="colorSelector" class="form-control" name="color">
                                                 <c:forEach var="variant" items="${variants}">
@@ -342,9 +343,11 @@
                                             </select>
                                         </p>
 
+
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
+
 
                                         <p><b>Availability: </b> <label style="color: black"></label></p>
                                         <p><b>Condition:</b> New</p>
@@ -354,6 +357,7 @@
                                                 <p><b>Brand: </b>${brand.name}</p>
                                             </c:if>
                                         </c:forEach>
+
 
                                         <p><b>Description:</b> ${product.description}</p>
 
@@ -365,6 +369,7 @@
                                     </div>
                                 </form>
                             </div>
+
 
 
 
@@ -387,13 +392,16 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
+
                                                             <li class="list-group-item"><b>Availability:</b></li>
+
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
                                                             <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
 
                                                             <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize}</li>
                                                             <li class="list-group-item"><b>Screen Type:</b> ${product.screenType}</li>
                                                             <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
+
                                                         </ul>
                                                     </div>
                                                     <div class="col-sm-6">
@@ -599,6 +607,7 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+
         <script src="js/cart.js"></script>
         <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -621,7 +630,6 @@
                 });
         
         </script>
-
     </body>
 </html>
 

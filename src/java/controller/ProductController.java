@@ -33,6 +33,7 @@ public class ProductController extends HttpServlet {
             return;
         }
 
+
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
 
@@ -91,6 +92,7 @@ public class ProductController extends HttpServlet {
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/shop.jsp");
         rd.forward(request, response);
     }
+
     
 }
 

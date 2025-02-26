@@ -194,10 +194,7 @@
                     <th>Gender</th>
                     <td>${user.gender ? 'Male' : 'Female'}</td>
                 </tr>
-                <tr>
-                    <th>Address</th>
-                    <td>${user.address}</td>
-                </tr>
+                
                 <tr>
                     <th>Date of Birth</th>
                     <td>${user.dateOfBirth}</td>

@@ -1,8 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.math.BigDecimal" %>
 
 <%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>

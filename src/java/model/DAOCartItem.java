@@ -5,10 +5,12 @@
  */
 package model;
 
+
 import entity.Cart;
 import entity.CartItem;
 import entity.Product;
 import java.math.BigDecimal;
+
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;

@@ -4,7 +4,9 @@
  */
 package controller;
 
+
 import entity.Address;
+
 import entity.Cart;
 import entity.CartItem;
 import entity.Order;
@@ -41,6 +43,7 @@ import model.DAOProductVariant;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+
 /**
  *
  * @author ASUS
@@ -58,6 +61,7 @@ public class CartController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+
             throws ServletException, IOException, SQLException {
         //Authorize
         HttpSession session = request.getSession(false);
@@ -74,6 +78,7 @@ public class CartController extends HttpServlet {
         DAOCart dao = new DAOCart();
         DAOCartItem daoItem = new DAOCartItem();
         DAOProduct daoPro = new DAOProduct();
+
         DAOProductVariant daoProVariant = new DAOProductVariant();
         DAOOrder daoOrder = new DAOOrder();
         DAOOrderDetail daoOD = new DAOOrderDetail();
@@ -131,6 +136,7 @@ public class CartController extends HttpServlet {
 
                     request.setAttribute("cartItems", cartItems);
                     request.setAttribute("totalOrderPrice", totalOrderPrice);
+
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
                 } else {
@@ -293,11 +299,13 @@ public class CartController extends HttpServlet {
                 }
                 Cart cart = dao.getCartByCustomerID(customerID);
                 if (cart == null) {
+
                     cart = new Cart();
                     cart.setCustomerID(customerID);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
+
                     cart.setCartStatus("active");
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
@@ -402,6 +410,7 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
@@ -420,11 +429,13 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**
