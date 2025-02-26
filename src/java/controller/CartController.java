@@ -4,11 +4,15 @@
  */
 package controller;
 
+
+import entity.Address;
+
 import entity.Cart;
 import entity.CartItem;
 import entity.Order;
 import entity.OrderDetail;
 import entity.Product;
+import entity.ProductVariant;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -23,15 +27,22 @@ import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.DAOAddress;
 import model.DAOCart;
 import model.DAOCartItem;
 import model.DAOOrder;
 import model.DAOOrderDetail;
 import model.DAOProduct;
+import model.DAOProductVariant;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 
 /**
  *
@@ -50,7 +61,8 @@ public class CartController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+            throws ServletException, IOException, SQLException {
         //Authorize
         HttpSession session = request.getSession(false);
         User user = null;
@@ -66,286 +78,321 @@ public class CartController extends HttpServlet {
         DAOCart dao = new DAOCart();
         DAOCartItem daoItem = new DAOCartItem();
         DAOProduct daoPro = new DAOProduct();
+
+        DAOProductVariant daoProVariant = new DAOProductVariant();
         DAOOrder daoOrder = new DAOOrder();
         DAOOrderDetail daoOD = new DAOOrderDetail();
+        DAOAddress daoAdd = new DAOAddress();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
+            Vector<Product> listpro = daoPro.getLatestProducts();
+            request.setAttribute("listpro", listpro);
+            List<Address> addresses = daoAdd.getAddressesByUserId(customerID);
+            request.setAttribute("userAddresses", addresses);
             if (service == null) {
                 service = "showCart";
             }
-//            if (customerID == null || customerID == 0) {
-//                request.setAttribute("error", "You need to be logged in to view your cart.");
-//                request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
-//                return;
-//            }
-//            if (service.equals("search")) {
-//                String query = request.getParameter("query");
-//
-//                if (query == null || query.trim().isEmpty()) {
-//                    request.setAttribute("error", "Please enter a search term!");
-//                    request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
-//                    return;
-//                }
-//
-//                Cart cart = dao.getCartByCustomerID(customerID);
-//
-//                if (cart == null) {
-//                    request.setAttribute("error", "Your cart is empty!");
-//                    request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
-//                    return;
-//                }
-//
-//                List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-//
-//                // Kiểm tra nếu cartItems không phải null và không trống
-//                if (cartItems == null || cartItems.isEmpty()) {
-//                    request.setAttribute("error", "No items found in your cart!");
-//                    request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
-//                    return;
-//                }
-//
-//                // Lọc các sản phẩm theo từ khóa
-//                List<CartItem> filteredCartItems = cartItems.stream()
-//                        .filter(item -> {
-//                            Product product = item.getProduct();
-//                            return product != null
-//                                    && (product.getName().toLowerCase().contains(query.toLowerCase())
-//                                    || String.valueOf(product.getPrice()).contains(query));
-//                        })
-//                        .collect(Collectors.toList()); // Sử dụng collect thay vì toList để đảm bảo tương thích
-//
-//                if (filteredCartItems.isEmpty()) {
-//                    request.setAttribute("message", "No results found.");
-//                }
-//
-//                // Tính tổng giá trị sau tìm kiếm
-//                double totalOrderPrice = filteredCartItems.stream()
-//                        .mapToDouble(CartItem::getTotalPrice)
-//                        .sum();
-//
-//                // Truyền danh sách sản phẩm và tổng giá trị vào request
-//                request.setAttribute("cartItems", filteredCartItems);
-//                request.setAttribute("totalOrderPrice", totalOrderPrice);
-//                request.setAttribute("query", query);
-//
-//                request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
-//            }
-            if (service != null && service.equals("updateQuantity")) {
-                try {
-                  
-                    int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
-                    int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
-
-                    if (newQuantity > 0) {
-                        CartItem cartItem = daoItem.getCartItemById(cartItemId);
-
-                        if (cartItem != null) {
-                            cartItem.setQuantity(newQuantity);
-                            double newTotalPrice = cartItem.getPrice() * newQuantity;
-                            cartItem.setTotalPrice(newTotalPrice);
-
-                            daoItem.updateCartItem(cartItem);
-                            response.sendRedirect("CartURL?service=showCart");
-                        }
-                    }
-                    Cart cart = dao.getCartByCustomerID(customerID);
-                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-                    double totalOrderPrice = cartItems.stream()
-                            .mapToDouble(CartItem::getTotalPrice)
-                            .sum();
-                    request.setAttribute("totalOrderPrice", totalOrderPrice);
-                    request.setAttribute("cartItems", cartItems);
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/cart.jsp");
-                    dispatcher.forward(request, response);
-
-                } catch (Exception e) {
-                    response.getWriter().write("Error: " + e.getMessage());
-                }
-            }
-
             if (service.equals("showCart")) {
                 Cart cart = dao.getCartByCustomerID(customerID);
+                int pageSize = 4;
+                int page = 1;
+                String pageParam = request.getParameter("page");
+
+                if (pageParam != null && !pageParam.isEmpty()) {
+                    try {
+                        page = Integer.parseInt(pageParam);
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
+                }
                 if (cart != null) {
-                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-                    Double totalOrderPrice = 0.0;
+                    List<CartItem> allCartItems = dao.getCartItemsByCartID1(cart.getCartID());
+                    int totalItems = allCartItems.size();
+                    int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID(), page, pageSize);
+
+                    BigDecimal totalOrderPrice = BigDecimal.ZERO;
                     for (CartItem item : cartItems) {
-                        Product product = daoPro.getProductById(item.getProductVariantID());
+                        ProductVariant productVariant = daoProVariant.getProductVariantById(item.getProductVariantID());
+                        if (productVariant == null) {
+                            continue;
+                        }
+
+                        Product product = daoPro.getProductById(productVariant.getProductID());
+                        if (product == null) {
+                            continue;
+                        }
+
                         item.setProduct(product);
-                        totalOrderPrice += item.getTotalPrice();
+                        item.setProductVariant(productVariant);
+                        BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+                        BigDecimal price = BigDecimal.valueOf(productVariant.getPrice());
+                        BigDecimal totalPrice = quantity.multiply(price).setScale(2, RoundingMode.HALF_UP);
+                        item.setTotalPrice(totalPrice);
+                        totalOrderPrice = totalOrderPrice.add(totalPrice);
                     }
 
                     request.setAttribute("cartItems", cartItems);
                     request.setAttribute("totalOrderPrice", totalOrderPrice);
+
+                    request.setAttribute("currentPage", page);
+                    request.setAttribute("totalPages", totalPages);
                 } else {
                     request.setAttribute("showMessage", "Your cart is empty!");
                 }
+
                 request.setAttribute("cart", cart);
                 request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
             }
-            if (service.equals("updateQuantity")) {
 
+            if (service.equals("updateQuantity")) {
                 try {
+                    Cart cart = dao.getCartByCustomerID(customerID);
                     int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
                     int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
 
-                    if (newQuantity > 0) {
-                        CartItem cartItem = daoItem.getCartItemById(cartItemId);
+                    if (newQuantity <= 0) {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Quantity must be a positive integer\"}");
+                        return;
+                    }
 
-                        if (cartItem != null) {
-                            cartItem.setQuantity(newQuantity);
-                            double newTotalPrice = cartItem.getPrice() * newQuantity;
-                            cartItem.setTotalPrice(newTotalPrice);
+                    CartItem cartItem = daoItem.getCartItemById(cartItemId);
+                    if (cartItem != null) {
+                        cartItem.setQuantity(newQuantity);
+                        BigDecimal price = BigDecimal.valueOf(cartItem.getPrice());
+                        BigDecimal quantity = BigDecimal.valueOf(newQuantity);
+                        BigDecimal newTotalPrice = price.multiply(quantity).setScale(2, RoundingMode.HALF_UP); // Nhân và làm tròn
+                        daoItem.updateCartItem(cartItem);
 
-                            daoItem.updateCartItem(cartItem);
-                            response.sendRedirect("CartURL?service=showCart");
+                        BigDecimal totalOrderPrice = BigDecimal.ZERO;
+                        List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
+                        for (CartItem item : cartItems) {
+                            totalOrderPrice = totalOrderPrice.add(item.getTotalPrice()).setScale(2, RoundingMode.HALF_UP);
+                        }
+
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"success\", \"totalOrderPrice\": \"" + totalOrderPrice + "\"}");
+                    } else {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Product not found in cart\"}");
+                    }
+                } catch (NumberFormatException e) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Invalid input format\"}");
+                } catch (Exception e) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Error updating cart\"}");
+                }
+            }
+
+            if (service.equals("removeItem")) {
+                try {
+                    int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
+
+                    CartItem cartItem = daoItem.getCartItemById(cartItemId);
+                    if (cartItem != null) {
+
+                        int rowsAffected = daoItem.delete(cartItem.getCartItemID());
+
+                        if (rowsAffected > 0) {
+
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\": \"success\"}");
+                        } else {
+
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\": \"error\", \"message\": \"Failed to delete product\"}");
+                        }
+                    } else {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Product not found\"}");
+                    }
+                } catch (Exception e) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Error processing request: " + e.getMessage() + "\"}");
+                }
+            }
+
+            if (service.equals("checkOut")) {
+                String[] selectedItems = request.getParameterValues("selectedItems");
+                if (selectedItems == null || selectedItems.length == 0) {
+                    Cart cart = dao.getCartByCustomerID(customerID);
+                    if (cart != null) {
+                        List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
+                        request.setAttribute("cartItems", cartItems);
+                        request.setAttribute("error", "Bạn chưa chọn sản phẩm nào để thanh toán.");
+                        request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
+                    }
+                } else {
+                    for (String selectedItemID : selectedItems) {
+                        int cartItemId = Integer.parseInt(selectedItemID);
+                        String quantityParam = request.getParameter("quantity_" + cartItemId);
+
+                        if (quantityParam != null) {
+                            int newQuantity = Integer.parseInt(quantityParam);
+                            CartItem cartItem = daoItem.getCartItemById(cartItemId);
+                            if (cartItem != null) {
+                                cartItem.setQuantity(newQuantity);
+                                BigDecimal price = BigDecimal.valueOf(cartItem.getPrice()); // Chuyển từ double sang BigDecimal
+                                BigDecimal newquantity = BigDecimal.valueOf(newQuantity); // Chuyển newQuantity thành BigDecimal
+                                BigDecimal totalPrice = price.multiply(newquantity).setScale(2, RoundingMode.HALF_UP); // Nhân và làm tròn
+                                cartItem.setTotalPrice(totalPrice);
+                                daoItem.updateCartItem(cartItem);
+                            }
+                        }
+                    }
+                    BigDecimal totalOrderPrice = BigDecimal.ZERO;
+                    List<CartItem> selectedCartItems = new ArrayList<>();
+                    Cart cart = dao.getCartByCustomerID(customerID);
+                    if (cart != null) {
+                        List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
+                        for (CartItem item : cartItems) {
+                            for (String selectedItemID : selectedItems) {
+                                if (Integer.toString(item.getCartItemID()).equals(selectedItemID)) {
+                                    ProductVariant productVariant = daoProVariant.getProductVariantById(item.getProductVariantID());
+                                    if (productVariant != null) {
+                                        Product product = daoPro.getProductById(productVariant.getProductID());
+                                        if (product != null) {
+                                            item.setProduct(product);
+                                            item.setProductVariant(productVariant);
+                                            totalOrderPrice = totalOrderPrice.add(item.getTotalPrice()).setScale(2, RoundingMode.HALF_UP);
+                                            selectedCartItems.add(item);
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
 
-                    Cart cart = dao.getCartByCustomerID(customerID);
-
-                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-                    double totalOrderPrice = 0.0;
-                    for (CartItem item : cartItems) {
-                        totalOrderPrice += item.getTotalPrice();
+                    if (!selectedCartItems.isEmpty()) {
+                        request.setAttribute("cartItems", selectedCartItems);
+                        request.setAttribute("totalOrderPrice", totalOrderPrice);
+                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                    } else {
+                        request.setAttribute("error", "Bạn chưa chọn sản phẩm nào để thanh toán.");
+                        request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
                     }
-
-                    response.getWriter().write(String.format("%.2f", totalOrderPrice));
-                } catch (NumberFormatException e) {
-                    response.getWriter().write("Invalid input.");
-                } catch (Exception e) {
-                    response.getWriter().write("Error updating cart.");
                 }
-            }
-            if (service.equals("removeItem")) {
-                int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
-                try {
-                    dao.deleteCartItem(cartItemId);
-                    response.sendRedirect("CartURL?service=showCart");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    response.getWriter().println("Error removing item from cart.");
-                }
-            }
-            if (service.equals("checkOut")) {
-                Cart cart = dao.getCartByCustomerID(customerID);
-                if (cart != null) {
-                    List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID());
-                    double totalOrderPrice = 0.0;
-
-                    for (CartItem item : cartItems) {
-                        Product product = daoPro.getProductById(item.getProductVariantID());
-                        item.setProduct(product);
-                        totalOrderPrice += item.getTotalPrice();
-                    }
-
-                    String fullName = (String) session.getAttribute("Name");
-                    String email = (String) session.getAttribute("Email");
-                    String PassHash = (String) session.getAttribute("PassHash");
-                    String mobile = (String) session.getAttribute("PhoneNumber");
-                    String address = (String) session.getAttribute("Address");
-
-                    request.setAttribute("cartItems", cartItems);
-                    request.setAttribute("totalOrderPrice", totalOrderPrice);
-                    request.setAttribute("fullName", fullName);
-                    request.setAttribute("email", email);
-                    request.setAttribute("PassHash", PassHash);
-                    request.setAttribute("mobile", mobile);
-                    request.setAttribute("address", address);
-                } else {
-                    request.setAttribute("error", "Your cart is empty!");
-                }
-                request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
             }
 
             if (service.equals("add2cart")) {
-
                 int productID = Integer.parseInt(request.getParameter("productID"));
+                String color = request.getParameter("color");
+                int storage = Integer.parseInt(request.getParameter("storage"));
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
+                System.out.println(productID + "," + color + "," + storage + "," + quantity);
+                ProductVariant productVariant = daoProVariant.getProductVariantByDetails(productID, color, storage);
 
+                if (productVariant == null) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Product variant not found!\"}");
+                    return;
+                }
+                if (productVariant.getStock() < quantity) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Not enough stock available! Only " + productVariant.getStock() + " units left.\"}");
+                    return;
+                }
                 Cart cart = dao.getCartByCustomerID(customerID);
-                System.out.println(cart);
-
                 if (cart == null) {
-                    System.out.println("Creating new cart for CustomerID: " + customerID);
+
                     cart = new Cart();
                     cart.setCustomerID(customerID);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
-                    cart.setCartStatus("active"); 
+
+                    cart.setCartStatus("active");
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
                 }
-
-                // Kiểm tra xem sản phẩm đã có trong giỏ chưa
-                CartItem existingItem = daoItem.getCartItemByCartIDAndProductID(cart.getCartID(), productID);
-                int existingQuantity = (existingItem != null) ? existingItem.getQuantity() : 0;
-                request.setAttribute("existingQuantity", existingQuantity);
+                CartItem existingItem = daoItem.getCartItemByCartIDAndProductVariantID(cart.getCartID(), productVariant.getId());
                 if (existingItem != null) {
-
-                    int newQuantity = existingItem.getQuantity() + quantity;  
-
-                    if (newQuantity > 0) {
-                        // Nếu số lượng mới hợp lệ (>= 1), cập nhật giỏ hàng
-                        existingItem.setQuantity(newQuantity);
-                        existingItem.setTotalPrice(existingItem.getPrice() * newQuantity); 
-                        daoItem.updateCartItem(existingItem); 
-                    } else {
-                        try {
-                            daoItem.removeCartItem(existingItem.getCartItemID());
-                        } catch (SQLException ex) {
-                            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                } else {
-                    Product product = daoPro.getProductById(productID);
-                    if (product != null) {
-                        CartItem newItem = new CartItem();
-                        newItem.setCartID(cart.getCartID());
-                        newItem.setProductVariantID(productID);
-                        newItem.setQuantity(quantity); 
-                        newItem.setPrice(product.getPrice());
-                        newItem.setTotalPrice(product.getPrice() * quantity); 
-                        daoItem.addCartItem(newItem);
-                    } else {
-                        request.setAttribute("error", "Product not found!");
-                        request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                    int newQuantity = existingItem.getQuantity() + quantity;
+                    if (productVariant.getStock() < newQuantity) {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Not enough stock available! Only " + productVariant.getStock() + " units left.\"}");
                         return;
                     }
+                    BigDecimal price = BigDecimal.valueOf(productVariant.getPrice());
+                    BigDecimal newquantity = BigDecimal.valueOf(newQuantity);
+                    BigDecimal totalPrice = price.multiply(newquantity).setScale(2, RoundingMode.HALF_UP);
+                    existingItem.setQuantity(newQuantity);
+                    System.out.println(totalPrice);
+                    existingItem.setTotalPrice(totalPrice);
+                    System.out.println("sau" + existingItem.getQuantity());
+                    System.out.println(daoItem.updateCartItem(existingItem));
+                } else {
+                    CartItem newItem = new CartItem();
+                    newItem.setCartID(cart.getCartID());
+                    newItem.setProductVariantID(productVariant.getId());
+                    newItem.setQuantity(quantity);
+                    newItem.setPrice(productVariant.getPrice());
+                    BigDecimal price = BigDecimal.valueOf(productVariant.getPrice()); // Chuyển từ double sang BigDecimal
+                    BigDecimal qty = BigDecimal.valueOf(quantity); // Chuyển quantity thành BigDecimal
+                    BigDecimal totalPrice = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
+                    newItem.setTotalPrice(totalPrice);
+                    daoItem.addCartItem(newItem);
                 }
-                session.setAttribute("cartMessage", "Product added to cart successfully!");
-                response.sendRedirect("ProductController");
+
+                double totalCartPrice = daoItem.calculateTotalCartPrice(cart.getCartID());
+                cart.setTotalPrice(totalCartPrice);
+                dao.updateCart(cart);
+
+                response.setContentType("application/json");
+                response.getWriter().write("{\"status\": \"success\", \"message\": \"Product added to cart successfully!\"}");
             }
 
             if (service.equals("submitOrder")) {
-                String fullName = request.getParameter("fullName");
-                String email = request.getParameter("email");
-                String address1 = request.getParameter("address1");
-                String address2 = request.getParameter("address2");
-                String message = request.getParameter("message");
-                Cart cart = dao.getCartByCustomerID(customerID);
-                if (cart == null || dao.getCartItemsByCartID(cart.getCartID()).isEmpty()) {
-                    request.setAttribute("error", "Your cart is empty or invalid!");
-                    response.sendRedirect("checkout.jsp");
+                String selectedAddressId = request.getParameter("addressSelect");
+                String recipientName = request.getParameter("newFullName");
+                String recipientPhone = request.getParameter("newPhone");
+                int paymentMethod = Integer.parseInt(request.getParameter("paymentMethod"));
+
+                if (selectedAddressId == null || selectedAddressId.isEmpty()) {
+                    response.sendRedirect("checkout.jsp?error=NoAddressSelected");
                     return;
                 }
+
+                int addressId = Integer.parseInt(selectedAddressId);
+                Address address = daoAdd.getAddressById(addressId);
+                if (address == null) {
+                    response.sendRedirect("checkout.jsp?error=InvalidAddress");
+                    return;
+                }
+
+                List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+                if (cartItems == null || cartItems.isEmpty()) {
+                    response.sendRedirect("checkout.jsp?error=EmptyCart");
+                    return;
+                }
+
+                double totalPrice = (double) session.getAttribute("totalOrderPrice");
+
                 Order order = new Order();
                 order.setBuyerID(customerID);
-                order.setShippingAddress(address1 + " " + address2);
-                order.setMessage(message);
-                order.setTotalPrice(cart.getTotalPrice());
-                order.setOrderTime(new Date());
+                order.setShippingAddress(address.getFullAddress());
+                order.setTotalPrice(totalPrice);
+                order.setDiscountedPrice(0);
+                order.setPaymentMethod(paymentMethod);
+                order.setRecipientName(recipientName);
+                order.setRecipientPhone(recipientPhone);
                 order.setOrderStatus("Pending");
-                int orderId = daoOrder.addOrder(order);
-                if (orderId == -1) {
-                    request.setAttribute("error", "Order submission failed due to a technical error.");
-                    response.sendRedirect("checkout.jsp");
-                    return;
+
+                int orderId = daoOrder.addOrder(order, cartItems);
+
+                if (orderId > 0) {
+                    daoItem.clearCart(customerID);
+                    session.removeAttribute("selectedCartItems");
+                    session.removeAttribute("totalOrderPrice");
+                    response.sendRedirect("order-success.jsp");
+                } else {
+                    response.sendRedirect("order-fail.jsp");
                 }
-                session.setAttribute("cart", null); // Clear the cart from session
-                session.setAttribute("checkoutMessage", "Checkout Success! Your order has been submitted.");
-                response.sendRedirect("HomePageController");
             }
 
         }
@@ -363,7 +410,12 @@ public class CartController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -377,7 +429,13 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(CartController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**

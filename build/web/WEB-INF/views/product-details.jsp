@@ -154,7 +154,7 @@
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -187,14 +187,14 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL">Blog List</a></li>
                                         </ul>
@@ -315,24 +315,26 @@
 
                             </div>
                             <div class="col-sm-7">
-                                <form action="ProductDetailController" method="get">
-                                    <div class="product-information">
-    <!--                                    <img src="${product.imageURL}" class="newarrival" alt="" />-->
-                                        <h2>${product.name}</h2>
-                                        <p><b>Price:</b> <span id="productPrice">$${minPrice}</span></p>
 
+                                <form action="CartURL" method="POST" onsubmit="event.preventDefault(); addToCart();">
+                                    <input type="hidden" id="productID" name="productID" value="${product.id}">
+                                    <input type="hidden" name="service" value="add2cart">
+
+                                    <!-- Thông tin sản phẩm -->
+                                    <div class="product-information">
+                                        <h2>${product.name}</h2>
+                                        <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
 
                                         <p><b>Storage:</b>
-                                            <select id="storageSelector" class="form-control" name="variantID">
+                                            <select id="storageSelector" class="form-control" name="storage">
                                                 <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.id}" data-price="${variant.price}" data-color="${variant.color}">
-                                                        ${variant.storage} GB - ${variant.price}
+                                                    <option value="${variant.storage}" data-price="${variant.price}" data-color="${variant.color}">
+                                                        ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
+
                                                     </option>
                                                 </c:forEach>
                                             </select>
                                         </p>
-
-
                                         <p><b>Color:</b>
                                             <select id="colorSelector" class="form-control" name="color">
                                                 <c:forEach var="variant" items="${variants}">
@@ -340,6 +342,13 @@
                                                 </c:forEach>
                                             </select>
                                         </p>
+
+
+                                        <p><b>Quantity:</b>
+                                            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
+                                        </p>
+
+
                                         <p><b>Availability: </b> <label style="color: black"></label></p>
                                         <p><b>Condition:</b> New</p>
 
@@ -348,17 +357,20 @@
                                                 <p><b>Brand: </b>${brand.name}</p>
                                             </c:if>
                                         </c:forEach>
+
+
                                         <p><b>Description:</b> ${product.description}</p>
-                                        <button type="submit" class="btn btn-fefault cart">
+
+                                        <!-- Nút "Add to cart" -->
+                                        <button type="submit" class="btn btn-default cart">
                                             <i class="fa fa-shopping-cart"></i>
                                             Add to cart
                                         </button>
-                                        <a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a>
                                     </div>
                                 </form>
+                            </div>
 
 
-                            </div> 
 
 
                         </div><!--/product-details-->
@@ -380,19 +392,21 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
-                                                           
+
+                                                            <li class="list-group-item"><b>Availability:</b></li>
+
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
                                                             <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
 
                                                             <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize}</li>
                                                             <li class="list-group-item"><b>Screen Type:</b> ${product.screenType}</li>
                                                             <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
-                                                            <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
+
                                                         </ul>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
-                                                           
+                                                            <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
                                                             <li class="list-group-item"><b>Battery Capacity:</b> ${product.batteryCapacity}</li>
                                                             <li class="list-group-item"><b>Operating System:</b> ${product.os}</li>
                                                             <li class="list-group-item"><b>SIM Type:</b> ${product.simType}</li>
@@ -578,38 +592,44 @@
             </div>
 
         </footer><!--/Footer-->
-
-
-
+        <!--        <div id="cart-notification" class="hidden" style="position: fixed; bottom: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; display: none;">
+                    <span class="checkmark" style="font-size: 20px; margin-right: 5px;">✔</span>
+                    <p style="display: inline; margin: 0;">Product added to cart successfully!</p>
+                </div>-->
+        <div id="cart-notification" class="hidden">
+            <span class="checkmark">✔</span>
+            <p>Product added to cart successfully!</p>
+        </div>
+        <script>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                var storageSelector = document.getElementById("storageSelector");
-                var productPrice = document.getElementById("productPrice");
-                var colorSelector = document.getElementById("colorSelector");
 
-                // Lắng nghe sự kiện khi người dùng chọn storage
-                storageSelector.addEventListener("change", function () {
+        <script src="js/cart.js"></script>
+        <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                            var storageSelector = document.getElementById("storageSelector");
+                    var productPrice = document.getElementById("productPrice");
+                    var colorSelector = document.getElementById("colorSelector");
+                    // Lắng nghe sự kiện khi người dùng chọn storage
+                    storageSelector.addEventListener("change", function () {
                     var selectedOption = storageSelector.options[storageSelector.selectedIndex];
                     var price = selectedOption.getAttribute("data-price");
                     var color = selectedOption.getAttribute("data-color");
-
                     productPrice.textContent = "$" + price;
                     for (var i = 0; i < colorSelector.options.length; i++) {
-                        if (colorSelector.options[i].value === color) {
-                            colorSelector.selectedIndex = i;
-                            break;
-                        }
+                    if (colorSelector.options[i].value === color) {
+                    colorSelector.selectedIndex = i;
+                    break;
                     }
+                    }
+                    });
                 });
-            });
+        
         </script>
-
-
     </body>
 </html>
+

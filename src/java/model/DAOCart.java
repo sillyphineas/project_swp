@@ -41,13 +41,13 @@ public class DAOCart extends DBConnection {
 
     public int updateCart(Cart other) {
         int n = 0;
-        String sql = "UPDATE [dbo].[Cart]\n"
-                + "   SET [CustomerID] = ?\n"
-                + "      ,[CartStatus] = ?\n"
-                + "      ,[TotalPrice] = ?\n"
-                + "      ,[CreatedAt] = ?\n"
-                + "      ,[UpdatedAt] = ?\n"
-                + " WHERE <CartID = ?>";
+        String sql = "UPDATE Cart "
+                + "SET CustomerID = ?, "
+                + "    CartStatus = ?, "
+                + "    TotalPrice = ?, "
+                + "    CreatedAt = ?, "
+                + "    UpdatedAt = ? "
+                + "WHERE CartID = ?";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getCustomerID());
@@ -165,7 +165,7 @@ public class DAOCart extends DBConnection {
                 cart.setTotalPrice(rs.getDouble("TotalPrice"));
                 cart.setCreatedAt(rs.getString("CreatedAt"));
                 cart.setUpdatedAt(rs.getString("UpdatedAt"));
-                cart.setCartItems(getCartItemsByCartID(cart.getCartID()));
+                cart.setCartItems(getCartItemsByCartID1(cart.getCartID()));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,23 +173,54 @@ public class DAOCart extends DBConnection {
         return cart;
     }
 
-    public List<CartItem> getCartItemsByCartID(int cartID) {
+    public List<CartItem> getCartItemsByCartID1(int cartID) {
         List<CartItem> cartItems = new ArrayList<>();
         String sql = "SELECT * FROM CartItem WHERE CartID = ? AND isDisabled = false";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);) {
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, cartID);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                CartItem item = new CartItem();
-                item.setCartItemID(rs.getInt("CartItemID"));
-                item.setCartID(rs.getInt("CartID"));
-                item.setProductVariantID(rs.getInt("ProductVariantID"));
-                item.setPrice(rs.getDouble("Price"));
-                item.setQuantity(rs.getInt("Quantity"));
-                item.setDiscountAmount(rs.getDouble("DiscountAmount"));
-                item.setTotalPrice(rs.getDouble("TotalPrice"));
-                item.setDisabled(rs.getBoolean("isDisabled"));
-                cartItems.add(item);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    CartItem item = new CartItem();
+                    item.setCartItemID(rs.getInt("CartItemID"));
+                    item.setCartID(rs.getInt("CartID"));
+                    item.setProductVariantID(rs.getInt("ProductVariantID"));
+                    item.setPrice(rs.getDouble("Price"));
+                    item.setQuantity(rs.getInt("Quantity"));
+                    item.setDiscountAmount(rs.getDouble("DiscountAmount"));
+                    item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
+                    item.setDisabled(rs.getBoolean("isDisabled"));
+                    cartItems.add(item);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cartItems;
+    }
+
+    public List<CartItem> getCartItemsByCartID(int cartID, int page, int pageSize) {
+        List<CartItem> cartItems = new ArrayList<>();
+        String sql = "SELECT * FROM CartItem WHERE CartID = ? AND isDisabled = false LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, cartID);
+            stmt.setInt(2, pageSize);
+            stmt.setInt(3, (page - 1) * pageSize);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    CartItem item = new CartItem();
+                    item.setCartItemID(rs.getInt("CartItemID"));
+                    item.setCartID(rs.getInt("CartID"));
+                    item.setProductVariantID(rs.getInt("ProductVariantID"));
+                    item.setPrice(rs.getDouble("Price"));
+                    item.setQuantity(rs.getInt("Quantity"));
+                    item.setDiscountAmount(rs.getDouble("DiscountAmount"));
+                    item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
+                    item.setDisabled(rs.getBoolean("isDisabled"));
+                    cartItems.add(item);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -248,7 +279,10 @@ public class DAOCart extends DBConnection {
 
     public static void main(String[] args) {
         DAOCart dao = new DAOCart();
-//        System.out.println(dao.getCartByCustomerID(8));
+//        System.out.println(dao.getCartItemsByCartID1(1));
+        Cart cart = new Cart(1, 4,"active",0.00, "2025-02-23", "2025-02-23");
+        System.out.println(dao.updateCart(cart));
+//        System.out.println(dao.getCartByCustomerID(4));
 //        Cart cart = dao.getCartByCustomerID(8);
 //        System.out.println(cart);
 //        List<CartItem> list = dao.getCartItemsByCartID(cart.getCartID());
@@ -256,16 +290,14 @@ public class DAOCart extends DBConnection {
 //            System.out.println(cartItem);
 //        }
 //  
-        Cart cart = new Cart();
-        cart.setCartID(1); // ID của giỏ hàng
-        cart.setCustomerID(1); // ID của khách hàng
-        cart.setCartStatus("Active"); // Trạng thái của giỏ hàng
-        cart.setTotalPrice(250.75); // Tổng giá trị giỏ hàng
-        cart.setCreatedAt("2025-02-05 10:30:00"); // Thời gian tạo giỏ hàng
-        cart.setUpdatedAt("2025-02-05 11:00:00"); // Thời gia
-//        dao.addCart(cart);
+//        Cart cart = new Cart();
+//        cart.setCartID(1); // ID của giỏ hàng
+//        cart.setCustomerID(4); // ID của khách hàng
+//        cart.setCartStatus("Active"); // Trạng thái của giỏ hàng
+//        cart.setTotalPrice(250.75); // Tổng giá trị giỏ hàng
+//        cart.setCreatedAt("2025-02-05 10:30:00"); // Thời gian tạo giỏ hàng
+//        cart.setUpdatedAt("2025-02-05 11:00:00"); // Thời gia
 //        System.out.println(dao.addCart(cart));
-        System.out.println(dao.getCartByCustomerID(8));
 
     }
 }
