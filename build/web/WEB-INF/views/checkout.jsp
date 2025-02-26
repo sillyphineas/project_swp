@@ -5,7 +5,9 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User" %>
+
+<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant,entity.Address" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -21,6 +23,7 @@
         <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
         <link href="css/responsive.css" rel="stylesheet">
+        <link href="css/cart.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -33,74 +36,89 @@
     </head><!--/head-->
     <style>
 
-        textarea {
-            width: 100%;
-            padding: 10px;
+        /* General styles for the form */
+        .shipping-address {
             margin-bottom: 20px;
+            padding: 20px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
         }
 
+        h3 {
+            text-align: center;
+        }
 
-        .submit-container {
-            display: flex;
-            justify-content: center;
+        #currentAddress p {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        #currentAddress {
+            margin-bottom: 20px;
+        }
+
+        #addressOptions {
             margin-top: 20px;
         }
 
-        .submit-btn {
-            padding: 10px 20px;
-            background-color: #4CAF50;
+        #defaultAddress input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        #newAddress select, #newAddress input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+        }
+
+        #changeAddressBtn, #confirmAddressBtn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #ff7f00;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+        }
+
+        #changeAddressBtn:hover, #confirmAddressBtn:hover {
+            background-color: #e67000;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
             font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
         }
 
         .submit-btn:hover {
             background-color: #45a049;
         }
+
+
     </style>
-
-    <script>
-        // Cập nhật số lượng và tính lại tổng giỏ hàng qua AJAX
-        function updateQuantity(cartItemId, price, change) {
-            var quantityField = document.getElementById("quantity_" + cartItemId);
-            var currentQuantity = parseInt(quantityField.value);
-            var newQuantity = currentQuantity + change;
-
-            // Đảm bảo số lượng không nhỏ hơn 1
-            if (newQuantity < 1) {
-                return;
-            }
-
-            // Cập nhật số lượng trên giao diện người dùng
-            quantityField.value = newQuantity;
-
-            // Gửi yêu cầu AJAX để cập nhật số lượng trên server
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'CartURL?service=updateQuantity&cartItemId=' + cartItemId + '&newQuantity=' + newQuantity, true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // Cập nhật giá trị tổng của item sau khi nhận phản hồi từ server
-                    var response = xhr.responseText;
-                    document.getElementById("total_" + cartItemId).innerText = "$" + response;
-
-                    // Cập nhật tổng giỏ hàng
-                    var totalPrice = 0;
-                    var cartItems = document.getElementsByClassName("cart_total_price");
-                    for (var i = 0; i < cartItems.length; i++) {
-                        totalPrice += parseFloat(cartItems[i].innerText.replace('$', ''));
-                    }
-                    document.getElementById("cart_total_price").innerText = "$" + totalPrice;
-                }
-            };
-            xhr.send();
-        }
-
-    </script>
 
     <body>
         <header id="header"><!--header-->
@@ -164,7 +182,7 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
@@ -226,169 +244,81 @@
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
-
-        <section id="cart_items">
-            <div class="container">
-                <div class="breadcrumbs">
-                    <ol class="breadcrumb">
-                        <li><a href="HomePageController">Home</a></li>
-                        <li class="active">Check out</li>
-                    </ol>
-                </div><!--/breadcrums-->
-
-                <div class="step-one">
-                    <h2 class="heading">Step1</h2>
-                </div>
-                <div class="checkout-options">
-                    <h3>New User</h3>
-                    <p>Checkout options</p>
-                    <ul class="nav">
-                        <li>
-                            <label><input type="checkbox"> Register Account</label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> Guest Checkout</label>
-                        </li>
-                        <li>
-                            <a href=""><i class="fa fa-times"></i>Cancel</a>
-                        </li>
-                    </ul>
-                </div><!--/checkout-options-->
-
-                <div class="register-req">
-                    <p>Please use Register And Checkout to easily get access to your order history, or use Checkout as Guest</p>
-                </div><!--/register-req-->
-
-                <div class="shopper-informations">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="shopper-info">
-                                <p>Shopper Information</p>
-                                <form >
-                                    <input type="text" placeholder="Display Name" value="<%= request.getAttribute("fullName")%>" >
-                                    <input type="text" placeholder="User Name" value="<%= request.getAttribute("email")%>" >
-                                    <input type="password" placeholder="Password" value="<%= request.getAttribute("PassHash")%>">
-                                </form>
-                                <a class="btn btn-primary" href="">Get Quotes</a>
-                                <a class="btn btn-primary" href="">Continue</a>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 clearfix">
-                            <div class="bill-to">
-                                <p>Bill To</p>
-                                <div class="form-one">
-                                    <form  action="CartURL">                                        
-                                        <input type="text" placeholder="Title" >
-                                        <input type="text" placeholder="Email*" value="<%= request.getAttribute("email")%>" readonly >
-                                        <input type="text" placeholder="Full Name *" value="<%= request.getAttribute("fullName")%>" >
-                                        <input type="text" placeholder="Address 1 *" value="<%= request.getAttribute("address")%>" >
-                                        <input type="text" placeholder="Address 2">
-                                        <textarea name="message" placeholder="Special Notes for Delivery"></textarea>
-                                        <div class="submit-container">
-                                            <button type="submit" name="service" value="submitOrder" class="submit-btn">Submit Order</button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="review-payment">
-                    <h2>Review & Payment</h2>
-                </div>
-
-                <div class="table-responsive cart_info">
-                    <table class="table table-condensed">
-                        <thead>
-                            <tr class="cart_menu">
-                                <td class="image">Item</td>
-                                <td class="description"></td>
-                                <td class="price">Price</td>
-                                <td class="quantity">Quantity</td>
-                                <td class="total">Total</td>
-                                <td></td>
-                            </tr>
-                        </thead>
-                        <tbody>
+        <section id="checkout_section">
+            <div class="container" style="max-width: 800px; margin: auto;">
+                <div class="shipping-address">
+                    <h3 style="font-size: 24px; font-weight: bold; color: #333;">Shipping Information</h3>
+                    <form id="orderForm" action="CartURL" method="POST">
+                        <label for="addressSelect" style="font-weight: bold;">Select Shipping Address:</label>
+                        <select name="addressSelect" id="addressSelect" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
                             <% 
-                            String error = (String) request.getAttribute("error");
-                            if (error != null) {
+                                // Lấy thông tin địa chỉ người dùng
+                                List<Address> addresses = (List<Address>) request.getAttribute("userAddresses"); 
                             %>
-                        <div class="error"><%= error %></div>
-                        <% 
-                            } 
-                        %>
-                        <%
-                            List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems");
-                            if (cartItems != null && !cartItems.isEmpty()) { 
-                            for (CartItem item : cartItems) {
-                            Product product = item.getProduct();
-                        %>
-                        <tr>
-                            <td class="cart_product">
-                                <a href=""><img src="<%=product.getImageURL()%>" alt=""></a>
-                            </td>
-                            <td class="cart_description">
-                                <h4><a href=""><%=product.getName()%></a></h4>
-                            </td>
-                            <td class="cart_price">
-                                <p><%=product.getPrice()%></p>
-                            </td>
-                            <td class="cart_quantity">
-                                <div class="cart_quantity_button">        
-                                    <!-- Input Số Lượng -->
-                                    <input class="cart_quantity_input" id="quantity_<%= item.getCartItemID() %>" type="text" 
-                                           name="quantity" value="<%= item.getQuantity() %>" autocomplete="off" size="2" readonly>
+                            <% if (addresses != null && !addresses.isEmpty()) { %>
+                            <% for (Address addr : addresses) { %>
+                            <option value="<%= addr.getId() %>">
+                                <%= addr.getAddress() %>, <%= addr.getDistrict() %>, <%= addr.getCity() %>
+                            </option>
+                            <% } %>
+                            <% } else { %>
+                            <option value="">No address available. Please add a new one!</option>
+                            <% } %>
+                        </select>
 
+                        <h4 style="font-size: 20px; font-weight: bold; color: #555;">Recipient Information</h4>
+                        <input type="text" name="newFullName" placeholder="Full Name *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newPhone" placeholder="Phone Number *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+
+                        <div class="review-payment">
+                            <h3 style="font-size: 22px; font-weight: bold; color: #333;">Review & Payment</h3>
+                        </div>
+
+                        <div class="cart_info">
+                            <% 
+                                List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems"); 
+                                if (cartItems != null && !cartItems.isEmpty()) { 
+                                    for (CartItem item : cartItems) {
+                                        Product product = item.getProduct();
+                                        ProductVariant productVariant = item.getProductVariant();
+                            %>
+                            <div style="display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
+                                <img src="<%= product.getImageURL() %>" alt="Product" style="width: 80px; height: 80px; border-radius: 5px; margin-right: 15px;">
+                                <div>
+                                    <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
+                                    <p style="margin: 2px 0; color: #666; font-size: 14px;">Color: <%= productVariant.getColor() %> / Storage: <%= productVariant.getStorage() %>GB</p>
+                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">₫<%= String.format("%,.0f", productVariant.getPrice()) %> x <%= item.getQuantity() %></p>
+                                        <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
                                 </div>
-                            </td>
-                            <td class="cart_total">
-                                <p class="cart_total_price" id="total_<%= item.getCartItemID() %>">$<%= item.getTotalPrice() %></p>
-                            </td>
-                            <td class="cart_delete">
-                                <a class="cart_quantity_delete" href="CartURL?service=removeItem&cartItemId=<%=item.getCartItemID()%>"><i class="fa fa-times"></i></a>
-                            </td>
-                        </tr>
-                        <% }
-                         }  
-                        %>
-                        <tr>
-                            <td colspan="4">&nbsp;</td>
-                            <td colspan="2">
-                                <table class="table table-condensed total-result">
-                                    <tr>
-                                        <td>Cart Sub Total</td>
-                                        <td>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></td>
-                                    </tr>
-                                    <tr class="shipping-cost">
-                                        <td>Shipping Cost</td>
-                                        <td>Free</td>										
-                                    </tr>
-                                    <tr>
-                                        <td>Total</td>
-                                        <td><span>$<%= request.getAttribute("totalOrderPrice")!= null?request.getAttribute("totalOrderPrice") :0 %></span></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="payment-options">
-                    <span>
-                        <label><input type="checkbox"> Direct Bank Transfer</label>
-                    </span>
-                    <span>
-                        <label><input type="checkbox"> Check Payment</label>
-                    </span>
-                    <span>
-                        <label><input type="checkbox"> Paypal</label>
-                    </span>
+                            </div>
+                            <% } } else { %>
+                            <tr><td colspan="6">Your cart is empty!</td></tr>
+                            <% } %>
+                        </div>
+
+                        <div class="payment-options" style="margin-top: 10px;">
+                            <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
+                            <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
+                            <label><input type="radio" name="paymentMethod" value="2"> Bank Transfer</label><br>
+                            <label><input type="radio" name="paymentMethod" value="3"> E-Wallet (Momo, ZaloPay)</label>
+                        </div>
+
+                        <div class="submit-container" style="margin-top: 10px; text-align: center;">
+                            <button type="submit" class="submit-btn" name="service" value="submitOrder" 
+                                    style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
+                                Place Order
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </section> <!--/#cart_items-->
+        </section>
+
+
+
+
+
+
 
 
 
@@ -557,5 +487,7 @@
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/updateQuantity.js"></script>
+        <!--        <script src="js/checkOut.js"></script>-->
     </body>
 </html>

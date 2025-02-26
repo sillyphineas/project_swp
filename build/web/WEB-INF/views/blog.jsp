@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,7 +99,7 @@
                                 <ul class="nav navbar-nav">
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="CartURL?service=checkout"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");

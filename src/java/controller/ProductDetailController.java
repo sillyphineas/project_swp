@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -7,8 +8,10 @@ package controller;
 
 import entity.Brand;
 import entity.Product;
-import entity.ProductVariant;
+
 import entity.User;
+import entity.ProductVariant;
+
 import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,7 +24,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
-import model.DAOProductVariants;
+
+import model.DAOProductVariant;
 
 
 /**
@@ -78,7 +82,9 @@ public class ProductDetailController extends HttpServlet {
         }
        DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
-        DAOProductVariants daoProductVariants = new DAOProductVariants();
+
+        DAOProductVariant daoProductVariants = new DAOProductVariant();
+
         Vector productList = new Vector();
         Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));
