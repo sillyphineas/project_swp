@@ -32,6 +32,7 @@ public class Product {
     private String connectivity;
     private Date createAt;
     private int createdBy;
+    private double variantPrice;
 
     public Product() {
     }
@@ -57,6 +58,7 @@ public class Product {
         this.connectivity = connectivity;
         this.createAt = createAt;
         this.createdBy = createdBy;
+        
     }
 
     public int getId() {
@@ -222,6 +224,14 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" + "id=" + id + ", brandID=" + brandID + ", name=" + name + ", description=" + description + ", isDisabled=" + isDisabled + ", feedbackCount=" + feedbackCount + ", status=" + status + ", imageURL=" + imageURL + ", chipset=" + chipset + ", ram=" + ram + ", screenSize=" + screenSize + ", screenType=" + screenType + ", resolution=" + resolution + ", batteryCapacity=" + batteryCapacity + ", cameraSpecs=" + cameraSpecs + ", os=" + os + ", simType=" + simType + ", connectivity=" + connectivity + ", createAt=" + createAt + ", createdBy=" + createdBy + '}';
+    }
+
+    public double getVariantPrice() {
+        return variantPrice;
+    }
+
+    public void setVariantPrice(double variantPrice) {
+        this.variantPrice = variantPrice;
     }
 
 }

@@ -4,6 +4,10 @@
  */
 package entity;
 
+
+import java.math.BigDecimal;
+
+
 /**
  *
  * @author HP
@@ -14,12 +18,14 @@ public class CartItem {
 	ProductVariantID;
 	private Double Price    ;
 	private int Quantity;
-	private double DiscountAmount,
-	TotalPrice  ;
+	private double DiscountAmount;
+	private BigDecimal TotalPrice  ;
         private boolean  isDisabled  ;
     private Product product;
+    private ProductVariant productVariant;
+            
 
-    public CartItem(int CartItemID, int CartID, int ProductVariantID, Double Price, int Quantity, double DiscountAmount, double TotalPrice, boolean isDisabled) {
+    public CartItem(int CartItemID, int CartID, int ProductVariantID, Double Price, int Quantity, double DiscountAmount, BigDecimal TotalPrice, boolean isDisabled) {
         this.CartItemID = CartItemID;
         this.CartID = CartID;
         this.ProductVariantID = ProductVariantID;
@@ -30,7 +36,7 @@ public class CartItem {
         this.isDisabled = isDisabled;
     }
 
-    public CartItem(int CartItemID, int ProductVariantID, Double Price, int Quantity, double TotalPrice) {
+    public CartItem(int CartItemID, int ProductVariantID, Double Price, int Quantity, BigDecimal TotalPrice) {
         this.CartItemID = CartItemID;
         this.ProductVariantID = ProductVariantID;
         this.Price = Price;
@@ -90,11 +96,11 @@ public class CartItem {
         this.DiscountAmount = DiscountAmount;
     }
 
-    public double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return TotalPrice;
     }
 
-    public void setTotalPrice(double TotalPrice) {
+    public void setTotalPrice(BigDecimal TotalPrice) {
         this.TotalPrice = TotalPrice;
     }
 
@@ -121,7 +127,14 @@ public class CartItem {
         this.isDisabled = isDisabled;
     }
 
-   
+    public ProductVariant getProductVariant() {
+        return productVariant;
+    }
+
+    public void setProductVariant(ProductVariant productVariant) {
+        this.productVariant = productVariant;
+    }
+
         
         
 }

@@ -18,15 +18,16 @@ public class Order {
     private String shippingAddress;    // VARCHAR(255) NOT NULL
     private double totalPrice;         // MONEY NOT NULL
     private double discountedPrice;    // MONEY NOT NULL
-    private byte paymentMethod;        // TINYINT NOT NULL
+    private int paymentMethod;        // TINYINT NOT NULL
     private boolean isDisabled;        // BIT NOT NULL
     private Integer voucherID;         // FOREIGN KEY REFERENCES Vouchers(id)
     private String message;
+    private String RecipientName,
+    RecipientPhone;
     public Order() {
     }
 
-    public Order(int id, int buyerID, byte status, Date orderTime, String orderStatus, Date shippingDate,
-                 String shippingAddress, double totalPrice, double discountedPrice, byte paymentMethod, boolean isDisabled, Integer voucherID) {
+    public Order(int id, int buyerID, byte status, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String message, String RecipientName, String RecipientPhone) {
         this.id = id;
         this.buyerID = buyerID;
         this.status = status;
@@ -39,7 +40,36 @@ public class Order {
         this.paymentMethod = paymentMethod;
         this.isDisabled = isDisabled;
         this.voucherID = voucherID;
+        this.message = message;
+        this.RecipientName = RecipientName;
+        this.RecipientPhone = RecipientPhone;
     }
+
+    public boolean isIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    public String getRecipientName() {
+        return RecipientName;
+    }
+
+    public void setRecipientName(String RecipientName) {
+        this.RecipientName = RecipientName;
+    }
+
+    public String getRecipientPhone() {
+        return RecipientPhone;
+    }
+
+    public void setRecipientPhone(String RecipientPhone) {
+        this.RecipientPhone = RecipientPhone;
+    }
+
+   
 
     // Getters and Setters
     public int getId() {
@@ -114,11 +144,11 @@ public class Order {
         this.discountedPrice = discountedPrice;
     }
 
-    public byte getPaymentMethod() {
+    public int getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(byte paymentMethod) {
+    public void setPaymentMethod(int paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
