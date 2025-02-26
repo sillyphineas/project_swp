@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.math.BigDecimal" %>
 
-<%@page import="java.util.List,entities.Cart,entities.CartItem,entities.Product,jakarta.servlet.http.HttpSession,entities.User,entities.ProductVariant" %>
+<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>

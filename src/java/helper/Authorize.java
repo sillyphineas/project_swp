@@ -4,7 +4,7 @@
  */
 package helper;
 
-import entities.User;
+import entity.User;
 
 /**
  *

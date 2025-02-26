@@ -4,10 +4,9 @@ function addToCart() {
     let storage = document.getElementById("storageSelector").value;
     let quantity = document.getElementById("quantity").value;
 
-    // Kiểm tra nếu productId không hợp lệ, không dùng alert mà gọi thông báo tùy chỉnh
     if (!productId || productId === "undefined") {
         console.error("ERROR: productID is null or undefined in JavaScript!");
-        showCartNotification("Có lỗi xảy ra, vui lòng kiểm tra lại thông tin sản phẩm.");
+        showCartNotification("An error occurred, please check the product information.");
         return;
     }
 
@@ -21,31 +20,29 @@ function addToCart() {
         return response.json();
     })
     .then(data => {
-        // Kiểm tra kết quả trả về từ server
         if (data.status === "success") {
-            showCartNotification("Sản phẩm đã được thêm vào giỏ hàng thành công!");
+            showCartNotification("Product has been successfully added to the cart!");
             updateCartDisplay();
         } else {
             showCartNotification(data.message);
         }
     })
     .catch(error => {
-        console.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng:", error);
-        showCartNotification("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.");
+        console.error("An error occurred while adding the product to the cart:", error);
+        showCartNotification("An error occurred while adding the product to the cart. Please try again.");
     });
 }
 
-// Hàm hiển thị thông báo giỏ hàng tùy chỉnh
 function showCartNotification(message) {
     let notification = document.getElementById("cart-notification");
-    notification.querySelector("p").textContent = message;  // Cập nhật nội dung thông báo
-    notification.classList.add("show");  // Hiển thị thông báo
+    notification.querySelector("p").textContent = message;
+    notification.classList.add("show");
 
     setTimeout(() => {
-        notification.classList.remove("show");  // Ẩn thông báo sau 3 giây
+        notification.classList.remove("show");
     }, 3000);
 }
 
 function updateCartDisplay() {
-    console.log("Giỏ hàng đã được cập nhật!");
+    console.log("Cart has been updated!");
 }
