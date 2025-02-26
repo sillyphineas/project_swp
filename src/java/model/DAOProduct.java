@@ -10,9 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DAOProduct extends DBConnection {
 
@@ -299,10 +302,6 @@ public class DAOProduct extends DBConnection {
         }
 
         return totalItems;
-    }
-
-    public static void main(String[] args) {
-
     }
 
     public Vector<Product> getProductsWithPaginationAndSorting(int page, int itemsPerPage) {
@@ -596,6 +595,8 @@ public class DAOProduct extends DBConnection {
                 ));
             }
         } catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+
             e.printStackTrace();
         }
         return productList;
@@ -790,6 +791,50 @@ public class DAOProduct extends DBConnection {
             e.printStackTrace();
         }
         return screenSizeList;
+    }
+
+    public Vector<Product> getLatestProducts() {
+        Vector<Product> products = new Vector<>();
+        String sql = "SELECT p.*, MIN(v.price) AS variantPrice "
+                + "FROM Products p "
+                + "JOIN ProductVariants v ON p.id = v.productID "
+                + "WHERE p.isDisabled = FALSE "
+                + "GROUP BY p.id "
+                + "ORDER BY p.createAt DESC LIMIT 10";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setBrandID(rs.getInt("brandID"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setImageURL(rs.getString("imageURL"));
+                product.setCreateAt(rs.getDate("createAt"));
+                product.setChipset(rs.getString("chipset"));
+                product.setRam(rs.getInt("ram"));
+                product.setScreenSize(rs.getDouble("screenSize"));
+                product.setScreenType(rs.getString("screenType"));
+                product.setResolution(rs.getString("resolution"));
+                product.setBatteryCapacity(rs.getInt("batteryCapacity"));
+                product.setCameraSpecs(rs.getString("cameraSpecs"));
+                product.setOs(rs.getString("os"));
+                product.setSimType(rs.getString("simType"));
+                product.setConnectivity(rs.getString("connectivity"));
+                product.setVariantPrice(rs.getDouble("variantPrice"));
+
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public static void main(String[] args) {
+        String password = "123456";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        System.out.println(hashedPassword);
     }
 
 }

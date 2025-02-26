@@ -78,6 +78,7 @@
                             let roleId = xhttp.responseText.split(":")[1];
                             console.log(roleId);
                             if (roleId == 1) {
+
                                 window.location.href = "<%= request.getContextPath() %>/AdminDashboardController";
                             } else if (roleId == 5) {
                                 window.location.href = "<%= request.getContextPath() %>/HomePageController";

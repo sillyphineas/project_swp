@@ -158,9 +158,12 @@
                                             <h1><span>E</span>-SHOPPER</h1>
                                             <h2>${blog.title}</h2>
                                             <p>${fn:substring(blog.content, 0, 200)}...</p>
-                                            <a href="${blog.backlinks}" class="btn btn-primary">
+
+                                            <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
                                                 Read More
                                             </a>
+
+
                                         </div>
                                         <div class="col-sm-6">
                                             <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
@@ -234,9 +237,9 @@
                                                 <c:set var="minPriceKey" value="minPrice_${product.id}" />
                                                 <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
                                                 <p>${product.name}</p>
-                                                <a href="#" class="btn btn-default add-to-cart">
-                                                    <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                </a>
+                                                <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
+                                                    <i class="fa fa-shopping-cart"></i> Add to cart
+                                                </a>    
                                             </div>
                                         </div>
                                     </div>
@@ -446,12 +449,16 @@
         </footer><!--/Footer-->
 
 
-
+        <div id="cart-notification" class="hidden">
+            <span class="checkmark">✔</span>
+            <p>Product added to cart successfully!</p>
+        </div>
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
     </body>
 </html>
