@@ -406,7 +406,9 @@
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
+
                                                             <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
+
                                                             <li class="list-group-item"><b>Battery Capacity:</b> ${product.batteryCapacity}</li>
                                                             <li class="list-group-item"><b>Operating System:</b> ${product.os}</li>
                                                             <li class="list-group-item"><b>SIM Type:</b> ${product.simType}</li>
@@ -630,6 +632,7 @@
                 });
         
         </script>
+
     </body>
 </html>
 

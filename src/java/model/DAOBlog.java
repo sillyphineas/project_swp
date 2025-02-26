@@ -115,7 +115,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
-                        rs.getBoolean("isSider"),
+                        rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
                 );
             }
@@ -140,7 +140,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
-                        rs.getBoolean("isSider"),
+                        rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
                 );
                 vector.add(blog);
@@ -168,7 +168,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
-                        rs.getBoolean("isSider"),
+                        rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
                 ));
             }
@@ -206,7 +206,7 @@ public class DAOBlog extends DBConnection {
                         rs.getString("imageURL"),
                         rs.getString("backlinks"),
                         rs.getString("status"),
-                        rs.getBoolean("isSider"),
+                        rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
                 ));
             }
