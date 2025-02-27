@@ -349,13 +349,10 @@
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-
-                                            <img src="${product.imageURL}" alt="" />
+                                            <img src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
                                             <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                            <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
-                                            <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-
+                                            <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                         </div>
                                     </div>
@@ -584,5 +581,3 @@
 <script src="js/main.js"></script>
 </body>
 </html>
-
-
