@@ -1,10 +1,15 @@
-
+<%-- 
+    Document   : index
+    Created on : Jan 18, 2025, 1:13:24 PM
+    Author     : HP
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="entity.Setting"%>
+<%@page import="model.DAOSetting"%>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,14 +17,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Blog Detail</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <title>Home | E-Shopper</title>
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -29,8 +34,18 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .inactive-status {
+                color: red; /* Màu đỏ cho trạng thái Inactive */
+                font-weight: bold;
+            }
 
+            .active-status {
+                color: green; /* Màu xanh cho trạng thái Active */
+                font-weight: bold;
+            }
 
+        </style>
     </head><!--/head-->
 
     <body>
@@ -66,7 +81,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -75,8 +90,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
+                                        <li><a href="#">Canada</a></li>
+                                        <li><a href="#">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -86,8 +101,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
+                                        <li><a href="#">Canadian Dollar</a></li>
+                                        <li><a href="#">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -95,10 +110,10 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -130,110 +145,60 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#" >Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="container blog-detail-container">
-            <div class="row justify-content-center">
-                <div class="col-md-9">
-                    <!-- Kiểm tra xem có thông báo lỗi hay không -->
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger">
-                            <p>${errorMessage}</p>
-                        </div>
-                    </c:if>
+        <section id="update-setting-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2>Update Setting</h2>
 
-                    <!-- Kiểm tra xem có blog hay không -->
-                    <c:if test="${not empty blog}">
-                        <div class="card blog-detail-card">
-                            <div class="card-header">
-                                <div class="text-center mb-3">
-                                    <img class="img-fluid rounded" src="${blog.imageURL}">
-                                </div>
-                                <h1 class="card-title mb-0">${blog.title}</h1>
+                        <!-- Fetching the setting based on the settingId -->
+                        <c:set var="setting" value="${setting}" />
+                        <form action="SettingController?service=updateSetting" method="post">
+                            <input type="hidden" name="id" value="${setting.id}" />
+                            <div class="form-group">
+                                <label for="type">Type</label>
+                                <input type="text" class="form-control" id="type" name="type" value="${setting.type}" required />
                             </div>
-                            <div class="card-body">
-                                <p><strong>Author:</strong> ${authorName}</p>
-                                <p><strong>Post time:</strong> ${blog.postTime}</p>
-
-                                <div>
-
-                                    <p>${blog.content}</p>
-                                </div>
-                                <c:if test="${blog.isDisabled}">
-                                    <p class="text-danger">This blog is disabled.</p>
-                                </c:if>
+                            <div class="form-group">
+                                <label for="key_name">Key Name</label>
+                                <input type="text" class="form-control" id="key_name" name="key_name" value="${setting.keyName}" required />
                             </div>
-                        </div>
-                    </c:if>
-                </div>
-                <!-- Sidebar -->
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Newest Blogs</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <c:forEach var="newBlog" items="${newBlogs}">
-                                    <li class="list-group-item">
-                                        <a href="BlogDetailServlet?id=${newBlog.id}">${newBlog.title}</a>
-                                    </li>
-                                </c:forEach>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <h3>Newest Products</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <c:forEach var="newProduct" items="${newProducts}">
-                                    <li class="list-group-item">
-                                        <a href="ProductDetailServlet?id=${newProduct.id}">${newProduct.name}</a> - $${newProduct.price}
-                                    </li>
-                                </c:forEach>
-                            </ul>
-                        </div>
+                            <div class="form-group">
+                                <label for="value">Value</label>
+                                <input type="text" class="form-control" id="value" name="value" value="${setting.value}" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" class="form-control" id="description" name="description" value="${setting.description}" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="Active" ${setting.status == 'Active' ? 'selected' : ''}>Active</option>
+                                    <option value="Inactive" ${setting.status == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Setting</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
-
-
-
-
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

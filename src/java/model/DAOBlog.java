@@ -112,8 +112,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("imageURL"),
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -137,8 +137,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("imageURL"),
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -165,8 +165,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("imageURL"),
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -175,7 +175,7 @@ public class DAOBlog extends DBConnection {
         }
         return blogs;
     }
-    
+
     public int getTotalBlogs() throws SQLException {
         int total = 0;
         String sql = "SELECT COUNT(*) FROM Blogs";
@@ -203,8 +203,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("imageURL"),
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -231,24 +231,16 @@ public class DAOBlog extends DBConnection {
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();
 
-        // Test function getBlogById with a specific id
-        int testBlogId = 1;  // Bạn có thể thay đổi ID blog tại đây
-        Blog blog = dao.getBlogById(testBlogId);
+        // Test function getAuthorNameById with a specific author ID
+        int testAuthorId = 1;  // Bạn có thể thay đổi ID tác giả tại đây
+        String authorName = dao.getAuthorNameById(testAuthorId);
 
-        // Kiểm tra nếu blog tồn tại và in ra thông tin của blog
-        if (blog != null) {
-            System.out.println("Blog found: ");
-            System.out.println("ID: " + blog.getId());
-            System.out.println("Author ID: " + blog.getAuthorID());
-            System.out.println("Post Time: " + blog.getPostTime());
-            System.out.println("Title: " + blog.getTitle());
-            System.out.println("Content: " + blog.getContent());
-            System.out.println("Image URL: " + blog.getImageURL());
-            System.out.println("Backlinks: " + blog.getBacklinks());
-            System.out.println("Status: " + blog.getStatus());
-            System.out.println("Is Disabled: " + blog.isIsDisabled());
+        // Kiểm tra nếu tên tác giả tồn tại và in ra thông tin của tác giả
+        if (!authorName.isEmpty()) {
+            System.out.println("Author found: ");
+            System.out.println("Author Name: " + authorName);
         } else {
-            System.out.println("Blog with ID " + testBlogId + " not found.");
+            System.out.println("Author with ID " + testAuthorId + " not found.");
         }
     }
 

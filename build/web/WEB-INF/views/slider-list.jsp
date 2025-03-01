@@ -1,10 +1,7 @@
-
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,14 +9,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Blog Detail</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <title>Home | E-Shopper</title>
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -29,8 +26,47 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            /* Cập nhật cho trạng thái Inactive và Active */
+            .inactive-status {
+                color: red;
+                font-weight: bold;
+            }
 
+            .active-status {
+                color: green;
+                font-weight: bold;
+            }
 
+            /* Cập nhật cho phần d-flex */
+            /* Cập nhật để căn chỉnh nút Add Setting với lề phải */
+            .d-flex {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            /* Sửa cho nút Add Setting thẳng với lề phải */
+            .add-setting-button {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+            /* Cập nhật chiều cao của dropdown để hiển thị đầy đủ */
+            .form-control {
+                width: 300px; /* Đảm bảo dropdown đủ rộng */
+                font-size: 16px; /* Tăng kích thước font chữ */
+                padding: 10px; /* Thêm padding để dropdown rộng hơn */
+                height: 40px; /* Điều chỉnh chiều cao của dropdown để hiển thị đầy đủ chữ */
+            }
+
+            /* Cập nhật cho các tùy chọn trong dropdown */
+            .form-control option {
+                white-space: nowrap; /* Đảm bảo nội dung không bị xuống dòng */
+                height: auto; /* Đảm bảo chiều cao của các tùy chọn đủ để hiển thị */
+            }
+
+        </style>
     </head><!--/head-->
 
     <body>
@@ -66,7 +102,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -75,8 +111,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
+                                        <li><a href="#">Canada</a></li>
+                                        <li><a href="#">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -86,8 +122,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
+                                        <li><a href="#">Canadian Dollar</a></li>
+                                        <li><a href="#">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -95,10 +131,10 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -130,110 +166,129 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#" >Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+                                    <li><a href="index.html">Home</a></li>
+                                    <li><a href="SliderController" class="active">Slider List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="container blog-detail-container">
-            <div class="row justify-content-center">
-                <div class="col-md-9">
-                    <!-- Kiểm tra xem có thông báo lỗi hay không -->
-                    <c:if test="${not empty errorMessage}">
-                        <div class="alert alert-danger">
-                            <p>${errorMessage}</p>
-                        </div>
-                    </c:if>
-
-                    <!-- Kiểm tra xem có blog hay không -->
-                    <c:if test="${not empty blog}">
-                        <div class="card blog-detail-card">
-                            <div class="card-header">
-                                <div class="text-center mb-3">
-                                    <img class="img-fluid rounded" src="${blog.imageURL}">
+        <section id="settings-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2>Settings List</h2>
+                        <div class="container">
+                            <div class="row d-flex justify-content-between align-items-center">
+                                <!-- Sort By & Order Dropdowns, Sort button -->
+                                <div class="col-auto d-flex">
+                                    <div class="form-group mb-0 mr-2">
+                                        <label for="sortBy" class="mr-2">Sort By:</label>
+                                        <select id="sortBy" name="sortBy" class="form-control d-inline-block">
+                                            <option value="id">ID</option>
+                                            <option value="type">Type</option>
+                                            <option value="keyName">Key Name</option>
+                                            <option value="value">Value</option>
+                                            <option value="status">Status</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-0 mr-2">
+                                        <label for="sortOrder" class="mr-2">Order:</label>
+                                        <select id="sortOrder" name="sortOrder" class="form-control d-inline-block">
+                                            <option value="asc">Ascending</option>
+                                            <option value="desc">Descending</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning">Sort</button>
                                 </div>
-                                <h1 class="card-title mb-0">${blog.title}</h1>
-                            </div>
-                            <div class="card-body">
-                                <p><strong>Author:</strong> ${authorName}</p>
-                                <p><strong>Post time:</strong> ${blog.postTime}</p>
 
-                                <div>
-
-                                    <p>${blog.content}</p>
+                                <!-- Thêm nút Add Setting căn thẳng với lề phải của bảng -->
+                                <div class="col-sm-12 d-flex justify-content-end mt-2">
+                                    <a href="SettingController?service=addSetting" class="btn btn-success">Add Setting</a>
                                 </div>
-                                <c:if test="${blog.isDisabled}">
-                                    <p class="text-danger">This blog is disabled.</p>
-                                </c:if>
                             </div>
                         </div>
-                    </c:if>
-                </div>
-                <!-- Sidebar -->
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Newest Blogs</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <c:forEach var="newBlog" items="${newBlogs}">
-                                    <li class="list-group-item">
-                                        <a href="BlogDetailServlet?id=${newBlog.id}">${newBlog.title}</a>
-                                    </li>
-                                </c:forEach>
-                            </ul>
-                        </div>
-                    </div>
 
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <h3>Newest Products</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <c:forEach var="newProduct" items="${newProducts}">
-                                    <li class="list-group-item">
-                                        <a href="ProductDetailServlet?id=${newProduct.id}">${newProduct.name}</a> - $${newProduct.price}
-                                    </li>
+
+
+
+
+                        <hr>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>ImageURL</th>
+                                    <th>Backlinks</th>                                    
+                                    <th>Status</th>                                                                        
+                                    <th>Activate</th>
+                                    <th>Deactivate</th>
+                                    <th>Update</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="slider" items="${sliders}">
+                                    <tr>
+                                        <td>${slider.id}</td>
+                                        <td>${slider.title}</td>
+                                        <td><img src="${slider.imageURL}" alt="Slider Image" width="100" height="100" /></td>
+                                        <td>${slider.backlinks}</td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${slider.isDisabled}">
+                                                    Hidden
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Visible
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <form action="SliderController" method="post">
+                                                <input type="hidden" name="id" value="${slider.id}" />
+                                                <c:choose>
+                                                    <c:when test="${slider.isDisabled == 1}">
+                                                        <input type="hidden" name="isDisabled" value="0" />
+                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <input type="hidden" name="isDisabled" value="1" />
+                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                <button type="submit" name="action" value="editSlider">Edit</button>
+                                            </form>
+
+                                        </td>
+                                    </tr>
                                 </c:forEach>
-                            </ul>
+                            </tbody>
+                        </table>
+                        <div>
+                            <c:if test="${totalPages > 1}">
+                                <ul>
+                                    <c:forEach var="i" begin="1" end="${totalPages}">
+                                        <li>
+                                            <a href="SliderController?page=${i}&pageSize=5" ${i == currentPage ? 'style="font-weight:bold"' : ''}>${i}</a>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </c:if>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-
-
-
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

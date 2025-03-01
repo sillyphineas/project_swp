@@ -112,9 +112,19 @@ public class Blog {
         this.isDisabled = isDisabled;
     }
 
+    public boolean isIsSlider() {
+        return isSlider;
+    }
+
+    public void setIsSlider(boolean isSlider) {
+        this.isSlider = isSlider;
+    }
+
     @Override
     public String toString() {
-        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", backlinks=" + backlinks + ", status=" + status + ", isDisabled=" + isDisabled + '}';
+        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", backlinks=" + backlinks + ", imageURL=" + imageURL + ", status=" + status + ", isSlider=" + isSlider + ", isDisabled=" + isDisabled + '}';
     }
+
+    
 
 }
