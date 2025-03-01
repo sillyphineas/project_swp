@@ -5,7 +5,9 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
+<%@page import="entity.User,java.util.List,jakarta.servlet.http.HttpSession,model.DAOUser"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,7 +15,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | T-Shopper</title>
+        <title>Home | E-Shopper</title>
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/font-awesome.min.css" rel="stylesheet">
         <link href="/css/prettyPhoto.css" rel="stylesheet">
@@ -30,6 +32,95 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+
+            .inactive-status {
+                color: red;
+                font-weight: bold;
+            }
+
+            .active-status {
+                color: green;
+                font-weight: bold;
+            }
+
+
+            .d-flex {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+
+            .add-setting-button {
+                display: flex;
+                justify-content: flex-end;
+                margin-top: 20px;
+            }
+
+            .form-control {
+                width: 300px;
+                font-size: 16px;
+                padding: 10px;
+                height: 40px;
+            }
+
+            .form-control option {
+                white-space: nowrap;
+                height: auto;
+            }
+
+
+            .new-pagination-area {
+                text-align: center;
+                margin-bottom: 20px; /* khoảng cách giữa phân trang và footer */
+            }
+
+            .new-pagination {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: inline-flex;
+            }
+
+            .new-pagination li {
+                margin: 0 3px; /* giảm khoảng cách giữa các trang */
+            }
+
+            .new-pagination li a {
+                display: inline-block;
+                width: 30px; /* giảm kích thước nút phân trang */
+                height: 30px;
+                text-align: center;
+                line-height: 30px; /* căn giữa số trang */
+                border-radius: 50%; /* tạo hình tròn */
+                background-color: #f1f1f1;
+                color: #333;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 14px; /* giảm kích thước chữ */
+            }
+
+            .new-pagination li a.new-active {
+                background-color: #ff8c00; /* màu sắc cho nút active */
+                color: white;
+            }
+
+            .new-pagination li a.new-disabled {
+                background-color: #ddd;
+                color: #aaa;
+                pointer-events: none;
+            }
+
+            /* Tách footer */
+            .footer {
+                margin-top: 50px; /* khoảng cách từ phân trang tới footer */
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+            }
+
+        </style>
     </head><!--/head-->
 
     <body>
@@ -131,20 +222,162 @@
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="UserController">Users List</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>                                   
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
+                            <form action="UserController" method="get">
+                                <input type="hidden" value="search" name="service">
+                                <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
+                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                    <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
+                                        <i class="fa fa-search"></i> 
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
+        <section id="settings-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2 style="color: red">Users List</h2>
+                        <div class="container">
+                            <form action="UserController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
+
+                                <input type="hidden" value="sort" name="service">
+
+                                <!-- Sort By Dropdown -->
+                                <div class="form-group mb-0" style="margin-bottom: 0;">
+                                    <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
+                                    <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                        <option value="id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
+                                        <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Full Name</option>
+                                        <option value="email" <%= "email".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Email</option>
+                                        <option value="phoneNumber" <%= "phoneNumber".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Phone</option>
+                                        <option value="gender" <%= "gender".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Gender</option>
+                                        <option value="dateOfBirth" <%= "dateOfBirth".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Date of Birth</option>
+                                        <option value="roleId" <%= "roleId".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Role</option>
+                                        <option value="isDisabled" <%= "isDisabled".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
+                                    </select>
+                                </div>
+
+                                <!-- Sort Order Dropdown -->
+                                <div class="form-group mb-0" style="margin-bottom: 0;">
+                                    <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
+                                    <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                        <option value="asc" <%= "asc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Ascending</option>
+                                        <option value="desc" <%= "desc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Descending</option>
+                                    </select>
+                                </div>
+
+                                <!-- Sort Button -->
+                                <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                    <i  style="margin-right: 5px;"></i> Sort
+                                </button>
+                            </form>
+                        </div>
+                                    <br>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th><a href="UserController?service=sort&sortBy=id&sortOrder=asc">ID</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=name&sortOrder=asc">Name</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=email&sortOrder=asc">Email</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=phoneNumber&sortOrder=asc">Phone</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=gender&sortOrder=asc">Gender</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=dateOfBirth&sortOrder=asc">Date of Birth</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=roleId&sortOrder=asc">Role</a></th>
+                                    <th><a href="UserController?service=sort&sortBy=isDisabled&sortOrder=asc">Status</a></th>
+                                    <th>Update</th>
+                                    <th>Add new User</th>>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% 
+                                    List<User> users = (List<User>) request.getAttribute("users");
+                                    if (users != null && !users.isEmpty()) {
+                                        for (User item : users) {
+                                %>
+                                <tr>
+                                    <td><%= item.getId() %></td>
+                                    <td><%= item.getName() %></td>
+                                    <td><%= item.getEmail() %></td>
+                                    <td><%= item.getPhoneNumber() %></td>
+                                    <td>
+                                        <a href="UserController?service=userFilter&gender=<%= item.isGender()?"0" : "1"%>"><%= item.isGender() ? "Male" : "Female" %></a>
+                                    </td>
+                                    <td><%= item.getDateOfBirth() %></td>
+                                    <td>
+                                        <a href="UserController?service=userFilter&role=<%= item.getRoleId() %>"><%= item.getRoleName() %></a>
+                                    </td>
+                                    <td>
+                                        <a href="UserController?service=userFilter&status=<%= item.isDisabled()? "0" : "1" %>"><%= item.isDisabled() ? "Disabled" : "Active" %></a>
+                                    </td>
+                                    <td>
+                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
+                                    </td>
+                                    <td>
+                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="deleteUser(<%= item.getId() %>)">Delete</button>
+                                    </td>
+                                </tr>
+                                <% 
+                                    }
+                                } else { 
+                                %>
+                                <tr>
+                                    <td colspan="8" style="text-align: center;">No users found.</td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination moved outside tbody -->
+                        <div class="new-pagination-area">
+                            <ul class="new-pagination">
+                                <% 
+                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
+                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
+
+                                    if (totalPages != null && totalPages > 0) {
+                                        for (int i = 1; i <= totalPages; i++) {
+                                %>
+                                <li>
+                                    <a href="UserController?service=listAllUser&page=<%= i %>" 
+                                       class="<%= (i == currentPage) ? "new-active" : "" %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% 
+                                        } 
+                                %>
+                                <li>
+                                    <a href="UserController?service=listAllUser&page=<%= currentPage + 1 %>" 
+                                       class="<%= (currentPage >= totalPages) ? "new-disabled" : "" %>">
+                                        Next
+                                    </a>
+                                </li>
+                                <% 
+                                    } 
+                                %>
+                            </ul>
+                        </div>
+
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -312,5 +545,30 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+                                            function deleteUser(userId) {
+                                                if (confirm('Are you sure you want to delete this user?')) {
+                                                    $.ajax({
+                                                        url: "UserController?service=removeUser&userId=" + userId, // Địa chỉ servlet và tham số
+                                                        type: "GET", // Phương thức HTTP GET
+                                                        dataType: "json", // Định dạng trả về là JSON
+                                                        success: function (response) {
+                                                            // Xử lý kết quả trả về từ server
+                                                            if (response.status === "success") {
+                                                                alert(response.message);  // Hiển thị thông báo thành công
+                                                                // Xóa người dùng khỏi danh sách trên giao diện
+                                                                $("#user-" + userId).remove();
+                                                            } else {
+                                                                alert(response.message);  // Hiển thị thông báo lỗi
+                                                            }
+                                                        },
+                                                        error: function () {
+                                                            alert("Error while deleting user. Please try again.");
+                                                        }
+                                                    });
+                                                }
+                                            }
+        </script>
     </body>
 </html>

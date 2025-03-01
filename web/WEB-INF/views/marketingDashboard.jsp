@@ -131,6 +131,7 @@
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href=""></li>
                                 </ul>
                             </div>
                         </div>

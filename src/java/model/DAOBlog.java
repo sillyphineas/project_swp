@@ -165,8 +165,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("imageURL"),
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -175,7 +175,7 @@ public class DAOBlog extends DBConnection {
         }
         return blogs;
     }
-    
+
     public int getTotalBlogs() throws SQLException {
         int total = 0;
         String sql = "SELECT COUNT(*) FROM Blogs";
@@ -189,12 +189,14 @@ public class DAOBlog extends DBConnection {
         return total;
     }
 
-    public List<Blog> searchBlogs(String query) throws SQLException {
-        String sql = "SELECT * FROM Blogs WHERE (title LIKE ? OR content LIKE ?) AND isDisabled = 0;";
+    public List<Blog> searchBlogs(String query, int page, int pageSize) throws SQLException {
+        String sql = "SELECT * FROM Blogs WHERE (title LIKE ? OR content LIKE ?) AND isDisabled = 0 ORDER BY postTime DESC LIMIT ? OFFSET ?;";
         List<Blog> blogs = new ArrayList<>();
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, "%" + query + "%");
             pre.setString(2, "%" + query + "%");
+            pre.setInt(3, pageSize);
+            pre.setInt(4, (page - 1) * pageSize);
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 blogs.add(new Blog(
@@ -214,6 +216,18 @@ public class DAOBlog extends DBConnection {
         return blogs;
     }
 
+    public int countTotalBlogs(String query) throws SQLException {
+    String sql = "SELECT COUNT(*) FROM Blogs WHERE (title LIKE ? OR content LIKE ?) AND isDisabled = 0;";
+    try (PreparedStatement pre = conn.prepareStatement(sql)) {
+        pre.setString(1, "%" + query + "%");
+        pre.setString(2, "%" + query + "%");
+        ResultSet rs = pre.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1);
+        }
+    }
+    return 0;
+}
     public int delete(int id) {
         int n = 0;
         String sql = "DELETE FROM [dbo].[Blogs]\n"
