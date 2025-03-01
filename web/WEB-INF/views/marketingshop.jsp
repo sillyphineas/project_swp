@@ -83,7 +83,20 @@
                 background-color: #ff8c00;
                 color: white;
             }
+            .alert {
+    background-color: #28a745; /* Green background */
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5px;
+}
 
+.alert .close {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+}
 
         </style>
     </head><!--/head-->
@@ -200,21 +213,22 @@
                                         <li><a href="ProductController" class="active">Products</a></li>
                                         <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                         <li><a href="CartURL">Cart</a></li> 
+                                        <li><a href="MarketingProductController">Product List</a></li>
                                     </ul>
                                 </li> 
-                                <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="BlogURL">Blog List</a></li>
-                                    </ul>
-                                </li> 
-                                <li><a href="404.html">404</a></li>
-                                <li><a href="contact-us.html">Contact</a></li>
+                                <!--                                <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                                                    <ul role="menu" class="sub-menu">
+                                                                        <li><a href="BlogURL">Blog List</a></li>
+                                                                    </ul>
+                                                                </li> 
+                                                                <li><a href="404.html">404</a></li>
+                                                                <li><a href="contact-us.html">Contact</a></li>-->
                             </ul>
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="pull-right">
-                            <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                            <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
                                 <input type="text" name="search" value="${param.search}" />
 
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -237,10 +251,21 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div class="left-sidebar">
-
+<c:if test="${not empty deleteMessage}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> ${deleteMessage}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</c:if>
                         <div class="filter-box">
+                            <div>
+
+                                <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
+                            </div>
                             <h2>Filter Products</h2>
-                            <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                            <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
 
                                 <label for="brandID">Brand</label>
                                 <select id="brandID" name="brandID" class="form-control">
@@ -299,9 +324,10 @@
                             </form>
                         </div>
                         <div class="price-range">
+
                             <h2>Filter by Price</h2>
                             <div class="well">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
                                     <label for="minPrice">Min Price ($)</label>
                                     <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
 
@@ -336,9 +362,9 @@
                     <div class="brand-filter text-center">
 
                         <div class="brand-list">
-                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0" class="btn btn-primary">All Brands</a>
+                            <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=0" class="btn btn-primary">All Brands</a>
                             <c:forEach var="brand" items="${brands}">
-                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}" class="btn btn-primary">${brand.name}</a>
+                                <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=${brand.id}" class="btn btn-primary">${brand.name}</a>
                             </c:forEach>
                         </div>
                     </div>
@@ -349,13 +375,14 @@
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-                                            <img href="ProductDetailController?id=${product.id}" src="${product.imageURL}" alt="${product.name}" />
+                                            <img src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
                                             <c:set var="minPriceKey" value="minPrice_${product.id}" />
                                             <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
-                                            <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                            <a href="MarketingProductController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
+                                            <a href="MarketingProductDetails?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
+                                              <a href="${pageContext.request.contextPath}/MarketingProductController?action=delete&id=${product.id}" class="btn btn-default add-to-cart">Delete</a>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -363,47 +390,21 @@
 
                     </div>
 
-                    <!--                                <div class="col-sm-4">  
-                                                        <div class="product-image-wrapper">
-                                                            <div class="single-products">
-                                                                <div class="productinfo text-center">
-                                                                    <img src="${product.imageURL}" alt="" />
-                                                                    <h2></h2>
-                                                                    <p>${product.name}</p>
-                                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                                    <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                                                </div>
-                                                                <div class="product-overlay">
-                                                                    <div class="overlay-content">
-                                                                        <h2></h2>
-                                                                        <p></p>
-                                                                        <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                                        <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="choose">
-                                                                <ul class="nav nav-pills nav-justified">
-                                                                    <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                                                                    <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>-->
+
                     <div class ="text-center">
-                       <div class="pagination">
-    <c:if test="${currentPage > 1}">
-        <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
-    </c:if>
-    
-    <c:forEach begin="1" end="${totalPages}" var="i">
-        <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-    </c:forEach>
-    
-    <c:if test="${currentPage < totalPages}">
-        <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
-    </c:if>
-</div>
+                        <div class="pagination">
+                            <c:if test="${currentPage > 1}">
+                                <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
+                            </c:if>
+
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                            </c:forEach>
+
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
+                            </c:if>
+                        </div>
 
 
                     </div>
