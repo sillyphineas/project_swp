@@ -33,10 +33,10 @@ public class ProductController extends HttpServlet {
             return;
         }
 
-            DAOProduct dao = new DAOProduct();
+        DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
 
-        // Lấy danh sách filter từ database
+      
         Vector<Brand> brandList = daoBrand.getAllBrands();
         Vector<String> osList = dao.getDistinctOS();
         Vector<String> connectivityList = dao.getDistinctConnectivity();
@@ -45,7 +45,7 @@ public class ProductController extends HttpServlet {
         Vector<Integer> batteryCapacityList = dao.getDistinctBatteryCapacity();
         Vector<Double> screenSizeList = dao.getDistinctScreenSize();
 
-        // Lấy tham số từ request
+        
 
         String brandIDStr = request.getParameter("brandID");
         String searchQuery = request.getParameter("search");
@@ -107,3 +107,4 @@ public class ProductController extends HttpServlet {
         rd.forward(request, response);
     }
 }
+

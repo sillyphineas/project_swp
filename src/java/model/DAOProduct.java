@@ -223,19 +223,7 @@ public class DAOProduct extends DBConnection {
         return vector;
     }
 
-    public int delete(int id) {
-        int n = 0;
-        String sql = "DELETE FROM [dbo].[Products]\n"
-                + "      WHERE id = ? ";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, id);
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
-    }
+   
 
     public Vector<Product> getProductsWithPagination(int page, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
@@ -392,7 +380,70 @@ public class DAOProduct extends DBConnection {
         }
         return total;
     }
+public int delete(int id) {
+        int n = 0;
 
+        
+        String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
+        String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productID = ?";
+        String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
+        String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
+
+        
+        PreparedStatement psDeleteProductVariants = null;
+        PreparedStatement psDeleteOrderDetails = null;
+        PreparedStatement psDeleteFeedbacks = null;
+        PreparedStatement psDeleteProduct = null;
+
+        try {
+            
+            conn.setAutoCommit(false); 
+
+            
+            psDeleteProductVariants = conn.prepareStatement(sqlDeleteProductVariants);
+            psDeleteProductVariants.setInt(1, id);
+            psDeleteProductVariants.executeUpdate();
+
+            
+            psDeleteOrderDetails = conn.prepareStatement(sqlDeleteOrderDetails);
+            psDeleteOrderDetails.setInt(1, id);
+            psDeleteOrderDetails.executeUpdate();
+
+           
+            psDeleteFeedbacks = conn.prepareStatement(sqlDeleteFeedbacks);
+            psDeleteFeedbacks.setInt(1, id);
+            psDeleteFeedbacks.executeUpdate();
+
+            
+            psDeleteProduct = conn.prepareStatement(sqlDeleteProduct);
+            psDeleteProduct.setInt(1, id);
+            n = psDeleteProduct.executeUpdate();
+
+            
+            conn.commit();
+            System.out.println("Sản phẩm xóa thành công với ID: " + id);
+        } catch (SQLException ex) {
+            // Nếu có lỗi, rollback transaction
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            ex.printStackTrace();
+            System.out.println("Lỗi khi xóa sản phẩm: " + ex.getMessage());
+        } finally {
+            
+            try {
+                if (psDeleteProductVariants != null) psDeleteProductVariants.close();
+                if (psDeleteOrderDetails != null) psDeleteOrderDetails.close();
+                if (psDeleteFeedbacks != null) psDeleteFeedbacks.close();
+                if (psDeleteProduct != null) psDeleteProduct.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return n;
+    }
     public Vector<Product> searchProductsByName(String searchQuery, int currentPage, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
         String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0 LIMIT ?, ?";
@@ -836,5 +887,6 @@ public class DAOProduct extends DBConnection {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         System.out.println(hashedPassword);
     }
+    
 
 }
