@@ -239,10 +239,12 @@
                                         <i class="fa fa-star-half-o"></i>
                                     </span>
                                 </div>
-                                <a href="">
-                                    <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi">
-                                </a>
-                                <p><%=blog.getContent()%></p>
+                                <div style="display: flex;">
+                                    <a href="">
+                                        <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
+                                    </a>
+                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
+                                </div>
 
                                 <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
 
@@ -258,9 +260,11 @@
                                         String service = request.getParameter("service");
                                         query = request.getParameter("query") != null ? request.getParameter("query") : "";
                                         String baseURL = "BlogURL?service=" + service;
-            
+
                                         if (service.equals("search") && !query.isEmpty()) {
                                             baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
+                                        } else if (service.equals("listAllBlogs")) {
+                                            baseURL = "BlogURL?service=listAllBlogs";
                                         }
 
                                         if (totalPages != null && totalPages > 0) {
@@ -277,7 +281,7 @@
                                     %>
                                     <li>
                                         <a href="<%= baseURL %>&page=<%= currentPage + 1 %>" 
-                                           <%= (currentPage >= totalPages) ? "style='pointer-events: none; color: gray;'" : "" %>>
+                                           <%= (currentPage >= totalPages) ? "style='pointer-events: none; color: gray;'" : "" %> >
                                             <i class="fa fa-angle-double-right"></i>
                                         </a>
                                     </li>
@@ -286,6 +290,7 @@
                                     %>
                                 </ul>
                             </div>
+
 
                         </div>
                     </div>

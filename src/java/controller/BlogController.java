@@ -83,8 +83,8 @@ public class BlogController extends HttpServlet {
                 String query = request.getParameter("query");
                 String pageStr = request.getParameter("page");
                 int page = 1;
-                int pageSize = 1;
-
+                int pageSize = 10;
+                query =query.toLowerCase();
                 if (query == null || query.trim().isEmpty()) {
                     request.setAttribute("error", "Please enter a search!!");
                     request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
@@ -96,19 +96,18 @@ public class BlogController extends HttpServlet {
                         page = Integer.parseInt(pageStr);
                     }
                 } catch (NumberFormatException e) {
-                    page = 1; // Nếu có lỗi, giữ nguyên trang đầu
+                    page = 1; 
                 }
 
                 // Gọi DAO để lấy danh sách blog theo trang
                 List<Blog> blogs = dao.searchBlogs(query, page, pageSize);
-                int totalBlogs = dao.countTotalBlogs(query);
+                int totalBlogs = dao.countTotalBlogsForSearch(query);
                 int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
 
                 if (blogs.isEmpty()) {
                     request.setAttribute("message", "No results found.");
                 }
 
-                // Gửi dữ liệu về View
                 request.setAttribute("blogs", blogs);
                 request.setAttribute("query", query);
                 request.setAttribute("currentPage", page);

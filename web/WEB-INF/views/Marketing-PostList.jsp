@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User,java.util.List,jakarta.servlet.http.HttpSession,model.DAOUser"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -227,7 +228,7 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <form action="UserController" method="get">
+                            <form action="MarketingPostController" method="get">
                                 <input type="hidden" value="search" name="service">
                                 <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
                                     <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
@@ -246,28 +247,22 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2 style="color: red">Users List</h2>
+                        <h2 style="color: red">Post List</h2>
                         <div class="container">
-                            <form action="UserController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
-
+                            <form action="MarketingPostController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
                                 <input type="hidden" value="sort" name="service">
 
-                                <!-- Sort By Dropdown -->
                                 <div class="form-group mb-0" style="margin-bottom: 0;">
                                     <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
                                     <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                                        <option value="id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
-                                        <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Full Name</option>
-                                        <option value="email" <%= "email".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Email</option>
-                                        <option value="phoneNumber" <%= "phoneNumber".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Phone</option>
-                                        <option value="gender" <%= "gender".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Gender</option>
-                                        <option value="dateOfBirth" <%= "dateOfBirth".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Date of Birth</option>
-                                        <option value="roleId" <%= "roleId".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Role</option>
-                                        <option value="isDisabled" <%= "isDisabled".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
+                                        <option value="b.id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
+                                        <option value="title" <%= "title".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Title</option>
+                                        <option value="postTime" <%= "postTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Post Time</option>
+                                        <option value="author" <%= "author".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Author</option>
+                                        <option value="status" <%= "status".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
                                     </select>
                                 </div>
 
-                                <!-- Sort Order Dropdown -->
                                 <div class="form-group mb-0" style="margin-bottom: 0;">
                                     <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
                                     <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
@@ -276,58 +271,68 @@
                                     </select>
                                 </div>
 
-                                <!-- Sort Button -->
                                 <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
-                                    <i  style="margin-right: 5px;"></i> Sort
+                                    <i style="margin-right: 5px;"></i> Sort
                                 </button>
                             </form>
+
                         </div>
-                                    <br>
+                        <br>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th><a href="UserController?service=sort&sortBy=id&sortOrder=asc">ID</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=name&sortOrder=asc">Name</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=email&sortOrder=asc">Email</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=phoneNumber&sortOrder=asc">Phone</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=gender&sortOrder=asc">Gender</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=dateOfBirth&sortOrder=asc">Date of Birth</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=roleId&sortOrder=asc">Role</a></th>
-                                    <th><a href="UserController?service=sort&sortBy=isDisabled&sortOrder=asc">Status</a></th>
+                                    <th><a href="MarketingPostController?service=sort&sortBy=b.id&sortOrder=asc">ID</a></th>
+                                    <th>Image</th>
+                                    <th><a href="MarketingPostController?service=sort&sortBy=author&sortOrder=asc">Author's Name</a></th>
+                                    <th><a href="MarketingPostController?service=sort&sortBy=postTime&sortOrder=asc">PostTime</a></th>
+                                    <th><a href="MarketingPostController?service=sort&sortBy=title&sortOrder=asc">Title</a></th>
+                                    <th>Content</th>
+                                    <th>Backlinks</th>    
+                                    <th><a href="MarketingPostController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
+                                    <th>Change Status</th>
                                     <th>Update</th>
-                                    <th>Add new User</th>
+
                                     <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% 
-                                    List<User> users = (List<User>) request.getAttribute("users");
-                                    if (users != null && !users.isEmpty()) {
-                                        for (User item : users) {
+                                <%
+                                List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+                                if (blogs != null && !blogs.isEmpty()) {
+                                DAOBlog dao = new DAOBlog();
+                                for (Blog blog : blogs){
+                                int authorID = blog.getAuthorID();
+                                String authname = dao.getAuthorNameById(blog.getAuthorID());
                                 %>
-                                <tr id="user-<%= user.getId() %>">
-                                    <td><%= item.getId() %></td>
-                                    <td><%= item.getName() %></td>
-                                    <td><%= item.getEmail() %></td>
-                                    <td><%= item.getPhoneNumber() %></td>
+                                <tr id="blog-<%= blog.getId() %>">
                                     <td>
-                                        <a href="UserController?service=userFilter&gender=<%= item.isGender()?"0" : "1"%>"><%= item.isGender() ? "Male" : "Female" %></a>
+                                        <a href="MarketingPostController?service=blogFilter&id=<%= blog.getId() %>"><%= blog.getId() %></a>
                                     </td>
-                                    <td><%= item.getDateOfBirth() %></td>
+                                    <td><a href=""><img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="width: 100px; height: 100px; object-fit: cover;"></a></td>
                                     <td>
-                                        <a href="UserController?service=userFilter&role=<%= item.getRoleId() %>"><%= item.getRoleName() %></a>
+                                        <a href="MarketingPostController?service=blogFilter&authorID=<%= blog.getAuthorID() %>"><%=authname%></a>
                                     </td>
-                                    <td>
-                                        <a href="UserController?service=userFilter&status=<%= item.isDisabled()? "0" : "1" %>"><%= item.isDisabled() ? "Disabled" : "Active" %></a>
+                                    <td><%=blog.getPostTime()%></td>
+                                    <td><%= blog.getTitle() %></td>
+                                    <td style=" ">
+                                        <%= blog.getSubContent() %>
                                     </td>
-                                    <td>
-                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
-                                    </td>
-                                    <td>
-                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
+                                    <td><a href="<%= blog.getBacklinks()%>"><%= blog.getBacklinks()%></a></td>
+                                    <td id="status_<%= blog.getId() %>">
+                                        <a href="MarketingPostController?service=blogFilter&status=<%= blog.isIsDisabled()%>">
+                                            <%= blog.getIsDisabled() %>
+                                        </a>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-danger" onclick="deleteUser(<%= item.getId() %>)">Delete</button>
+                                        <button class="btn btn-info" onclick="changeStatus(<%= blog.getId() %>, <%= blog.isIsDisabled()%>)">Change</button>
+                                    </td>
+
+                                    <td>
+                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= blog.getId() %>" class="btn btn-primary">Update</a>
+                                    </td>
+
+                                    <td>
+                                        <button type="button" class="btn btn-danger" onclick="deleteBlog(<%= blog.getId() %>)">Delete</button>
                                     </td>
                                 </tr>
                                 <% 
@@ -335,13 +340,11 @@
                                 } else { 
                                 %>
                                 <tr>
-                                    <td colspan="8" style="text-align: center;">No users found.</td>
+                                    <td colspan="8" style="text-align: center;">No Blogs found.</td>
                                 </tr>
                                 <% } %>
                             </tbody>
                         </table>
-
-                        <!-- Pagination moved outside tbody -->
                         <div class="new-pagination-area">
                             <ul class="new-pagination">
                                 <% 
@@ -349,23 +352,23 @@
                                     Integer currentPage = (Integer) request.getAttribute("currentPage");
                                     String service = request.getParameter("service");
                                     if (service == null) {
-                                        service = "listAllUser";
+                                        service = "listAllBlogs";
                                     }
                                     String sortBy = (String) request.getAttribute("sortBy");
                                     String sortOrder = (String) request.getAttribute("sortOrder");
                                     String query = (String) request.getAttribute("query");
-                                    Integer filterId = (Integer) request.getAttribute("role");
-                                    Integer filterAuthorId = (Integer) request.getAttribute("gender");
-                                    Boolean filterStatus = (Boolean) request.getAttribute("status");
+                                    Integer filterId = (Integer) request.getAttribute("filterId");
+                                    Integer filterAuthorId = (Integer) request.getAttribute("filterAuthorId");
+                                    Boolean filterStatus = (Boolean) request.getAttribute("filterStatus");
                                     
                                     if (totalPages != null && totalPages > 0) {
                                         for (int i = 1; i <= totalPages; i++) {    
                                 %>
                                 <li>
-                                    <a href="UserController?service=<%= service %>&page=<%= i %> 
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= i %> 
                                        <%= (service.equals("sort") ? "&sortBy=" + sortBy + "&sortOrder=" + sortOrder : "") %>
                                        <%= (service.equals("search") ? "&query=" + query : "") %>
-                                       <%= (service.equals("userFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
+                                       <%= (service.equals("blogFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
                                         <%= i %>
                                     </a>
                                 </li>
@@ -373,10 +376,10 @@
                                         } 
                                 %>
                                 <li>
-                                    <a href="UserController?service=<%= service %>&page=<%= currentPage + 1 %>
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage + 1 %>
                                        <%= (service.equals("sort") ? "&sortBy=" + sortBy + "&sortOrder=" + sortOrder : "") %>
                                        <%= (service.equals("search") ? "&query=" + query : "") %>
-                                       <%= (service.equals("userFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
+                                       <%= (service.equals("blogFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
                                         Next
                                     </a>
                                 </li>
@@ -385,6 +388,7 @@
                                 %>
                             </ul>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -558,27 +562,48 @@
         <script src="js/main.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        $.ajax({
-            url: "UserController?service=removeUser&userId=" + userId,
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-                if (response.status === "success") {
-                    alert(response.message);
-                    $("#user-" + userId).remove();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function () {
-                alert("Error while deleting user. Please try again.");
-            }
-        });
-    }
-}
+                                            function deleteBlog(blogId) {
+                                                // Xác nhận người dùng có chắc chắn muốn xóa không
+                                                if (confirm('Are you sure you want to delete this blog?')) {
+                                                    $.ajax({
+                                                        url: "MarketingPostController?service=removeBlog&blogId=" + blogId, // Gọi service xóa bài viết
+                                                        type: "GET", // Phương thức HTTP GET
+                                                        dataType: "json", // Định dạng trả về là JSON
+                                                        success: function (response) {
+                                                            if (response.status === "success") {
+                                                                alert(response.message);
+                                                                $("#blog-" + blogId).remove();
+                                                            } else {
+                                                                alert(response.message);
+                                                            }
+                                                        },
+                                                        error: function (xhr, status, error) {
+                                                            // Xử lý lỗi và hiển thị thông báo chi tiết
+                                                            alert("Error while deleting blog. Please try again.");
+                                                        }
+                                                    });
+                                                }
+                                            }
 
         </script>
+        <script>
+            function changeStatus(blogId, currentStatus) {
+                var newStatus = (currentStatus === true) ? false : true;  // true -> Disabled, false -> Active
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "MarketingPostController?service=changeStatus", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send("id=" + blogId + "&status=" + newStatus);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var newStatusText = newStatus ? "Disabled" : "Active";
+                        document.getElementById("status_" + blogId).innerHTML =
+                                '<a href="MarketingPostController?service=blogFilter&status=' + newStatus + '">' + newStatusText + '</a>';
+                    } else {
+                        alert("Lỗi khi cập nhật trạng thái.");
+                    }
+                };
+            }
+        </script>
+
     </body>
 </html>
