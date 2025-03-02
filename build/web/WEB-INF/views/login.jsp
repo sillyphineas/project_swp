@@ -45,7 +45,9 @@
 
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.trim() === "redirect") {
+                        if (xhttp.responseText.trim() === "cancel") {
+                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=cancel";
+                        } else if (xhttp.responseText.trim() === "redirect") {
                             window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
                         } else {
                             document.getElementById("msg").innerHTML = xhttp.responseText;
@@ -87,7 +89,7 @@
                             } else if (roleId == 3) {
                                 window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
                             } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/views/marketingDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
 
                             }
                         } else {

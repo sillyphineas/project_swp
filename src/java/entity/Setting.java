@@ -1,33 +1,56 @@
 package entity;
 
 import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Setting {
+
     private int id;
-    private String type;
+    private int typeId;
+    private String typeName;
     private String keyName;
     private String value;
     private String description;
-    private String status;  // Chuyển từ boolean sang String
+    private String status;
     private Date createdAt;
     private Date updatedAt;
+    private Integer roleId;  // Liên kết với Roles
+    private Integer brandId; // Liên kết với Brands
 
-    // Constructor
     public Setting() {
     }
 
-    public Setting(int id, String type, String keyName, String value, String description, String status, Date createdAt, Date updatedAt) {
+    public Setting(int id, int typeId, String typeName, String keyName, String value,
+            String description, String status, Date createdAt, Date updatedAt,
+            Integer roleId, Integer brandId) {
         this.id = id;
-        this.type = type;
+        this.typeId = typeId;
+        this.typeName = typeName;
         this.keyName = keyName;
         this.value = value;
         this.description = description;
-        this.status = status;  // Cập nhật status là String
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.roleId = roleId;
+        this.brandId = brandId;
+    }
+    
+    public Setting(ResultSet rs) throws SQLException {
+        this.id = rs.getInt("id");
+        this.typeId = rs.getInt("type_id");
+        this.typeName = rs.getString("type_name");
+        this.keyName = rs.getString("key_name");
+        this.value = rs.getString("value");
+        this.description = rs.getString("description");
+        this.status = rs.getString("status");
+        this.createdAt = rs.getTimestamp("created_at");
+        this.updatedAt = rs.getTimestamp("updated_at");
+        this.roleId = (Integer) rs.getObject("role_id");
+        this.brandId = (Integer) rs.getObject("brand_id");
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -36,12 +59,20 @@ public class Setting {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public int getTypeId() {
+        return typeId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public String getKeyName() {
@@ -68,11 +99,11 @@ public class Setting {
         this.description = description;
     }
 
-    public String getStatus() {  // Thay đổi từ boolean thành String
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {  // Cập nhật phương thức setter
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -92,17 +123,19 @@ public class Setting {
         this.updatedAt = updatedAt;
     }
 
-    @Override
-    public String toString() {
-        return "Setting{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", keyName='" + keyName + '\'' +
-                ", value='" + value + '\'' +
-                ", description='" + description + '\'' +
-                ", status='" + status + '\'' +  // Hiển thị status dưới dạng String
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public Integer getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Integer brandId) {
+        this.brandId = brandId;
     }
 }

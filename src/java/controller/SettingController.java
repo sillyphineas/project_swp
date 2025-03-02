@@ -13,7 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.DAOSetting;
 import entity.Setting;
+import entity.SettingType;
 import java.util.Vector;
+import model.DAOBrand;
+import model.DAORole;
+import model.DAOSettingType;
 
 /**
  *
@@ -60,44 +64,144 @@ public class SettingController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DAOSetting dao = new DAOSetting();
+        DAOSetting daoSetting = new DAOSetting();
         String service = request.getParameter("service");
+        DAOSettingType daoSettingType = new DAOSettingType();
+
         if (service == null) {
             service = "displaySettings";
         }
+
         if (service.equals("displaySettings")) {
-            Vector<Setting> settingList = dao.getAllSettings();
+            int page = 1;
+            int itemsPerPage = 10;
+
+            if (request.getParameter("page") != null) {
+                page = Integer.parseInt(request.getParameter("page"));
+            }
+
+            Vector<Setting> settingList = daoSetting.getSettingsWithPagination(page, itemsPerPage);
+            Vector<SettingType> settingTypes = daoSettingType.getAllSettingTypes();
+
+            int totalSettings = daoSetting.getTotalSettingsCount();
+            int totalPages = (int) Math.ceil((double) totalSettings / itemsPerPage);
+
             request.setAttribute("settingList", settingList);
+            request.setAttribute("settingTypes", settingTypes);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
             request.getRequestDispatcher("/WEB-INF/views/setting-list.jsp").forward(request, response);
+
         }
+
         if (service.equals("activate")) {
             int id = Integer.parseInt(request.getParameter("settingId"));
-            Setting setting = dao.getSettingById(id);
+            Setting setting = daoSetting.getSettingById(id);
             setting.setStatus("Active");
-            dao.updateSetting(setting);
+            daoSetting.updateSetting(setting);
             response.sendRedirect("SettingController?service=displaySettings");
         }
+
         if (service.equals("deactivate")) {
             int id = Integer.parseInt(request.getParameter("settingId"));
-            Setting setting = dao.getSettingById(id);
+            Setting setting = daoSetting.getSettingById(id);
             setting.setStatus("Inactive");
-            dao.updateSetting(setting);
+            daoSetting.updateSetting(setting);
             response.sendRedirect("SettingController?service=displaySettings");
         }
+
         if (service.equals("addSetting")) {
+            Vector<SettingType> settingTypes = daoSettingType.getAllSettingTypes();
+            request.setAttribute("settingTypes", settingTypes);
             request.getRequestDispatcher("/WEB-INF/views/add-setting.jsp").forward(request, response);
         }
+
         if (service.equals("updateSetting")) {
             int id = Integer.parseInt(request.getParameter("settingId"));
-            Setting setting = dao.getSettingById(id);
+            Setting setting = daoSetting.getSettingById(id);
+            Vector<SettingType> settingTypes = daoSettingType.getAllSettingTypes();
             request.setAttribute("setting", setting);
+            request.setAttribute("settingTypes", settingTypes);
             request.getRequestDispatcher("/WEB-INF/views/update-setting.jsp").forward(request, response);
         }
+
         if (service.equals("deleteSetting")) {
             int id = Integer.parseInt(request.getParameter("settingId"));
-            dao.deleteSetting(id);
+            daoSetting.deleteSetting(id);
             response.sendRedirect("SettingController?service=displaySettings");
         }
+
+        if (service.equals("searchSettings")) {
+            String keyword = request.getParameter("keyword");
+            int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int itemsPerPage = 10;
+
+            Vector<Setting> settingList = daoSetting.searchSettings(keyword, page, itemsPerPage);
+            int totalSettings = daoSetting.getTotalSearchCount(keyword);
+            int totalPages = (int) Math.ceil((double) totalSettings / itemsPerPage);
+
+            request.setAttribute("settingList", settingList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("keyword", keyword);
+
+            request.getRequestDispatcher("/WEB-INF/views/setting-list.jsp").forward(request, response);
+        }
+
+        if (service.equals("filterSettings")) {
+            String status = request.getParameter("status");
+            String type = request.getParameter("type");
+            String createdAt = request.getParameter("createdAt");
+
+            if (createdAt == null || createdAt.trim().isEmpty()) {
+                createdAt = null;
+            }
+
+            int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int itemsPerPage = 10;
+
+            Vector<Setting> settingList = daoSetting.filterSettings(status, type, createdAt, page, itemsPerPage);
+            int totalSettings = daoSetting.getTotalFilterCount(status, type, createdAt);
+            int totalPages = (int) Math.ceil((double) totalSettings / itemsPerPage);
+
+            request.setAttribute("settingList", settingList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("status", status);
+            request.setAttribute("type", type);
+            request.setAttribute("createdAt", createdAt);
+
+            request.getRequestDispatcher("/WEB-INF/views/setting-list.jsp").forward(request, response);
+        }
+
+        if (service.equals("sortSettings")) {
+            String sortBy = request.getParameter("sortBy");
+            String sortOrder = request.getParameter("sortOrder");
+
+            if (!"id".equals(sortBy) && !"key_name".equals(sortBy)) {
+                sortBy = "id";
+            }
+            if (!"asc".equalsIgnoreCase(sortOrder) && !"desc".equalsIgnoreCase(sortOrder)) {
+                sortOrder = "asc";
+            }
+
+            int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+            int itemsPerPage = 10;
+
+            Vector<Setting> settingList = daoSetting.sortSettings(sortBy, sortOrder, page, itemsPerPage);
+            int totalSettings = daoSetting.getTotalSettingsCount();
+            int totalPages = (int) Math.ceil((double) totalSettings / itemsPerPage);
+
+            request.setAttribute("settingList", settingList);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("sortBy", sortBy);
+            request.setAttribute("sortOrder", sortOrder);
+
+            request.getRequestDispatcher("/WEB-INF/views/setting-list.jsp").forward(request, response);
+        }
+
     }
 
     /**
@@ -111,50 +215,65 @@ public class SettingController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        DAOSetting daoSetting = new DAOSetting();
+        DAOSettingType daoSettingType = new DAOSettingType();
+        DAORole daoRole = new DAORole();
+        DAOBrand daoBrand = new DAOBrand();
+
         String service = request.getParameter("service");
-        DAOSetting dao = new DAOSetting();
 
-        if (service != null && service.equals("updateSetting")) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            String type = request.getParameter("type");
-            String keyName = request.getParameter("key_name");
-            String value = request.getParameter("value");
-            String description = request.getParameter("description");
-            String status = request.getParameter("status");
-
-            Setting setting = new Setting();
-            setting.setId(id);
-            setting.setType(type);
-            setting.setKeyName(keyName);
-            setting.setValue(value);
-            setting.setDescription(description);
-            setting.setStatus(status);
-
-            dao.updateSetting(setting);
-            response.sendRedirect("SettingController?service=displaySettings");
-        }
-        if (service != null && service.equals("addSetting")) {
-            String type = request.getParameter("type");
+        if (service.equals("addSetting")) {
+            String typeName = request.getParameter("type");
             String keyName = request.getParameter("keyName");
             String value = request.getParameter("value");
             String description = request.getParameter("description");
             String status = request.getParameter("status");
-//            System.out.println(type);
-//            System.out.println(keyName);
-//            System.out.println(value);
-//            System.out.println(description);
-//            System.out.println(status);
+
+            int typeId = daoSettingType.getTypeIdByName(typeName);
+            if (typeId == -1) {
+                typeId = daoSettingType.addNewSettingType(typeName);
+            }
+
+            Integer roleId = null, brandId = null;
+
+            if ("User Role Management".equals(typeName)) {
+                roleId = daoRole.addRoleAndReturnId(keyName);
+            }
+
+            if ("Brand Management".equals(typeName)) {
+                brandId = daoBrand.addBrandAndReturnId(keyName);
+            }
 
             Setting setting = new Setting();
-            setting.setType(type);
+            setting.setTypeId(typeId);
+            setting.setTypeName(typeName);
+            setting.setKeyName(keyName);
+            setting.setValue(value);
+            setting.setDescription(description);
+            setting.setStatus(status);
+            setting.setRoleId(roleId);
+            setting.setBrandId(brandId);
+
+            daoSetting.addSetting(setting);
+            response.sendRedirect("SettingController?service=displaySettings");
+        }
+
+        if (service.equals("updateSetting")) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String keyName = request.getParameter("keyName");
+            String value = request.getParameter("value");
+            String description = request.getParameter("description");
+            String status = request.getParameter("status");
+
+            Setting setting = daoSetting.getSettingById(id);
             setting.setKeyName(keyName);
             setting.setValue(value);
             setting.setDescription(description);
             setting.setStatus(status);
 
-            dao.addSetting(setting);
+            daoSetting.updateSetting(setting);
             response.sendRedirect("SettingController?service=displaySettings");
         }
-
     }
+
 }

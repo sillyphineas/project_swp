@@ -4,9 +4,6 @@
  */
 package controller;
 
-import entity.User;
-import helper.Authorize;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,14 +12,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.DAOUser;
+import java.util.HashMap;
+import java.util.Map;
+import model.DAOOrder;
 
 /**
  *
  * @author HP
  */
-    @WebServlet(name = "VerifyAccountController", urlPatterns = {"/VerifyAccountController"})
-public class VerifyAccountController extends HttpServlet {
+@WebServlet(name = "VNPayReturnServlet", urlPatterns = {"/vnpay_return"})
+public class VNPayReturnServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +40,10 @@ public class VerifyAccountController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet VerifyAccountController</title>");
+            out.println("<title>Servlet VNPayReturnServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet VerifyAccountController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet VNPayReturnServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,30 +61,33 @@ public class VerifyAccountController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
+        HttpSession session = request.getSession();
+
+        Map<String, String[]> paramMap = request.getParameterMap();
+        Map<String, String> vnp_Params = new HashMap<>();
+        for (String key : paramMap.keySet()) {
+            vnp_Params.put(key, paramMap.get(key)[0]);
         }
-        if (!Authorize.isAccepted(user, "/VerifyAccountController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
-            return;
-        }
-        String service = request.getParameter("service");
-        if (service.equals("forward")) {
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/verify-account.jsp");
-            rd.forward(request, response);
-        }
-        
-        if (service.equals("confirmRegister")) {
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/success-registered.jsp");
-            rd.forward(request, response);
-        }
-        
-        if (service.equals("cancel")) {
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/404.jsp");
-            rd.forward(request, response);
+
+        String vnp_TxnRef = vnp_Params.get("vnp_TxnRef");
+        String vnp_ResponseCode = vnp_Params.get("vnp_ResponseCode");
+
+        DAOOrder daoOrder = new DAOOrder();
+
+        if ("00".equals(vnp_ResponseCode)) {
+            daoOrder.updateOrderStatus(vnp_TxnRef, "Paid");
+            session.setAttribute("paymentStatus", "success");
+            response.sendRedirect("OrderController?service=orderSuccess");
+        } else {
+            daoOrder.updateOrderStatus(vnp_TxnRef, "Failed");
+            session.setAttribute("paymentStatus", "failed");
+
+            if ("24".equals(vnp_ResponseCode)) {
+                session.setAttribute("cancelMessage", "Bạn đã hủy giao dịch.");
+                response.sendRedirect("OrderController?service=orderFailed");
+            } else {
+                response.sendRedirect("order-fail.jsp");
+            }
         }
     }
 
@@ -100,34 +102,7 @@ public class VerifyAccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String enteredCode = request.getParameter("code");
-        String storedCode = (String) session.getAttribute("verificationCode");
-        String email = (String) session.getAttribute("email");
-        String hashedPassword = (String) session.getAttribute("password");
-
-        response.setContentType("text/plain");
-
-        if (enteredCode != null && enteredCode.equals(storedCode)) {
-            DAOUser daoUser = new DAOUser();
-            User user = new User();
-            user.setEmail(email);
-            user.setPassHash(hashedPassword);
-            user.setRoleId(5);
-            user.setDisabled(false);
-
-            if (daoUser.addUser(user) != 0) {
-                session.removeAttribute("verificationCode");
-
-                response.sendRedirect("VerifyAccountController?service=confirmRegister");
-            } else {
-                response.sendRedirect("/WEB-INF/views/404.jsp");
-            }
-        } else {
-            request.setAttribute("error", "Invalid code");
-            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/verify-account.jsp");
-            rd.forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**
