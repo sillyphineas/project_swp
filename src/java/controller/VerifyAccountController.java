@@ -82,6 +82,11 @@ public class VerifyAccountController extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/success-registered.jsp");
             rd.forward(request, response);
         }
+        
+        if (service.equals("cancel")) {
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/404.jsp");
+            rd.forward(request, response);
+        }
     }
 
     /**

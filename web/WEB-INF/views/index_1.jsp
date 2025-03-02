@@ -159,7 +159,7 @@
                                             <h2>${blog.title}</h2>
                                             <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                            <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                            <a href="${blog.backlinks}" class="btn btn-primary">
                                                 Read More
                                             </a>
 
@@ -237,9 +237,7 @@
                                                 <c:set var="minPriceKey" value="minPrice_${product.id}" />
                                                 <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
                                                 <p>${product.name}</p>
-                                                <a href="javascript:void(0);" onclick="addToCart(${product.id})" class="btn btn-default add-to-cart">
-                                                    <i class="fa fa-shopping-cart"></i> Add to cart
-                                                </a>    
+                                                <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>  
                                             </div>
                                         </div>
                                     </div>

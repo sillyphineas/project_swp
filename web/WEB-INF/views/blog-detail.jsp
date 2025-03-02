@@ -130,10 +130,10 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li class="dropdown"><a href="#" >Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController" class="active">Products</a></li>
+                                            <li><a href="ProductController">Products</a></li>
                                             <li><a href="CartURL?service=checkOut">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
@@ -177,7 +177,7 @@
                         <div class="card blog-detail-card">
                             <div class="card-header">
                                 <div class="text-center mb-3">
-                                    <img class="img-fluid rounded" src="${blog.imageURL}" ">
+                                    <img class="img-fluid rounded" src="${blog.imageURL}">
                                 </div>
                                 <h1 class="card-title mb-0">${blog.title}</h1>
                             </div>
