@@ -36,9 +36,8 @@ public class SliderController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException, SQLException {
         try {
-            // Lấy tham số trang và số lượng slider mỗi trang
-            int page = 1; // Mặc định trang 1
-            int pageSize = 5; // Mặc định số lượng slider mỗi trang là 5
+            int page = 1;
+            int pageSize = 5;
 
             if (request.getParameter("page") != null) {
                 page = Integer.parseInt(request.getParameter("page"));

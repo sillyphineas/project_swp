@@ -185,55 +185,17 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Settings List</h2>
-                        <div class="container">
-                            <div class="row d-flex justify-content-between align-items-center">
-                                <!-- Sort By & Order Dropdowns, Sort button -->
-                                <div class="col-auto d-flex">
-                                    <div class="form-group mb-0 mr-2">
-                                        <label for="sortBy" class="mr-2">Sort By:</label>
-                                        <select id="sortBy" name="sortBy" class="form-control d-inline-block">
-                                            <option value="id">ID</option>
-                                            <option value="type">Type</option>
-                                            <option value="keyName">Key Name</option>
-                                            <option value="value">Value</option>
-                                            <option value="status">Status</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group mb-0 mr-2">
-                                        <label for="sortOrder" class="mr-2">Order:</label>
-                                        <select id="sortOrder" name="sortOrder" class="form-control d-inline-block">
-                                            <option value="asc">Ascending</option>
-                                            <option value="desc">Descending</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-warning">Sort</button>
-                                </div>
-
-                                <!-- Thêm nút Add Setting căn thẳng với lề phải của bảng -->
-                                <div class="col-sm-12 d-flex justify-content-end mt-2">
-                                    <a href="SettingController?service=addSetting" class="btn btn-success">Add Setting</a>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
+                        <h2>Slider List</h2>
                         <hr>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Title</th>
-                                    <th>ImageURL</th>
-                                    <th>Backlinks</th>                                    
-                                    <th>Status</th>                                                                        
-                                    <th>Activate</th>
-                                    <th>Deactivate</th>
-                                    <th>Update</th>
-                                    <th>Delete</th>
+                                    <th>Image</th>
+                                    <th>Backlinks</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

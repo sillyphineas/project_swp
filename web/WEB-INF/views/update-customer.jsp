@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.Setting"%>
+<%@page import="model.DAOSetting"%>
 <%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -27,43 +29,14 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
-            /* Cập nhật cho trạng thái Inactive và Active */
             .inactive-status {
-                color: red;
+                color: red; /* Màu đỏ cho trạng thái Inactive */
                 font-weight: bold;
             }
 
             .active-status {
-                color: green;
+                color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
-            }
-
-            /* Cập nhật cho phần d-flex */
-            /* Cập nhật để căn chỉnh nút Add Setting với lề phải */
-            .d-flex {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            /* Sửa cho nút Add Setting thẳng với lề phải */
-            .add-setting-button {
-                display: flex;
-                justify-content: flex-end;
-                margin-top: 20px;
-            }
-            /* Cập nhật chiều cao của dropdown để hiển thị đầy đủ */
-            .form-control {
-                width: 300px; /* Đảm bảo dropdown đủ rộng */
-                font-size: 16px; /* Tăng kích thước font chữ */
-                padding: 10px; /* Thêm padding để dropdown rộng hơn */
-                height: 40px; /* Điều chỉnh chiều cao của dropdown để hiển thị đầy đủ chữ */
-            }
-
-            /* Cập nhật cho các tùy chọn trong dropdown */
-            .form-control option {
-                white-space: nowrap; /* Đảm bảo nội dung không bị xuống dòng */
-                height: auto; /* Đảm bảo chiều cao của các tùy chọn đủ để hiển thị */
             }
 
         </style>
@@ -166,87 +139,44 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="SliderController" class="active">Slider List</a></li>
+                                    <li><a href="index.html" >Home</a></li>
+                                    <li><a href="CustomerController" class="active">Customer List</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="settings-section">
+        <section id="update-setting-section">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Slider List</h2>
-                        <hr>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Image</th>
-                                    <th>Backlinks</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="slider" items="${sliders}">
-                                    <tr>
-                                        <td>${slider.id}</td>
-                                        <td>${slider.title}</td>
-                                        <td><img src="${slider.imageURL}" alt="Slider Image" width="100" height="100" /></td>
-                                        <td>${slider.backlinks}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${slider.isDisabled}">
-                                                    Hidden
-                                                </c:when>
-                                                <c:otherwise>
-                                                    Visible
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <form action="SliderController" method="post">
-                                                <input type="hidden" name="id" value="${slider.id}" />
-                                                <c:choose>
-                                                    <c:when test="${slider.isDisabled == 1}">
-                                                        <input type="hidden" name="isDisabled" value="0" />
-                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input type="hidden" name="isDisabled" value="1" />
-                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <button type="submit" name="action" value="editSlider">Edit</button>
-                                            </form>
+                        <h2>Update Customer</h2>
+                        <c:if test="${not empty mess}">
+                            <div style="color: red; font-weight: bold;">${mess}</div>
+                        </c:if>
+                        >
+                        <form action="EditCustomerController" method="post">
+                            <input type="hidden" name="id" value="${customer.id}" />
 
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                        <div>
-                            <c:if test="${totalPages > 1}">
-                                <ul>
-                                    <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <li>
-                                            <a href="SliderController?page=${i}&pageSize=5" ${i == currentPage ? 'style="font-weight:bold"' : ''}>${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </c:if>
-                        </div>
+                            <div>
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" value="${customer.email}" required />
+                            </div>
+
+                            <div>
+                                <label for="phoneNumber">Phone Number:</label>
+                                <input type="text" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required />
+                            </div>
+
+                            
+
+                            <button type="submit">Save Changes</button>
+                        </form>
+
                     </div>
                 </div>
             </div>
