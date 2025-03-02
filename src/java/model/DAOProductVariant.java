@@ -185,4 +185,31 @@ public class DAOProductVariant extends DBConnection {
 //        System.out.println(variant.getProductVariantById(58));
         System.out.println(variant.getProductVariantByDetails(1, "Đen", 128));
     }
+    public Vector<ProductVariant> getVariantsByProductId(int productId, String color) {
+    Vector<ProductVariant> variants = new Vector<>();
+    String sql = "SELECT * FROM ProductVariants WHERE productID = ?";
+    
+    
+    
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setInt(1, productId);
+        ResultSet rs = pre.executeQuery();
+        
+        while (rs.next()) {
+            ProductVariant variant = new ProductVariant(
+                    rs.getInt("id"),
+                    rs.getInt("productID"),
+                    rs.getString("color"),
+                    rs.getInt("storage"),
+                    rs.getDouble("price"),
+                    rs.getInt("stock")
+            );
+            variants.add(variant);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return variants;
+}
 }

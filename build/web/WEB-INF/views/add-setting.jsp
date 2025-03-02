@@ -168,28 +168,37 @@
 
                         <!-- Form to add new setting -->
                         <form action="SettingController?service=addSetting" method="post">
+                            <!-- Chọn loại Setting -->
                             <div class="form-group">
-                                <label for="type">Type</label>
-                                <input type="text" class="form-control" id="type" name="type" required />
+                                <label for="type">Type:</label>
+                                <select class="form-control" id="type" name="type" required>
+                                    <c:forEach var="type" items="${settingTypes}">
+                                        <option value="${type.typeName}">${type.typeName}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
+                            <!-- Nhập Key Name -->
                             <div class="form-group">
-                                <label for="keyName">Key Name</label>
+                                <label for="keyName">Key Name:</label>
                                 <input type="text" class="form-control" id="keyName" name="keyName" required />
                             </div>
 
+                            <!-- Nhập Value -->
                             <div class="form-group">
-                                <label for="value">Value</label>
+                                <label for="value">Value:</label>
                                 <input type="text" class="form-control" id="value" name="value" required />
                             </div>
 
+                            <!-- Mô tả -->
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">Description:</label>
                                 <input type="text" class="form-control" id="description" name="description" required />
                             </div>
 
+                            <!-- Trạng thái -->
                             <div class="form-group">
-                                <label for="status">Status</label>
+                                <label for="status">Status:</label>
                                 <select class="form-control" id="status" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>

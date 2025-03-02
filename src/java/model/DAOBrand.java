@@ -119,7 +119,7 @@ public class DAOBrand extends DBConnection {
 
     public Vector<Brand> getAllBrands() {
         Vector<Brand> brands = new Vector<>();
-        String sql = "SELECT * FROM Brands"; // Thay đổi truy vấn SQL tùy vào cấu trúc bảng của bạn
+        String sql = "SELECT * FROM Brands WHERE status= 'Active'"; // Thay đổi truy vấn SQL tùy vào cấu trúc bảng của bạn
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
@@ -136,6 +136,24 @@ public class DAOBrand extends DBConnection {
             ex.printStackTrace();
         }
         return brands;
+    }
+
+    public int addBrandAndReturnId(String brandName) {
+        int brandId = -1;
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO Brands (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, brandName);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                brandId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return brandId;
     }
 
     public static void main(String[] args) {

@@ -170,30 +170,46 @@
                         <c:set var="setting" value="${setting}" />
                         <form action="SettingController?service=updateSetting" method="post">
                             <input type="hidden" name="id" value="${setting.id}" />
+
+                            <!-- Chọn loại Setting -->
                             <div class="form-group">
-                                <label for="type">Type</label>
-                                <input type="text" class="form-control" id="type" name="type" value="${setting.type}" required />
+                                <label for="type">Type:</label>
+                                <select class="form-control" id="type" name="type" required>
+                                    <c:forEach var="type" items="${settingTypes}">
+                                        <option value="${type.typeName}" ${type.typeName == setting.typeName ? 'selected' : ''}>${type.typeName}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
+
+                            <!-- Nhập Key Name -->
                             <div class="form-group">
-                                <label for="key_name">Key Name</label>
-                                <input type="text" class="form-control" id="key_name" name="key_name" value="${setting.keyName}" required />
+                                <label for="keyName">Key Name:</label>
+                                <input type="text" class="form-control" id="keyName" name="keyName" value="${setting.keyName}" required />
                             </div>
+
+                            <!-- Nhập Value -->
                             <div class="form-group">
-                                <label for="value">Value</label>
+                                <label for="value">Value:</label>
                                 <input type="text" class="form-control" id="value" name="value" value="${setting.value}" required />
                             </div>
+
+                            <!-- Mô tả -->
                             <div class="form-group">
-                                <label for="description">Description</label>
+                                <label for="description">Description:</label>
                                 <input type="text" class="form-control" id="description" name="description" value="${setting.description}" required />
                             </div>
+
+                            <!-- Trạng thái -->
                             <div class="form-group">
-                                <label for="status">Status</label>
+                                <label for="status">Status:</label>
                                 <select class="form-control" id="status" name="status">
                                     <option value="Active" ${setting.status == 'Active' ? 'selected' : ''}>Active</option>
                                     <option value="Inactive" ${setting.status == 'Inactive' ? 'selected' : ''}>Inactive</option>
                                 </select>
                             </div>
+
                             <button type="submit" class="btn btn-primary">Update Setting</button>
+                            <a href="SettingController?service=displaySettings" class="btn btn-danger">Cancel</a>
                         </form>
                     </div>
                 </div>

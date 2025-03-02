@@ -4,7 +4,6 @@
  */
 package model;
 
-
 import entity.CartItem;
 
 import entity.Order;
@@ -74,9 +73,8 @@ public class DAOOrder extends DBConnection {
                 + "VALUES (?, ?, NOW(), ?, ?, ?, ?, ?, 0)";
         String sqlOrderDetails = "INSERT INTO OrderDetails (orderID, productID, quantity, productPrice) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS);
-                PreparedStatement stmtOrderDetails = conn.prepareStatement(sqlOrderDetails)) {
-            conn.setAutoCommit(false); 
+        try (PreparedStatement stmtOrder = conn.prepareStatement(sqlOrder, Statement.RETURN_GENERATED_KEYS); PreparedStatement stmtOrderDetails = conn.prepareStatement(sqlOrderDetails)) {
+            conn.setAutoCommit(false);
             stmtOrder.setInt(1, order.getBuyerID());
             stmtOrder.setInt(2, 1);
             stmtOrder.setString(3, "Pending");
@@ -214,6 +212,25 @@ public class DAOOrder extends DBConnection {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void updateOrderStatus(String txnRef, String status) {
+        String sql = "UPDATE Orders SET orderStatus = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setLong(2, Long.parseLong(txnRef)); // Chuyển đổi txnRef sang long
+
+            int rowsUpdated = ps.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Order " + txnRef + " updated to status: " + status);
+            } else {
+                System.out.println("Failed to update order status for txnRef: " + txnRef);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.println("Lỗi chuyển đổi số: " + e.getMessage());
+        }
     }
 
     // Test the DAOOrder

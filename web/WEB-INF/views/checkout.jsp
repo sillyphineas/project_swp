@@ -225,9 +225,9 @@
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
+                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>
@@ -288,7 +288,7 @@
                                     <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
                                     <p style="margin: 2px 0; color: #666; font-size: 14px;">Color: <%= productVariant.getColor() %> / Storage: <%= productVariant.getStorage() %>GB</p>
                                     <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">₫<%= String.format("%,.0f", productVariant.getPrice()) %> x <%= item.getQuantity() %></p>
-                                        <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
+                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
                                 </div>
                             </div>
                             <% } } else { %>
@@ -303,12 +303,30 @@
                             <label><input type="radio" name="paymentMethod" value="3"> E-Wallet (Momo, ZaloPay)</label>
                         </div>
 
+
                         <div class="submit-container" style="margin-top: 10px; text-align: center;">
                             <button type="submit" class="submit-btn" name="service" value="submitOrder" 
                                     style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
                                 Place Order
                             </button>
                         </div>
+                    </form>
+                    <%
+                        double totalAmount = 0.0;
+                        List<CartItem> listCartItems = (List<CartItem>) request.getAttribute("cartItems");
+                        if (listCartItems != null) {
+                            for (CartItem item : listCartItems) {
+                                totalAmount += item.getTotalPrice().doubleValue();
+                            }
+                        }
+                    %>
+                    <form id="VNPayPaymentForm" action="VNPayPaymentServlet" method="POST" style="text-align: center; margin-top: 20px;">
+                        <input type="hidden" name="vnp_OrderInfo" value="Thanh toán đơn hàng">
+                        <input type="hidden" name="ordertype" value="other">
+                        <input type="hidden" name="amount" value="<%= totalAmount %>">
+                        <button type="submit" class="submit-btn" style="background-color: #007bff; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
+                            Thanh toán qua VNPay
+                        </button>
                     </form>
                 </div>
             </div>

@@ -13,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | E-Shopper</title>
+        <title>Home | T-Shopper</title>
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/font-awesome.min.css" rel="stylesheet">
         <link href="/css/prettyPhoto.css" rel="stylesheet">
@@ -129,8 +129,9 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="index.html" class="active">Home</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>   
+                                    <li><a href="UserController">Users List</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>                                   
                                 </ul>
                             </div>
                         </div>

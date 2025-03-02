@@ -8,6 +8,8 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -154,6 +156,208 @@ public class DAOUser extends DBConnection {
         return n;
     }
 
+    public List<User> getPaginatedUsers(int page, int pageSize) throws SQLException {
+        String sql = "SELECT * FROM Users ORDER BY id ASC LIMIT ? OFFSET ?";
+        List<User> users = new ArrayList<>();
+
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, pageSize);
+            pre.setInt(2, (page - 1) * pageSize);
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                users.add(new User(rs.getInt("id"),
+                                        rs.getShort("roleId"),
+                        rs.getBoolean("isDisabled")));
+            }
+        }
+        return users;
+    }
+
+    public int getTotalUsers() {
+        int totalUsers = 0;
+        String sql = "SELECT COUNT(*) FROM Users";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql); ResultSet rs = preparedStatement.executeQuery()) {
+            if (rs.next()) {
+                totalUsers = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalUsers;
+    }
+
+    public List<User> getFilteredUsers(int page, int pageSize, Boolean gender, Integer roleId, Boolean isDisabled) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM Users WHERE 1 = 1 ");
+
+        if (gender != null) {
+            sql.append("AND gender = ? ");
+        }
+        if (roleId != null) {
+            sql.append("AND roleId = ? ");
+        }
+        if (isDisabled != null) {
+            sql.append("AND isDisabled = ? ");
+        }
+
+        sql.append("ORDER BY id ASC LIMIT ? OFFSET ?");
+
+        List<User> users = new ArrayList<>();
+
+        try (PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+
+            if (gender != null) {
+                pre.setBoolean(index++, gender);
+            }
+            if (roleId != null) {
+                pre.setInt(index++, roleId);
+            }
+            if (isDisabled != null) {
+                pre.setBoolean(index++, isDisabled);
+            }
+
+            pre.setInt(index++, pageSize);
+            pre.setInt(index++, (page - 1) * pageSize);
+
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                users.add(new User(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("passHash"),
+                        rs.getBoolean("gender"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("resetToken"),
+                        rs.getDate("resetTokenExpired"),
+                        rs.getDate("dateOfBirth"),
+                        rs.getShort("roleId"),
+                        rs.getBoolean("isDisabled")));
+            }
+        }
+
+        return users;
+    }
+
+    public int getTotalUsers(Boolean gender, Integer roleId, Boolean isDisabled) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Users WHERE 1 = 1 ");
+
+        if (gender != null) {
+            sql.append("AND gender = ? ");
+        }
+        if (roleId != null) {
+            sql.append("AND roleId = ? ");
+        }
+        if (isDisabled != null) {
+            sql.append("AND isDisabled = ? ");
+        }
+
+        try (PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+            int index = 1;
+
+            if (gender != null) {
+                pre.setBoolean(index++, gender);
+            }
+            if (roleId != null) {
+                pre.setInt(index++, roleId);
+            }
+            if (isDisabled != null) {
+                pre.setBoolean(index++, isDisabled);
+            }
+
+            ResultSet rs = pre.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+
+        return 0;
+    }
+
+    public List<User> searchUsers(String query, int page, int pageSize) {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM Users WHERE name LIKE ? OR email LIKE ? OR phoneNumber LIKE ? LIMIT ?, ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchQuery = "%" + query + "%";
+            stmt.setString(1, searchQuery);
+            stmt.setString(2, searchQuery);
+            stmt.setString(3, searchQuery);
+            stmt.setInt(4, (page - 1) * pageSize);
+            stmt.setInt(5, pageSize);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("passHash"),
+                        rs.getBoolean("gender"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("resetToken"),
+                        rs.getDate("resetTokenExpired"),
+                        rs.getDate("dateOfBirth"),
+                        rs.getShort("roleId"),
+                        rs.getBoolean("isDisabled")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    public int countTotalUsers(String query) {
+        int totalUsers = 0;
+        String sql = "SELECT COUNT(*) FROM Users WHERE name LIKE ? OR email LIKE ? OR phoneNumber LIKE ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchQuery = "%" + query + "%";
+            stmt.setString(1, searchQuery);
+            stmt.setString(2, searchQuery);
+            stmt.setString(3, searchQuery);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                totalUsers = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalUsers;
+    }
+
+    public List<User> sortUsers(String sortBy, String sortOrder, int page, int pageSize) {
+        String sql = "SELECT * FROM Users ORDER BY " + sortBy + " " + sortOrder
+                + " LIMIT ? OFFSET ?";
+        List<User> users = new ArrayList<>();
+        try ( PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, pageSize);
+            stmt.setInt(2, (page - 1) * pageSize);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    users.add(new User(rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("passHash"),
+                            rs.getBoolean("gender"),
+                            rs.getString("phoneNumber"),
+                            rs.getString("resetToken"),
+                            rs.getDate("resetTokenExpired"),
+                            rs.getDate("dateOfBirth"),
+                            rs.getShort("roleId"),
+                            rs.getBoolean("isDisabled")));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
     public Vector<User> getCustomers(int page, int pageSize, String filterStatus, String searchQuery) {
         Vector<User> customers = new Vector<>();
         String sql = "SELECT * FROM Users WHERE roleId = 5 ";
@@ -201,6 +405,7 @@ public class DAOUser extends DBConnection {
                         rs.getString("resetToken"),
                         rs.getDate("resetTokenExpired"),
                         rs.getDate("dateOfBirth"),
+
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled")
                 );
@@ -269,23 +474,6 @@ public class DAOUser extends DBConnection {
 
     public static void main(String[] args) {
 
-        DAOUser dao = new DAOUser();
-
-        // Tạo đối tượng User cần cập nhật
-        User user = new User();
-        user.setId(1); // Giả sử người dùng có ID là 1
-        user.setEmail("newemail@example.com"); // Cập nhật email
-        user.setPhoneNumber("1234567890"); // Cập nhật số điện thoại
-        user.setDisabled(false); // Cập nhật trạng thái (false = chưa bị khóa)
-
-        // Gọi phương thức updateCustomer
-        int result = dao.updateCustomer(user);
-
-        // In ra kết quả cập nhật
-        if (result > 0) {
-            System.out.println("Cập nhật thông tin người dùng thành công.");
-        } else {
-            System.out.println("Cập nhật thông tin người dùng thất bại.");
-        }
+        
     }
 }

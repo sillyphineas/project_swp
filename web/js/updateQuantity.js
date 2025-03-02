@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         document.body.appendChild(alertBox);
 
-        setTimeout(() => alertBox.remove(), 3000);
+        setTimeout(() => alertBox.remove(), 1000);
     }
 
     checkboxes.forEach(checkbox => {

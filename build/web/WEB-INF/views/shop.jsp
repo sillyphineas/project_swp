@@ -202,9 +202,9 @@
                                         <li><a href="CartURL">Cart</a></li> 
                                     </ul>
                                 </li> 
-                                <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="BlogURL">Blog List</a></li>
+                                        <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                     </ul>
                                 </li> 
                                 <li><a href="404.html">404</a></li>
@@ -349,14 +349,12 @@
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-
-                                            <img src="${product.imageURL}" alt="" />
+                                            <img href="ProductDetailController?id=${product.id}" src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
                                             <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                            <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
-                                            <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-
+                                            <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -393,19 +391,19 @@
                                                         </div>
                                                     </div>-->
                     <div class ="text-center">
-                       <div class="pagination">
-    <c:if test="${currentPage > 1}">
-        <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
-    </c:if>
-    
-    <c:forEach begin="1" end="${totalPages}" var="i">
-        <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-    </c:forEach>
-    
-    <c:if test="${currentPage < totalPages}">
-        <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
-    </c:if>
-</div>
+                        <div class="pagination">
+                            <c:if test="${currentPage > 1}">
+                                <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
+                            </c:if>
+
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                            </c:forEach>
+
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
+                            </c:if>
+                        </div>
 
 
                     </div>
@@ -584,5 +582,3 @@
 <script src="js/main.js"></script>
 </body>
 </html>
-
-
