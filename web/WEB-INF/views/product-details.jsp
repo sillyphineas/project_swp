@@ -366,6 +366,7 @@
                                             <i class="fa fa-shopping-cart"></i>
                                             Add to cart
                                         </button>
+                                        
                                     </div>
                                 </form>
                             </div>

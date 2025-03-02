@@ -212,4 +212,6 @@ public class DAOProductVariant extends DBConnection {
     }
     return variants;
 }
+
+    
 }

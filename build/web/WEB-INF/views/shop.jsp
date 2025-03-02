@@ -351,10 +351,11 @@
                                         <div class="productinfo text-center">
                                             <img href="ProductDetailController?id=${product.id}" src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
-                                            <c:set var="minPriceKey" value="minPrice_${product.id}" />
+                                            <c:set var="minPriceKey" value="minPrice_${product.id}"   />
                                             <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
+                                          
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                            <a href="MarketingProductController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
+                                           
                                         </div>
                                     </div>
                                 </div>

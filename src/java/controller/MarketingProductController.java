@@ -7,6 +7,7 @@ package controller;
 
 import entity.Brand;
 import entity.Product;
+import entity.ProductVariant;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
@@ -89,6 +91,8 @@ public class MarketingProductController extends HttpServlet {
         String screenType = request.getParameter("screenType");
         String batteryCapacityStr = request.getParameter("batteryCapacity");
         String screenSizeStr = request.getParameter("screenSize");
+         String sortBy = request.getParameter("sortBy");
+    String sortOrder = request.getParameter("sortOrder");
 
         int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0.0;
@@ -102,7 +106,7 @@ public class MarketingProductController extends HttpServlet {
         int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
         int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
 
-        Vector<Product> productList = dao.getProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
+        Vector<Product> productList = dao.getProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage, sortBy, sortOrder);
         Product latestProduct = dao.getLatestProduct();
 
         for (Product product : productList) {
@@ -156,7 +160,34 @@ public class MarketingProductController extends HttpServlet {
                 session.setAttribute("deleteMessage", "Không thể xóa sản phẩm.");
             }
             response.sendRedirect("MarketingProductController");
-        }   
+        }
+        else if ("hide".equals(action)) {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        int result = dao.hideProduct(productId);
+
+        if (result > 0) {
+            session.setAttribute("productStatusMessage", "Sản phẩm đã được ẩn.");
+        } else {
+            session.setAttribute("productStatusMessage", "Không thể ẩn sản phẩm.");
+        }
+        response.sendRedirect("MarketingProductController");}
+        
+     else if ("show".equals(action)) {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        int result = dao.showProduct(productId);
+
+        if (result > 0) {
+            session.setAttribute("productStatusMessage", "Sản phẩm đã được hiển thị.");
+        } else {
+            session.setAttribute("productStatusMessage", "Không thể hiển thị sản phẩm.");
+        }
+        response.sendRedirect("MarketingProductController");
+    }
+     else if("addProduct".equals(action)){
+       request.setAttribute("brands", daoBrand.getAllBrands());
+       request.getRequestDispatcher("WEB-INF/views/add_product.jsp").forward(request, response);
+        
+     }
         else{
 
         
@@ -181,6 +212,8 @@ public class MarketingProductController extends HttpServlet {
         request.setAttribute("screenSize", screenSize);
         request.setAttribute("minPrice", minPrice);
         request.setAttribute("maxPrice", maxPrice);
+        request.setAttribute("sortBy", sortBy);
+    request.setAttribute("sortOrder", sortOrder);
 
 
         request.getRequestDispatcher("WEB-INF/views/marketingshop.jsp").forward(request, response);
@@ -197,8 +230,62 @@ public class MarketingProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        DAOProduct dao = new DAOProduct();
+        DAOBrand daoBrand = new DAOBrand();
+        DAOProductVariant daovariant = new DAOProductVariant();
+        String action = request.getParameter("action");
+
+        if ("submitAddProduct".equals(action)) {
+            HttpSession session = request.getSession();
+            try {
+              
+                
+                int brandID = Integer.parseInt(request.getParameter("brandID"));
+                String name = request.getParameter("name");
+                String description = request.getParameter("description");
+                String imageURL = request.getParameter("imageURL");
+                int feedbackCount = Integer.parseInt(request.getParameter("feedbackCount"));
+                String chipset = request.getParameter("chipset");
+                int ram = Integer.parseInt(request.getParameter("ram"));
+                double screenSize = Double.parseDouble(request.getParameter("screenSize"));
+                String screenType = request.getParameter("screenType");
+                String resolution = request.getParameter("resolution");
+               
+                int batteryCapacity = Integer.parseInt(request.getParameter("batteryCapacity"));
+                String cameraSpecs = request.getParameter("cameraSpecs");
+                String os = request.getParameter("os");
+                String simType = request.getParameter("simType");
+                String connectivity = request.getParameter("connectivity");
+                int createBy = Integer.parseInt(request.getParameter("createBy"));
+
+                
+Product newProduct = new Product(brandID, brandID, name, description, true, feedbackCount, simType, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, new java.sql.Date(System.currentTimeMillis()), createBy);
+int productID = dao.addProduct(newProduct);                
+if (productID > 0) {
+                   
+                  String color = request.getParameter("color");
+                  int storage = Integer.parseInt(request.getParameter("storage"));
+                  Double price = Double.parseDouble(request.getParameter("price"));
+                  int stock = Integer.parseInt(request.getParameter("stock"));
+                  
+                        ProductVariant variant = new ProductVariant(ram, productID, color, storage, price, stock);
+                        daovariant.addProductVariant(variant);
+                    
+
+                    session.setAttribute("message", "Product added successfully!");
+                } else {
+                    session.setAttribute("message", "Failed to add product.");
+                }
+            } catch (Exception e) {
+                session.setAttribute("message", "Error: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            response.sendRedirect("MarketingProductController");
+        }
     }
+    
+    
 
     /** 
      * Returns a short description of the servlet.

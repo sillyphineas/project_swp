@@ -71,7 +71,7 @@ public class ProductController extends HttpServlet {
         int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
         int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
 
-        Vector<Product> productList = dao.getProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
+        Vector<Product> productList = dao.getProductsByFilter(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
         Product latestProduct = dao.getLatestProduct();
 
         for (Product product : productList) {

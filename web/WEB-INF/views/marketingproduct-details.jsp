@@ -192,6 +192,7 @@
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
+                                            <li><a href="MarketingProductDetails">Product Details</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
@@ -227,6 +228,7 @@
                             <div class="brands_products">
                                 <h2>Brands</h2> 
                                 <div class="brands-name">
+                                    
                                     <ul class="nav nav-pills nav-stacked">
                                         <li> 
                                             <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
@@ -361,11 +363,12 @@
 
                                         <p><b>Description:</b> ${product.description}</p>
 
-                                        <!-- Nút "Add to cart" -->
-                                        <button type="submit" class="btn btn-default cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            Add to cart
-                                        </button>
+                                        <p>
+                                           
+                                          
+                                             <a href="MarketingProductDetails?action=editProduct" class="btn btn-group cart">Edit Product</a>
+                                        </p>
+                                        
                                     </div>
                                 </form>
                             </div>
@@ -612,24 +615,24 @@
 
         <script src="js/cart.js"></script>
         <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                            var storageSelector = document.getElementById("storageSelector");
-                    var productPrice = document.getElementById("productPrice");
-                    var colorSelector = document.getElementById("colorSelector");
-                    // Lắng nghe sự kiện khi người dùng chọn storage
-                    storageSelector.addEventListener("change", function () {
-                    var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-                    var price = selectedOption.getAttribute("data-price");
-                    var color = selectedOption.getAttribute("data-color");
-                    productPrice.textContent = "$" + price;
-                    for (var i = 0; i < colorSelector.options.length; i++) {
-                    if (colorSelector.options[i].value === color) {
-                    colorSelector.selectedIndex = i;
-                    break;
-                    }
-                    }
-                    });
-                });
+        document.addEventListener("DOMContentLoaded", function () {
+                    var storageSelector = document.getElementById("storageSelector");
+            var productPrice = document.getElementById("productPrice");
+            var colorSelector = document.getElementById("colorSelector");
+            // Lắng nghe sự kiện khi người dùng chọn storage
+            storageSelector.addEventListener("change", function () {
+            var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+            var price = selectedOption.getAttribute("data-price");
+            var color = selectedOption.getAttribute("data-color");
+            productPrice.textContent = "$" + price;
+            for (var i = 0; i < colorSelector.options.length; i++) {
+            if (colorSelector.options[i].value === color) {
+            colorSelector.selectedIndex = i;
+            break;
+            }
+            }
+            });
+        });
         
         </script>
 
