@@ -122,8 +122,25 @@ public class User {
         return roleId;
     }
 
+    public String getRoleName(){
+        switch (this.roleId) {
+            case 1:
+                return "Admin";
+            case 2:
+                return "Marketing";
+            case 3:
+                return "Sale";
+            case 4:
+                return "Shipper";
+            case 5:
+                return "Customer";
+            default:
+                throw new AssertionError();
+        }
+    }
     public void setRoleId(int roleId) {
         this.roleId = roleId;
+        
     }
 
     public boolean isDisabled() {

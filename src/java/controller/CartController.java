@@ -88,8 +88,10 @@ public class CartController extends HttpServlet {
             String service = request.getParameter("service");
             Vector<Product> listpro = daoPro.getLatestProducts();
             request.setAttribute("listpro", listpro);
+            
             List<Address> addresses = daoAdd.getAddressesByUserId(customerID);
             request.setAttribute("userAddresses", addresses);
+            
             if (service == null) {
                 service = "showCart";
             }

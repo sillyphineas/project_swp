@@ -202,9 +202,9 @@
                                         <li><a href="CartURL">Cart</a></li> 
                                     </ul>
                                 </li> 
-                                <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="BlogURL">Blog List</a></li>
+                                        <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                     </ul>
                                 </li> 
                                 <li><a href="404.html">404</a></li>
