@@ -202,9 +202,9 @@
                                         <li><a href="CartURL">Cart</a></li> 
                                     </ul>
                                 </li> 
-                                <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <li><a href="BlogURL">Blog List</a></li>
+                                        <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                     </ul>
                                 </li> 
                                 <li><a href="404.html">404</a></li>
@@ -349,14 +349,12 @@
                                 <div class="product-image-wrapper">
                                     <div class="single-products">
                                         <div class="productinfo text-center">
-
-                                            <img src="${product.imageURL}" alt="" />
+                                            <img href="ProductDetailController?id=${product.id}" src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
                                             <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                            <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
-                                            <a href="CartURL?service=add2cart&productID=${product.id}&quantity=${existingQuantity != null ? existingQuantity + 1 : 1}" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-
+                                            <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
+                                            <a href="MarketingProductController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
                                         </div>
                                     </div>
                                 </div>
@@ -584,5 +582,3 @@
 <script src="js/main.js"></script>
 </body>
 </html>
-
-

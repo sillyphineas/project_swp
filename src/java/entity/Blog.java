@@ -4,6 +4,9 @@
  */
 package entity;
 
+import org.eclipse.jdt.internal.compiler.ast.FalseLiteral;
+import org.eclipse.jdt.internal.compiler.ast.TrueLiteral;
+
 /**
  *
  * @author HP
@@ -34,8 +37,6 @@ public class Blog {
         this.isSlider = isSlider;
         this.isDisabled = isDisabled;
     }
-    
-   
 
     public Blog() {
     }
@@ -76,6 +77,15 @@ public class Blog {
         return content;
     }
 
+    public String getSubContent() {
+        int maxLength = 100;
+        if (content.length() > maxLength) {
+            return content.substring(0, maxLength) + "...";
+        } else {
+            return content;
+        }
+    }
+
     public void setContent(String content) {
         this.content = content;
     }
@@ -112,9 +122,27 @@ public class Blog {
         this.isDisabled = isDisabled;
     }
 
+    public String getIsDisabled(){
+        if(this.isDisabled == true){
+            return "Disabled";
+        }
+        return "Active";
+    }
+
+
+    public boolean isIsSlider() {
+        return isSlider;
+    }
+
+    public void setIsSlider(boolean isSlider) {
+        this.isSlider = isSlider;
+    }
+
     @Override
     public String toString() {
-        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", backlinks=" + backlinks + ", status=" + status + ", isDisabled=" + isDisabled + '}';
+        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", backlinks=" + backlinks + ", imageURL=" + imageURL + ", status=" + status + ", isSlider=" + isSlider + ", isDisabled=" + isDisabled + '}';
     }
+
+    
 
 }
