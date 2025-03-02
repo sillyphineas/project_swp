@@ -354,7 +354,7 @@
                                             <c:set var="minPriceKey" value="minPrice_${product.id}" />
                                             <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                            <a href="MarketingProductController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -391,19 +391,19 @@
                                                         </div>
                                                     </div>-->
                     <div class ="text-center">
-                       <div class="pagination">
-    <c:if test="${currentPage > 1}">
-        <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
-    </c:if>
-    
-    <c:forEach begin="1" end="${totalPages}" var="i">
-        <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-    </c:forEach>
-    
-    <c:if test="${currentPage < totalPages}">
-        <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
-    </c:if>
-</div>
+                        <div class="pagination">
+                            <c:if test="${currentPage > 1}">
+                                <a href="?page=${currentPage-1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="pre">Previous</a>
+                            </c:if>
+
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <a href="?page=${i}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                            </c:forEach>
+
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="?page=${currentPage+1}&brandID=${brandID}&os=${os}&connectivity=${connectivity}&ram=${ram}&screenType=${screenType}&batteryCapacity=${batteryCapacity}&screenSize=${screenSize}&minPrice=${minPrice}&maxPrice=${maxPrice}" class="next">Next</a>
+                            </c:if>
+                        </div>
 
 
                     </div>

@@ -166,8 +166,9 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="SliderController" class="active">Slider List</a></li>
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                    <li><a href="SliderController">Slider List</a></li>
                                 </ul>
                             </div>
                         </div>

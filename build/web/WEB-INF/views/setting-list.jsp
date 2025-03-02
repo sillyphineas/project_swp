@@ -72,6 +72,63 @@
                 height: auto; /* Đảm bảo chiều cao của các tùy chọn đủ để hiển thị */
             }
 
+            /* Giảm khoảng cách giữa các thành phần trong Sort, Search, Filter */
+            .form-row {
+                display: flex;
+                align-items: center; /* Căn giữa theo chiều dọc */
+                justify-content: flex-start; /* Các phần tử nằm gần nhau */
+                gap: 10px; /* Tạo khoảng cách vừa phải */
+                margin-bottom: 10px !important; /* Giảm khoảng cách giữa các dòng */
+            }
+
+            /* Giảm khoảng cách giữa các phần tử bên trong mỗi dòng */
+            .form-group {
+                margin-bottom: 0px !important; /* Xóa khoảng cách thừa */
+                display: flex;
+                align-items: center;
+            }
+
+            /* Định dạng input và select cho đồng đều */
+            .form-control {
+                width: auto !important; /* Giữ kích thước tự nhiên */
+                min-width: 180px; /* Đảm bảo không quá nhỏ */
+                padding: 5px;
+                height: 38px; /* Đồng bộ với button */
+            }
+
+            /* Tinh chỉnh button để không bị cách xa nhau */
+            .btn {
+                height: 38px; /* Giữ cùng chiều cao với input */
+                padding: 5px 12px; /* Tạo kích thước cân đối */
+            }
+
+            /* Giữ khoảng cách hợp lý giữa button */
+            .btn-warning,
+            .btn-success,
+            .btn-link {
+                margin-left: 5px !important;
+            }
+
+
+            /* Đảm bảo các nút trong Actions luôn nằm cùng 1 dòng */
+            .btn-group {
+                display: flex !important;  /* Sử dụng flexbox để giữ các nút trên cùng 1 dòng */
+                flex-wrap: nowrap !important; /* Ngăn các nút xuống dòng */
+                gap: 5px; /* Tạo khoảng cách nhỏ giữa các nút */
+            }
+
+            /* Giữ kích thước các button đồng nhất */
+            .btn-group .btn {
+                white-space: nowrap; /* Ngăn chặn xuống dòng trong button */
+                min-width: 80px; /* Giữ các nút có cùng chiều rộng */
+                padding: 6px 12px; /* Đồng bộ padding */
+            }
+
+            /* Đảm bảo table không bị co lại làm ảnh hưởng */
+            .table td {
+                white-space: nowrap; /* Ngăn chặn text bị xuống dòng */
+            }
+
         </style>
     </head><!--/head-->
 
@@ -172,7 +229,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="UserController">Users List</a></li>
                                     <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
@@ -192,44 +250,75 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h2>Settings List</h2>
+                        <hr>
                         <div class="container">
-                            <div class="row d-flex justify-content-between align-items-center">
-                                <!-- Sort By & Order Dropdowns, Sort button -->
-                                <div class="col-auto d-flex">
-                                    <div class="form-group mb-0 mr-2">
-                                        <label for="sortBy" class="mr-2">Sort By:</label>
-                                        <select id="sortBy" name="sortBy" class="form-control d-inline-block">
-                                            <option value="id">ID</option>
-                                            <option value="type">Type</option>
-                                            <option value="keyName">Key Name</option>
-                                            <option value="value">Value</option>
-                                            <option value="status">Status</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group mb-0 mr-2">
-                                        <label for="sortOrder" class="mr-2">Order:</label>
-                                        <select id="sortOrder" name="sortOrder" class="form-control d-inline-block">
-                                            <option value="asc">Ascending</option>
-                                            <option value="desc">Descending</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="btn btn-warning">Sort</button>
+                            <!-- 🔹 Sort Form -->
+                            <form action="SettingController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
+                                <input type="hidden" name="service" value="sortSettings">
+
+                                <div class="form-group mb-0 mr-2">
+                                    <label for="sortBy" class="mr-2">Sort By:</label>
+                                    <select id="sortBy" name="sortBy" class="form-control">
+                                        <option value="id">ID</option>
+                                        <option value="key_name">Key Name</option>
+                                    </select>
                                 </div>
 
-                                <!-- Thêm nút Add Setting căn thẳng với lề phải của bảng -->
-                                <div class="col-sm-12 d-flex justify-content-end mt-2">
-                                    <a href="SettingController?service=addSetting" class="btn btn-success">Add Setting</a>
+                                <div class="form-group mb-0 mr-2">
+                                    <label for="sortOrder" class="mr-2">Order:</label>
+                                    <select id="sortOrder" name="sortOrder" class="form-control">
+                                        <option value="asc">Ascending</option>
+                                        <option value="desc">Descending</option>
+                                    </select>
                                 </div>
-                            </div>
+
+                                <button type="submit" class="btn btn-warning">Sort</button>
+                                <a href="SettingController?service=addSetting" class="btn btn-success">Add Setting</a>
+                            </form>
+
+                            <hr>
+
+                            <!-- 🔹 Search Form -->
+                            <form action="SettingController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
+                                <input type="hidden" name="service" value="searchSettings">
+                                <div class="form-group mb-0 flex-grow-1">
+                                    <label for="searchKeyword" class="mr-2">Search:</label>
+                                    <input type="text" id="searchKeyword" name="keyword" value="${keyword}" class="form-control" placeholder="Enter key name or value">
+                                </div>
+                                <button type="submit" class="btn btn-warning">Search</button>
+                                <a href="SettingController?service=displaySettings" class="btn btn-link">Reset</a>
+                            </form>
+
+                            <hr>
+
+                            <!-- 🔹 Filter Form -->
+                            <form action="SettingController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
+                                <input type="hidden" name="service" value="filterSettings">
+                                <div class="form-group mb-0 mr-2">
+                                    <label for="statusFilter" class="mr-2">Status:</label>
+                                    <select id="statusFilter" name="status" class="form-control">
+                                        <option value="All">All</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-0 mr-2">
+                                    <label for="typeFilter" class="mr-2">Type:</label>
+                                    <select id="typeFilter" name="type" class="form-control">
+                                        <option value="All">All Types</option>
+                                        <c:forEach var="type" items="${settingTypes}">
+                                            <option value="${type.typeName}">${type.typeName}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-warning">Filter</button>
+                                <a href="SettingController?service=displaySettings" class="btn btn-link">Reset</a>
+                            </form>
                         </div>
-
-
-
-
 
                         <hr>
                         <table class="table table-bordered">
-                            <thead>
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>ID</th>
                                     <th>Type</th>
@@ -239,44 +328,62 @@
                                     <th>Status</th>
                                     <th>Created At</th>
                                     <th>Updated At</th>
-                                    <th>Activate</th>
-                                    <th>Deactivate</th>
-                                    <th>Update</th>
-                                    <th>Delete</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Iterating through the list of settings -->
+
                                 <c:forEach var="setting" items="${settingList}">
                                     <tr>
                                         <td>${setting.id}</td>
-                                        <td>${setting.type}</td>
+                                        <td>${setting.typeName}</td>
                                         <td>${setting.keyName}</td>
                                         <td>${setting.value}</td>
                                         <td>${setting.description}</td>
                                         <td class="${setting.status == 'Inactive' ? 'inactive-status' : 'active-status'}">
                                             ${setting.status == 'Inactive' ? 'Inactive' : 'Active'}
                                         </td>
-
                                         <td>${setting.createdAt}</td>
                                         <td>${setting.updatedAt}</td>
-                                        <!-- Add buttons for Activate, Update, Delete -->
                                         <td>
-                                            <a href="SettingController?service=activate&settingId=${setting.id}" class="btn btn-primary">Activate</a>
+                                            <div class="btn-group">
+                                                <a href="SettingController?service=activate&settingId=${setting.id}" 
+                                                   class="btn btn-success btn-sm" ${setting.status == 'Active' ? 'disabled' : ''}>Activate</a>
+
+                                                <a href="SettingController?service=deactivate&settingId=${setting.id}" 
+                                                   class="btn btn-warning btn-sm" ${setting.status == 'Inactive' ? 'disabled' : ''}>Deactivate</a>
+
+                                                <a href="SettingController?service=updateSetting&settingId=${setting.id}" 
+                                                   class="btn btn-info btn-sm">Edit</a>
+
+                                                <a href="SettingController?service=deleteSetting&settingId=${setting.id}" 
+                                                   class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+                                            </div>
                                         </td>
-                                        <td>
-                                            <a href="SettingController?service=deactivate&settingId=${setting.id}" class="btn btn-primary">Deactivate</a>
-                                        </td>
-                                        <td>
-                                            <a href="SettingController?service=updateSetting&settingId=${setting.id}" class="btn btn-primary">Update</a>
-                                        </td>
-                                        <td>
-                                            <a href="SettingController?service=deleteSetting&settingId=${setting.id}" class="btn btn-primary">Delete</a>
-                                        </td>
+
                                     </tr>
                                 </c:forEach>
+
                             </tbody>
                         </table>
+                        <div class="pagination">
+                            <ul class="pagination">
+                                <c:if test="${currentPage > 1}">
+                                    <li><a href="SettingController?service=displaySettings&page=${currentPage - 1}">&laquo; Prev</a></li>
+                                    </c:if>
+
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <li class="${i == currentPage ? 'active' : ''}">
+                                        <a href="SettingController?service=displaySettings&page=${i}">${i}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <c:if test="${currentPage < totalPages}">
+                                    <li><a href="SettingController?service=displaySettings&page=${currentPage + 1}">Next &raquo;</a></li>
+                                    </c:if>
+                            </ul>
+                        </div>
+
                     </div>
                 </div>
             </div>

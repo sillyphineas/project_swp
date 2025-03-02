@@ -215,10 +215,10 @@ public class DAOOrder extends DBConnection {
     }
 
     public void updateOrderStatus(String txnRef, String status) {
-        String sql = "UPDATE Orders SET orderStatus = ? WHERE id = (SELECT orderID FROM OrderDetails WHERE orderID = ? LIMIT 1)";
+        String sql = "UPDATE Orders SET orderStatus = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
-            ps.setLong(2, Long.parseLong(txnRef)); // Chuyển đổi txnRef sang số nguyên (ID đơn hàng)
+            ps.setLong(2, Long.parseLong(txnRef)); // Chuyển đổi txnRef sang long
 
             int rowsUpdated = ps.executeUpdate();
             if (rowsUpdated > 0) {
@@ -228,6 +228,8 @@ public class DAOOrder extends DBConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.println("Lỗi chuyển đổi số: " + e.getMessage());
         }
     }
 
