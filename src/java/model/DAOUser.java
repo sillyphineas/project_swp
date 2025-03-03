@@ -167,7 +167,15 @@ public class DAOUser extends DBConnection {
 
             while (rs.next()) {
                 users.add(new User(rs.getInt("id"),
-                                        rs.getShort("roleId"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("passHash"),
+                        rs.getBoolean("gender"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("resetToken"),
+                        rs.getDate("resetTokenExpired"),
+                        rs.getDate("dateOfBirth"),
+                        rs.getShort("roleId"),
                         rs.getBoolean("isDisabled")));
             }
         }
@@ -358,122 +366,15 @@ public class DAOUser extends DBConnection {
         }
         return users;
     }
-    public Vector<User> getCustomers(int page, int pageSize, String filterStatus, String searchQuery) {
-        Vector<User> customers = new Vector<>();
-        String sql = "SELECT * FROM Users WHERE roleId = 5 ";
-
-        if (filterStatus != null && !filterStatus.isEmpty()) {
-            sql += "AND isDisabled = ? ";
-        }
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            sql += "AND (name LIKE ? OR email LIKE ? OR phoneNumber LIKE ?) ";
-        }
-
-        sql += "LIMIT ? OFFSET ?"; // phân trang
-
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-
-            int paramIndex = 1;
-
-            // Thêm filter trạng thái
-            if (filterStatus != null && !filterStatus.isEmpty()) {
-                pre.setBoolean(paramIndex++, Boolean.parseBoolean(filterStatus));
-            }
-
-            // Thêm tìm kiếm
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                String searchPattern = "%" + searchQuery + "%";
-                pre.setString(paramIndex++, searchPattern);
-                pre.setString(paramIndex++, searchPattern);
-                pre.setString(paramIndex++, searchPattern);
-            }
-
-            // Thêm phân trang
-            pre.setInt(paramIndex++, pageSize);
-            pre.setInt(paramIndex, (page - 1) * pageSize); // OFFSET
-
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                User user = new User(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getString("passHash"),
-                        rs.getBoolean("gender"),
-                        rs.getString("phoneNumber"),
-                        rs.getString("resetToken"),
-                        rs.getDate("resetTokenExpired"),
-                        rs.getDate("dateOfBirth"),
-
-                        rs.getInt("roleId"),
-                        rs.getBoolean("isDisabled")
-                );
-                customers.add(user);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return customers;
-    }
-
-    public int getTotalCustomers(String filterStatus, String searchQuery) {
-        int total = 0;
-        String sql = "SELECT COUNT(*) FROM Users WHERE roleId = 5 ";
-
-        if (filterStatus != null && !filterStatus.isEmpty()) {
-            sql += "AND isDisabled = ? ";
-        }
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            sql += "AND (name LIKE ? OR email LIKE ? OR phoneNumber LIKE ?) ";
-        }
-
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            int paramIndex = 1;
-
-            if (filterStatus != null && !filterStatus.isEmpty()) {
-                pre.setBoolean(paramIndex++, Boolean.parseBoolean(filterStatus));
-            }
-
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                String searchPattern = "%" + searchQuery + "%";
-                pre.setString(paramIndex++, searchPattern);
-                pre.setString(paramIndex++, searchPattern);
-                pre.setString(paramIndex++, searchPattern);
-            }
-
-            ResultSet rs = pre.executeQuery();
-            if (rs.next()) {
-                total = rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return total;
-    }
-
-    public int updateCustomer(User user) {
-        int n = 0;
-        String sql = "UPDATE Users SET email = ?, phoneNumber = ?, isDisabled = ? WHERE id = ?";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, user.getEmail());
-            pre.setString(2, user.getPhoneNumber());
-            pre.setBoolean(3, user.isDisabled());
-            pre.setInt(4, user.getId());
-
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
-    }
 
     public static void main(String[] args) {
-
-        
+        DAOUser dao = new DAOUser();
+//        User user = dao.getUserById(2);
+//        if (user != null) {
+//            System.out.println(user);
+//        } else {
+//            System.out.println("User not found.");
+//        }
+        System.out.println(dao.searchUsers("haiductran712@gmail.com", 1, 10));
     }
 }
