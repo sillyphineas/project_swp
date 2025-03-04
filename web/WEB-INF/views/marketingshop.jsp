@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : shop
     Created on : Jan 18, 2025, 1:15:10 PM
@@ -277,18 +278,19 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div class="left-sidebar">
-<c:if test="${not empty deleteMessage}">
+<%--<c:if test="${not empty deleteMessage}">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>Success!</strong> ${deleteMessage}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-</c:if>
+</c:if>--%>
                         <div class="filter-box">
                             <div>
 
-                                <a href="MarketingProductController?action=addProduct" class="btn btn-primary">Add Product</a>
+                                <a href="AddProductController?action=addProduct" class="btn btn-primary">Add Product</a>
+                                <a href="AddProductController?action=addProductVariant" class="btn btn-primary">Add ProductVariant</a>
                             </div>
                            <!-- Sort By Section -->
 <div class="sort-box text-center">
