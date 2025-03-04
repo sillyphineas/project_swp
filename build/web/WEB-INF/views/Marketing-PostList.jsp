@@ -1,3 +1,5 @@
+
+
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -122,6 +124,27 @@
             }
 
         </style>
+        <style>
+            #notification {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #cce5ff;
+                color: #004085;
+                padding: 15px 30px;
+                border-radius: 5px;
+                display: none;
+                opacity: 0;
+                transition: opacity 0.5s ease-in-out;
+                z-index: 9999;
+            }
+
+            #notification.show {
+                display: block;
+                opacity: 1;
+            }
+        </style>
     </head><!--/head-->
 
     <body>
@@ -221,9 +244,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -249,33 +271,38 @@
                     <div class="col-sm-12">
                         <h2 style="color: red">Post List</h2>
                         <div class="container">
-                            <form action="MarketingPostController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
-                                <input type="hidden" value="sort" name="service">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <form action="MarketingPostController" method="get" style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="hidden" value="sort" name="service">
+                                    <div class="form-group mb-0" style="margin-bottom: 0;">
+                                        <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
+                                        <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                            <option value="b.id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
+                                            <option value="title" <%= "title".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Title</option>
+                                            <option value="postTime" <%= "postTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Post Time</option>
+                                            <option value="author" <%= "author".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Author</option>
+                                            <option value="status" <%= "status".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
+                                        </select>
+                                    </div>
 
-                                <div class="form-group mb-0" style="margin-bottom: 0;">
-                                    <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
-                                    <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                                        <option value="b.id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
-                                        <option value="title" <%= "title".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Title</option>
-                                        <option value="postTime" <%= "postTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Post Time</option>
-                                        <option value="author" <%= "author".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Author</option>
-                                        <option value="status" <%= "status".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
-                                    </select>
-                                </div>
+                                    <div class="form-group mb-0" style="margin-bottom: 0;">
+                                        <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
+                                        <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                            <option value="asc" <%= "asc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Ascending</option>
+                                            <option value="desc" <%= "desc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Descending</option>
+                                        </select>
+                                    </div>
 
-                                <div class="form-group mb-0" style="margin-bottom: 0;">
-                                    <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
-                                    <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                                        <option value="asc" <%= "asc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Ascending</option>
-                                        <option value="desc" <%= "desc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Descending</option>
-                                    </select>
-                                </div>
+                                    <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                        <i style="margin-right: 5px;"></i> Sort
+                                    </button>
+                                </form>
 
-                                <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
-                                    <i style="margin-right: 5px;"></i> Sort
-                                </button>
-                            </form>
-
+                                <!-- Add Blog Button -->
+                                <a href="MarketingPostController?service=addBlog" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                    <i style="margin-right: 5px;"></i> Add Blog
+                                </a>
+                            </div>
                         </div>
                         <br>
                         <table class="table table-bordered">
@@ -290,19 +317,18 @@
                                     <th>Backlinks</th>    
                                     <th><a href="MarketingPostController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
                                     <th>Change Status</th>
-                                    <th>Update</th>
-
+                                    <th>View</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="blog-list">
                                 <%
                                 List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
                                 if (blogs != null && !blogs.isEmpty()) {
-                                DAOBlog dao = new DAOBlog();
-                                for (Blog blog : blogs){
-                                int authorID = blog.getAuthorID();
-                                String authname = dao.getAuthorNameById(blog.getAuthorID());
+                                    DAOBlog dao = new DAOBlog();
+                                    for (Blog blog : blogs){
+                                        int authorID = blog.getAuthorID();
+                                        String authname = dao.getAuthorNameById(blog.getAuthorID());
                                 %>
                                 <tr id="blog-<%= blog.getId() %>">
                                     <td>
@@ -310,27 +336,32 @@
                                     </td>
                                     <td><a href=""><img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="width: 100px; height: 100px; object-fit: cover;"></a></td>
                                     <td>
-                                        <a href="MarketingPostController?service=blogFilter&authorID=<%= blog.getAuthorID() %>"><%=authname%></a>
+                                        <a href="MarketingPostController?service=blogFilter&authorID=<%= blog.getAuthorID() %>"><%= authname %></a>
                                     </td>
-                                    <td><%=blog.getPostTime()%></td>
+                                    <td><%= blog.getPostTime() %></td>
                                     <td><%= blog.getTitle() %></td>
-                                    <td style=" ">
+                                    <td style="">
                                         <%= blog.getSubContent() %>
                                     </td>
-                                    <td><a href="<%= blog.getBacklinks()%>"><%= blog.getBacklinks()%></a></td>
+                                    <td><a href="<%= blog.getBacklinks() %>"><%= blog.getBacklinks() %></a></td>
                                     <td id="status_<%= blog.getId() %>">
-                                        <a href="MarketingPostController?service=blogFilter&status=<%= blog.isIsDisabled()%>">
+                                        <a href="MarketingPostController?service=blogFilter&status=<%= blog.isIsDisabled() %>">
                                             <%= blog.getIsDisabled() %>
                                         </a>
                                     </td>
                                     <td>
-                                        <button class="btn btn-info" onclick="changeStatus(<%= blog.getId() %>, <%= blog.isIsDisabled()%>)">Change</button>
+                                        <button id="changeButton_<%= blog.getId() %>" class="btn btn-info" 
+                                                onclick="changeStatus(<%= blog.getId() %>, <%= blog.isIsDisabled() ? "true" : "false" %>)">
+                                            Change
+                                        </button>
                                     </td>
-
                                     <td>
-                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= blog.getId() %>" class="btn btn-primary">Update</a>
+                                        <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" 
+                                           class="btn" 
+                                           style="display: inline-block; padding: 7px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold; cursor: pointer; border: none;">
+                                            View
+                                        </a>
                                     </td>
-
                                     <td>
                                         <button type="button" class="btn btn-danger" onclick="deleteBlog(<%= blog.getId() %>)">Delete</button>
                                     </td>
@@ -345,6 +376,7 @@
                                 <% } %>
                             </tbody>
                         </table>
+
                         <div class="new-pagination-area">
                             <ul class="new-pagination">
                                 <% 
@@ -357,38 +389,43 @@
                                     String sortBy = (String) request.getAttribute("sortBy");
                                     String sortOrder = (String) request.getAttribute("sortOrder");
                                     String query = (String) request.getAttribute("query");
-                                    Integer filterId = (Integer) request.getAttribute("filterId");
-                                    Integer filterAuthorId = (Integer) request.getAttribute("filterAuthorId");
-                                    Boolean filterStatus = (Boolean) request.getAttribute("filterStatus");
-                                    
+
+                                    // Xử lý filter tránh null
+                                    String filterId = (request.getAttribute("id") != null) ? request.getAttribute("id").toString() : "";
+                                    String filterAuthorId = (request.getAttribute("authorID") != null) ? request.getAttribute("authorID").toString() : "";
+                                    String filterStatus = (request.getAttribute("status") != null) ? request.getAttribute("status").toString() : "";
+
+                                    // Tạo chuỗi filter
+                                    StringBuilder filterParams = new StringBuilder();
+                                    if ("blogFilter".equals(service)) {
+                                        if (!filterId.isEmpty()) filterParams.append("&id=").append(filterId);
+                                        if (!filterAuthorId.isEmpty()) filterParams.append("&authorID=").append(filterAuthorId);
+                                        if (!filterStatus.isEmpty()) filterParams.append("&status=").append(filterStatus);
+                                    }
+
                                     if (totalPages != null && totalPages > 0) {
                                         for (int i = 1; i <= totalPages; i++) {    
                                 %>
                                 <li>
-                                    <a href="MarketingPostController?service=<%= service %>&page=<%= i %> 
-                                       <%= (service.equals("sort") ? "&sortBy=" + sortBy + "&sortOrder=" + sortOrder : "") %>
-                                       <%= (service.equals("search") ? "&query=" + query : "") %>
-                                       <%= (service.equals("blogFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= i %><%= filterParams.toString() %>">
                                         <%= i %>
                                     </a>
                                 </li>
                                 <% 
                                         } 
                                 %>
+                                <% if (currentPage < totalPages) { %>
                                 <li>
-                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage + 1 %>
-                                       <%= (service.equals("sort") ? "&sortBy=" + sortBy + "&sortOrder=" + sortOrder : "") %>
-                                       <%= (service.equals("search") ? "&query=" + query : "") %>
-                                       <%= (service.equals("blogFilter") ? "&filterId=" + filterId + "&filterAuthorId=" + filterAuthorId + "&filterStatus=" + filterStatus : "") %>">
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage + 1 %><%= filterParams.toString() %>">
                                         Next
                                     </a>
                                 </li>
+                                <% } %>
                                 <% 
                                     } 
                                 %>
                             </ul>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -563,47 +600,81 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
                                             function deleteBlog(blogId) {
-                                                // Xác nhận người dùng có chắc chắn muốn xóa không
                                                 if (confirm('Are you sure you want to delete this blog?')) {
                                                     $.ajax({
-                                                        url: "MarketingPostController?service=removeBlog&blogId=" + blogId, // Gọi service xóa bài viết
-                                                        type: "GET", // Phương thức HTTP GET
-                                                        dataType: "json", // Định dạng trả về là JSON
+                                                        url: "MarketingPostController?service=removeBlog&blogId=" + blogId,
+                                                        type: "GET",
+                                                        dataType: "json",
                                                         success: function (response) {
                                                             if (response.status === "success") {
                                                                 alert(response.message);
                                                                 $("#blog-" + blogId).remove();
+
+                                                                if ($("#blog-list").children().length === 0) {
+                                                                    window.history.back();
+                                                                } else {
+                                                                    window.location.reload();
+                                                                }
                                                             } else {
                                                                 alert(response.message);
                                                             }
                                                         },
                                                         error: function (xhr, status, error) {
-                                                            // Xử lý lỗi và hiển thị thông báo chi tiết
                                                             alert("Error while deleting blog. Please try again.");
                                                         }
                                                     });
                                                 }
                                             }
 
+
         </script>
         <script>
             function changeStatus(blogId, currentStatus) {
-                var newStatus = (currentStatus === true) ? false : true;  // true -> Disabled, false -> Active
+                var newStatus = (currentStatus === true) ? false : true;
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "MarketingPostController?service=changeStatus", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.send("id=" + blogId + "&status=" + newStatus);
+
                 xhr.onload = function () {
                     if (xhr.status === 200) {
                         var newStatusText = newStatus ? "Disabled" : "Active";
                         document.getElementById("status_" + blogId).innerHTML =
                                 '<a href="MarketingPostController?service=blogFilter&status=' + newStatus + '">' + newStatusText + '</a>';
+                        var changeButton = document.getElementById("changeButton_" + blogId);
+                        changeButton.setAttribute("onclick", "changeStatus(" + blogId + ", " + newStatus + ")");
+                        changeButton.innerHTML = "Change";
                     } else {
                         alert("Lỗi khi cập nhật trạng thái.");
                     }
                 };
             }
-        </script>
 
+        </script>
+        <script>
+            function showNotification(message) {
+                var notification = document.getElementById('notification');
+                var messageElement = document.getElementById('notification-message');
+
+                messageElement.textContent = message;
+
+                notification.classList.add('show');
+
+                setTimeout(function () {
+                    notification.classList.remove('show');
+                }, 1000);
+            }
+
+            window.onload = function () {
+                var urlParams = new URLSearchParams(window.location.search);
+                var message = urlParams.get('message');
+                if (message) {
+                    showNotification(message);
+                }
+            };
+        </script>
+        <div id="notification" class="alert alert-info" style="display: none;">
+            <p id="notification-message">Blog Added successfully!</p>
+        </div>
     </body>
 </html>

@@ -178,14 +178,6 @@ public int addUser(User user) {
 
     }
 
-    // Kiểm tra kết quả cập nhật và trả về thông báo tương ứng
-    if (n > 0) {
-        return "User updated successfully!";
-    } else {
-        return "User update failed.";
-    }
-}
-
     public int deleteUser(int id) {
         int n = 0;
         String sql = "DELETE FROM Users WHERE id = ?";
