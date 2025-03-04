@@ -6,7 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
+<%@page import="entity.User, entity.Product"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -150,7 +150,7 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav">
+                                <ul class="nav navstbar-nav">
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
@@ -192,6 +192,7 @@
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
+                                            <li><a href="MarketingProductDetails">Product Details</a></li> 
                                         </ul>
                                     </li> 
                                     <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
@@ -227,6 +228,7 @@
                             <div class="brands_products">
                                 <h2>Brands</h2> 
                                 <div class="brands-name">
+                                    
                                     <ul class="nav nav-pills nav-stacked">
                                         <li> 
                                             <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
@@ -319,17 +321,22 @@
                                 <form action="CartURL" method="POST" onsubmit="event.preventDefault(); addToCart();">
                                     <input type="hidden" id="productID" name="productID" value="${product.id}">
                                     <input type="hidden" name="service" value="add2cart">
-
+                                    <%
+                                        Product product = (Product)  request.getAttribute("product");
+                                    %>
                                     <!-- Thông tin sản phẩm -->
                                     <div class="product-information">
-                                        <h2>${product.name}</h2>
+                                        <h2><%= product.getName()%></h2>
                                         <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
 
                                         <p><b>Storage:</b>
                                             <select id="storageSelector" class="form-control" name="storage">
                                                 <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.storage}" data-price="${variant.price}" data-color="${variant.color}">
+                                                    <option value="${variant.storage}" data-price="${variant.price}"
+                                                            data-color="${variant.color}"
+                                                            data-stock="${variant.stock}">
                                                         ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
+                                                        
 
                                                     </option>
                                                 </c:forEach>
@@ -342,31 +349,24 @@
                                                 </c:forEach>
                                             </select>
                                         </p>
-
-
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
-
-
                                         <p><b>Availability: </b> <label style="color: black"></label></p>
                                         <p><b>Condition:</b> New</p>
-
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
                                                 <p><b>Brand: </b>${brand.name}</p>
                                             </c:if>
                                         </c:forEach>
-
-
                                         <p><b>Description:</b> ${product.description}</p>
-
-                                        <!-- Nút "Add to cart" -->
-                                        <button type="submit" class="btn btn-default cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            Add to cart
-                                        </button>
+                                        <p><b>Stock:</b> <span id="stockInfo"></span></p>
+   
+    <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
+                                        </p>
+                                        
                                     </div>
+                                        
                                 </form>
                             </div>
 
@@ -393,7 +393,7 @@
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
 
-                                                            <li class="list-group-item"><b>Availability:</b></li>
+                                                            
 
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
                                                             <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
@@ -611,26 +611,30 @@
         <script src="js/main.js"></script>
 
         <script src="js/cart.js"></script>
-        <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                            var storageSelector = document.getElementById("storageSelector");
-                    var productPrice = document.getElementById("productPrice");
-                    var colorSelector = document.getElementById("colorSelector");
-                    // Lắng nghe sự kiện khi người dùng chọn storage
-                    storageSelector.addEventListener("change", function () {
-                    var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-                    var price = selectedOption.getAttribute("data-price");
-                    var color = selectedOption.getAttribute("data-color");
-                    productPrice.textContent = "$" + price;
-                    for (var i = 0; i < colorSelector.options.length; i++) {
-                    if (colorSelector.options[i].value === color) {
-                    colorSelector.selectedIndex = i;
-                    break;
-                    }
-                    }
-                    });
-                });
-        
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+        var storageSelector = document.getElementById("storageSelector");
+        var productPrice = document.getElementById("productPrice");
+        var colorSelector = document.getElementById("colorSelector");
+        var stockInfo = document.getElementById("stockInfo");
+
+        // Lắng nghe sự kiện khi người dùng chọn storage
+        storageSelector.addEventListener("change", function () {
+            var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+            var price = selectedOption.getAttribute("data-price");
+            var color = selectedOption.getAttribute("data-color");
+            var stock = selectedOption.getAttribute("data-stock");
+
+            productPrice.textContent = "$" + price;
+            for (var i = 0; i < colorSelector.options.length; i++) {
+            if (colorSelector.options[i].value === color) {
+            colorSelector.selectedIndex = i;
+            break;
+            }
+            }
+            });
+        });
+
         </script>
 
     </body>

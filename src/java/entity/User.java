@@ -147,8 +147,14 @@ public class User {
     public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
-
     
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
 
     public int getUpdatedBy() {
         return updatedBy;
