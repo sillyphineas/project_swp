@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -220,7 +221,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="UserController">Users List</a></li>
                                     <li><a href="SettingController">Settings List</a></li>
                                 </ul>
@@ -248,41 +249,46 @@
                     <div class="col-sm-12">
                         <h2 style="color: red">Users List</h2>
                         <div class="container">
-                            <form action="UserController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <form action="UserController" method="get" style="display: flex; flex-wrap: nowrap; align-items: center; gap: 8px;">
 
-                                <input type="hidden" value="sort" name="service">
+                                    <input type="hidden" value="sort" name="service">
 
-                                <!-- Sort By Dropdown -->
-                                <div class="form-group mb-0" style="margin-bottom: 0;">
-                                    <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
-                                    <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                                        <option value="id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
-                                        <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Full Name</option>
-                                        <option value="email" <%= "email".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Email</option>
-                                        <option value="phoneNumber" <%= "phoneNumber".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Phone</option>
-                                        <option value="gender" <%= "gender".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Gender</option>
-                                        <option value="dateOfBirth" <%= "dateOfBirth".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Date of Birth</option>
-                                        <option value="roleId" <%= "roleId".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Role</option>
-                                        <option value="isDisabled" <%= "isDisabled".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
-                                    </select>
-                                </div>
+                                    <!-- Sort By Dropdown -->
+                                    <div class="form-group mb-0" style="margin-bottom: 0;">
+                                        <label for="sortBy" style="font-size: 13px; margin-right: 8px; color: #555;">Sort By:</label>
+                                        <select id="sortBy" name="sortBy" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                            <option value="id" <%= "id".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ID</option>
+                                            <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Full Name</option>
+                                            <option value="email" <%= "email".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Email</option>
+                                            <option value="phoneNumber" <%= "phoneNumber".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Phone</option>
+                                            <option value="gender" <%= "gender".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Gender</option>
+                                            <option value="dateOfBirth" <%= "dateOfBirth".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Date of Birth</option>
+                                            <option value="roleId" <%= "roleId".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Role</option>
+                                            <option value="isDisabled" <%= "isDisabled".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
+                                        </select>
+                                    </div>
 
-                                <!-- Sort Order Dropdown -->
-                                <div class="form-group mb-0" style="margin-bottom: 0;">
-                                    <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
-                                    <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                                        <option value="asc" <%= "asc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Ascending</option>
-                                        <option value="desc" <%= "desc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Descending</option>
-                                    </select>
-                                </div>
+                                    <!-- Sort Order Dropdown -->
+                                    <div class="form-group mb-0" style="margin-bottom: 0;">
+                                        <label for="sortOrder" style="font-size: 13px; margin-right: 8px; color: #555;">Order:</label>
+                                        <select id="sortOrder" name="sortOrder" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                                            <option value="asc" <%= "asc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Ascending</option>
+                                            <option value="desc" <%= "desc".equals(request.getAttribute("sortOrder")) ? "selected" : "" %>>Descending</option>
+                                        </select>
+                                    </div>
 
-                                <!-- Sort Button -->
-                                <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
-                                    <i  style="margin-right: 5px;"></i> Sort
-                                </button>
-                            </form>
+                                    <!-- Sort Button -->
+                                    <button type="submit" class="btn btn-warning custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                        <i  style="margin-right: 5px;"></i> Sort
+                                    </button>
+                                </form>
+                                <a href="MarketingPostController?service=addBlog" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                    <i style="margin-right: 5px;"></i> Add User
+                                </a>
+                            </div>
                         </div>
-                                    <br>
+                        <br>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -294,8 +300,9 @@
                                     <th><a href="UserController?service=sort&sortBy=dateOfBirth&sortOrder=asc">Date of Birth</a></th>
                                     <th><a href="UserController?service=sort&sortBy=roleId&sortOrder=asc">Role</a></th>
                                     <th><a href="UserController?service=sort&sortBy=isDisabled&sortOrder=asc">Status</a></th>
+                                    <th>Change Status</th>
+                                    <th>View</th>
                                     <th>Update</th>
-                                    <th>Add new User</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
@@ -317,15 +324,25 @@
                                     <td>
                                         <a href="UserController?service=userFilter&role=<%= item.getRoleId() %>"><%= item.getRoleName() %></a>
                                     </td>
+                                    <td id="status_<%= item.getId() %>">
+                                        <a href="UserController?service=userFilter&status=<%= item.isDisabled()%>"><%= item.getStatus() %></a>
+                                    </td>
                                     <td>
-                                        <a href="UserController?service=userFilter&status=<%= item.isDisabled()? "0" : "1" %>"><%= item.isDisabled() ? "Disabled" : "Active" %></a>
+                                        <button id="changeButton_<%= item.getId() %>" class="btn btn-info" onclick="changeStatus(<%= item.getId() %>, <%= item.isDisabled() ? "true" : "false" %>)">
+                                            Change
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <a href="MarketingPostController?service=view&id=<%= item.getId() %>" 
+                                           class="btn" 
+                                           style="display: inline-block; padding: 7px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold; cursor: pointer; border: none;">
+                                            View
+                                        </a>
                                     </td>
                                     <td>
                                         <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
                                     </td>
-                                    <td>
-                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
-                                    </td>
+
                                     <td>
                                         <button type="button" class="btn btn-danger" onclick="deleteUser(<%= item.getId() %>)">Delete</button>
                                     </td>
@@ -558,26 +575,53 @@
         <script src="js/main.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-                function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
-        $.ajax({
-            url: "UserController?service=removeUser&userId=" + userId,
-            type: "GET",
-            dataType: "json",
-            success: function (response) {
-                if (response.status === "success") {
-                    alert(response.message);
-                    $("#user-" + userId).remove();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function () {
-                alert("Error while deleting user. Please try again.");
+                                            function deleteUser(userId) {
+                                                if (confirm('Are you sure you want to delete this user?')) {
+                                                    $.ajax({
+                                                        url: "UserController?service=removeUser&userId=" + userId,
+                                                        type: "GET",
+                                                        dataType: "json",
+                                                        success: function (response) {
+                                                            if (response.status === "success") {
+                                                                alert(response.message);
+                                                                $("#user-" + userId).remove();
+                                                            } else {
+                                                                alert(response.message);
+                                                            }
+                                                        },
+                                                        error: function () {
+                                                            alert("Error while deleting user. Please try again.");
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+        </script>
+        <script>
+
+            function changeStatus(userId, currentStatus) {
+                var newStatus = (currentStatus === "true") ? false : true;  // true -> Disabled, false -> Active
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "UserController?service=changeStatus", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.send("id=" + userId + "&status=" + newStatus);
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        var newStatusText = newStatus ? "Disabled" : "Active";
+                        document.getElementById("status_" + userId).innerHTML =
+                                '<a href="UserController?service=userFilter&status=' + newStatus + '">' + newStatusText + '</a>';
+
+                        var changeButton = document.getElementById("changeButton_" + userId);
+                        changeButton.setAttribute("onclick", "changeStatus(" + userId + ", '" + newStatus + "')");
+
+                        changeButton.innerHTML = "Change";
+                    } else {
+                        alert("Lỗi khi cập nhật trạng thái.");
+                    }
+                };
             }
-        });
-    }
-}
+
 
         </script>
     </body>

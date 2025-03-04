@@ -46,6 +46,23 @@ public class Order {
         this.RecipientPhone = RecipientPhone;
         this.assignedSaleId = assignedSaleId;
     }
+    
+    public Order(int id, int buyerID, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String RecipientName, String RecipientPhone, int assignedSaleId) {
+        this.id = id;
+        this.buyerID = buyerID;
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.shippingDate = shippingDate;
+        this.shippingAddress = shippingAddress;
+        this.totalPrice = totalPrice;
+        this.discountedPrice = discountedPrice;
+        this.paymentMethod = paymentMethod;
+        this.isDisabled = isDisabled;
+        this.voucherID = voucherID;
+        this.RecipientName = RecipientName;
+        this.RecipientPhone = RecipientPhone;
+        this.assignedSaleId = assignedSaleId;
+    }
 
     public boolean isIsDisabled() {
         return isDisabled;
