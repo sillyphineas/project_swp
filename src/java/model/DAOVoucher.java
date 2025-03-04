@@ -130,4 +130,23 @@ public class DAOVoucher extends DBConnection {
         return n;
     }
 
+    public String getVoucherCodeByOrderId(int orderId) {
+        String voucherCode = null;
+        String sql = "SELECT v.VoucherCode "
+                + "FROM Vouchers v "
+                + "JOIN Orders o ON v.VoucherID = o.voucherID "
+                + "WHERE o.id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId); // Set orderId vào câu truy vấn
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                voucherCode = rs.getString("VoucherCode"); // Lấy voucherCode từ kết quả truy vấn
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return voucherCode; // Trả về voucherCode nếu tìm thấy, hoặc null nếu không tìm thấy
+    }
 }

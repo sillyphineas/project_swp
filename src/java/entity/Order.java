@@ -21,13 +21,12 @@ public class Order {
     private int paymentMethod;        // TINYINT NOT NULL
     private boolean isDisabled;        // BIT NOT NULL
     private Integer voucherID;         // FOREIGN KEY REFERENCES Vouchers(id)
-    private String message;
     private String RecipientName,
     RecipientPhone;
     public Order() {
     }
 
-    public Order(int id, int buyerID, byte status, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String message, String RecipientName, String RecipientPhone) {
+    public Order(int id, int buyerID, byte status, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String RecipientName, String RecipientPhone) {
         this.id = id;
         this.buyerID = buyerID;
         this.status = status;
@@ -40,7 +39,7 @@ public class Order {
         this.paymentMethod = paymentMethod;
         this.isDisabled = isDisabled;
         this.voucherID = voucherID;
-        this.message = message;
+        
         this.RecipientName = RecipientName;
         this.RecipientPhone = RecipientPhone;
     }
@@ -184,9 +183,5 @@ public class Order {
                 ", isDisabled=" + isDisabled +
                 ", voucherID=" + voucherID +
                 '}';
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
