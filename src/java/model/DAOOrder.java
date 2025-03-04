@@ -196,7 +196,7 @@ public class DAOOrder extends DBConnection {
 
         String sql = "SELECT o.id AS orderId, o.buyerID, u.name AS buyerName, u.phoneNumber AS buyerPhone, v.VoucherCode, "
                 + "o.status AS orderStatus, o.shippingAddress, o.orderTime, o.totalPrice, o.discountedPrice, o.paymentMethod, "
-                + "o.shippingDate, o.RecipientName, o.RecipientPhone "
+                + "o.shippingDate, o.RecipientName, o.RecipientPhone, o.AssignedSaleId "
                 + "FROM Orders o "
                 + "JOIN Users u ON o.buyerID = u.id "
                 + "LEFT JOIN Vouchers v ON o.voucherID = v.VoucherID "
@@ -219,7 +219,7 @@ public class DAOOrder extends DBConnection {
                 int buyerId = rs.getInt("buyerID");
                 String buyerName = rs.getString("buyerName");
                 String voucherCode = rs.getString("VoucherCode");
-                byte orderStatus = rs.getByte("orderStatus");
+                String orderStatus = rs.getString("orderStatus");
                 String shippingAddress = rs.getString("shippingAddress");
                 Timestamp orderTime = rs.getTimestamp("orderTime");
                 double totalPrice = rs.getDouble("totalPrice");
@@ -228,11 +228,9 @@ public class DAOOrder extends DBConnection {
                 Date shippingDate = rs.getDate("shippingDate");
                 String recipientName = rs.getString("RecipientName");
                 String recipientPhone = rs.getString("RecipientPhone");
-
+                int assignedSaleId = rs.getInt("AssignedSaleId");
                 // Tạo đối tượng Order từ dữ liệu trong ResultSet và thêm vào danh sách
-                Order order = new Order(orderId, buyerId, orderStatus, orderTime, String.valueOf(orderStatus),
-                        shippingDate, shippingAddress, totalPrice, discountedPrice, paymentMethod,
-                        false, null, recipientName, recipientPhone);
+                Order order = new Order(orderId, buyerId, orderTime, orderStatus, shippingDate, shippingAddress, totalPrice, discountedPrice, paymentMethod, false, null, recipientName, recipientPhone, assignedSaleId);
                 // Bạn có thể thêm logic để xử lý voucherCode nếu cần
                 orders.add(order);
             }
