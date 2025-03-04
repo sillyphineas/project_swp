@@ -64,7 +64,7 @@ public class EditCustomerController extends HttpServlet {
 
         DAOUser dao = new DAOUser();
         User customer = dao.getUserById(customerId);
-
+        
         // Đưa thông tin customer vào request để hiển thị trong form
         request.setAttribute("customer", customer);
         request.getRequestDispatcher("/WEB-INF/views/update-customer.jsp").forward(request, response);
@@ -82,9 +82,16 @@ public class EditCustomerController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
+        System.out.println("id "+id);
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
+        String name = request.getParameter("name");
+        boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         boolean isDisabled = Boolean.parseBoolean(request.getParameter("status"));
+
+        // Lấy thông tin người dùng từ session (để lấy updatedBy)
+        User loggedInUser = (User) request.getSession().getAttribute("user");
+        int updatedBy = loggedInUser != null ? loggedInUser.getId() : 0;
 
         // Tạo đối tượng User và cập nhật thông tin
         DAOUser dao = new DAOUser();
@@ -93,7 +100,10 @@ public class EditCustomerController extends HttpServlet {
         if (customer != null) {
             customer.setEmail(email);
             customer.setPhoneNumber(phoneNumber);
-            customer.setDisabled(isDisabled);
+            customer.setName(name);  // Cập nhật tên
+            customer.setGender(gender);  // Cập nhật giới tính
+            customer.setIsDisabled(isDisabled);
+            customer.setUpdatedBy(updatedBy);  // Đặt giá trị updatedBy
 
             // Cập nhật thông tin người dùng
             int result = dao.updateCustomer(customer);

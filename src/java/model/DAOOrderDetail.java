@@ -1,133 +1,132 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
+
 import entity.OrderDetail;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-/**
- *
- * @author HP
- */
-public class DAOOrderDetail extends DBConnection{
-    // Add a new order detail
+
+public class DAOOrderDetail extends DBConnection {
+
     public int addOrderDetail(OrderDetail orderDetail) {
         int result = 0;
-        String sql = "INSERT INTO OrderDetails (orderID, productID, quantity, productPrice) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO orderdetails (orderId, productVariantID, quantity) VALUES (?, ?, ?)";
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, orderDetail.getOrderID());
-            preparedStatement.setInt(2, orderDetail.getProductVariantID());
-            preparedStatement.setInt(3, orderDetail.getQuantity());
-            preparedStatement.setDouble(4, orderDetail.getProductPrice());
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, orderDetail.getOrderId());
+            ps.setInt(2, orderDetail.getProductVariantID());
+            ps.setInt(3, orderDetail.getQuantity());
 
-            result = preparedStatement.executeUpdate();
+            result = ps.executeUpdate();
+            if (result > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    int generatedId = rs.getInt(1);
+                    orderDetail.setId(generatedId);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    // Get all order details for a given order
-    public List<OrderDetail> getOrderDetailsByOrderID(int orderID) {
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        String sql = "SELECT * FROM OrderDetails WHERE orderID = ?";
+    public List<OrderDetail> getAllOrderDetails() {
+        List<OrderDetail> list = new ArrayList<>();
+        String sql = "SELECT * FROM orderdetails";
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, orderID);
-            ResultSet rs = preparedStatement.executeQuery();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                int productID = rs.getInt("productID");
+                int id = rs.getInt("id");
+                int orderId = rs.getInt("orderId");
+                int productVariantID = rs.getInt("productVariantID");
                 int quantity = rs.getInt("quantity");
-                double productPrice = rs.getDouble("productPrice");
 
-                orderDetails.add(new OrderDetail(orderID, productID, quantity, productPrice));
+                OrderDetail od = new OrderDetail(id, orderId, productVariantID, quantity);
+                list.add(od);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return orderDetails;
+        return list;
     }
 
-    // Get order detail by orderID and productID
-    public OrderDetail getOrderDetail(int orderID, int productID) {
-        OrderDetail orderDetail = null;
-        String sql = "SELECT * FROM OrderDetails WHERE orderID = ? AND productID = ?";
+    public OrderDetail getOrderDetailById(int idParam) {
+        OrderDetail od = null;
+        String sql = "SELECT * FROM orderdetails WHERE id = ?";
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, orderID);
-            preparedStatement.setInt(2, productID);
-            ResultSet rs = preparedStatement.executeQuery();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idParam);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                int id = rs.getInt("id");
+                int orderId = rs.getInt("orderId");
+                int productVariantID = rs.getInt("productVariantID");
                 int quantity = rs.getInt("quantity");
-                double productPrice = rs.getDouble("productPrice");
 
-                orderDetail = new OrderDetail(orderID, productID, quantity, productPrice);
+                od = new OrderDetail(id, orderId, productVariantID, quantity);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return orderDetail;
+        return od;
     }
 
-    // Update an order detail
+    public List<OrderDetail> getOrderDetailsByOrderId(int orderIdParam) {
+        List<OrderDetail> list = new ArrayList<>();
+        String sql = "SELECT * FROM orderdetails WHERE orderId = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderIdParam);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int orderId = rs.getInt("orderId");
+                int productVariantID = rs.getInt("productVariantID");
+                int quantity = rs.getInt("quantity");
+
+                OrderDetail od = new OrderDetail(id, orderId, productVariantID, quantity);
+                list.add(od);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public int updateOrderDetail(OrderDetail orderDetail) {
         int result = 0;
-        String sql = "UPDATE OrderDetails SET quantity = ?, productPrice = ? WHERE orderID = ? AND productID = ?";
+        String sql = "UPDATE orderdetails SET orderId = ?, productVariantID = ?, quantity = ? WHERE id = ?";
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, orderDetail.getQuantity());
-            preparedStatement.setDouble(2, orderDetail.getProductPrice());
-            preparedStatement.setInt(3, orderDetail.getOrderID());
-            preparedStatement.setInt(4, orderDetail.getProductVariantID());
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderDetail.getOrderId());
+            ps.setInt(2, orderDetail.getProductVariantID());
+            ps.setInt(3, orderDetail.getQuantity());
+            ps.setInt(4, orderDetail.getId());
 
-            result = preparedStatement.executeUpdate();
+            result = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    // Delete an order detail by orderID and productID
-    public int deleteOrderDetail(int orderID, int productID) {
+
+    public int deleteOrderDetail(int idParam) {
         int result = 0;
-        String sql = "DELETE FROM OrderDetails WHERE orderID = ? AND productID = ?";
+        String sql = "DELETE FROM orderdetails WHERE id = ?";
         try {
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, orderID);
-            preparedStatement.setInt(2, productID);
-            result = preparedStatement.executeUpdate();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idParam);
+            result = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    // Test the DAOOrderDetail
+
     public static void main(String[] args) {
-//        DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
-//
-//        // Add a new order detail
-//        OrderDetail orderDetail = new OrderDetail(1, 101, 2, 50.00);
-//        daoOrderDetail.addOrderDetail(orderDetail);
-//
-//        // Get all order details for a given order
-//        List<OrderDetail> orderDetails = daoOrderDetail.getOrderDetailsByOrderID(1);
-//        for (OrderDetail od : orderDetails) {
-//            System.out.println(od);
-//        }
-//
-//        // Update an order detail
-//        orderDetail.setQuantity(3);
-//        daoOrderDetail.updateOrderDetail(orderDetail);
-//
-//        // Get order detail by orderID and productID
-//        OrderDetail retrievedOrderDetail = daoOrderDetail.getOrderDetail(1, 101);
-//        System.out.println("Retrieved OrderDetail: " + retrievedOrderDetail);
-//
-//        // Delete an order detail
-//        daoOrderDetail.deleteOrderDetail(1, 101);
+
     }
 }

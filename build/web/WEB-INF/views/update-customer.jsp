@@ -158,9 +158,14 @@
                         <c:if test="${not empty mess}">
                             <div style="color: red; font-weight: bold;">${mess}</div>
                         </c:if>
-                        >
+                        
                         <form action="EditCustomerController" method="post">
                             <input type="hidden" name="id" value="${customer.id}" />
+
+                            <div>
+                                <label for="name">Name:</label>
+                                <input type="text" id="name" name="name" value="${customer.name}" required />
+                            </div>
 
                             <div>
                                 <label for="email">Email:</label>
@@ -172,11 +177,19 @@
                                 <input type="text" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required />
                             </div>
 
-                            
+                            <div>
+                                <label for="gender">Gender:</label>
+                                <input type="radio" id="male" name="gender" value="true" ${customer.gender ? 'checked' : ''} /> Male
+                                <input type="radio" id="female" name="gender" value="false" ${!customer.gender ? 'checked' : ''} /> Female
+                            </div>
+
+                            <div>
+                                <label for="status">Status:</label>
+                                <input type="checkbox" id="status" name="status" ${customer.isDisabled ? 'checked' : ''} />
+                            </div>
 
                             <button type="submit">Save Changes</button>
                         </form>
-
                     </div>
                 </div>
             </div>

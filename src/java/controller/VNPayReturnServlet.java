@@ -4,6 +4,11 @@
  */
 package controller;
 
+import entity.Cart;
+import entity.CartItem;
+import entity.Order;
+import entity.OrderDetail;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,9 +17,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import model.DAOCart;
+import model.DAOCartItem;
 import model.DAOOrder;
+import model.DAOOrderDetail;
+import model.DAOProductVariant;
 
 /**
  *
@@ -73,18 +85,81 @@ public class VNPayReturnServlet extends HttpServlet {
         String vnp_ResponseCode = vnp_Params.get("vnp_ResponseCode");
 
         DAOOrder daoOrder = new DAOOrder();
+        DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
 
         if ("00".equals(vnp_ResponseCode)) {
             daoOrder.updateOrderStatus(vnp_TxnRef, "Paid");
             session.setAttribute("paymentStatus", "success");
-            response.sendRedirect("OrderController?service=orderSuccess");
+
+            User user = (User) session.getAttribute("user");
+            if (user == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+            int customerID = user.getId();
+            DAOCart daoCart = new DAOCart();
+            DAOCartItem daoCartItem = new DAOCartItem();
+
+            List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+            if (selectedCartItems == null || selectedCartItems.isEmpty()) {
+                response.sendRedirect("checkout.jsp?error=EmptyCart");
+                return;
+            }
+            Date orderTime = new Date();
+            double totalAmount = 0.0;
+
+            if (selectedCartItems != null) {
+                for (CartItem item : selectedCartItems) {
+                    totalAmount += item.getTotalPrice().doubleValue();
+                }
+            }
+
+            Order newOrder = new Order();
+            newOrder.setBuyerID(customerID);
+            newOrder.setOrderTime(orderTime);
+            newOrder.setOrderStatus("Paid");
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(orderTime);
+            calendar.add(Calendar.DATE, 3);
+            newOrder.setShippingDate(calendar.getTime());
+            newOrder.setShippingAddress((String) session.getAttribute("addressSelect"));
+            newOrder.setTotalPrice(totalAmount);
+            newOrder.setDiscountedPrice(0.0);
+            newOrder.setPaymentMethod(1);
+            newOrder.setDisabled(false);
+            newOrder.setVoucherID(null);
+            newOrder.setRecipientName((String) session.getAttribute("newFullName"));
+            newOrder.setRecipientPhone((String) session.getAttribute("newPhone"));
+            newOrder.setAssignedSaleId(3);
+
+            int OrderId = daoOrder.addOrder(newOrder);
+
+            for (CartItem item : selectedCartItems) {
+                OrderDetail newOrderDetail = new OrderDetail();
+                newOrderDetail.setOrderId(OrderId);
+                newOrderDetail.setProductVariantID(item.getProductVariantID());
+                newOrderDetail.setQuantity(item.getQuantity());
+                daoOrderDetail.addOrderDetail(newOrderDetail);
+            }
+            if (OrderId > 0) {
+                DAOProductVariant daoProductVariant = new DAOProductVariant();
+                for (CartItem item : selectedCartItems) {
+                    int variantId = item.getProductVariantID();
+                    int quantity = item.getQuantity();
+                    daoProductVariant.reduceStock(variantId, quantity);
+                }
+                daoCartItem.clearCart(customerID);
+                response.sendRedirect("OrderController?service=orderSuccess");
+            } else {
+                response.sendRedirect("order-fail.jsp");
+            }
         } else {
             daoOrder.updateOrderStatus(vnp_TxnRef, "Failed");
             session.setAttribute("paymentStatus", "failed");
 
             if ("24".equals(vnp_ResponseCode)) {
                 session.setAttribute("cancelMessage", "Bạn đã hủy giao dịch.");
-                response.sendRedirect("OrderController?service=orderFailed");
+                response.sendRedirect("CartURL");
             } else {
                 response.sendRedirect("order-fail.jsp");
             }

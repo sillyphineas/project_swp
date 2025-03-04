@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : shop
     Created on : Jan 18, 2025, 1:15:10 PM
@@ -97,6 +98,32 @@
     font-size: 1.5em;
     font-weight: bold;
 }
+ .sort-box {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-group .dropdown-menu {
+        min-width: 140px;
+    }
+    .btn-warning {
+        background-color: #ff9800;
+        border-color: #ff9800;
+        color: white;
+    }
+    .btn-warning:hover {
+        background-color: #e68900;
+    }
+    .btn-light {
+        background-color: #f8f9fa;
+        border-color: #ddd;
+        color: black;
+    }
 
         </style>
     </head><!--/head-->
@@ -251,19 +278,49 @@
             <div class="row">
                 <div class="col-sm-3">
                     <div class="left-sidebar">
-<c:if test="${not empty deleteMessage}">
+<%--<c:if test="${not empty deleteMessage}">
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>Success!</strong> ${deleteMessage}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
-</c:if>
+</c:if>--%>
                         <div class="filter-box">
                             <div>
 
-                                <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Add Product</a>
+                                <a href="AddProductController?action=addProduct" class="btn btn-primary">Add Product</a>
+                                <a href="AddProductController?action=addProductVariant" class="btn btn-primary">Add ProductVariant</a>
                             </div>
+                           <!-- Sort By Section -->
+<div class="sort-box text-center">
+    <h3 style="margin-bottom: 15px; font-weight: bold;">Sort By</h3>
+    <form action="MarketingProductController" method="get" class="d-flex justify-content-center align-items-center flex-wrap">
+        <div class="btn-group mx-2">
+            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                ${sortBy == 'name' ? 'Name' : sortBy == 'price' ? 'Price' : 'All'}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="?sortBy=name&sortOrder=${sortOrder}">Name</a></li>
+                <li><a href="?sortBy=price&sortOrder=${sortOrder}">Price</a></li>
+            </ul>
+        </div>
+
+        <div class="btn-group mx-2">
+            <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                ${sortOrder == 'asc' ? 'Ascending' : 'Descending'}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="?sortBy=${sortBy}&sortOrder=asc">Ascending</a></li>
+                <li><a href="?sortBy=${sortBy}&sortOrder=desc">Descending</a></li>
+            </ul>
+        </div>
+
+        <button type="submit" class="btn btn-success mx-2">Sort</button>
+    </form>
+</div>
                             <h2>Filter Products</h2>
                             <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
 
@@ -381,6 +438,12 @@
                                             <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
                                             <a href="MarketingProductDetails?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
                                               <a href="${pageContext.request.contextPath}/MarketingProductController?action=delete&id=${product.id}" class="btn btn-default add-to-cart">Delete</a>
+                                      <c:if test="${product.isDisabled}">
+    <a href="${pageContext.request.contextPath}/MarketingProductController?action=show&id=${product.id}" class="btn btn-default add-to-cart">Show Product</a>
+</c:if>
+<c:if test="${!product.isDisabled}">
+    <a href="${pageContext.request.contextPath}/MarketingProductController?action=hide&id=${product.id}" class="btn btn-default add-to-cart">Hide Product</a>
+</c:if>
                                         </div>
 
                                     </div>

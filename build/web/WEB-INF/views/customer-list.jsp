@@ -31,114 +31,170 @@
 
             <!-- Direct CSS for Style Enhancements -->
             <style>
-                /* General page styling */
-                body {
-                    font-family: 'Arial', sans-serif;
-                    background-color: #f8f9fa;
-                    color: #333;
-                    padding-top: 50px;
+                /* Section Styling */
+                #settings-section {
+                    margin-top: 20px;
+                    margin-bottom: 40px;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 }
 
-                /* Header */
-                h2 {
-                    color: #007bff;
-                    font-size: 2.5rem;
-                    font-weight: bold;
-                    text-align: center;
-                    margin-bottom: 30px;
+                /* Search and Filter Form */
+                .form-group {
+                    margin-bottom: 15px;
                 }
 
-                /* Form styling */
-                .form-control {
-                    width: 300px;
-                    font-size: 16px;
-                    padding: 10px;
-                    height: 40px;
-                    border-radius: 5px;
-                }
-
-                .form-control option {
-                    white-space: nowrap;
-                }
-
-                /* Table styling */
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 30px;
-                }
-
-                table th, table td {
-                    padding: 10px;
-                    text-align: center;
-                    border: 1px solid #ddd;
-                    font-size: 1.5rem;
-                }
-
-                table th {
-                    background-color: #007bff;
-                    color: white;
-                }
-
-                /* Action buttons */
-                td a {
-                    color: #007bff;
-                    text-decoration: none;
-                    margin: 0 10px;
-                }
-
-                td a:hover {
-                    text-decoration: underline;
-                }
-
-                /* Pagination styling */
-                .pagination {
+                form {
                     display: flex;
-                    justify-content: center;
-                    gap: 10px;
-                    padding: 20px 0;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 15px;
+                    margin-bottom: 20px;
                 }
 
-                .pagination a {
-                    text-decoration: none;
-                    padding: 10px 15px;
-                    background-color: #007bff;
+                /* Input Field and Select Box Styling */
+                form input, form select {
+                    padding: 10px;
+                    font-size: 16px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: 200px;
+                }
+
+                /* Button Styling */
+                form button {
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    border: none;
+                    background-color: #f39c12;
                     color: white;
-                    border-radius: 5px;
+                    border-radius: 4px;
+                    cursor: pointer;
                 }
 
-                .pagination a:hover {
-                    background-color: #0056b3;
+                form button:hover {
+                    background-color: #e67e22;
                 }
 
-                /* Add Setting Button styling */
-                .add-setting-button {
-                    text-align: right;
+                /* Pagination Styling */
+                .pagination {
+                    text-align: center;
                     margin-top: 20px;
                 }
 
-                .add-setting-button a {
-                    padding: 10px 20px;
-                    background-color: #28a745;
+                .pagination a {
+                    margin: 0 5px;
+                    padding: 8px 16px;
+                    background-color: #f39c12;
                     color: white;
-                    border-radius: 5px;
                     text-decoration: none;
-                    font-size: 1rem;
+                    border-radius: 4px;
+                    transition: background-color 0.3s;
                 }
 
-                .add-setting-button a:hover {
-                    background-color: #218838;
+                .pagination a:hover {
+                    background-color: #e67e22;
                 }
 
-                /* Status Badge styling */
-                .inactive-status {
-                    color: red;
+                /* Table Styling */
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 30px;
+                }
+
+                table th, table td {
+                    padding: 12px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                    background-color: #f9f9f9;
+                }
+
+                table th {
+                    background-color: #f1c40f;
+                    color: white;
                     font-weight: bold;
                 }
 
-                .active-status {
-                    color: green;
-                    font-weight: bold;
+                table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                table tr:hover {
+                    background-color: #f0e68c;
+                }
+
+                /* Responsive Styling */
+                @media screen and (max-width: 768px) {
+                    form {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+
+                    form input, form select {
+                        width: 100%;
+                    }
+
+                    form button {
+                        width: 100%;
+                        margin-top: 10px;
+                    }
+
+                    .pagination a {
+                        margin: 5px;
+                    }
+                }
+                /* Global Styles for the Search Section */
+                .form-group {
+                    margin-bottom: 0;
+                }
+
+                form {
+                    display: flex;
+                    align-items: center;  /* Align elements vertically */
+                    justify-content: flex-start;  /* Ensure they are aligned to the left */
+                    gap: 10px;  /* Add space between elements */
+                    margin-bottom: 20px;
+                }
+
+                /* Input field and Select box */
+                form input, form select {
+                    padding: 10px;
+                    font-size: 16px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: 200px;  /* Ensure input fields have a consistent width */
+                }
+
+                /* Button Styling */
+                form button {
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    background-color: #f39c12;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
+                }
+
+                form button:hover {
+                    background-color: #e67e22;
+                }
+
+                /* Responsive Design for smaller screens */
+                @media screen and (max-width: 768px) {
+                    form {
+                        flex-direction: column;
+                        align-items: flex-start;  /* Stack the elements vertically */
+                    }
+
+                    form input, form select, form button {
+                        width: 100%;  /* Make elements full width on smaller screens */
+                        margin-bottom: 10px;
+                    }
                 }
             </style>
 
@@ -241,12 +297,18 @@
                                 </div>
                                 <div class="mainmenu pull-left">
                                     <ul class="nav navbar-nav collapse navbar-collapse">
-                                        <li><a href="index.html">Home</a></li>
-                                        <li><a href="CustomerController" class="active">Customer List</a></li>
+                                        <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                        <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                        <li><a href="SliderController">Slider List</a></li>
+                                        <li><a href="CustomerController">Customer List</a></li>
                                     </ul>
                                 </div>
                             </div>
-
+                            <div class="col-sm-3">
+                                <div class="search_box pull-right">
+                                    <input type="text" placeholder="Search"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div><!--/header-bottom-->
@@ -268,7 +330,7 @@
                                                 <select name="status" class="form-control d-inline-block">
                                                     <option value="">All</option>
                                                     <option value="false">Active</option>
-                                                    <option value="true">Disabled</option>
+                                                    <option value="true">Inactive</option>
                                                 </select>
                                             </div>
                                             <button type="submit" class="btn btn-warning">Search</button>
@@ -288,7 +350,7 @@
                                             <th>Gender</th>
                                             <th>Email</th>
                                             <th>Phone</th>
-
+                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -300,12 +362,11 @@
                                                 <td>${customer.gender ? 'Male' : 'Female'}</td>
                                                 <td>${customer.email}</td>
                                                 <td>${customer.phoneNumber}</td>
-
-
+                                                <td>${customer.isDisabled ? 'Inactive' : 'Active'}</td>
                                                 <td>
-                                                    <a href="viewCustomer?id=${customer.id}">View</a> | 
+                                                    <a href="CustomerDetailController?id=${customer.id}">View</a> | 
                                                     <a href="EditCustomerController?id=${customer.id}">Edit</a> | 
-                                                    <a href="changeStatus?id=${customer.id}">Change Status</a>
+                                                    <a href="CustomerController?service=changeStatus&id=${customer.id}">Change Status</a>
                                                 </td>
                                             </tr>
                                         </c:forEach>

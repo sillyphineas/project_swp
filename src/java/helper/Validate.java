@@ -16,7 +16,7 @@ public class Validate {
     public static boolean checkLoginValidUser(String email, String password) {
         DAOUser daouser = new DAOUser();
         User user = daouser.getUserByEmail(email);
-        if (user != null) {
+        if (user != null && !user.isDisabled()) {
             if (BCrypt.checkpw(password, user.getPassHash())) {
                 return true;
             } else {

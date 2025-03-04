@@ -6,6 +6,8 @@ import model.DBConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -84,23 +86,23 @@ public class DAOProductVariant extends DBConnection {
         return n;
     }
 
-    public int updateProductVariant(ProductVariant variant) {
-        int n = 0;
-        String sql = "UPDATE ProductVariants SET productID = ?, color = ?, storage = ?, price = ?, stock = ? WHERE id = ?";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, variant.getProductID());
-            pre.setString(2, variant.getColor());
-            pre.setInt(3, variant.getStorage());
-            pre.setDouble(4, variant.getPrice());
-            pre.setInt(5, variant.getStock());
-            pre.setInt(6, variant.getId());
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
+ public int updateProductVariant(ProductVariant variant) {
+    int n = 0;
+    String sql = "UPDATE ProductVariants SET color = ?, storage = ?, price = ?, stock = ? WHERE id = ?";
+
+    try (PreparedStatement pre = conn.prepareStatement(sql)) {
+        pre.setString(1, variant.getColor());
+        pre.setInt(2, variant.getStorage());
+        pre.setDouble(3, variant.getPrice());
+        pre.setInt(4, variant.getStock());
+        pre.setInt(5, variant.getId());
+        
+        n = pre.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
+    return n;
+}
 
     public int deleteProductVariant(int id) {
         int n = 0;
@@ -180,36 +182,53 @@ public class DAOProductVariant extends DBConnection {
         }
         return variants;
     }
+
     public static void main(String[] args) {
         DAOProductVariant variant = new DAOProductVariant();
 //        System.out.println(variant.getProductVariantById(58));
         System.out.println(variant.getProductVariantByDetails(1, "Đen", 128));
     }
+
     public Vector<ProductVariant> getVariantsByProductId(int productId, String color) {
-    Vector<ProductVariant> variants = new Vector<>();
-    String sql = "SELECT * FROM ProductVariants WHERE productID = ?";
-    
-    
-    
-    try {
-        PreparedStatement pre = conn.prepareStatement(sql);
-        pre.setInt(1, productId);
-        ResultSet rs = pre.executeQuery();
-        
-        while (rs.next()) {
-            ProductVariant variant = new ProductVariant(
-                    rs.getInt("id"),
-                    rs.getInt("productID"),
-                    rs.getString("color"),
-                    rs.getInt("storage"),
-                    rs.getDouble("price"),
-                    rs.getInt("stock")
-            );
-            variants.add(variant);
+        Vector<ProductVariant> variants = new Vector<>();
+        String sql = "SELECT * FROM ProductVariants WHERE productID = ?";
+
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, productId);
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                ProductVariant variant = new ProductVariant(
+                        rs.getInt("id"),
+                        rs.getInt("productID"),
+                        rs.getString("color"),
+                        rs.getInt("storage"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock")
+                );
+                variants.add(variant);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+        return variants;
     }
-    return variants;
-}
+
+
+    public void reduceStock(int variantId, int quantity) {
+        String sql = "UPDATE ProductVariants "
+                + "SET stock = stock - ? "
+                + "WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, variantId);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOProductVariant.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+
 }

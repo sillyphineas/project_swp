@@ -19,60 +19,60 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class DAOProduct extends DBConnection {
 
-    public int addProduct(Product other) {
-        int n = 0;
-        String sql = "INSERT INTO [dbo].[Products]\n"
-                + "           ([brandID]\n"
-                + "           ,[name]\n"
-                + "           ,[price]\n"
-                + "           ,[stock]\n"
-                + "           ,[description]\n"
-                + "           ,[isDisabled]\n"
-                + "           ,[feedbackCount]\n"
-                + "           ,[status]\n"
-                + "           ,[imageURL]\n"
-                + "           ,[chipset]\n"
-                + "           ,[ram]\n"
-                + "           ,[storage]\n"
-                + "           ,[screenSize]\n"
-                + "           ,[screenType]\n"
-                + "           ,[resolution]\n"
-                + "           ,[batteryCapacity]\n"
-                + "           ,[cameraSpecs]\n"
-                + "           ,[os]\n"
-                + "           ,[simType]\n"
-                + "           ,[connectivity])\n"
-                + "     VALUES\n"
-                + "           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, other.getBrandID());
-            pre.setString(2, other.getName());
-            pre.setString(3, other.getDescription());
-            pre.setBoolean(4, other.isIsDisabled());
-            pre.setInt(5, other.getFeedbackCount());
-            pre.setString(6, other.getStatus());
-            pre.setString(7, other.getImageURL());
-            pre.setString(8, other.getChipset());
-            pre.setInt(9, other.getRam());
-            pre.setDouble(10, other.getScreenSize());
-            pre.setString(11, other.getScreenType());
-            pre.setString(12, other.getResolution());
-            pre.setInt(13, other.getBatteryCapacity());
-            pre.setString(14, other.getCameraSpecs());
-            pre.setString(15, other.getOs());
-            pre.setString(16, other.getSimType());
-            pre.setString(17, other.getConnectivity());
-            pre.setDate(18, (Date) other.getCreateAt());
-            pre.setInt(19, other.getCreatedBy());
-
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        return n;
-    }
+//    public int addProduct(Product other) {
+//        int n = 0;
+//        String sql = "INSERT INTO [dbo].[Products]\n"
+//                + "           ([brandID]\n"
+//                + "           ,[name]\n"
+//                + "           ,[price]\n"
+//                + "           ,[stock]\n"
+//                + "           ,[description]\n"
+//                + "           ,[isDisabled]\n"
+//                + "           ,[feedbackCount]\n"
+//                + "           ,[status]\n"
+//                + "           ,[imageURL]\n"
+//                + "           ,[chipset]\n"
+//                + "           ,[ram]\n"
+//                + "           ,[storage]\n"
+//                + "           ,[screenSize]\n"
+//                + "           ,[screenType]\n"
+//                + "           ,[resolution]\n"
+//                + "           ,[batteryCapacity]\n"
+//                + "           ,[cameraSpecs]\n"
+//                + "           ,[os]\n"
+//                + "           ,[simType]\n"
+//                + "           ,[connectivity])\n"
+//                + "     VALUES\n"
+//                + "           (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//        try {
+//            PreparedStatement pre = conn.prepareStatement(sql);
+//            pre.setInt(1, other.getBrandID());
+//            pre.setString(2, other.getName());
+//            pre.setString(3, other.getDescription());
+//            pre.setBoolean(4, other.isIsDisabled());
+//            pre.setInt(5, other.getFeedbackCount());
+//            pre.setString(6, other.getStatus());
+//            pre.setString(7, other.getImageURL());
+//            pre.setString(8, other.getChipset());
+//            pre.setInt(9, other.getRam());
+//            pre.setDouble(10, other.getScreenSize());
+//            pre.setString(11, other.getScreenType());
+//            pre.setString(12, other.getResolution());
+//            pre.setInt(13, other.getBatteryCapacity());
+//            pre.setString(14, other.getCameraSpecs());
+//            pre.setString(15, other.getOs());
+//            pre.setString(16, other.getSimType());
+//            pre.setString(17, other.getConnectivity());
+//            pre.setDate(18, (Date) other.getCreateAt());
+//            pre.setInt(19, other.getCreatedBy());
+//
+//            n = pre.executeUpdate();
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        }
+//
+//        return n;
+//    }
 
     public int UpdateProduct(Product other) {
         int n = 0;
@@ -381,69 +381,76 @@ public class DAOProduct extends DBConnection {
         return total;
     }
 public int delete(int id) {
-        int n = 0;
+    int n = 0;
+
+   
+    String sqlDeleteCartItem = "DELETE FROM CartItem WHERE ProductVariantID = ?";
+    String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
+    String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productID = ?";
+    String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
+    String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
+
+   
+    PreparedStatement psDeleteCartItem = null;
+    PreparedStatement psDeleteProductVariants = null;
+    PreparedStatement psDeleteOrderDetails = null;
+    PreparedStatement psDeleteFeedbacks = null;
+    PreparedStatement psDeleteProduct = null;
+
+    try {
+        
+        conn.setAutoCommit(false);
 
         
-        String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
-        String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productID = ?";
-        String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
-        String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
+        psDeleteCartItem = conn.prepareStatement(sqlDeleteCartItem);
+        psDeleteCartItem.setInt(1, id);
+        psDeleteCartItem.executeUpdate();
+
+      
+        psDeleteProductVariants = conn.prepareStatement(sqlDeleteProductVariants);
+        psDeleteProductVariants.setInt(1, id);
+        psDeleteProductVariants.executeUpdate();
+
+       
+        psDeleteOrderDetails = conn.prepareStatement(sqlDeleteOrderDetails);
+        psDeleteOrderDetails.setInt(1, id);
+        psDeleteOrderDetails.executeUpdate();
+
+        psDeleteFeedbacks = conn.prepareStatement(sqlDeleteFeedbacks);
+        psDeleteFeedbacks.setInt(1, id);
+        psDeleteFeedbacks.executeUpdate();
 
         
-        PreparedStatement psDeleteProductVariants = null;
-        PreparedStatement psDeleteOrderDetails = null;
-        PreparedStatement psDeleteFeedbacks = null;
-        PreparedStatement psDeleteProduct = null;
+        psDeleteProduct = conn.prepareStatement(sqlDeleteProduct);
+        psDeleteProduct.setInt(1, id);
+        n = psDeleteProduct.executeUpdate();
 
+      
+        conn.commit();
+        System.out.println("Sản phẩm xóa thành công với ID: " + id);
+    } catch (SQLException ex) {
+        
         try {
-            
-            conn.setAutoCommit(false); 
-
-            
-            psDeleteProductVariants = conn.prepareStatement(sqlDeleteProductVariants);
-            psDeleteProductVariants.setInt(1, id);
-            psDeleteProductVariants.executeUpdate();
-
-            
-            psDeleteOrderDetails = conn.prepareStatement(sqlDeleteOrderDetails);
-            psDeleteOrderDetails.setInt(1, id);
-            psDeleteOrderDetails.executeUpdate();
-
-           
-            psDeleteFeedbacks = conn.prepareStatement(sqlDeleteFeedbacks);
-            psDeleteFeedbacks.setInt(1, id);
-            psDeleteFeedbacks.executeUpdate();
-
-            
-            psDeleteProduct = conn.prepareStatement(sqlDeleteProduct);
-            psDeleteProduct.setInt(1, id);
-            n = psDeleteProduct.executeUpdate();
-
-            
-            conn.commit();
-            System.out.println("Sản phẩm xóa thành công với ID: " + id);
-        } catch (SQLException ex) {
-            // Nếu có lỗi, rollback transaction
-            try {
-                conn.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            ex.printStackTrace();
-            System.out.println("Lỗi khi xóa sản phẩm: " + ex.getMessage());
-        } finally {
-            
-            try {
-                if (psDeleteProductVariants != null) psDeleteProductVariants.close();
-                if (psDeleteOrderDetails != null) psDeleteOrderDetails.close();
-                if (psDeleteFeedbacks != null) psDeleteFeedbacks.close();
-                if (psDeleteProduct != null) psDeleteProduct.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            conn.rollback();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return n;
+        ex.printStackTrace();
+        System.out.println("Lỗi khi xóa sản phẩm: " + ex.getMessage());
+    } finally {
+        // Đảm bảo đóng các PreparedStatement
+        try {
+            if (psDeleteCartItem != null) psDeleteCartItem.close();
+            if (psDeleteProductVariants != null) psDeleteProductVariants.close();
+            if (psDeleteOrderDetails != null) psDeleteOrderDetails.close();
+            if (psDeleteFeedbacks != null) psDeleteFeedbacks.close();
+            if (psDeleteProduct != null) psDeleteProduct.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+    return n;
+}
     public Vector<Product> searchProductsByName(String searchQuery, int currentPage, int itemsPerPage) {
         Vector<Product> productList = new Vector<>();
         String sql = "SELECT * FROM Products WHERE name LIKE ? AND isDisabled = 0 LIMIT ?, ?";
@@ -691,13 +698,10 @@ public int delete(int id) {
         }
         return 0;
     }
+     public int getTotalProductsByFiltersbyAdmin(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
+            String connectivity, int ram, String screenType) {
+        String sql = "SELECT COUNT(*) FROM Products";
 
-    public Vector<Product> getProductsByFilters(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
-            String connectivity, int ram, String screenType, int currentPage, int itemsPerPage) {
-        Vector<Product> productList = new Vector<>();
-        int startIndex = (currentPage - 1) * itemsPerPage;
-
-        String sql = "SELECT * FROM Products WHERE isDisabled = 0";
         if (brandID > 0) {
             sql += " AND brandID = " + brandID;
         }
@@ -725,39 +729,17 @@ public int delete(int id) {
         if (batteryCapacity > 0) {
             sql += " AND batteryCapacity = " + batteryCapacity;
         }
-        sql += " ORDER BY createAt DESC LIMIT " + itemsPerPage + " OFFSET " + startIndex;
 
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                productList.add(new Product(
-                        rs.getInt("id"),
-                        rs.getInt("brandID"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getBoolean("isDisabled"),
-                        rs.getInt("feedbackCount"),
-                        rs.getString("status"),
-                        rs.getString("imageURL"),
-                        rs.getString("chipset"),
-                        rs.getInt("ram"),
-                        rs.getDouble("screenSize"),
-                        rs.getString("screenType"),
-                        rs.getString("resolution"),
-                        rs.getInt("batteryCapacity"),
-                        rs.getString("cameraSpecs"),
-                        rs.getString("os"),
-                        rs.getString("simType"),
-                        rs.getString("connectivity"),
-                        rs.getDate("createAt"),
-                        rs.getInt("createdBy")
-                ));
-            };
+            return rs.next() ? rs.getInt(1) : 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return productList;
-    
-}
+        return 0;
+    }
+
+   
+
     
     public Vector<String> getDistinctOS() {
         Vector<String> osList = new Vector<>();
@@ -881,12 +863,289 @@ public int delete(int id) {
         }
         return products;
     }
+public int hideProduct(int id) {
+    int n = 0;
+    String sql = "UPDATE Products SET isDisabled = 1 WHERE id = ? AND isDisabled = 0"; 
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        n = ps.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return n;
+}
 
+
+public int showProduct(int id) {
+    int n = 0;
+    String sql = "UPDATE Products SET isDisabled = 0 WHERE id = ? AND isDisabled = 1"; 
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, id);
+        n = ps.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return n;
+}
     public static void main(String[] args) {
         String password = "123456";
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         System.out.println(hashedPassword);
     }
+    
+     public Vector<Product> getProductsByFilter(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
+            String connectivity, int ram, String screenType, int currentPage, int itemsPerPage) {
+        Vector<Product> productList = new Vector<>();
+        int startIndex = (currentPage - 1) * itemsPerPage;
+       
+
+        String sql = "SELECT * FROM Products WHERE isDisabled = 0";
+        if (brandID > 0) {
+            sql += " AND brandID = " + brandID;
+        }
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            sql += " AND name LIKE '%" + searchQuery + "%'";
+        }
+        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
+            sql += " AND price BETWEEN " + minPrice + " AND " + maxPrice;
+        }
+        if (os != null && !os.isEmpty()) {
+            sql += " AND os = '" + os + "'";
+        }
+        if (connectivity != null && !connectivity.isEmpty()) {
+            sql += " AND connectivity = '" + connectivity + "'";
+        }
+        if (ram > 0) {
+            sql += " AND ram = " + ram;
+        }
+        if (screenType != null && !screenType.isEmpty()) {
+            sql += " AND screenType = '" + screenType + "'";
+        }
+        if (screenSize >0) {
+            sql += " AND screenSize = " + screenSize ;
+        }
+        if (batteryCapacity > 0) {
+            sql += " AND batteryCapacity = " + batteryCapacity;
+        }
+        sql += " ORDER BY createAt DESC LIMIT " + itemsPerPage + " OFFSET " + startIndex;
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                productList.add(new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                ));
+            };
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+    
+}
+      public Vector<Product> getProductsByFilterbyAdmin(int brandID, String searchQuery, double minPrice, double maxPrice, String os,double screenSize, int batteryCapacity,
+            String connectivity, int ram, String screenType, int currentPage, int itemsPerPage) {
+        Vector<Product> productList = new Vector<>();
+        int startIndex = (currentPage - 1) * itemsPerPage;
+       
+
+        String sql = "SELECT * FROM Products where 1 = 1";
+        if (brandID > 0) {
+            sql += " AND brandID = " + brandID;
+        }
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            sql += " AND name LIKE '%" + searchQuery + "%'";
+        }
+        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
+            sql += " AND price BETWEEN " + minPrice + " AND " + maxPrice;
+        }
+        if (os != null && !os.isEmpty()) {
+            sql += " AND os = '" + os + "'";
+        }
+        if (connectivity != null && !connectivity.isEmpty()) {
+            sql += " AND connectivity = '" + connectivity + "'";
+        }
+        if (ram > 0) {
+            sql += " AND ram = " + ram;
+        }
+        if (screenType != null && !screenType.isEmpty()) {
+            sql += " AND screenType = '" + screenType + "'";
+        }
+        if (screenSize >0) {
+            sql += " AND screenSize = " + screenSize ;
+        }
+        if (batteryCapacity > 0) {
+            sql += " AND batteryCapacity = " + batteryCapacity;
+        }
+        sql += " ORDER BY createAt DESC LIMIT " + itemsPerPage + " OFFSET " + startIndex;
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                productList.add(new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                ));
+            };
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return productList;
+      }
+     public int addProduct(Product product) {
+    int productId = -1;
+    String sql = "INSERT INTO Products (brandID, name, description, isDisabled, feedbackCount, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, createAt, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        pre.setInt(1, product.getBrandID());
+        pre.setString(2, product.getName());
+        pre.setString(3, product.getDescription());
+        pre.setBoolean(4, product.isIsDisabled());
+        pre.setInt(5, product.getFeedbackCount());
+        pre.setString(6, product.getStatus());
+        pre.setString(7, product.getImageURL());
+        pre.setString(8, product.getChipset());
+        pre.setInt(9, product.getRam());
+        pre.setDouble(10, product.getScreenSize());
+        pre.setString(11, product.getScreenType());
+        pre.setString(12, product.getResolution());
+        pre.setInt(13, product.getBatteryCapacity());
+        pre.setString(14, product.getCameraSpecs());
+        pre.setString(15, product.getOs());
+        pre.setString(16, product.getSimType());
+        pre.setString(17, product.getConnectivity());
+        pre.setDate(18, new java.sql.Date(System.currentTimeMillis()));
+        pre.setInt(19, product.getCreatedBy());
+
+        int affectedRows = pre.executeUpdate();
+        if (affectedRows > 0) {
+            try (ResultSet generatedKeys = pre.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    productId = generatedKeys.getInt(1);
+                }
+            }
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return productId;
+}
+     // them pa
+       public Vector<Product> getProductsByFilters(
+        int brandID, String searchQuery, double minPrice, double maxPrice, String os, double screenSize, int batteryCapacity,
+        String connectivity, int ram, String screenType, int currentPage, int itemsPerPage, String sortBy, String sortOrder) {
+
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (currentPage - 1) * itemsPerPage;
+
+    // SQL: Lấy sản phẩm và giá thấp nhất của mỗi sản phẩm
+    String sql = "SELECT p.*, COALESCE(MIN(v.price), 0) AS minPrice " +
+                 "FROM Products p " +
+                 "LEFT JOIN ProductVariants v ON p.id = v.productID " +
+                 "WHERE p.isDisabled = 0";
+
+    // Áp dụng bộ lọc
+    if (brandID > 0) sql += " AND p.brandID = " + brandID;
+    if (searchQuery != null && !searchQuery.trim().isEmpty()) sql += " AND p.name LIKE '%" + searchQuery + "%'";
+    if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) sql += " AND (v.price BETWEEN " + minPrice + " AND " + maxPrice + " OR v.price IS NULL)";
+    if (os != null && !os.isEmpty()) sql += " AND p.os = '" + os + "'";
+    if (connectivity != null && !connectivity.isEmpty()) sql += " AND p.connectivity = '" + connectivity + "'";
+    if (ram > 0) sql += " AND p.ram = " + ram;
+    if (screenType != null && !screenType.isEmpty()) sql += " AND p.screenType = '" + screenType + "'";
+    if (screenSize > 0) sql += " AND p.screenSize = " + screenSize;
+    if (batteryCapacity > 0) sql += " AND p.batteryCapacity = " + batteryCapacity;
+
+    // Group để lấy giá thấp nhất của mỗi sản phẩm
+    sql += " GROUP BY p.id";
+
+    // Điều kiện sắp xếp
+    if ("name".equalsIgnoreCase(sortBy)) {
+        sql += " ORDER BY p.name ";
+    } else if ("price".equalsIgnoreCase(sortBy)) {
+        sql += " ORDER BY minPrice ";
+    } else {
+        sql += " ORDER BY p.createAt DESC"; // Mặc định: sắp xếp theo ngày tạo
+    }
+
+    // ASC/DESC
+    if ("desc".equalsIgnoreCase(sortOrder)) {
+        sql += " DESC";
+    } else {
+        sql += " ASC";
+    }
+
+    // Phân trang
+    sql += " LIMIT " + itemsPerPage + " OFFSET " + startIndex;
+
+    try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            Product product = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+
+            // Gán giá thấp nhất của biến thể sản phẩm
+            product.setVariantPrice(rs.getDouble("minPrice"));
+
+            productList.add(product);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return productList;
+}
+
     
 
 }

@@ -1,44 +1,49 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
 
-/**
- *
- * @author HP
- */
 public class OrderDetail {
-    private int orderID;               // Foreign Key to Orders table
-    private int ProductVariantID;             // Foreign Key to Products table
-    private int quantity;              // Quantity of the product in the order
-    private double productPrice;       // Price of the product at the time of order
+    private int id;
+    private int orderId;
+    private int productVariantID; 
+    private int quantity;
 
     public OrderDetail() {
     }
 
-    public OrderDetail(int orderID, int ProductVariantID, int quantity, double productPrice) {
-        this.orderID = orderID;
-        this.ProductVariantID = ProductVariantID;
+    public OrderDetail(int id, int orderId, int productVariantID, int quantity) {
+        this.id = id;
+        this.orderId = orderId;
+        this.productVariantID = productVariantID;
         this.quantity = quantity;
-        this.productPrice = productPrice;
     }
 
-    // Getters and Setters
-    public int getOrderID() {
-        return orderID;
+    public OrderDetail(int orderId, int productVariantID, int quantity) {
+        this.orderId = orderId;
+        this.productVariantID = productVariantID;
+        this.quantity = quantity;
     }
 
-    public void setOrderID(int orderID) {
-        this.orderID = orderID;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public int getProductVariantID() {
-        return ProductVariantID;
+        return productVariantID;
     }
 
-    public void setProductVariantID(int ProductVariantID) {
-        this.ProductVariantID = ProductVariantID;
+    public void setProductVariantID(int productVariantID) {
+        this.productVariantID = productVariantID;
     }
 
     public int getQuantity() {
@@ -49,21 +54,13 @@ public class OrderDetail {
         this.quantity = quantity;
     }
 
-    public double getProductPrice() {
-        return productPrice;
-    }
-
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
-    }
-
     @Override
     public String toString() {
         return "OrderDetail{" +
-                "orderID=" + orderID +
-                ", ProductVariantID=" + ProductVariantID +
+                "id=" + id +
+                ", orderId=" + orderId +
+                ", productVariantID=" + productVariantID +
                 ", quantity=" + quantity +
-                ", productPrice=" + productPrice +
                 '}';
     }
 }
