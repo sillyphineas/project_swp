@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -24,7 +25,8 @@ public class Blog {
             status;
     private boolean isSlider;
     private boolean isDisabled;
-
+    private String authorName;
+    
     public Blog(int id, int authorID, String postTime, String title, String content, String backlinks, String imageURL, String status, boolean isSlider, boolean isDisabled) {
         this.id = id;
         this.authorID = authorID;
@@ -38,7 +40,26 @@ public class Blog {
         this.isDisabled = isDisabled;
     }
 
+    public Blog(int id, int authorID, String postTime, String title, String content, String backlinks, String imageURL, boolean isDisabled) {
+        this.id = id;
+        this.authorID = authorID;
+        this.postTime = postTime;
+        this.title = title;
+        this.content = content;
+        this.backlinks = backlinks;
+        this.imageURL = imageURL;
+        this.isDisabled = isDisabled;
+    }
+    
     public Blog() {
+    }
+
+    public boolean isIsSlider() {
+        return isSlider;
+    }
+
+    public void setIsSlider(boolean isSlider) {
+        this.isSlider = isSlider;
     }
 
     public int getId() {
@@ -122,27 +143,24 @@ public class Blog {
         this.isDisabled = isDisabled;
     }
 
-    public String getIsDisabled(){
-        if(this.isDisabled == true){
+    public String getIsDisabled() {
+        if (this.isDisabled == true) {
             return "Disabled";
         }
         return "Active";
     }
 
-
-    public boolean isIsSlider() {
-        return isSlider;
-    }
-
-    public void setIsSlider(boolean isSlider) {
-        this.isSlider = isSlider;
-    }
-
     @Override
     public String toString() {
-        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", backlinks=" + backlinks + ", imageURL=" + imageURL + ", status=" + status + ", isSlider=" + isSlider + ", isDisabled=" + isDisabled + '}';
+        return "Blog{" + "id=" + id + ", authorID=" + authorID + ", postTime=" + postTime + ", title=" + title + ", content=" + content + ", imageURL=" + imageURL + ", backlinks=" + backlinks + ", status=" + status + ", isDisabled=" + isDisabled + '}';
     }
 
-    
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
 
 }

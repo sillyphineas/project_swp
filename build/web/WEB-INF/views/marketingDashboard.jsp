@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -129,9 +130,10 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
+					<li><a href="SliderController">Slider List</a></li>
+                                    <li><a href=""></li>
                                 </ul>
                             </div>
                         </div>
