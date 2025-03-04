@@ -248,6 +248,19 @@ public class DAOUser extends DBConnection {
         return users;
     }
 
+    public boolean updateUserStatus(int id, boolean status) {
+        String query = "UPDATE Users SET isDisabled = ? WHERE id = ?";
+        try (PreparedStatement pst = conn.prepareStatement(query)) {
+            pst.setBoolean(1, status);
+            pst.setInt(2, id);
+            int rowsUpdated = pst.executeUpdate();
+            return rowsUpdated > 0; 
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public int getTotalUsers(Boolean gender, Integer roleId, Boolean isDisabled) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Users WHERE 1 = 1 ");
 
