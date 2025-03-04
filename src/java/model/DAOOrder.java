@@ -190,8 +190,128 @@ public class DAOOrder extends DBConnection {
         }
     }
 
+    public List<Order> getOrdersForShipper(int shipperId, String statusFilter, String searchQuery, int page, int pageSize) {
+        List<Order> orders = new ArrayList<>();
+        int offset = (page - 1) * pageSize; // Tính toán offset cho phân trang
+
+        String sql = "SELECT o.id AS orderId, o.buyerID, u.name AS buyerName, u.phoneNumber AS buyerPhone, v.VoucherCode, "
+                + "o.status AS orderStatus, o.shippingAddress, o.orderTime, o.totalPrice, o.discountedPrice, o.paymentMethod, "
+                + "o.shippingDate, o.RecipientName, o.RecipientPhone "
+                + "FROM Orders o "
+                + "JOIN Users u ON o.buyerID = u.id "
+                + "LEFT JOIN Vouchers v ON o.voucherID = v.VoucherID "
+                + "WHERE o.isDisabled = 0 "
+                + "AND (o.status LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
+                + "AND EXISTS (SELECT 1 FROM Shipping s WHERE s.OrderID = o.id AND s.ShipperID = ?) "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + statusFilter + "%"); // Lọc theo trạng thái
+            ps.setString(2, "%" + searchQuery + "%"); // Tìm kiếm theo tên khách hàng hoặc mã đơn hàng
+            ps.setString(3, "%" + searchQuery + "%"); // Tìm kiếm theo mã đơn hàng
+            ps.setInt(4, shipperId); // Thông tin shipper
+            ps.setInt(5, pageSize);  // Số lượng đơn hàng mỗi trang
+            ps.setInt(6, offset);     // Offset cho phân trang
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int orderId = rs.getInt("orderId");
+                int buyerId = rs.getInt("buyerID");
+                String buyerName = rs.getString("buyerName");
+                String voucherCode = rs.getString("VoucherCode");
+                byte orderStatus = rs.getByte("orderStatus");
+                String shippingAddress = rs.getString("shippingAddress");
+                Timestamp orderTime = rs.getTimestamp("orderTime");
+                double totalPrice = rs.getDouble("totalPrice");
+                double discountedPrice = rs.getDouble("discountedPrice");
+                int paymentMethod = rs.getInt("paymentMethod");
+                Date shippingDate = rs.getDate("shippingDate");
+                String recipientName = rs.getString("RecipientName");
+                String recipientPhone = rs.getString("RecipientPhone");
+
+                // Tạo đối tượng Order từ dữ liệu trong ResultSet và thêm vào danh sách
+                Order order = new Order(orderId, buyerId, orderStatus, orderTime, String.valueOf(orderStatus),
+                        shippingDate, shippingAddress, totalPrice, discountedPrice, paymentMethod,
+                        false, null, recipientName, recipientPhone);
+                // Bạn có thể thêm logic để xử lý voucherCode nếu cần
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public int getTotalOrdersForShipper(int shipperId, String statusFilter, String searchQuery) {
+        String sql = "SELECT COUNT(*) FROM Orders o "
+                + "JOIN Users u ON o.buyerID = u.id "
+                + "LEFT JOIN Vouchers v ON o.voucherID = v.VoucherID "
+                + "WHERE o.isDisabled = 0 "
+                + "AND (o.status LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
+                + "AND EXISTS (SELECT 1 FROM Shipping s WHERE s.OrderID = o.id AND s.ShipperID = ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + statusFilter + "%");
+            ps.setString(2, "%" + searchQuery + "%");
+            ps.setString(3, "%" + searchQuery + "%");
+            ps.setInt(4, shipperId);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean updateStatus(int orderId, int newStatus) {
+        String sql = "UPDATE Orders SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, newStatus); // Sử dụng giá trị trạng thái kiểu int
+            ps.setInt(2, orderId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // Test the DAOOrder
     public static void main(String[] args) {
+        // Khởi tạo DAOOrder
+        DAOOrder daoOrder = new DAOOrder();
 
+        // Các tham số cần thiết
+        int shipperId = 2; // Thử với shipper ID đã có trong cơ sở dữ liệu
+        String statusFilter = ""; // Không lọc trạng thái, lấy tất cả
+        String searchQuery = ""; // Tìm kiếm tất cả đơn hàng
+        int page = 1; // Trang đầu tiên
+        int pageSize = 10; // Lấy 10 đơn hàng mỗi trang
+
+        // Lấy danh sách đơn hàng cho shipper
+        List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
+
+        // Kiểm tra nếu không có đơn hàng
+        if (orders.isEmpty()) {
+            System.out.println("No orders found for the given criteria.");
+        } else {
+            // In ra kết quả
+            for (Order order : orders) {
+                System.out.println("Order ID: " + order.getId());
+                System.out.println("Buyer ID: " + order.getBuyerID());
+                System.out.println("Order Status: " + order.getOrderStatus());
+                System.out.println("Shipping Address: " + order.getShippingAddress());
+                System.out.println("Total Price: " + order.getTotalPrice());
+                System.out.println("Discounted Price: " + order.getDiscountedPrice());
+                System.out.println("Payment Method: " + order.getPaymentMethod());
+                System.out.println("Shipping Date: " + order.getShippingDate());
+                System.out.println("Recipient Name: " + order.getRecipientName());
+                System.out.println("Recipient Phone: " + order.getRecipientPhone());
+                System.out.println("-----------------------------");
+            }
+        }
     }
+
 }

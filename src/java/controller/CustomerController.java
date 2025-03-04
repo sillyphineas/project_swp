@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller;
 
 import entity.User;
@@ -21,36 +20,39 @@ import model.DAOUser;
  *
  * @author DUC MINH
  */
-@WebServlet(name="CustomerController", urlPatterns={"/CustomerController"})
+@WebServlet(name = "CustomerController", urlPatterns = {"/CustomerController"})
 public class CustomerController extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CustomerController</title>");  
+            out.println("<title>Servlet CustomerController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CustomerController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet CustomerController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -58,35 +60,52 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        DAOUser dao = new DAOUser();
-        
-        // Lấy các tham số từ request
-        String filterStatus = request.getParameter("status");  // "true" or "false"
-        String searchQuery = request.getParameter("search");
-        String pageParam = request.getParameter("page");
+            throws ServletException, IOException {
+        String service = request.getParameter("service");
 
-        int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
-        int pageSize = 10;
+        if (service == null) {
+            service = "displayCustomers";
+        }
+        if (service.equals("displayCustomers")) {
+            DAOUser dao = new DAOUser();
 
-        // Lấy tổng số khách hàng và danh sách khách hàng
-        int totalCustomers = dao.getTotalCustomers(filterStatus, searchQuery);
-        int totalPages = (int) Math.ceil((double) totalCustomers / pageSize);
-        Vector<User> customers = dao.getCustomers(page, pageSize, filterStatus, searchQuery);
+            // Lấy các tham số từ request
+            String filterStatus = request.getParameter("status");  // "true" or "false"
+            String searchQuery = request.getParameter("search");
+            String pageParam = request.getParameter("page");
 
-        // Set các attribute cho JSP
-        request.setAttribute("customers", customers);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("currentPage", page);
-        
-        // Chuyển đến trang JSP
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/customer-list.jsp");
-        dispatcher.forward(request, response);
+            int page = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
+            int pageSize = 10;
+
+            // Lấy tổng số khách hàng và danh sách khách hàng
+            int totalCustomers = dao.getTotalCustomers(filterStatus, searchQuery);
+            int totalPages = (int) Math.ceil((double) totalCustomers / pageSize);
+            Vector<User> customers = dao.getCustomers(page, pageSize, filterStatus, searchQuery);
+
+            // Set các attribute cho JSP
+            request.setAttribute("customers", customers);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+
+            // Chuyển đến trang JSP
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/customer-list.jsp");
+            dispatcher.forward(request, response);
+        }
+        if (service.equals("changeStatus")) {
+            int customerId = Integer.parseInt(request.getParameter("id"));
+            DAOUser daoUser = new DAOUser();
+
+            // Thực hiện thay đổi trạng thái của khách hàng
+            daoUser.changeStatus(customerId);
+
+            // Chuyển hướng lại trang danh sách khách hàng
+            response.sendRedirect("CustomerController");
+        }
     }
-    
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -94,12 +113,13 @@ public class CustomerController extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
