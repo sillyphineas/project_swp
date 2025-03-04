@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DAOUser extends DBConnection {
 
-    public int addUser(User user) {
+    public int addUser2(User user) {
         int n = 0;
         String sql = "INSERT INTO Users (email, passHash, roleId, isDisabled)\n"
                 + "VALUES (?, ?, ?, ?)";
@@ -33,6 +33,31 @@ public class DAOUser extends DBConnection {
         }
         return n;
     }
+
+public int addUser(User user) {
+    int n = 0;
+    String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setString(1, user.getName());               // Thêm tên người dùng
+        pre.setString(2, user.getEmail());              // Thêm email
+        pre.setString(3, user.getPassHash());           // Thêm mật khẩu đã mã hóa
+        pre.setBoolean(4, user.isGender());             // Thêm giới tính
+        pre.setString(5, user.getPhoneNumber());       // Thêm số điện thoại
+        pre.setString(6, user.getResetToken());        // Thêm mã reset nếu có
+        pre.setDate(7, user.getResetTokenExpired());   // Thêm ngày hết hạn mã reset nếu có
+        pre.setDate(8, user.getDateOfBirth());         // Thêm ngày sinh
+        pre.setInt(9, user.getRoleId());               // Thêm roleId
+        pre.setBoolean(10, user.isDisabled());         // Thêm trạng thái kích hoạt của người dùng
+
+        n = pre.executeUpdate();  // Thực thi câu lệnh
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return n;  // Trả về số bản ghi bị ảnh hưởng (1 nếu thành công, 0 nếu thất bại)
+}
+
 
     public Vector<User> getUsers(String sql) {
         Vector<User> vector = new Vector<>();
@@ -117,31 +142,40 @@ public class DAOUser extends DBConnection {
         return user;
     }
 
-    public int updateUser(User user) {
-        int n = 0;
-        String sql = "UPDATE Users "
-                + "SET name = ?, email = ?, passHash = ?, gender = ?, phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, Address = ?, DateOfBirth = ?, roleId = ?, isDisabled = ? "
-                + "WHERE id = ?";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, user.getName());
-            pre.setString(2, user.getEmail());
-            pre.setString(3, user.getPassHash());
-            pre.setBoolean(4, user.isGender());
-            pre.setString(5, user.getPhoneNumber());
-            pre.setString(6, user.getResetToken());
-            pre.setDate(7, user.getResetTokenExpired());
-            pre.setDate(8, user.getDateOfBirth());
-            pre.setInt(9, user.getRoleId());
-            pre.setBoolean(10, user.isDisabled());
-            pre.setInt(11, user.getId());
 
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
+    public String updateUser(User user) {
+    int n = 0;
+    String sql = "UPDATE Users "
+               + "SET name = ?, email = ?, passHash = ?, gender = ?, phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, DateOfBirth = ?, roleId = ?, isDisabled = ? "
+               + "WHERE id = ?";
+
+    try (PreparedStatement pre = conn.prepareStatement(sql)) {
+        // Gán giá trị cho PreparedStatement
+        pre.setString(1, user.getName());
+        pre.setString(2, user.getEmail());
+        pre.setString(3, user.getPassHash());
+        pre.setBoolean(4, user.isGender());
+        pre.setString(5, user.getPhoneNumber());
+        pre.setString(6, user.getResetToken());
+        pre.setDate(7, user.getResetTokenExpired());
+        pre.setDate(8, user.getDateOfBirth());
+        pre.setInt(9, user.getRoleId());
+        pre.setBoolean(10, user.isDisabled());
+        pre.setInt(11, user.getId());  // Cập nhật theo id
+
+        // Thực thi câu lệnh và trả về số bản ghi bị ảnh hưởng
+        n = pre.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();  // Có thể thay bằng một cách xử lý lỗi khác, ví dụ ném ngoại lệ
     }
+
+    // Kiểm tra kết quả cập nhật và trả về thông báo tương ứng
+    if (n > 0) {
+        return "User updated successfully!";
+    } else {
+        return "User update failed.";
+    }
+}
 
     public int deleteUser(int id) {
         int n = 0;
@@ -248,6 +282,7 @@ public class DAOUser extends DBConnection {
         return users;
     }
 
+
     public boolean updateUserStatus(int id, boolean status) {
         String query = "UPDATE Users SET isDisabled = ? WHERE id = ?";
         try (PreparedStatement pst = conn.prepareStatement(query)) {
@@ -260,6 +295,7 @@ public class DAOUser extends DBConnection {
             return false;
         }
     }
+
 
     public int getTotalUsers(Boolean gender, Integer roleId, Boolean isDisabled) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Users WHERE 1 = 1 ");
@@ -379,6 +415,7 @@ public class DAOUser extends DBConnection {
         }
         return users;
     }
+
     public Vector<User> getCustomers(int page, int pageSize, String filterStatus, String searchQuery) {
         Vector<User> customers = new Vector<>();
         String sql = "SELECT * FROM Users WHERE roleId = 5 ";
@@ -496,5 +533,6 @@ public class DAOUser extends DBConnection {
     public static void main(String[] args) {
 
         
+
     }
 }

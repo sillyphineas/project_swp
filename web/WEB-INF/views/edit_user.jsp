@@ -1,12 +1,17 @@
-
 <%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
-    Author     : HP
+    Document   : edit_user
+    Created on : Mar 3, 2025, 5:04:46 PM
+    Author     : Admin
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.Setting"%>
+<%@page import="model.DAOSetting"%>
 <%@page import="entity.User"%>
+<%@page import="model.DAOUser"%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -31,6 +36,18 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .inactive-status {
+                color: red; /* Màu đỏ cho trạng thái Inactive */
+                font-weight: bold;
+            }
+
+            .active-status {
+                color: green; /* Màu xanh cho trạng thái Active */
+                font-weight: bold;
+            }
+
+        </style>
     </head><!--/head-->
 
     <body>
@@ -131,9 +148,7 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="index.html" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-					                <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href=""></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -147,6 +162,86 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
+        <section id="update-setting-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h2>Edit User</h2>
+
+
+                        <!-- Lấy thông tin người dùng và điền vào form -->
+                        <form action="UserDetailController?action=updateUser" method="post">
+                            <c:set var="user" value="${user}" />
+                            <input type="text" name="userId" value="${user.id}"/>
+
+                            <!-- User Name -->
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required />
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" />
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
+                                    <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
+                                </select>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="${user.phoneNumber}" />
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="${user.dateOfBirth}" />
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group">
+                                <label for="roleId">Role</label>
+                                <select class="form-control" id="roleId" name="roleId" required>
+                                    <c:forEach var="role" items="${roles}">
+                                        <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                          <!-- Status -->
+<div class="form-group">
+    <label for="isDisabled">Status</label>
+    <select class="form-control" id="isDisabled" name="isDisabled" required>
+        <option value="false" ${!user.disabled ? 'selected' : ''}>Active</option>
+        <option value="true" ${user.disabled ? 'selected' : ''}>Inactive</option>
+    </select>
+</div>
+
+
+                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <a href="UserController" class="btn btn-danger">Cancel</a>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
