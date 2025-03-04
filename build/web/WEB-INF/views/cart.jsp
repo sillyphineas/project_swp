@@ -1,3 +1,4 @@
+cart.jsp
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -311,7 +312,7 @@
                                         <a class="cart-delete" href="javascript:void(0)" onclick="removeItem(<%= item.getCartItemID() %>, event)">🗑️</a>
                                     </td>
                             <input type="hidden" name="cartItemId_<%= item.getCartItemID() %>" value="<%= item.getCartItemID() %>">
-                            <!-- Cập nhật input hidden để gửi quantity mới -->
+
                             <input type="hidden" name="quantity_<%= item.getCartItemID() %>" value="<%= item.getQuantity() %>">
                             </tr>
                             <% } } else { %>

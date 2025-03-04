@@ -1,3 +1,4 @@
+cart.js
 function addToCart() {
     let productId = document.getElementById("productID").value;
     let color = document.getElementById("colorSelector").value;
@@ -37,10 +38,12 @@ function showCartNotification(message) {
     let notification = document.getElementById("cart-notification");
     notification.querySelector("p").textContent = message;
     notification.classList.add("show");
+    notification.classList.remove("hidden");
 
     setTimeout(() => {
         notification.classList.remove("show");
-    }, 3000);
+        notification.classList.add("hidden");
+    }, 1000); 
 }
 
 function updateCartDisplay() {

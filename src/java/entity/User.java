@@ -1,17 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
 
 import java.sql.Date;
 
-
-/**
- *
- * @author HP
- */
 public class User {
+
     private int id;                // ID của user
     private String name;           // Tên user
     private String email;          // Email user
@@ -23,14 +15,18 @@ public class User {
     private Date dateOfBirth;      // Ngày sinh
     private int roleId;            // Vai trò (role ID)
     private boolean isDisabled;    // Trạng thái vô hiệu hóa
+    private int updatedBy;         // Người cập nhật (tham chiếu đến id)
+    private Date updatedAt;        // Thời gian cập nhật
 
     // Constructor không tham số
     public User() {
     }
 
     // Constructor đầy đủ tham số
-
-    public User(int id, String name, String email, String passHash, boolean gender, String phoneNumber, String resetToken, Date resetTokenExpired, Date dateOfBirth, int roleId, boolean isDisabled) {
+    public User(int id, String name, String email, String passHash, boolean gender,
+            String phoneNumber, String resetToken, Date resetTokenExpired,
+            Date dateOfBirth, int roleId, boolean isDisabled,
+            int updatedBy, Date updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -42,8 +38,9 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.roleId = roleId;
         this.isDisabled = isDisabled;
+        this.updatedBy = updatedBy;
+        this.updatedAt = updatedAt;
     }
-
 
     // Getters và Setters cho từng thuộc tính
     public int getId() {
@@ -122,7 +119,7 @@ public class User {
         return roleId;
     }
 
-    public String getRoleName(){
+    public String getRoleName() {
         switch (this.roleId) {
             case 1:
                 return "Admin";
@@ -138,34 +135,62 @@ public class User {
                 throw new AssertionError();
         }
     }
+
     public void setRoleId(int roleId) {
         this.roleId = roleId;
-        
     }
 
-    public boolean isDisabled() {
+    public boolean isIsDisabled() {
         return isDisabled;
     }
 
-    public void setDisabled(boolean disabled) {
-        isDisabled = disabled;
+    public void setIsDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    
+
+    public int getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(int updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getStatus() {
+        if (this.isDisabled == true) {
+            return "Disabled";
+        }
+        return "Active";
     }
 
     // Override toString() để dễ dàng hiển thị thông tin user
+
     @Override
     public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", passHash='" + passHash + '\'' +
-                ", gender=" + gender +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", resetToken='" + resetToken + '\'' +
-                ", resetTokenExpired=" + resetTokenExpired +
-                ", dateOfBirth=" + dateOfBirth +
-                ", roleId=" + roleId +
-                ", isDisabled=" + isDisabled +
-                '}';
+        return "User{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", passHash='" + passHash + '\''
+                + ", gender=" + gender
+                + ", phoneNumber='" + phoneNumber + '\''
+                + ", resetToken='" + resetToken + '\''
+                + ", resetTokenExpired=" + resetTokenExpired
+                + ", dateOfBirth=" + dateOfBirth
+                + ", roleId=" + roleId
+                + ", isDisabled=" + isDisabled
+                + ", updatedBy=" + updatedBy
+                + ", updatedAt=" + updatedAt
+                + '}';
     }
 }

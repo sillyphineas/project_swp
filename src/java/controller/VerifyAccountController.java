@@ -114,7 +114,7 @@ public class VerifyAccountController extends HttpServlet {
             user.setEmail(email);
             user.setPassHash(hashedPassword);
             user.setRoleId(5);
-            user.setDisabled(false);
+            user.setIsDisabled(false);
 
             if (daoUser.addUser(user) != 0) {
                 session.removeAttribute("verificationCode");

@@ -27,45 +27,89 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
-            /* Cập nhật cho trạng thái Inactive và Active */
-            .inactive-status {
-                color: red;
-                font-weight: bold;
+            /* Global Styles */
+            h2 {
+                color: #333;
+                margin-bottom: 20px;
             }
 
-            .active-status {
-                color: green;
-                font-weight: bold;
-            }
-
-            /* Cập nhật cho phần d-flex */
-            /* Cập nhật để căn chỉnh nút Add Setting với lề phải */
-            .d-flex {
+            /* Container for the Header Section (Slider List and Add Slider) */
+            .header-section {
                 display: flex;
-                align-items: center;
                 justify-content: space-between;
+                align-items: center;
+                margin-bottom: 30px;
             }
 
-            /* Sửa cho nút Add Setting thẳng với lề phải */
-            .add-setting-button {
+            /* Styling for Slider List Header */
+            .header-section h2 {
+                margin: 0;
+            }
+
+            /* Styling for Add Slider Button */
+            .add-setting-button .btn {
+                background-color: #f39c12;
+                color: white;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .add-setting-button .btn:hover {
+                background-color: #e67e22;
+            }
+
+            /* Form Section for Filter and Search */
+            .form-section {
                 display: flex;
-                justify-content: flex-end;
-                margin-top: 20px;
-            }
-            /* Cập nhật chiều cao của dropdown để hiển thị đầy đủ */
-            .form-control {
-                width: 300px; /* Đảm bảo dropdown đủ rộng */
-                font-size: 16px; /* Tăng kích thước font chữ */
-                padding: 10px; /* Thêm padding để dropdown rộng hơn */
-                height: 40px; /* Điều chỉnh chiều cao của dropdown để hiển thị đầy đủ chữ */
+                justify-content: space-between;
+                gap: 15px;
+                margin-bottom: 20px;
             }
 
-            /* Cập nhật cho các tùy chọn trong dropdown */
-            .form-control option {
-                white-space: nowrap; /* Đảm bảo nội dung không bị xuống dòng */
-                height: auto; /* Đảm bảo chiều cao của các tùy chọn đủ để hiển thị */
+            .form-section form {
+                display: flex;
+                gap: 10px;
+                align-items: center;
             }
 
+            /* Styling for Select and Button in Form */
+            form select, form button, form input {
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+
+            /* Styling for Search Button */
+            form button {
+                background-color: #f39c12;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+
+            form button:hover {
+                background-color: #e67e22;
+            }
+
+            /* Responsive Design */
+            @media screen and (max-width: 768px) {
+                .header-section {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .form-section {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .form-section form {
+                    width: 100%;
+                }
+            }
         </style>
     </head><!--/head-->
 
@@ -169,6 +213,7 @@
                                     <li><a href="MarketingDashboardController" class="active">Home</a></li>
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
                                     <li><a href="SliderController">Slider List</a></li>
+                                    <li><a href="CustomerController">Customer List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -187,6 +232,32 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h2>Slider List</h2>
+                        <div class="add-setting-button">
+                            <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
+                        </div>
+                        <hr>
+                        <form action="${pageContext.request.contextPath}/SliderController" method="get">
+                            <select name="status" class="form-control">
+                                <option value="">All</option>
+                                <option value="0">Visible</option>
+                                <option value="1">Hidden</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
+                        <hr>
+                        <div class="col-sm-2">
+                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="d-flex">
+                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control" />
+                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                            </form>
+                        </div>
+
+
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-${messageType}">
+                                ${message}
+                            </div>
+                        </c:if>
                         <hr>
                         <table class="table table-bordered">
                             <thead>
@@ -220,34 +291,43 @@
                                             <form action="SliderController" method="post">
                                                 <input type="hidden" name="id" value="${slider.id}" />
                                                 <c:choose>
-                                                    <c:when test="${slider.isDisabled == 1}">
-                                                        <input type="hidden" name="isDisabled" value="0" />
-                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
+                                                    <c:when test="${slider.isDisabled == true}">
+                                                        <input type="hidden" name="isDisabled" value="false" />
+                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <input type="hidden" name="isDisabled" value="1" />
-                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
+                                                        <input type="hidden" name="isDisabled" value="true" />
+                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
                                                     </c:otherwise>
                                                 </c:choose>
-                                                <button type="submit" name="action" value="editSlider">Edit</button>
+                                                <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="view-detail-link">View Detail</a>
                                             </form>
-
                                         </td>
+
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
                         <div>
-                            <c:if test="${totalPages > 1}">
-                                <ul>
+                            <!-- Kiểm tra xem có nhiều hơn 1 trang không -->
+                            <c:if test="${totalPages >= 1}">
+                                <ul class="pagination">
+                                    <!-- Lặp qua các trang từ 1 đến totalPages để tạo liên kết phân trang -->
                                     <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <li>
-                                            <a href="SliderController?page=${i}&pageSize=5" ${i == currentPage ? 'style="font-weight:bold"' : ''}>${i}</a>
+                                        <li class="${i == currentPage ? 'active' : ''}">
+                                            <a href="SliderController?page=${i}">${i}</a>
                                         </li>
                                     </c:forEach>
                                 </ul>
                             </c:if>
+
+                            <!-- Nếu totalPages nhỏ hơn hoặc bằng 1, hiển thị thông báo -->
+                            <c:if test="${totalPages < 1}">
+                                <p>No pages available.</p> <!-- Thông báo nếu không có trang nào hoặc chỉ có 1 trang -->
+                            </c:if>
                         </div>
+
+
                     </div>
                 </div>
             </div>

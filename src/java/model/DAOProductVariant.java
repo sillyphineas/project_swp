@@ -86,23 +86,23 @@ public class DAOProductVariant extends DBConnection {
         return n;
     }
 
-    public int updateProductVariant(ProductVariant variant) {
-        int n = 0;
-        String sql = "UPDATE ProductVariants SET productID = ?, color = ?, storage = ?, price = ?, stock = ? WHERE id = ?";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, variant.getProductID());
-            pre.setString(2, variant.getColor());
-            pre.setInt(3, variant.getStorage());
-            pre.setDouble(4, variant.getPrice());
-            pre.setInt(5, variant.getStock());
-            pre.setInt(6, variant.getId());
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
+ public int updateProductVariant(ProductVariant variant) {
+    int n = 0;
+    String sql = "UPDATE ProductVariants SET color = ?, storage = ?, price = ?, stock = ? WHERE id = ?";
+
+    try (PreparedStatement pre = conn.prepareStatement(sql)) {
+        pre.setString(1, variant.getColor());
+        pre.setInt(2, variant.getStorage());
+        pre.setDouble(3, variant.getPrice());
+        pre.setInt(4, variant.getStock());
+        pre.setInt(5, variant.getId());
+        
+        n = pre.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
+    return n;
+}
 
     public int deleteProductVariant(int id) {
         int n = 0;
@@ -215,6 +215,7 @@ public class DAOProductVariant extends DBConnection {
         return variants;
     }
 
+
     public void reduceStock(int variantId, int quantity) {
         String sql = "UPDATE ProductVariants "
                 + "SET stock = stock - ? "
@@ -228,5 +229,6 @@ public class DAOProductVariant extends DBConnection {
             Logger.getLogger(DAOProductVariant.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 
 }
