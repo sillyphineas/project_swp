@@ -248,11 +248,11 @@
             <div class="container" style="max-width: 800px; margin: auto;">
                 <div class="shipping-address">
                     <h3 style="font-size: 24px; font-weight: bold; color: #333;">Shipping Information</h3>
-                    <form id="orderForm" action="CartURL" method="POST">
+                    <form id="orderForm" action="OrderController" method="POST">
+                        <input type="hidden" name="service" value="createOrder">
                         <label for="addressSelect" style="font-weight: bold;">Select Shipping Address:</label>
                         <select name="addressSelect" id="addressSelect" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
                             <% 
-                                // Lấy thông tin địa chỉ người dùng
                                 List<Address> addresses = (List<Address>) request.getAttribute("userAddresses"); 
                             %>
                             <% if (addresses != null && !addresses.isEmpty()) { %>
@@ -299,45 +299,18 @@
                         <div class="payment-options" style="margin-top: 10px;">
                             <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
                             <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
-                            <label><input type="radio" name="paymentMethod" value="2"> Bank Transfer</label><br>
-                            <label><input type="radio" name="paymentMethod" value="3"> E-Wallet (Momo, ZaloPay)</label>
+                            <label><input type="radio" name="paymentMethod" value="2"> Pay with VNPay</label><br>
                         </div>
-
-
                         <div class="submit-container" style="margin-top: 10px; text-align: center;">
-                            <button type="submit" class="submit-btn" name="service" value="submitOrder" 
+                            <button type="submit" class="submit-btn" 
                                     style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
                                 Place Order
                             </button>
                         </div>
-                    </form>
-                    <%
-                        double totalAmount = 0.0;
-                        List<CartItem> listCartItems = (List<CartItem>) request.getAttribute("cartItems");
-                        if (listCartItems != null) {
-                            for (CartItem item : listCartItems) {
-                                totalAmount += item.getTotalPrice().doubleValue();
-                            }
-                        }
-                    %>
-                    <form id="VNPayPaymentForm" action="VNPayPaymentServlet" method="POST" style="text-align: center; margin-top: 20px;">
-                        <input type="hidden" name="vnp_OrderInfo" value="Thanh toán đơn hàng">
-                        <input type="hidden" name="ordertype" value="other">
-                        <input type="hidden" name="amount" value="<%= totalAmount %>">
-                        <button type="submit" class="submit-btn" style="background-color: #007bff; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
-                            Thanh toán qua VNPay
-                        </button>
-                    </form>
+                    </form>            
                 </div>
             </div>
         </section>
-
-
-
-
-
-
-
 
 
         <footer id="footer"><!--Footer-->

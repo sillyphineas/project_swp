@@ -4,6 +4,7 @@
  */
 package helper;
 
+import entity.Order;
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import java.util.Date;
@@ -22,7 +23,7 @@ public class EmailUtil {
 
     //email: haiductran712@gmail.com
     //password: ojzo ostc hira jnjk
-    public static void sendMail(String email, String verificationCode) {
+    public static void sendRegisterMail(String email, String verificationCode) {
         final String from = "haiductran712@gmail.com";
         final String password = "ojzoostchirajnjk";
 
@@ -50,6 +51,43 @@ public class EmailUtil {
             msg.setSubject("Welcome to T-Phone Store");
             msg.setSentDate(new Date());
             msg.setText("Your verified code is " + verificationCode);
+
+            Transport.send(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendOrderMail(String email, Order o1) {
+        final String from = "haiductran712@gmail.com";
+        final String password = "ojzoostchirajnjk";
+
+        final String to = email;
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        MimeMessage msg = new MimeMessage(session);
+        try {
+            msg.addHeader("Content-Type", "text/HTML");
+            msg.setFrom(from);
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject("Information about your order");
+            msg.setSentDate(new Date());
+            String content = "";
+
+            msg.setContent(content, "text/html; charset=UTF-8");
 
             Transport.send(msg);
         } catch (Exception e) {
