@@ -1,3 +1,5 @@
+
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -181,6 +183,21 @@ public class AdminUserController extends HttpServlet {
                 request.setAttribute("totalPages", totalPages);
 
                 request.getRequestDispatcher("/WEB-INF/views/user-list.jsp").forward(request, response);
+            }
+
+            if (service.equals("changeStatus")) {
+                String idStr = request.getParameter("id");
+                Integer id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : null;
+
+                String statusStr = request.getParameter("status");
+                boolean status = statusStr.equals("true");  // true means active, false means disabled
+
+                if (id != null) {
+                    boolean success = dao.updateUserStatus(id, status);
+
+                    response.setContentType("text/plain");
+                    response.getWriter().write(success ? "Status updated" : "Failed to update status");
+                }
             }
 
         }

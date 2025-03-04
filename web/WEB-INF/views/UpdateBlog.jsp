@@ -1,13 +1,13 @@
+
+
 <%-- 
-    Document   : checkout
-    Created on : Jan 18, 2025, 1:13:09 PM
+    Document   : blog-single
+    Created on : Jan 18, 2025, 1:12:42 PM
     Author     : HP
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant,entity.Address" %>
-
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -15,15 +15,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Checkout | E-Shopper</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
-        <link href="css/cart.css" rel="stylesheet">
+        <title>Blog Single | E-Shopper</title>
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -34,91 +33,6 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-    <style>
-
-        /* General styles for the form */
-        .shipping-address {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            max-width: 600px;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
-        }
-
-        h3 {
-            text-align: center;
-        }
-
-        #currentAddress p {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-        }
-
-        #currentAddress {
-            margin-bottom: 20px;
-        }
-
-        #addressOptions {
-            margin-top: 20px;
-        }
-
-        #defaultAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        #newAddress select, #newAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-
-        #changeAddressBtn, #confirmAddressBtn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #ff7f00;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #changeAddressBtn:hover, #confirmAddressBtn:hover {
-            background-color: #e67000;
-        }
-
-        .submit-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-
-
-    </style>
 
     <body>
         <header id="header"><!--header-->
@@ -182,7 +96,7 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
@@ -217,101 +131,119 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut" class="active">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
+                            <form action="MarketingPostController" method="get">
+                                <input type="hidden" value="search" name="service">
+                                <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
+                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                    <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
+                                        <i class="fa fa-search"></i> 
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div><!--/header-bottom-->
+            </div><<!--/header-bottom-->
         </header><!--/header-->
-        <section id="checkout_section">
-            <div class="container" style="max-width: 800px; margin: auto;">
-                <div class="shipping-address">
-                    <h3 style="font-size: 24px; font-weight: bold; color: #333;">Shipping Information</h3>
-                    <form id="orderForm" action="OrderController" method="POST">
-                        <input type="hidden" name="service" value="createOrder">
-                        <label for="addressSelect" style="font-weight: bold;">Select Shipping Address:</label>
-                        <select name="addressSelect" id="addressSelect" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                            <% 
-                                List<Address> addresses = (List<Address>) request.getAttribute("userAddresses"); 
-                            %>
-                            <% if (addresses != null && !addresses.isEmpty()) { %>
-                            <% for (Address addr : addresses) { %>
-                            <option value="<%= addr.getId() %>">
-                                <%= addr.getAddress() %>, <%= addr.getDistrict() %>, <%= addr.getCity() %>
-                            </option>
-                            <% } %>
-                            <% } else { %>
-                            <option value="">No address available. Please add a new one!</option>
-                            <% } %>
-                        </select>
 
-                        <h4 style="font-size: 20px; font-weight: bold; color: #555;">Recipient Information</h4>
-                        <input type="text" name="newFullName" placeholder="Full Name *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        <input type="text" name="newPhone" placeholder="Phone Number *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="blog-post-area">
+                        <h2 class="title text-center">Update Post</h2>
 
-                        <div class="review-payment">
-                            <h3 style="font-size: 22px; font-weight: bold; color: #333;">Review & Payment</h3>
-                        </div>
-
-                        <div class="cart_info">
-                            <% 
-                                List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems"); 
-                                if (cartItems != null && !cartItems.isEmpty()) { 
-                                    for (CartItem item : cartItems) {
-                                        Product product = item.getProduct();
-                                        ProductVariant productVariant = item.getProductVariant();
-                            %>
-                            <div style="display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-                                <img src="<%= product.getImageURL() %>" alt="Product" style="width: 80px; height: 80px; border-radius: 5px; margin-right: 15px;">
-                                <div>
-                                    <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
-                                    <p style="margin: 2px 0; color: #666; font-size: 14px;">Color: <%= productVariant.getColor() %> / Storage: <%= productVariant.getStorage() %>GB</p>
-                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">₫<%= String.format("%,.0f", productVariant.getPrice()) %> x <%= item.getQuantity() %></p>
-                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
-                                </div>
+                        <% 
+                        String message = (String) request.getAttribute("message");
+                        if (message != null && !message.isEmpty()) {
+                        %>
+                        <div style="color: red; font-weight: bold;"><%= message %></div>
+                        <% 
+                        }
+                        %>
+                        <% 
+                        Blog blog = (Blog) request.getAttribute("blog");
+                        if (blog != null) {
+                        %>
+                        <form action="MarketingPostController" method="post">
+                            <input type="hidden" name="service" value="updateBlog" />
+                            <input type="hidden" name="id" value="<%= blog.getId() %>">
+                            <!-- Title -->
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" class="form-control" value="<%= blog.getTitle() %>" required />
                             </div>
-                            <% } } else { %>
-                            <tr><td colspan="6">Your cart is empty!</td></tr>
-                            <% } %>
-                        </div>
 
-                        <div class="payment-options" style="margin-top: 10px;">
-                            <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
-                            <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
-                            <label><input type="radio" name="paymentMethod" value="2"> Pay with VNPay</label><br>
-                        </div>
-                        <div class="submit-container" style="margin-top: 10px; text-align: center;">
-                            <button type="submit" class="submit-btn" 
-                                    style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
-                                Place Order
-                            </button>
-                        </div>
-                    </form>            
+                            <!-- Author -->
+                            <div class="form-group">
+                                <label for="authorID">Author</label>
+                                <select name="authorID" class="form-control" required>
+                                    <%
+                                        ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
+                                        while (rsAuthor.next()) {
+                                            int authorId = rsAuthor.getInt("id");
+                                            String authorName = rsAuthor.getString("name");
+                                    %>
+                                    <option value="<%= authorId %>"<%= blog.getAuthorID() == authorId ? "selected" : "" %>  %>
+                                        <%= authorName %>
+                                    </option>
+                                    <%
+                                        }
+                                    %>
+                                </select>
+                            </div>
+
+                            <!-- Post Time -->
+                            <div class="form-group">
+                                <label for="postTime">Post Time</label>
+                                <input type="datetime-local" name="postTime" class="form-control" value="<%= blog.getPostTime() %>" required />
+                            </div>
+
+                            <!-- Content -->
+                            <div class="form-group">
+                                <label for="content">Content</label>
+                                <textarea name="content" class="form-control" rows="5" required><%= blog.getContent() %></textarea>
+                            </div>
+
+                            <!-- Image URL -->
+                            <div class="form-group">
+                                <label for="imageURL">Image URL</label>
+                                <input type="text" name="imageURL" class="form-control" value="<%= blog.getImageURL() %>" />
+                            </div>
+
+                            <!-- Backlinks -->
+                            <div class="form-group">
+                                <label for="backlinks">Backlinks</label>
+                                <input type="text" name="backlinks" class="form-control" value="<%= blog.getBacklinks() %>" />
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="isDisabled">Status</label>
+                                <select name="isDisabled" class="form-control" required>
+                                    <option value="false" <%= "false".equals(blog.isIsDisabled()) ? "selected" : "" %>>Active</option>
+                                    <option value="true" <%= "true".equals(blog.isIsDisabled()) ? "selected" : "" %>>Disable</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
+                            <button type="submit" name="submit" value="updateBlog"class="btn btn-primary" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">Save Changes</button>
+                            <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                    Back
+                            </a>
+                            </div>
+                        </form>
+
+                        <% 
+                        }
+                        %>
+                    </div>
                 </div>
-            </div>
         </section>
-
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -474,11 +406,10 @@
 
 
         <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
+        <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
-        <script src="js/updateQuantity.js"></script>
-        <!--        <script src="js/checkOut.js"></script>-->
     </body>
 </html>

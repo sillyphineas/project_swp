@@ -66,7 +66,7 @@ public class VNPayPaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doPost(request, response);
     }
 
     /**
@@ -80,18 +80,9 @@ public class VNPayPaymentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        // 🛠 FIX: Đọc số tiền đúng cách
-        String amountStr = request.getParameter("amount");
-
-        if (amountStr == null || amountStr.isEmpty()) {
-            response.sendRedirect("checkout.jsp?error=InvalidAmount");
-            return;
-        }
-
         long amount;
         try {
-            double amountDouble = Double.parseDouble(amountStr); // Dùng Double để tránh lỗi số khoa học
+            double amountDouble = (Double) request.getAttribute("amount"); // Dùng Double để tránh lỗi số khoa học
             amount = (long) (amountDouble * 100); // Chuyển sang VND theo yêu cầu VNPay
         } catch (NumberFormatException e) {
             response.sendRedirect("checkout.jsp?error=InvalidAmountFormat");

@@ -98,7 +98,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("userID", user.getId());
             response.getWriter().write("success:" + daouser.getUserByEmail(email).getRoleId());
         } else {
-            response.getWriter().write("Invalid email or password");
+            response.getWriter().write("Invalid account");
         }
     }
 

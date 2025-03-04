@@ -4,26 +4,24 @@
  */
 package entity;
 
-
 import java.math.BigDecimal;
-
 
 /**
  *
  * @author HP
  */
 public class CartItem {
-    	private int CartItemID  ,
-	CartID                  ,
-	ProductVariantID;
-	private Double Price    ;
-	private int Quantity;
-	private double DiscountAmount;
-	private BigDecimal TotalPrice  ;
-        private boolean  isDisabled  ;
+
+    private int CartItemID,
+            CartID,
+            ProductVariantID;
+    private Double Price;
+    private int Quantity;
+    private double DiscountAmount;
+    private BigDecimal TotalPrice;
+    private boolean isDisabled;
     private Product product;
     private ProductVariant productVariant;
-            
 
     public CartItem(int CartItemID, int CartID, int ProductVariantID, Double Price, int Quantity, double DiscountAmount, BigDecimal TotalPrice, boolean isDisabled) {
         this.CartItemID = CartItemID;
@@ -46,8 +44,7 @@ public class CartItem {
 
     public CartItem() {
     }
-    
-    
+
     public int getCartItemID() {
         return CartItemID;
     }
@@ -111,6 +108,7 @@ public class CartItem {
     public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
+
     public void setProduct(Product product) {
         this.product = product;
     }
@@ -118,6 +116,7 @@ public class CartItem {
     public Product getProduct() {
         return product;
     }
+
     @Override
     public String toString() {
         return "CartItem{" + "CartItemID=" + CartItemID + ", CartID=" + CartID + ", ProductVariantID=" + ProductVariantID + ", Price=" + Price + ", Quantity=" + Quantity + ", DiscountAmount=" + DiscountAmount + ", TotalPrice=" + TotalPrice + ", isDisabled=" + isDisabled + '}';
@@ -135,6 +134,4 @@ public class CartItem {
         this.productVariant = productVariant;
     }
 
-        
-        
 }

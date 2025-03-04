@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -68,30 +69,22 @@ public class DAOBlog extends DBConnection {
         return authorName;
     }
 
-    public int UpdateBlogs(Blog other) {
+    public int updateBlog(Blog blog) {
+        String sql = "UPDATE Blogs SET title = ?, authorID = ?, postTime = ?, content = ?, imageURL = ?, backlinks = ?, isDisabled = ? WHERE id = ?";
         int n = 0;
-        String sql = "UPDATE [dbo].[Blogs]\n"
-                + "   SET [authorID] = ?\n"
-                + "      ,[postTime] = ?\n"
-                + "      ,[title] = ?\n"
-                + "      ,[content] = ?\n"
-                + "      ,[imageURL] = ?\n"
-                + "      ,[backlinks] = ?\n"
-                + "      ,[status] = ?\n"
-                + "      ,[isDisabled] = ?\n"
-                + " WHERE <id = ?>";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, other.getAuthorID());
-            pre.setString(2, other.getPostTime());
-            pre.setString(3, other.getTitle());
-            pre.setString(4, other.getContent());
-            pre.setString(5, other.getImageURL());
-            pre.setString(6, other.getBacklinks());
-            pre.setString(7, other.getStatus());
-            pre.setBoolean(8, other.isIsDisabled());
-            pre.setInt(9, other.getId());
-            n = pre.executeUpdate();
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, blog.getTitle());
+            stmt.setInt(2, blog.getAuthorID());
+            stmt.setString(3, blog.getPostTime());
+            stmt.setString(4, blog.getContent());
+            stmt.setString(5, blog.getImageURL());
+            stmt.setString(6, blog.getBacklinks());
+            stmt.setBoolean(7, blog.isIsDisabled());
+            stmt.setInt(8, blog.getId());
+
+            n = stmt.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -112,8 +105,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("backlinks"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -137,8 +130,8 @@ public class DAOBlog extends DBConnection {
                         rs.getString("postTime"),
                         rs.getString("title"),
                         rs.getString("content"),
-                        rs.getString("backlinks"),
                         rs.getString("imageURL"),
+                        rs.getString("backlinks"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -213,6 +206,7 @@ public class DAOBlog extends DBConnection {
         }
         return total;
     }
+
     public int getMaketingTotalBlogs() throws SQLException {
         int total = 0;
         String sql = "SELECT COUNT(*) FROM Blogs";
@@ -225,6 +219,7 @@ public class DAOBlog extends DBConnection {
         }
         return total;
     }
+
     public List<Blog> searchBlogs(String query, int page, int pageSize) throws SQLException {
 
         String sql = "SELECT * FROM Blogs WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(content) LIKE LOWER(?)) AND isDisabled = 0 ORDER BY postTime DESC LIMIT ? OFFSET ?;";
@@ -259,7 +254,41 @@ public class DAOBlog extends DBConnection {
 
         return blogs;
     }
+    
+     public List<Blog> MaketingSearchBlogs(String query, int page, int pageSize) throws SQLException {
 
+        String sql = "SELECT * FROM Blogs WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(content) LIKE LOWER(?)) LIMIT ? OFFSET ?;";
+
+        List<Blog> blogs = new ArrayList<>();
+
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+
+            pre.setString(1, "%" + query.toLowerCase() + "%");
+            pre.setString(2, "%" + query.toLowerCase() + "%");
+            pre.setInt(3, pageSize);
+            pre.setInt(4, (page - 1) * pageSize);
+
+            // Thực thi truy vấn
+            ResultSet rs = pre.executeQuery();
+
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("backlinks"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isSlider"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+        }
+
+        return blogs;
+    }
     public int countTotalBlogsForSearch(String query) throws SQLException {
         String sql = "SELECT COUNT(*) FROM Blogs WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(content) LIKE LOWER(?)) AND isDisabled = 0;";
 
@@ -300,7 +329,7 @@ public class DAOBlog extends DBConnection {
             sql.append(" AND isDisabled = ?");
         }
 
-        sql.append(" ORDER BY postTime DESC LIMIT ? OFFSET ?");
+        sql.append(" LIMIT ? OFFSET ?");
 
         try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
             int index = 1;
@@ -432,20 +461,64 @@ public class DAOBlog extends DBConnection {
         }
     }
 
+    public Blog getBlogDetails(int id) {
+        Blog blog = null;
+        String sql = "SELECT b.*, a.name AS authorName "
+                + "FROM Blogs b "
+                + "JOIN Users a ON b.authorID = a.id "
+                + "WHERE b.id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                blog = new Blog();
+                blog.setId(rs.getInt("id"));
+                blog.setAuthorID(rs.getInt("authorID"));
+                blog.setPostTime(rs.getString("postTime"));
+                blog.setTitle(rs.getString("title"));
+                blog.setContent(rs.getString("content"));
+                blog.setBacklinks(rs.getString("backlinks"));
+                blog.setImageURL(rs.getString("imageURL"));
+                blog.setStatus(rs.getString("status"));
+                blog.setIsSlider(rs.getBoolean("isSlider"));
+                blog.setIsDisabled(rs.getBoolean("isDisabled"));
+                blog.setAuthorName(rs.getString("authorName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return blog;
+    }
+
+    public int addBlog(Blog blog) {
+        String sql = "INSERT INTO Blogs (authorID, postTime, title, content, backlinks, imageURL, status, isSlider, isDisabled) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, blog.getAuthorID());
+            stmt.setString(2, blog.getPostTime());
+            stmt.setString(3, blog.getTitle());
+            stmt.setString(4, blog.getContent());
+            stmt.setString(5, blog.getBacklinks());
+            stmt.setString(6, blog.getImageURL());
+            stmt.setString(7, blog.getStatus());
+            stmt.setBoolean(8, blog.isIsDisabled());
+            stmt.setBoolean(9, blog.isIsSlider());
+
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();
-
-
-        // Test function getAuthorNameById with a specific author ID
-        int testAuthorId = 1;  // Bạn có thể thay đổi ID tác giả tại đây
-        String authorName = dao.getAuthorNameById(testAuthorId);
-
-        // Kiểm tra nếu tên tác giả tồn tại và in ra thông tin của tác giả
-        if (!authorName.isEmpty()) {
-            System.out.println("Author found: ");
-            System.out.println("Author Name: " + authorName);
-        } else {
-            System.out.println("Author with ID " + testAuthorId + " not found.");
+        try {
+            System.out.println(dao.getFilteredBlogs(1, 5, 1, 0, true));
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
