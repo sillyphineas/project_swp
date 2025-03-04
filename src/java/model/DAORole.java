@@ -8,6 +8,7 @@ import entity.Role;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author HP
@@ -93,6 +94,24 @@ public class DAORole extends DBConnection {
         return result;
     }
 
+    public int addRoleAndReturnId(String roleName) {
+        int roleId = -1;
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO Roles (roleName) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, roleName);
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                roleId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return roleId;
+    }
+
     // Test the DAORole
     public static void main(String[] args) {
         DAORole daoRole = new DAORole();
@@ -100,17 +119,14 @@ public class DAORole extends DBConnection {
         // Add a new role
         //Role adminRole = new Role(0, "Admin");
         //daoRole.addRole(adminRole);
-
         // Get all roles
         //List<Role> roles = daoRole.getAllRoles();
         //for (Role role : roles) {
         //    System.out.println(role);
         //}
-
         // Update a role
         //Role roleToUpdate = new Role(1, "Super Admin");
         //daoRole.updateRole(roleToUpdate);
-
         // Get role by ID
         Role retrievedRole = daoRole.getRoleById(1);
         System.out.println("Retrieved Role: " + retrievedRole);

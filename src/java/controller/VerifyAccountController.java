@@ -82,6 +82,11 @@ public class VerifyAccountController extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/success-registered.jsp");
             rd.forward(request, response);
         }
+        
+        if (service.equals("cancel")) {
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/404.jsp");
+            rd.forward(request, response);
+        }
     }
 
     /**
@@ -109,7 +114,7 @@ public class VerifyAccountController extends HttpServlet {
             user.setEmail(email);
             user.setPassHash(hashedPassword);
             user.setRoleId(5);
-            user.setDisabled(false);
+            user.setIsDisabled(false);
 
             if (daoUser.addUser(user) != 0) {
                 session.removeAttribute("verificationCode");

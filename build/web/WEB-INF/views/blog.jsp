@@ -171,25 +171,25 @@
         <section>
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">  
-                            <div class="brands_products">
-                                <h2>Brands</h2> 
-                                <div class="brands-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
-                                        </li> 
-                                        <c:forEach var="brand" items="${brands}">
-                                            <li> 
-                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
-                                            </li> 
-                                        </c:forEach> 
-                                    </ul> 
-                                </div>
-                            </div>                                                       
-                        </div>
-                    </div>
+                    <!--                    <div class="col-sm-3">
+                                            <div class="left-sidebar">  
+                                                <div class="brands_products">
+                                                    <h2>Brands</h2> 
+                                                    <div class="brands-name">
+                                                        <ul class="nav nav-pills nav-stacked">
+                                                            <li> 
+                                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                                            </li> 
+                    <c:forEach var="brand" items="${brands}">
+                        <li> 
+                            <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                        </li> 
+                    </c:forEach> 
+                </ul> 
+            </div>
+        </div>                                                       
+    </div>
+</div>-->
                     <%
                         String message = (String) request.getAttribute("message");
                         String error = (String) request.getAttribute("error");
@@ -239,10 +239,12 @@
                                         <i class="fa fa-star-half-o"></i>
                                     </span>
                                 </div>
-                                <a href="">
-                                    <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi">
-                                </a>
-                                <p><%=blog.getContent()%></p>
+                                <div style="display: flex;">
+                                    <a href="">
+                                        <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
+                                    </a>
+                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
+                                </div>
 
                                 <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
 
@@ -253,25 +255,43 @@
                             <div class="pagination-area">
                                 <ul class="pagination">
                                     <% 
-                                        int totalPages = (int) request.getAttribute("totalPages");
-                                        int currentPage = (int) request.getAttribute("currentPage");
-                                        for (int i = 1; i <= totalPages; i++) {
+                                        Integer totalPages = (Integer) request.getAttribute("totalPages");
+                                        Integer currentPage = (Integer) request.getAttribute("currentPage");
+                                        String service = request.getParameter("service");
+                                        query = request.getParameter("query") != null ? request.getParameter("query") : "";
+                                        String baseURL = "BlogURL?service=" + service;
+
+                                        if (service.equals("search") && !query.isEmpty()) {
+                                            baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
+                                        } else if (service.equals("listAllBlogs")) {
+                                            baseURL = "BlogURL?service=listAllBlogs";
+                                        }
+
+                                        if (totalPages != null && totalPages > 0) {
+                                            for (int i = 1; i <= totalPages; i++) {
                                     %>
                                     <li>
-                                        <a href="BlogURL?service=listAllBlogs&page=<%= i %>" 
+                                        <a href="<%= baseURL %>&page=<%= i %>" 
                                            class="<%= (i == currentPage) ? "active" : "" %>">
                                             <%= i %>
                                         </a>
                                     </li>
-                                    <% } %>
+                                    <% 
+                                            } 
+                                    %>
                                     <li>
-                                        <a href="BlogURL?service=listAllBlogs&page=<%= currentPage + 1 %>" 
-                                           <%= (currentPage == totalPages) ? "style='pointer-events: none; color: gray;'" : "" %>>
+                                        <a href="<%= baseURL %>&page=<%= currentPage + 1 %>" 
+                                           <%= (currentPage >= totalPages) ? "style='pointer-events: none; color: gray;'" : "" %> >
                                             <i class="fa fa-angle-double-right"></i>
                                         </a>
                                     </li>
+                                    <% 
+                                        } 
+                                    %>
                                 </ul>
                             </div>
+
+
                         </div>
                     </div>
                 </div>

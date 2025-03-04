@@ -225,9 +225,9 @@
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
+                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
                                     </li> 
                                     <li><a href="404.html">404</a></li>
@@ -248,11 +248,11 @@
             <div class="container" style="max-width: 800px; margin: auto;">
                 <div class="shipping-address">
                     <h3 style="font-size: 24px; font-weight: bold; color: #333;">Shipping Information</h3>
-                    <form id="orderForm" action="CartURL" method="POST">
+                    <form id="orderForm" action="OrderController" method="POST">
+                        <input type="hidden" name="service" value="createOrder">
                         <label for="addressSelect" style="font-weight: bold;">Select Shipping Address:</label>
                         <select name="addressSelect" id="addressSelect" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
                             <% 
-                                // Lấy thông tin địa chỉ người dùng
                                 List<Address> addresses = (List<Address>) request.getAttribute("userAddresses"); 
                             %>
                             <% if (addresses != null && !addresses.isEmpty()) { %>
@@ -288,7 +288,7 @@
                                     <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
                                     <p style="margin: 2px 0; color: #666; font-size: 14px;">Color: <%= productVariant.getColor() %> / Storage: <%= productVariant.getStorage() %>GB</p>
                                     <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">₫<%= String.format("%,.0f", productVariant.getPrice()) %> x <%= item.getQuantity() %></p>
-                                        <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
+                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
                                 </div>
                             </div>
                             <% } } else { %>
@@ -299,27 +299,18 @@
                         <div class="payment-options" style="margin-top: 10px;">
                             <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
                             <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
-                            <label><input type="radio" name="paymentMethod" value="2"> Bank Transfer</label><br>
-                            <label><input type="radio" name="paymentMethod" value="3"> E-Wallet (Momo, ZaloPay)</label>
+                            <label><input type="radio" name="paymentMethod" value="2"> Pay with VNPay</label><br>
                         </div>
-
                         <div class="submit-container" style="margin-top: 10px; text-align: center;">
-                            <button type="submit" class="submit-btn" name="service" value="submitOrder" 
+                            <button type="submit" class="submit-btn" 
                                     style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
                                 Place Order
                             </button>
                         </div>
-                    </form>
+                    </form>            
                 </div>
             </div>
         </section>
-
-
-
-
-
-
-
 
 
         <footer id="footer"><!--Footer-->

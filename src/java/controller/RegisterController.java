@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.Random;
+import model.DAOSetting;
 import model.DAOUser;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -95,13 +96,19 @@ public class RegisterController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        response.setContentType("text/plain"); // Định dạng phản hồi
+        response.setContentType("text/plain");
+        
+        DAOSetting daosetting = new DAOSetting();
+        if (daosetting.getSettingById(1).getStatus().equals("Inactive")) {
+            response.getWriter().write("cancel");
+            return;
+        }
+        
         if (Validate.checkRegisterExistedEmail(email)) {
             if (Validate.checkRegisterPasswordLength(password)) {
                 if (Validate.checkRegisterEqualPassword(password, confirmPassword)) {
                     String verificationCode = String.format("%06d", new Random().nextInt(999999));
-                    EmailUtil.sendMail(email, verificationCode);
-
+                    EmailUtil.sendRegisterMail(email, verificationCode);
                     HttpSession session = request.getSession();
                     session.setAttribute("email", email);
                     session.setAttribute("password", BCrypt.hashpw(password, BCrypt.gensalt()));

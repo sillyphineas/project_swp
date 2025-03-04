@@ -3,15 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package entity;
+
 import java.util.Date;
+
 /**
  *
  * @author HP
  */
 public class Order {
+
     private int id;                    // IDENTITY(1,1) PRIMARY KEY
     private int buyerID;               // FOREIGN KEY REFERENCES Users(id)
-    private byte status;               // TINYINT NOT NULL
     private Date orderTime;            // DATETIME NOT NULL
     private String orderStatus;        // VARCHAR(50) NOT NULL
     private Date shippingDate;         // DATE
@@ -21,16 +23,16 @@ public class Order {
     private int paymentMethod;        // TINYINT NOT NULL
     private boolean isDisabled;        // BIT NOT NULL
     private Integer voucherID;         // FOREIGN KEY REFERENCES Vouchers(id)
-    private String message;
     private String RecipientName,
-    RecipientPhone;
+            RecipientPhone;
+    private Integer assignedSaleId;
+
     public Order() {
     }
 
-    public Order(int id, int buyerID, byte status, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String message, String RecipientName, String RecipientPhone) {
+    public Order(int id, int buyerID, Date orderTime, String orderStatus, Date shippingDate, String shippingAddress, double totalPrice, double discountedPrice, int paymentMethod, boolean isDisabled, Integer voucherID, String message, String RecipientName, String RecipientPhone, int assignedSaleId) {
         this.id = id;
         this.buyerID = buyerID;
-        this.status = status;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.shippingDate = shippingDate;
@@ -40,9 +42,9 @@ public class Order {
         this.paymentMethod = paymentMethod;
         this.isDisabled = isDisabled;
         this.voucherID = voucherID;
-        this.message = message;
         this.RecipientName = RecipientName;
         this.RecipientPhone = RecipientPhone;
+        this.assignedSaleId = assignedSaleId;
     }
 
     public boolean isIsDisabled() {
@@ -69,8 +71,6 @@ public class Order {
         this.RecipientPhone = RecipientPhone;
     }
 
-   
-
     // Getters and Setters
     public int getId() {
         return id;
@@ -86,14 +86,6 @@ public class Order {
 
     public void setBuyerID(int buyerID) {
         this.buyerID = buyerID;
-    }
-
-    public byte getStatus() {
-        return status;
-    }
-
-    public void setStatus(byte status) {
-        this.status = status;
     }
 
     public Date getOrderTime() {
@@ -168,25 +160,28 @@ public class Order {
         this.voucherID = voucherID;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", buyerID=" + buyerID +
-                ", status=" + status +
-                ", orderTime=" + orderTime +
-                ", orderStatus='" + orderStatus + '\'' +
-                ", shippingDate=" + shippingDate +
-                ", shippingAddress='" + shippingAddress + '\'' +
-                ", totalPrice=" + totalPrice +
-                ", discountedPrice=" + discountedPrice +
-                ", paymentMethod=" + paymentMethod +
-                ", isDisabled=" + isDisabled +
-                ", voucherID=" + voucherID +
-                '}';
+    public Integer getAssignedSaleId() {
+        return assignedSaleId;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setAssignedSaleId(Integer assignedSaleId) {
+        this.assignedSaleId = assignedSaleId;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{"
+                + "id=" + id
+                + ", buyerID=" + buyerID
+                + ", orderTime=" + orderTime
+                + ", orderStatus='" + orderStatus + '\''
+                + ", shippingDate=" + shippingDate
+                + ", shippingAddress='" + shippingAddress + '\''
+                + ", totalPrice=" + totalPrice
+                + ", discountedPrice=" + discountedPrice
+                + ", paymentMethod=" + paymentMethod
+                + ", isDisabled=" + isDisabled
+                + ", voucherID=" + voucherID
+                + '}';
     }
 }

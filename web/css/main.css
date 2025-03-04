@@ -1,3 +1,4 @@
+main.css
 ﻿
 /*************************
 *******Typography******
@@ -2559,13 +2560,13 @@ h2.title {
 }
 
 
-.show {
+#cart-notification.show {
     display: block !important;
     opacity: 1 !important;
 }
 
 .hidden {
-    visibility: hidden;
+    display: none;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }

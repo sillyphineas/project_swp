@@ -88,8 +88,10 @@ public class CartController extends HttpServlet {
             String service = request.getParameter("service");
             Vector<Product> listpro = daoPro.getLatestProducts();
             request.setAttribute("listpro", listpro);
+            
             List<Address> addresses = daoAdd.getAddressesByUserId(customerID);
             request.setAttribute("userAddresses", addresses);
+            
             if (service == null) {
                 service = "showCart";
             }
@@ -272,6 +274,7 @@ public class CartController extends HttpServlet {
                         request.setAttribute("cartItems", selectedCartItems);
                         request.setAttribute("totalOrderPrice", totalOrderPrice);
                         request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                        session.setAttribute("selectedCartItems", selectedCartItems);
                     } else {
                         request.setAttribute("error", "Bạn chưa chọn sản phẩm nào để thanh toán.");
                         request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
@@ -347,53 +350,54 @@ public class CartController extends HttpServlet {
                 response.getWriter().write("{\"status\": \"success\", \"message\": \"Product added to cart successfully!\"}");
             }
 
-            if (service.equals("submitOrder")) {
-                String selectedAddressId = request.getParameter("addressSelect");
-                String recipientName = request.getParameter("newFullName");
-                String recipientPhone = request.getParameter("newPhone");
-                int paymentMethod = Integer.parseInt(request.getParameter("paymentMethod"));
-
-                if (selectedAddressId == null || selectedAddressId.isEmpty()) {
-                    response.sendRedirect("checkout.jsp?error=NoAddressSelected");
-                    return;
-                }
-
-                int addressId = Integer.parseInt(selectedAddressId);
-                Address address = daoAdd.getAddressById(addressId);
-                if (address == null) {
-                    response.sendRedirect("checkout.jsp?error=InvalidAddress");
-                    return;
-                }
-
-                List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
-                if (cartItems == null || cartItems.isEmpty()) {
-                    response.sendRedirect("checkout.jsp?error=EmptyCart");
-                    return;
-                }
-
-                double totalPrice = (double) session.getAttribute("totalOrderPrice");
-
-                Order order = new Order();
-                order.setBuyerID(customerID);
-                order.setShippingAddress(address.getFullAddress());
-                order.setTotalPrice(totalPrice);
-                order.setDiscountedPrice(0);
-                order.setPaymentMethod(paymentMethod);
-                order.setRecipientName(recipientName);
-                order.setRecipientPhone(recipientPhone);
-                order.setOrderStatus("Pending");
-
-                int orderId = daoOrder.addOrder(order, cartItems);
-
-                if (orderId > 0) {
-                    daoItem.clearCart(customerID);
-                    session.removeAttribute("selectedCartItems");
-                    session.removeAttribute("totalOrderPrice");
-                    response.sendRedirect("order-success.jsp");
-                } else {
-                    response.sendRedirect("order-fail.jsp");
-                }
-            }
+//            if (service.equals("submitOrder")) {
+//                String selectedAddressId = request.getParameter("addressSelect");
+//                String recipientName = request.getParameter("newFullName");
+//                String recipientPhone = request.getParameter("newPhone");
+//                int paymentMethod = Integer.parseInt(request.getParameter("paymentMethod"));
+//
+//                if (selectedAddressId == null || selectedAddressId.isEmpty()) {
+//                    response.sendRedirect("checkout.jsp?error=NoAddressSelected");
+//                    return;
+//                }
+//
+//                int addressId = Integer.parseInt(selectedAddressId);
+//                Address address = daoAdd.getAddressById(addressId);
+//                if (address == null) {
+//                    response.sendRedirect("checkout.jsp?error=InvalidAddress");
+//                    return;
+//                }
+//
+//                List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+//                System.out.println(cartItems);
+//                if (cartItems == null || cartItems.isEmpty()) {
+//                    response.sendRedirect("checkout.jsp?error=EmptyCart");
+//                    return;
+//                }
+//
+//                double totalPrice = (double) session.getAttribute("totalOrderPrice");
+//
+//                Order order = new Order();
+//                order.setBuyerID(customerID);
+//                order.setShippingAddress(address.getFullAddress());
+//                order.setTotalPrice(totalPrice);
+//                order.setDiscountedPrice(0);
+//                order.setPaymentMethod(paymentMethod);
+//                order.setRecipientName(recipientName);
+//                order.setRecipientPhone(recipientPhone);
+//                order.setOrderStatus("Pending");
+//
+//                int orderId = daoOrder.addOrder2(order, cartItems);
+//
+//                if (orderId > 0) {
+//                    daoItem.clearCart(customerID);
+//                    session.removeAttribute("selectedCartItems");
+//                    session.removeAttribute("totalOrderPrice");
+//                    response.sendRedirect("order-success.jsp");
+//                } else {
+//                    response.sendRedirect("order-fail.jsp");
+//                }
+//            }
 
         }
     }
