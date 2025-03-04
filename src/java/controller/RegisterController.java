@@ -108,7 +108,7 @@ public class RegisterController extends HttpServlet {
             if (Validate.checkRegisterPasswordLength(password)) {
                 if (Validate.checkRegisterEqualPassword(password, confirmPassword)) {
                     String verificationCode = String.format("%06d", new Random().nextInt(999999));
-                    EmailUtil.sendMail(email, verificationCode);
+                    EmailUtil.sendRegisterMail(email, verificationCode);
                     HttpSession session = request.getSession();
                     session.setAttribute("email", email);
                     session.setAttribute("password", BCrypt.hashpw(password, BCrypt.gensalt()));

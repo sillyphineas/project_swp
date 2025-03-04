@@ -167,7 +167,15 @@ public class DAOUser extends DBConnection {
 
             while (rs.next()) {
                 users.add(new User(rs.getInt("id"),
-                                        rs.getShort("roleId"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("passHash"),
+                        rs.getBoolean("gender"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("resetToken"),
+                        rs.getDate("resetTokenExpired"),
+                        rs.getDate("dateOfBirth"),
+                        rs.getShort("roleId"),
                         rs.getBoolean("isDisabled")));
             }
         }
