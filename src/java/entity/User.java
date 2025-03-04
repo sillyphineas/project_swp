@@ -151,6 +151,12 @@ public class User {
         isDisabled = disabled;
     }
 
+    public String getStatus() {
+        if (this.isDisabled == true) {
+            return "Disabled";
+        }
+        return "Active";
+    }
     // Override toString() để dễ dàng hiển thị thông tin user
     @Override
     public String toString() {
