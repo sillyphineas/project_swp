@@ -69,9 +69,9 @@ public class UserDetailController extends HttpServlet {
             action = "display";
         }
         if (action.equals("addUser")) {
-            // Truyền danh sách các vai trò từ DB vào JSP
+           
             DAORole daoRole = new DAORole();
-            List<Role> roles = daoRole.getAllRoles();  // Lấy tất cả các vai trò
+            List<Role> roles = daoRole.getAllRoles(); 
             request.setAttribute("roles", roles);
             request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
         }
@@ -102,7 +102,7 @@ public class UserDetailController extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/user_details.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("UserController"); // Chuyển hướng nếu có lỗi
+            response.sendRedirect("UserController"); 
         
     }
          }
@@ -124,6 +124,7 @@ public class UserDetailController extends HttpServlet {
         System.out.println("Post       " + action);
         DAOUser dao = new DAOUser();
          if (action != null && action.equals("addUser")) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
             String name = request.getParameter("name");
             String email = request.getParameter("email");
             String password = request.getParameter("password");
@@ -131,12 +132,12 @@ public class UserDetailController extends HttpServlet {
             String phoneNumber = request.getParameter("phoneNumber");
             String dateOfBirth = request.getParameter("dateOfBirth");
             boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
-            int roleId = Integer.parseInt(request.getParameter("roleId"));  // Lấy roleId từ form
-
-            // Mã hóa mật khẩu (nếu cần)
-            String passHash = password; // Thực tế cần mã hóa mật khẩu, đây là ví dụ đơn giản.
+            int roleId = Integer.parseInt(request.getParameter("roleId"));  
+            
+            String passHash = password; 
 
             User user = new User();
+            user.setId(userId);
             user.setName(name);
             user.setEmail(email);
             user.setPassHash(passHash);
@@ -148,54 +149,17 @@ public class UserDetailController extends HttpServlet {
                 java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
                 user.setDateOfBirth(sqlDate);
             } catch (Exception e) {
-                // Handle error if needed
+                
             }
             user.setDisabled(isDisabled);
-            user.setRoleId(roleId);  // Set roleId
+            user.setRoleId(roleId);  
+            user.setUpdatedBy(userId);
 
             dao.addUser(user);
             response.sendRedirect("UserController");
         }
 
-//        if (action != null && action.equals("updateUser")) {
-//            int userId = Integer.parseInt(request.getParameter("userId"));
-//            String name = request.getParameter("name");
-//            String email = request.getParameter("email");
-//            String password = request.getParameter("password");
-//            boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-//            String phoneNumber = request.getParameter("phoneNumber");
-//            String dateOfBirth = request.getParameter("dateOfBirth");
-//            boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
-//
-//            // Mã hóa mật khẩu (nếu cần)
-//            String passHash = password; // Thực tế cần mã hóa mật khẩu, đây là ví dụ đơn giản.
-//
-//            User user = new User();
-//            user.setId(userId);
-//            user.setName(name);
-//            user.setEmail(email);
-//            user.setPassHash(passHash);
-//            user.setGender(gender);
-//            user.setPhoneNumber(phoneNumber);
-//            try {
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng ngày tháng
-//                java.util.Date parsedDate = sdf.parse(dateOfBirth); // Chuyển chuỗi thành java.util.Date
-//                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime()); // Chuyển java.util.Date thành java.sql.Date
-//                user.setDateOfBirth(sqlDate); // Gán giá trị cho user
-//            } catch (Exception e) {
-//            }
-//            user.setDisabled(isDisabled);
-//            
-//            System.out.println("Post           " + user.toString());
-//            dao.updateUser(user);
-//            response.sendRedirect("UserController");
-//        }
-         
-
-  
-
    if (action != null && action.equals("updateUser")) {
-        // Lấy tất cả các giá trị từ form
         int userId = Integer.parseInt(request.getParameter("userId"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -203,54 +167,40 @@ public class UserDetailController extends HttpServlet {
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String phoneNumber = request.getParameter("phoneNumber");
         String resetToken = request.getParameter("resetToken");
-
-        // Chuyển đổi resetTokenExpired từ chuỗi thành Date
         String resetTokenExpiredStr = request.getParameter("resetTokenExpired");
         java.sql.Date resetTokenExpired = null;
         try {
             if (resetTokenExpiredStr != null && !resetTokenExpiredStr.isEmpty()) {
-                // Sử dụng SimpleDateFormat để kiểm tra và chuyển đổi ngày tháng
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date parsedDate = sdf.parse(resetTokenExpiredStr);
                 resetTokenExpired = new java.sql.Date(parsedDate.getTime());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Xử lý lỗi nếu cần thiết
         }
-
-        // Chuyển đổi dateOfBirth từ chuỗi thành Date
         String dateOfBirthStr = request.getParameter("dateOfBirth");
         java.sql.Date dateOfBirth = null;
         try {
             if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
-                // Sử dụng SimpleDateFormat để chuyển đổi ngày tháng từ chuỗi
+                
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date parsedDate = sdf.parse(dateOfBirthStr);
                 dateOfBirth = new java.sql.Date(parsedDate.getTime());
             }
         } catch (Exception e) {
             e.printStackTrace();
-            // Xử lý lỗi nếu cần thiết
         }
-
         boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
         int roleId = Integer.parseInt(request.getParameter("roleId"));
-
-        // Kiểm tra xem roleId có tồn tại trong bảng roles không
         DAORole daoRole = new DAORole();
-        Role role = daoRole.getRoleById(roleId); // Giả sử có phương thức getRoleById trong DAORole
+        Role role = daoRole.getRoleById(roleId); 
         if (role == null) {
-            // Nếu không tồn tại roleId trong bảng roles, trả về lỗi hoặc thông báo
             request.setAttribute("error", "Invalid role ID!");
             request.getRequestDispatcher("/WEB-INF/views/edit_user.jsp").forward(request, response);
             return;
+        
         }
-
-        // Mã hóa mật khẩu (nếu cần)
-        String passHash = password; // Thực tế cần mã hóa mật khẩu, đây là ví dụ đơn giản.
-
-        // Tạo đối tượng User và set tất cả các trường
+        String passHash = password; 
         User user = new User();
         user.setId(userId);
         user.setName(name);
@@ -263,8 +213,9 @@ public class UserDetailController extends HttpServlet {
         user.setDateOfBirth(dateOfBirth);  // Set ngày sinh
         user.setDisabled(isDisabled);
         user.setRoleId(roleId);
-
-        // Cập nhật người dùng trong cơ sở dữ liệu
+        user.setUpdatedBy(userId);  // Can be updated dynamically depending on the user
+        user.setUpdatedAt(new java.sql.Date(System.currentTimeMillis())); 
+        
         dao.updateUser(user);
         response.sendRedirect("UserController");
     
