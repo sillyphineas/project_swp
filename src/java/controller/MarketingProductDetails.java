@@ -107,7 +107,9 @@ public class MarketingProductDetails extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("editProduct".equals(action)) {
+            
             int productId = Integer.parseInt(request.getParameter("id"));
+            System.out.println("productid" +productId);
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             int brandID = Integer.parseInt(request.getParameter("brandID"));
@@ -123,16 +125,16 @@ public class MarketingProductDetails extends HttpServlet {
             String os = request.getParameter("os");
             String connectivity = request.getParameter("connectivity");
             
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date createAt = new Date();
-            String createAtString = request.getParameter("createAt");
-            if (createAtString != null && !createAtString.isEmpty()) {
-                try {
-                    createAt = sdf.parse(createAtString);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+           SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+Date createAt = new Date(); // Khởi tạo một ngày mặc định
+String createAtString = request.getParameter("createAt");
+if (createAtString != null && !createAtString.isEmpty()) {
+    try {
+        createAt = sdf.parse(createAtString); // Chuyển đổi từ chuỗi sang Date
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
             Product updatedProduct = new Product(productId, brandID, name, description, isDisabled, 0, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, "", os, "", connectivity, createAt, 2);
             daoProduct.UpdateProduct(updatedProduct);

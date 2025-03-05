@@ -171,7 +171,8 @@
                     <div class="col-sm-12">
                         <h2>Add New User</h2>
                         <form action="UserDetailController?action=addUser" method="post">
-
+                             <c:set var="user" value="${user}" />
+                            <input type="text" name="userId" value="${user.id}"/>
                             <!-- User Name -->
                             <div class="form-group">
                                 <label for="name">Name</label>

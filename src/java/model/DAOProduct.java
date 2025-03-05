@@ -120,7 +120,7 @@ public class DAOProduct extends DBConnection {
             pre.setString(16, other.getSimType());
             pre.setString(17, other.getConnectivity());
             pre.setInt(18, other.getId());
-            pre.setDate(19, (Date) other.getCreateAt());
+            pre.setDate(19, new java.sql.Date(other.getCreateAt().getTime()));
             pre.setInt(20, other.getCreatedBy());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -386,7 +386,6 @@ public int delete(int id) {
    
     String sqlDeleteCartItem = "DELETE FROM CartItem WHERE ProductVariantID = ?";
     String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
-    String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productID = ?";
     String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
     String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
 
@@ -406,20 +405,13 @@ public int delete(int id) {
         psDeleteCartItem.setInt(1, id);
         psDeleteCartItem.executeUpdate();
 
-      
         psDeleteProductVariants = conn.prepareStatement(sqlDeleteProductVariants);
         psDeleteProductVariants.setInt(1, id);
         psDeleteProductVariants.executeUpdate();
 
-       
-        psDeleteOrderDetails = conn.prepareStatement(sqlDeleteOrderDetails);
-        psDeleteOrderDetails.setInt(1, id);
-        psDeleteOrderDetails.executeUpdate();
-
         psDeleteFeedbacks = conn.prepareStatement(sqlDeleteFeedbacks);
         psDeleteFeedbacks.setInt(1, id);
         psDeleteFeedbacks.executeUpdate();
-
         
         psDeleteProduct = conn.prepareStatement(sqlDeleteProduct);
         psDeleteProduct.setInt(1, id);
@@ -1028,7 +1020,10 @@ public int showProduct(int id) {
       }
      public int addProduct(Product product) {
     int productId = -1;
-    String sql = "INSERT INTO Products (brandID, name, description, isDisabled, feedbackCount, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, createAt, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Products (brandID, name, description, isDisabled,"
+            + " feedbackCount, status, imageURL, chipset, ram, screenSize, screenType,"
+            + " resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, createAt, createdBy) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
         pre.setInt(1, product.getBrandID());
         pre.setString(2, product.getName());
