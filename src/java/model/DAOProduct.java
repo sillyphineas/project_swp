@@ -386,7 +386,7 @@ public int delete(int id) {
    
     String sqlDeleteCartItem = "DELETE FROM CartItem WHERE ProductVariantID = ?";
     String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
-    String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productID = ?";
+    
     String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
     String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
 
@@ -410,11 +410,6 @@ public int delete(int id) {
         psDeleteProductVariants = conn.prepareStatement(sqlDeleteProductVariants);
         psDeleteProductVariants.setInt(1, id);
         psDeleteProductVariants.executeUpdate();
-
-       
-        psDeleteOrderDetails = conn.prepareStatement(sqlDeleteOrderDetails);
-        psDeleteOrderDetails.setInt(1, id);
-        psDeleteOrderDetails.executeUpdate();
 
         psDeleteFeedbacks = conn.prepareStatement(sqlDeleteFeedbacks);
         psDeleteFeedbacks.setInt(1, id);

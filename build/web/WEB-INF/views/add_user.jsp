@@ -1,7 +1,18 @@
+<%-- 
+    Document   : add_user
+    Created on : Mar 3, 2025, 2:18:34 PM
+    Author     : Admin
+--%>
+
+
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.Setting"%>
 <%@page import="model.DAOSetting"%>
 <%@page import="entity.User"%>
+<%@page import="model.DAOUser"%>
+
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
@@ -38,113 +49,6 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
-
-            /* Container của phần Update Customer */
-            #update-setting-section {
-                padding: 30px;
-                background-color: #fff;
-                margin-top: 50px;
-                border-radius: 8px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Tiêu đề của phần Update Customer */
-            #update-setting-section h2 {
-                text-align: center;
-                color: #333;
-                font-size: 28px;
-                margin-bottom: 30px;
-            }
-
-            /* Phần thông báo lỗi */
-            #update-setting-section .message {
-                color: red;
-                font-weight: bold;
-                text-align: center;
-                margin-bottom: 20px;
-                font-size: 16px;
-            }
-
-            /* Định dạng các trường nhập liệu */
-            #update-setting-section form {
-                max-width: 600px;
-                margin: 0 auto;
-            }
-
-            #update-setting-section form div {
-                margin-bottom: 20px;
-            }
-
-            #update-setting-section label {
-                font-size: 16px;
-                font-weight: bold;
-                color: #333;
-                display: block;
-                margin-bottom: 8px;
-            }
-
-            #update-setting-section input[type="text"],
-            #update-setting-section input[type="email"],
-            #update-setting-section input[type="radio"] {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                box-sizing: border-box;
-                font-size: 16px;
-                color: #333;
-            }
-
-            #update-setting-section input[type="radio"] {
-                width: auto;
-                margin-right: 10px;
-            }
-
-            /* Định dạng nút Save Changes */
-            #update-setting-section button {
-                padding: 12px 20px;
-                background-color: #f39c12;
-                color: white;
-                font-size: 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                display: block;
-                width: 100%;
-                text-align: center;
-                margin-top: 20px;
-            }
-
-            #update-setting-section button:hover {
-                background-color: #e67e22;
-            }
-
-            /* Responsive Design */
-            @media screen and (max-width: 768px) {
-                #update-setting-section {
-                    padding: 20px;
-                }
-
-                #update-setting-section h2 {
-                    font-size: 22px;
-                }
-
-                #update-setting-section label {
-                    font-size: 14px;
-                }
-
-                #update-setting-section input[type="text"],
-                #update-setting-section input[type="email"] {
-                    padding: 10px;
-                    font-size: 14px;
-                }
-
-                #update-setting-section button {
-                    font-size: 14px;
-                }
-            }
-
 
         </style>
     </head><!--/head-->
@@ -246,56 +150,98 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="index.html" >Home</a></li>
-                                    <li><a href="CustomerController" class="active">Customer List</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
-
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="update-setting-section">
+        <section id="add-user-section">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Update Customer</h2>
-                        <c:if test="${not empty mess}">
-                            <div style="color: red; font-weight: bold;">${mess}</div>
-                        </c:if>
+                        <h2>Add New User</h2>
+                        <form action="UserDetailController?action=addUser" method="post">
 
-                        <form action="EditCustomerController" method="post">
-                            <input type="hidden" name="id" value="${customer.id}" />
-
-                            <div>
-                                <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" value="${customer.name}" required />
+                            <!-- User Name -->
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required />
                             </div>
 
-                            <div>
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" value="${customer.email}" required />
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required />
                             </div>
 
-                            <div>
-                                <label for="phoneNumber">Phone Number:</label>
-                                <input type="text" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required />
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required />
                             </div>
 
-                            <div>
-                                <label for="gender">Gender:</label>
-                                <input type="radio" id="male" name="gender" value="true" ${customer.gender ? 'checked' : ''} /> Male
-                                <input type="radio" id="female" name="gender" value="false" ${!customer.gender ? 'checked' : ''} /> Female
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="true">Male</option>
+                                    <option value="false">Female</option>
+                                </select>
                             </div>
 
-                            <button type="submit">Save Changes</button>
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" />
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" />
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group">
+                                <label for="roleId">Role</label>
+                                <select class="form-control" id="roleId" name="roleId" required>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Marketing</option>
+                                    <option value="3">Sale</option>
+                                    <option value="4">Shipper</option>
+                                    <option value="5">Customer</option>
+                                </select>
+                            </div>
+
+                            <!-- Status (Active/Inactive) -->
+                            <div class="form-group">
+                                <label for="isDisabled">Status</label>
+                                <select class="form-control" id="isDisabled" name="isDisabled" required>
+                                    <option value="false">Active</option>
+                                    <option value="true">Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary">Add User</button>
+                            <a href="UserController" class="btn btn-danger">Cancel</a>
                         </form>
                     </div>
                 </div>
             </div>
         </section>
+
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
