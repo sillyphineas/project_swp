@@ -121,17 +121,17 @@
                 color: #777;
             }
             table td .btn {
-    display: inline-block;
-    padding: 7px 20px;
-    font-size: 13px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    cursor: pointer;
-    border: none;
-    margin-right: 5px; /* Adjust the spacing between buttons */
-}
+                display: inline-block;
+                padding: 7px 20px;
+                font-size: 13px;
+                font-weight: bold;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+                cursor: pointer;
+                border: none;
+                margin-right: 5px; /* Adjust the spacing between buttons */
+            }
 
         </style>
     </head><!--/head-->
@@ -318,13 +318,13 @@
                                     <th>Delete</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="user-list">
                                 <% 
                                     List<User> users = (List<User>) request.getAttribute("users");
                                     if (users != null && !users.isEmpty()) {
                                         for (User item : users) {
                                 %>
-                                <tr id="user-<%= user.getId() %>">
+                                <tr id="user-<%= item.getId() %>">
                                     <td><%= item.getId() %></td>
                                     <td><%= item.getName() %></td>
                                     <td><%= item.getEmail() %></td>
@@ -356,7 +356,9 @@
                                     </td>
 
                                     <td>
-                                        <button type="button" class="btn btn-danger" onclick="deleteUser(<%= item.getId() %>)">Delete</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteUser('<%= item.getId() %>')">
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                                 <% 
@@ -590,13 +592,20 @@
                                             function deleteUser(userId) {
                                                 if (confirm('Are you sure you want to delete this user?')) {
                                                     $.ajax({
-                                                        url: "UserController?service=removeUser&userId=" + userId,
-                                                        type: "GET",
+                                                        url: "UserController?service=removeUser",
+                                                        type: "POST",
+                                                        data: {userId: userId},
                                                         dataType: "json",
                                                         success: function (response) {
                                                             if (response.status === "success") {
-                                                                alert(response.message);
-                                                                $("#user-" + userId).remove();
+                                                                $("#user-" + userId).fadeOut(10, function () {
+                                                                    $(this).remove();
+                                                                    if ($("#user-list").children().length === 0) {
+                                                                        window.history.back();
+                                                                    } else {
+                                                                        window.location.reload();
+                                                                    }
+                                                                });
                                                             } else {
                                                                 alert(response.message);
                                                             }
@@ -608,11 +617,12 @@
                                                 }
                                             }
 
+
         </script>
         <script>
 
             function changeStatus(userId, currentStatus) {
-                var newStatus = (currentStatus === "true") ? false : true;  // true -> Disabled, false -> Active
+                var newStatus = (currentStatus === "true") ? false : true;
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", "UserController?service=changeStatus", true);
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
