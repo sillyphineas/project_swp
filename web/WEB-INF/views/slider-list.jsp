@@ -214,6 +214,7 @@
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
                                     <li><a href="SliderController">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>

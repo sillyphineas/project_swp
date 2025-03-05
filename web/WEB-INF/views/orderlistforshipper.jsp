@@ -150,7 +150,7 @@
                         margin: 5px;
                     }
                 }
-                
+
             </style>
 
 
@@ -253,10 +253,8 @@
                                 </div>
                                 <div class="mainmenu pull-left">
                                     <ul class="nav navbar-nav collapse navbar-collapse">
-                                        <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                        <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                        <li><a href="SliderController">Slider List</a></li>
-                                        <li><a href="CustomerController">Customer List</a></li>
+                                        <li><a href="ShipperDashboardController" class="active">Home</a></li>
+                                        <li><a href="ShipperOrderController">Order List</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -266,17 +264,19 @@
                 </div><!--/header-bottom-->
             </header><!--/header-->
             <h2>Order List</h2>
+            <!-- Bộ lọc tìm kiếm và trạng thái -->
             <form action="ShipperOrderController" method="get">
+                <!-- Thay các option cũ bằng các option khớp với DB -->
                 <select name="status">
-                    <option value="Processing" ${order.status == 1 ? 'selected' : ''}>Processing</option>
-                    <option value="Shipped" ${order.status == 2 ? 'selected' : ''}>Shipped</option>
-                    <option value="Delivered" ${order.status == 3 ? 'selected' : ''}>Delivered</option>
-
+                    <option value="Pending"  ${param.status eq 'Pending'  ? 'selected' : ''}>Pending</option>
+                    <option value="Paid"     ${param.status eq 'Paid'     ? 'selected' : ''}>Paid</option>
+                    <!-- Có thể thêm các trạng thái khác nếu bạn có thêm cột hoặc giá trị khác trong DB -->
                 </select>
-                Search: <input type="text" name="search" value="${param.search}"/>
-                <input type="submit" value="Search"/>
+                Search: <input type="text" name="search" value="${param.search}" />
+                <input type="submit" value="Search" />
             </form>
 
+            <!-- Bảng hiển thị danh sách đơn hàng -->
             <table border="1">
                 <thead>
                     <tr>
@@ -293,14 +293,13 @@
                     <c:forEach var="order" items="${orders}">
                         <tr>
                             <td>${order.id}</td>
-                            <td>${buyerNames[order.buyerID]}</td> <!-- Lấy buyerName từ Map -->
-                            <td>${voucherCodes[order.id]}</td> <!-- Lấy voucherCode từ Map -->
+                            <td>${buyerNames[order.buyerID]}</td>
+                            <td>${voucherCodes[order.id]}</td>
                             <td>
-                                <!-- Hiển thị chữ tương ứng với trạng thái -->
+                                <!-- Hiển thị đúng các giá trị thực tế trong DB -->
                                 <c:choose>
-                                    <c:when test="${order.status == 1}">Processing</c:when>
-                                    <c:when test="${order.status == 2}">Shipped</c:when>
-                                    <c:when test="${order.status == 3}">Delivered</c:when>
+                                    <c:when test="${order.orderStatus eq 'Pending'}">Pending</c:when>
+                                    <c:when test="${order.orderStatus eq 'Paid'}">Paid</c:when>
                                     <c:otherwise>Unknown</c:otherwise>
                                 </c:choose>
                             </td>
@@ -308,24 +307,24 @@
                             <td>${order.totalPrice}</td>
                             <td>
                                 <form action="ShipperOrderController" method="post">
-                                    <input type="hidden" name="orderId" value="${order.id}"/>
+                                    <input type="hidden" name="orderId" value="${order.id}" />
+                                    <!-- Dropdown cập nhật trạng thái khớp với DB -->
                                     <select name="status">
-                                        <option value="Processing" ${order.status == 1 ? 'selected' : ''}>Processing</option>
-                                        <option value="Shipped" ${order.status == 2 ? 'selected' : ''}>Shipped</option>
-                                        <option value="Delivered" ${order.status == 3 ? 'selected' : ''}>Delivered</option>
-
+                                        <option value="Pending" ${order.orderStatus eq 'Pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="Paid"    ${order.orderStatus eq 'Paid'    ? 'selected' : ''}>Paid</option>
+                                        <!-- Nếu có trạng thái khác, thêm tiếp ở đây -->
                                     </select>
                                     <button type="submit">Update</button>
                                 </form>
                             </td>
                         </tr>
                     </c:forEach>
-
-
                 </tbody>
             </table>
 
-            <div>
+
+            <!-- Phân trang -->
+            <div class="pagination">
                 <c:forEach begin="1" end="${totalPages}" var="page">
                     <a href="?page=${page}&status=${param.status}&search=${param.search}">${page}</a>
                 </c:forEach>
