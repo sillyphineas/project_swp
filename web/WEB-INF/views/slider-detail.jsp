@@ -242,10 +242,7 @@
                 <th>Title</th>
                 <td>${slider.title}</td>
             </tr>
-            <tr>
-                <th>Content</th>
-                <td>${slider.content}</td>
-            </tr>
+            
             <tr>
                 <th>Image</th>
                 <td><img src="${slider.imageURL}" alt="Slider Image" width="200"></td>

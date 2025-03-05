@@ -1,7 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+
+<%-- 
+    Document   : blog-single
+    Created on : Jan 18, 2025, 1:12:42 PM
+    Author     : HP
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -9,14 +15,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | E-Shopper</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <title>Blog Single | E-Shopper</title>
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -26,74 +32,6 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <style>
-            /* Global Styles */
-            h2 {
-                color: #333;
-                margin-bottom: 20px;
-            }
-
-            /* Container for the Header Section (Slider List and Add Slider) */
-            .header-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 30px;
-            }
-
-            /* Container for Filter and Search Forms */
-            .form-section {
-                display: flex;
-                justify-content: flex-start;
-                gap: 15px;
-                margin-bottom: 20px;
-                align-items: center; /* Căn giữa các phần tử theo chiều dọc */
-            }
-
-            /* Styling for Select, Button, and Input */
-            form select, form button, form input {
-                padding: 10px;
-                font-size: 16px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
-                height: 40px; /* Đảm bảo các phần tử có cùng chiều cao */
-                display: inline-block;
-            }
-
-            /* Styling for Search and Filter Buttons */
-            form button {
-                background-color: #f39c12;
-                color: white;
-                border: none;
-                cursor: pointer;
-                height: 40px; /* Đảm bảo chiều cao button giống các phần tử khác */
-            }
-
-            /* Optional: Ensure the buttons are aligned properly */
-            .filter-form button, .search-form button {
-                margin-left: 10px; /* To add space between the input and button */
-            }
-
-            /* Ensure that forms are in a single row */
-            .filter-form, .search-form {
-                display: flex;
-                align-items: center;
-                height: 40px; /* Giúp đảm bảo rằng tất cả phần tử có cùng chiều cao */
-            }
-
-            /* Responsive for small screens */
-            @media screen and (max-width: 768px) {
-                .form-section {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .filter-form, .search-form {
-                    width: 100%;
-                }
-            }
-
-        </style>
     </head><!--/head-->
 
     <body>
@@ -104,19 +42,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -129,7 +67,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -138,8 +76,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -149,8 +87,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -158,10 +96,10 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
@@ -193,129 +131,118 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
+                            <form action="MarketingPostController" method="get">
+                                <input type="hidden" value="search" name="service">
+                                <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
+                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                    <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
+                                        <i class="fa fa-search"></i> 
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div><!--/header-bottom-->
+            </div><<!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="settings-section">
+        <section>
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <h2>Slider List</h2>
-                        <div class="add-setting-button">
-                            <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
-                        </div>
-                        <hr>
-                        <div class="form-section">
-                            <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
-                                <select name="status" class="form-control">
-                                    <option value="">All</option>
-                                    <option value="0">Visible</option>
-                                    <option value="1">Hidden</option>
-                                </select>
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </form>
+                    <div class="blog-post-area">
+                        <h2 class="title text-center">Update Post</h2>
 
-                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
-                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control" />
-                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
-                            </form>
-                        </div>
-
-
-
-                        <c:if test="${not empty message}">
-                            <div class="alert alert-${messageType}">
-                                ${message}
+                        <% 
+                        String message = (String) request.getAttribute("message");
+                        if (message != null && !message.isEmpty()) {
+                        %>
+                        <div style="color: red; font-weight: bold;"><%= message %></div>
+                        <% 
+                        }
+                        %>
+                        <% 
+                        Blog blog = (Blog) request.getAttribute("blog");
+                        if (blog != null) {
+                        %>
+                        <form action="MarketingPostController" method="post">
+                            <input type="hidden" name="service" value="updateBlog" />
+                            <input type="hidden" name="id" value="<%= blog.getId() %>">
+                            <!-- Title -->
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" class="form-control" value="<%= blog.getTitle() %>" required />
                             </div>
-                        </c:if>
-                        <hr>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Image</th>
-                                    <th>Backlinks</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="slider" items="${sliders}">
-                                    <tr>
-                                        <td>${slider.id}</td>
-                                        <td>${slider.title}</td>
-                                        <td><img src="${slider.imageURL}" alt="Slider Image" width="100" height="100" /></td>
-                                        <td>${slider.backlinks}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${slider.isDisabled}">
-                                                    Hidden
-                                                </c:when>
-                                                <c:otherwise>
-                                                    Visible
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <form action="SliderController" method="post">
-                                                <input type="hidden" name="id" value="${slider.id}" />
-                                                <c:choose>
-                                                    <c:when test="${slider.isDisabled == true}">
-                                                        <input type="hidden" name="isDisabled" value="false" />
-                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input type="hidden" name="isDisabled" value="true" />
-                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="view-detail-link">View Detail</a>
-                                            </form>
-                                        </td>
 
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                        <div>
-                            <!-- Kiểm tra xem có nhiều hơn 1 trang không -->
-                            <c:if test="${totalPages >= 1}">
-                                <ul class="pagination">
-                                    <!-- Lặp qua các trang từ 1 đến totalPages để tạo liên kết phân trang -->
-                                    <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <li class="${i == currentPage ? 'active' : ''}">
-                                            <a href="SliderController?page=${i}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </c:if>
+                            <!-- Author -->
+                            <div class="form-group">
+                                <label for="authorID">Author</label>
+                                <select name="authorID" class="form-control" required>
+                                    <%
+                                        ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
+                                        while (rsAuthor.next()) {
+                                            int authorId = rsAuthor.getInt("id");
+                                            String authorName = rsAuthor.getString("name");
+                                    %>
+                                    <option value="<%= authorId %>"<%= blog.getAuthorID() == authorId ? "selected" : "" %>  %>
+                                        <%= authorName %>
+                                    </option>
+                                    <%
+                                        }
+                                    %>
+                                </select>
+                            </div>
 
-                            <!-- Nếu totalPages nhỏ hơn hoặc bằng 1, hiển thị thông báo -->
-                            <c:if test="${totalPages < 1}">
-                                <p>No pages available.</p> <!-- Thông báo nếu không có trang nào hoặc chỉ có 1 trang -->
-                            </c:if>
-                        </div>
+                            <!-- Post Time -->
+                            <div class="form-group">
+                                <label for="postTime">Post Time</label>
+                                <input type="datetime-local" name="postTime" class="form-control" value="<%= blog.getPostTime() %>" required />
+                            </div>
 
+                            <!-- Content -->
+                            <div class="form-group">
+                                <label for="content">Content</label>
+                                <textarea name="content" class="form-control" rows="5" required><%= blog.getContent() %></textarea>
+                            </div>
 
+                            <!-- Image URL -->
+                            <div class="form-group">
+                                <label for="imageURL">Image URL</label>
+                                <input type="text" name="imageURL" class="form-control" value="<%= blog.getImageURL() %>" />
+                            </div>
+
+                            <!-- Backlinks -->
+                            <div class="form-group">
+                                <label for="backlinks">Backlinks</label>
+                                <input type="text" name="backlinks" class="form-control" value="<%= blog.getBacklinks() %>" />
+                            </div>
+
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="isDisabled">Status</label>
+                                <select name="isDisabled" class="form-control" required>
+                                    <option value="false" <%= "false".equals(blog.isIsDisabled()) ? "selected" : "" %>>Active</option>
+                                    <option value="true" <%= "true".equals(blog.isIsDisabled()) ? "selected" : "" %>>Disable</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
+                            <button type="submit" name="submit" value="updateBlog"class="btn btn-primary" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">Save Changes</button>
+                            <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                    Back
+                            </a>
+                            </div>
+                        </form>
+
+                        <% 
+                        }
+                        %>
                     </div>
                 </div>
-            </div>
         </section>
 
         <footer id="footer"><!--Footer-->
@@ -406,11 +333,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Online Help</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">Order Status</a></li>
-                                    <li><a href="#">Change Location</a></li>
-                                    <li><a href="#">FAQ’s</a></li>
+                                    <li><a href="">Online Help</a></li>
+                                    <li><a href="">Contact Us</a></li>
+                                    <li><a href="">Order Status</a></li>
+                                    <li><a href="">Change Location</a></li>
+                                    <li><a href="">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -418,11 +345,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">T-Shirt</a></li>
-                                    <li><a href="#">Mens</a></li>
-                                    <li><a href="#">Womens</a></li>
-                                    <li><a href="#">Gift Cards</a></li>
-                                    <li><a href="#">Shoes</a></li>
+                                    <li><a href="">T-Shirt</a></li>
+                                    <li><a href="">Mens</a></li>
+                                    <li><a href="">Womens</a></li>
+                                    <li><a href="">Gift Cards</a></li>
+                                    <li><a href="">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -430,11 +357,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privecy Policy</a></li>
-                                    <li><a href="#">Refund Policy</a></li>
-                                    <li><a href="#">Billing System</a></li>
-                                    <li><a href="#">Ticket System</a></li>
+                                    <li><a href="">Terms of Use</a></li>
+                                    <li><a href="">Privecy Policy</a></li>
+                                    <li><a href="">Refund Policy</a></li>
+                                    <li><a href="">Billing System</a></li>
+                                    <li><a href="">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -442,11 +369,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Company Information</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                    <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affillate Program</a></li>
-                                    <li><a href="#">Copyright</a></li>
+                                    <li><a href="">Company Information</a></li>
+                                    <li><a href="">Careers</a></li>
+                                    <li><a href="">Store Location</a></li>
+                                    <li><a href="">Affillate Program</a></li>
+                                    <li><a href="">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -479,9 +406,9 @@
 
 
         <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/price-range.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
     </body>

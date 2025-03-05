@@ -1,5 +1,15 @@
+<%-- 
+    Document   : edit_user
+    Created on : Mar 3, 2025, 5:04:46 PM
+    Author     : Admin
+--%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.Setting"%>
+<%@page import="model.DAOSetting"%>
 <%@page import="entity.User"%>
+<%@page import="model.DAOUser"%>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
@@ -10,13 +20,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Home | E-Shopper</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/font-awesome.min.css" rel="stylesheet">
+        <link href="/css/prettyPhoto.css" rel="stylesheet">
+        <link href="/css/price-range.css" rel="stylesheet">
+        <link href="/css/animate.css" rel="stylesheet">
+        <link href="/css/main.css" rel="stylesheet">
+        <link href="/css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -27,70 +37,14 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
-            /* Global Styles */
-            h2 {
-                color: #333;
-                margin-bottom: 20px;
+            .inactive-status {
+                color: red; /* Màu đỏ cho trạng thái Inactive */
+                font-weight: bold;
             }
 
-            /* Container for the Header Section (Slider List and Add Slider) */
-            .header-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 30px;
-            }
-
-            /* Container for Filter and Search Forms */
-            .form-section {
-                display: flex;
-                justify-content: flex-start;
-                gap: 15px;
-                margin-bottom: 20px;
-                align-items: center; /* Căn giữa các phần tử theo chiều dọc */
-            }
-
-            /* Styling for Select, Button, and Input */
-            form select, form button, form input {
-                padding: 10px;
-                font-size: 16px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
-                height: 40px; /* Đảm bảo các phần tử có cùng chiều cao */
-                display: inline-block;
-            }
-
-            /* Styling for Search and Filter Buttons */
-            form button {
-                background-color: #f39c12;
-                color: white;
-                border: none;
-                cursor: pointer;
-                height: 40px; /* Đảm bảo chiều cao button giống các phần tử khác */
-            }
-
-            /* Optional: Ensure the buttons are aligned properly */
-            .filter-form button, .search-form button {
-                margin-left: 10px; /* To add space between the input and button */
-            }
-
-            /* Ensure that forms are in a single row */
-            .filter-form, .search-form {
-                display: flex;
-                align-items: center;
-                height: 40px; /* Giúp đảm bảo rằng tất cả phần tử có cùng chiều cao */
-            }
-
-            /* Responsive for small screens */
-            @media screen and (max-width: 768px) {
-                .form-section {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .filter-form, .search-form {
-                    width: 100%;
-                }
+            .active-status {
+                color: green; /* Màu xanh cho trạng thái Active */
+                font-weight: bold;
             }
 
         </style>
@@ -193,11 +147,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="index.html" class="active">Home</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -211,107 +162,81 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="settings-section">
+        <section id="update-setting-section">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Slider List</h2>
-                        <div class="add-setting-button">
-                            <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
-                        </div>
-                        <hr>
-                        <div class="form-section">
-                            <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
-                                <select name="status" class="form-control">
-                                    <option value="">All</option>
-                                    <option value="0">Visible</option>
-                                    <option value="1">Hidden</option>
-                                </select>
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </form>
-
-                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
-                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control" />
-                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
-                            </form>
-                        </div>
+                        <h2>Edit User</h2>
 
 
+                        <!-- Lấy thông tin người dùng và điền vào form -->
+                        <form action="UserDetailController?action=updateUser" method="post">
+                            <c:set var="user" value="${user}" />
+                            <input type="text" name="userId" value="${user.id}"/>
 
-                        <c:if test="${not empty message}">
-                            <div class="alert alert-${messageType}">
-                                ${message}
+                            <!-- User Name -->
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
                             </div>
-                        </c:if>
-                        <hr>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Image</th>
-                                    <th>Backlinks</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="slider" items="${sliders}">
-                                    <tr>
-                                        <td>${slider.id}</td>
-                                        <td>${slider.title}</td>
-                                        <td><img src="${slider.imageURL}" alt="Slider Image" width="100" height="100" /></td>
-                                        <td>${slider.backlinks}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${slider.isDisabled}">
-                                                    Hidden
-                                                </c:when>
-                                                <c:otherwise>
-                                                    Visible
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                        <td>
-                                            <form action="SliderController" method="post">
-                                                <input type="hidden" name="id" value="${slider.id}" />
-                                                <c:choose>
-                                                    <c:when test="${slider.isDisabled == true}">
-                                                        <input type="hidden" name="isDisabled" value="false" />
-                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <input type="hidden" name="isDisabled" value="true" />
-                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                                <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="view-detail-link">View Detail</a>
-                                            </form>
-                                        </td>
 
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                        <div>
-                            <!-- Kiểm tra xem có nhiều hơn 1 trang không -->
-                            <c:if test="${totalPages >= 1}">
-                                <ul class="pagination">
-                                    <!-- Lặp qua các trang từ 1 đến totalPages để tạo liên kết phân trang -->
-                                    <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <li class="${i == currentPage ? 'active' : ''}">
-                                            <a href="SliderController?page=${i}">${i}</a>
-                                        </li>
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required />
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" />
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
+                                    <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
+                                </select>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="${user.phoneNumber}" />
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="${user.dateOfBirth}" />
+                            </div>
+
+                            <!-- Role -->
+                            <div class="form-group">
+                                <label for="roleId">Role</label>
+                                <select class="form-control" id="roleId" name="roleId" required>
+                                    <c:forEach var="role" items="${roles}">
+                                        <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
                                     </c:forEach>
-                                </ul>
-                            </c:if>
+                                </select>
+                            </div>
 
-                            <!-- Nếu totalPages nhỏ hơn hoặc bằng 1, hiển thị thông báo -->
-                            <c:if test="${totalPages < 1}">
-                                <p>No pages available.</p> <!-- Thông báo nếu không có trang nào hoặc chỉ có 1 trang -->
-                            </c:if>
-                        </div>
+                          <!-- Status -->
+<div class="form-group">
+    <label for="isDisabled">Status</label>
+    <select class="form-control" id="isDisabled" name="isDisabled" required>
+        <option value="false" ${!user.disabled ? 'selected' : ''}>Active</option>
+        <option value="true" ${user.disabled ? 'selected' : ''}>Inactive</option>
+    </select>
+</div>
 
+
+                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <a href="UserController" class="btn btn-danger">Cancel</a>
+
+                        </form>
 
                     </div>
                 </div>

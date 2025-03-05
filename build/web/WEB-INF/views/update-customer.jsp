@@ -39,6 +39,113 @@
                 font-weight: bold;
             }
 
+            /* Container của phần Update Customer */
+            #update-setting-section {
+                padding: 30px;
+                background-color: #fff;
+                margin-top: 50px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Tiêu đề của phần Update Customer */
+            #update-setting-section h2 {
+                text-align: center;
+                color: #333;
+                font-size: 28px;
+                margin-bottom: 30px;
+            }
+
+            /* Phần thông báo lỗi */
+            #update-setting-section .message {
+                color: red;
+                font-weight: bold;
+                text-align: center;
+                margin-bottom: 20px;
+                font-size: 16px;
+            }
+
+            /* Định dạng các trường nhập liệu */
+            #update-setting-section form {
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            #update-setting-section form div {
+                margin-bottom: 20px;
+            }
+
+            #update-setting-section label {
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            #update-setting-section input[type="text"],
+            #update-setting-section input[type="email"],
+            #update-setting-section input[type="radio"] {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+                font-size: 16px;
+                color: #333;
+            }
+
+            #update-setting-section input[type="radio"] {
+                width: auto;
+                margin-right: 10px;
+            }
+
+            /* Định dạng nút Save Changes */
+            #update-setting-section button {
+                padding: 12px 20px;
+                background-color: #f39c12;
+                color: white;
+                font-size: 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            #update-setting-section button:hover {
+                background-color: #e67e22;
+            }
+
+            /* Responsive Design */
+            @media screen and (max-width: 768px) {
+                #update-setting-section {
+                    padding: 20px;
+                }
+
+                #update-setting-section h2 {
+                    font-size: 22px;
+                }
+
+                #update-setting-section label {
+                    font-size: 14px;
+                }
+
+                #update-setting-section input[type="text"],
+                #update-setting-section input[type="email"] {
+                    padding: 10px;
+                    font-size: 14px;
+                }
+
+                #update-setting-section button {
+                    font-size: 14px;
+                }
+            }
+
+
         </style>
     </head><!--/head-->
 
@@ -158,7 +265,7 @@
                         <c:if test="${not empty mess}">
                             <div style="color: red; font-weight: bold;">${mess}</div>
                         </c:if>
-                        
+
                         <form action="EditCustomerController" method="post">
                             <input type="hidden" name="id" value="${customer.id}" />
 
@@ -181,11 +288,6 @@
                                 <label for="gender">Gender:</label>
                                 <input type="radio" id="male" name="gender" value="true" ${customer.gender ? 'checked' : ''} /> Male
                                 <input type="radio" id="female" name="gender" value="false" ${!customer.gender ? 'checked' : ''} /> Female
-                            </div>
-
-                            <div>
-                                <label for="status">Status:</label>
-                                <input type="checkbox" id="status" name="status" ${customer.isDisabled ? 'checked' : ''} />
                             </div>
 
                             <button type="submit">Save Changes</button>
