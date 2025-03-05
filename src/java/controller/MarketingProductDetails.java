@@ -54,7 +54,7 @@ public class MarketingProductDetails extends HttpServlet {
             request.setAttribute("product", product);
             request.getRequestDispatcher("WEB-INF/views/marketingproduct-details.jsp").forward(request, response);
         }
-         if ("editVariant".equals(action)) {
+        if ("editVariant".equals(action)) {
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
             Vector<Brand> brandList = daoBrand.getAllBrands();
@@ -72,7 +72,7 @@ public class MarketingProductDetails extends HttpServlet {
             request.setAttribute("product", product);
             request.getRequestDispatcher("WEB-INF/views/edit_product.jsp").forward(request, response);
         }
-          if ("editProduct".equals(action)) {
+        if ("editProduct".equals(action)) {
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
             Vector<Brand> brandList = daoBrand.getAllBrands();
@@ -122,19 +122,43 @@ public class MarketingProductDetails extends HttpServlet {
             int batteryCapacity = Integer.parseInt(request.getParameter("batteryCapacity"));
             String os = request.getParameter("os");
             String connectivity = request.getParameter("connectivity");
-            
+
+            // Lấy ngày tạo từ request, nếu không có thì dùng ngày hiện tại
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date createAt = new Date();
+            java.util.Date createAtUtil = new java.util.Date();
             String createAtString = request.getParameter("createAt");
             if (createAtString != null && !createAtString.isEmpty()) {
                 try {
-                    createAt = sdf.parse(createAtString);
+                    createAtUtil = sdf.parse(createAtString);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            // Chuyển đổi java.util.Date sang java.sql.Date
+            java.sql.Date createAt = new java.sql.Date(createAtUtil.getTime());
 
-            Product updatedProduct = new Product(productId, brandID, name, description, isDisabled, 0, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, "", os, "", connectivity, createAt, 2);
+            Product updatedProduct = new Product(
+                    productId,
+                    brandID,
+                    name,
+                    description,
+                    isDisabled,
+                    0,
+                    status,
+                    imageURL,
+                    chipset,
+                    ram,
+                    screenSize,
+                    screenType,
+                    resolution,
+                    batteryCapacity,
+                    "",
+                    os,
+                    "",
+                    connectivity,
+                    createAt, // Sử dụng java.sql.Date ở đây
+                    2
+            );
             daoProduct.UpdateProduct(updatedProduct);
             response.sendRedirect("MarketingProductDetails?id=" + productId);
         }
