@@ -186,28 +186,19 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                            <li><a href="MarketingProductDetails">Product Details</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                    <li><a href="SliderController">Slider List</a></li>
+                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="MarketingProductController">Product List</a></li>
+
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
 
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -231,11 +222,11 @@
                                     
                                     <ul class="nav nav-pills nav-stacked">
                                         <li> 
-                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
+                                            <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=0">All Brands</a> 
                                         </li> 
                                         <c:forEach var="brand" items="${brands}">
                                             <li> 
-                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
+                                                <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=${brand.id}"> ${brand.name} </a>
                                             </li> 
                                         </c:forEach> 
                                     </ul> 
@@ -245,12 +236,12 @@
                             <div class="price-range">
                                 <h2>Filter by Price</h2>
                                 <div class="well">
-                                    <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
                                         <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="5000000000000" step="10" class="form-control">
 
                                         <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="5000000000000" step="10" class="form-control">
 
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
                                     </form>
@@ -352,7 +343,7 @@
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
-                                        <p><b>Availability: </b> <label style="color: black"></label></p>
+                                       
                                         <p><b>Condition:</b> New</p>
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
@@ -362,17 +353,11 @@
                                         <p><b>Description:</b> ${product.description}</p>
                                         <p><b>Stock:</b> <span id="stockInfo"></span></p>
    
-    <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
+        <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
                                         </p>
-                                        
                                     </div>
-                                        
                                 </form>
                             </div>
-
-
-
-
                         </div><!--/product-details-->
 
                         <div class="category-tab shop-details-tab"><!--category-tab-->

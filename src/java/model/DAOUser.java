@@ -39,26 +39,27 @@ public class DAOUser extends DBConnection {
 
 public int addUser(User user) {
     int n = 0;
-    String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try {
-        PreparedStatement pre = conn.prepareStatement(sql);
-        pre.setString(1, user.getName());               // Thêm tên người dùng
-        pre.setString(2, user.getEmail());              // Thêm email
-        pre.setString(3, user.getPassHash());           // Thêm mật khẩu đã mã hóa
-        pre.setBoolean(4, user.isGender());             // Thêm giới tính
-        pre.setString(5, user.getPhoneNumber());       // Thêm số điện thoại
-        pre.setString(6, user.getResetToken());        // Thêm mã reset nếu có
-        pre.setDate(7, user.getResetTokenExpired());   // Thêm ngày hết hạn mã reset nếu có
-        pre.setDate(8, user.getDateOfBirth());         // Thêm ngày sinh
-        pre.setInt(9, user.getRoleId());               // Thêm roleId
-        pre.setBoolean(10, user.isDisabled());         // Thêm trạng thái kích hoạt của người dùng
+    String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at) "
+               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    try (PreparedStatement pre = conn.prepareStatement(sql)) {
+        pre.setString(1, user.getName());               
+        pre.setString(2, user.getEmail());              
+        pre.setString(3, user.getPassHash());           
+        pre.setBoolean(4, user.isGender());             
+        pre.setString(5, user.getPhoneNumber());       
+        pre.setString(6, user.getResetToken());       
+        pre.setDate(7, user.getResetTokenExpired());  
+        pre.setDate(8, user.getDateOfBirth());         
+        pre.setInt(9, user.getRoleId());              
+        pre.setBoolean(10, user.isDisabled());      
+        pre.setInt(11, user.getUpdatedBy());
+        pre.setDate(12, user.getUpdatedAt()); 
 
-        n = pre.executeUpdate();  // Thực thi câu lệnh
+        n = pre.executeUpdate();  // 
     } catch (SQLException ex) {
         ex.printStackTrace();
     }
-    return n;  // Trả về số bản ghi bị ảnh hưởng (1 nếu thành công, 0 nếu thất bại)
+    return n;  
 }
 
 
@@ -154,7 +155,9 @@ public int addUser(User user) {
 
     public int updateUser(User user) {
         int n = 0;
-        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ? WHERE id = ?";
+        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?,"
+                + " phoneNumber = ?, resetToken = ?, resetTokenExpired = ?,"
+                + " DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ? WHERE id = ?";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, user.getName());
@@ -168,7 +171,7 @@ public int addUser(User user) {
             pre.setInt(9, user.getRoleId());
             pre.setBoolean(10, user.isIsDisabled());
             pre.setInt(11, user.getUpdatedBy());
-            pre.setDate(12, user.getUpdatedAt()); // Sửa thành updatedAt
+            pre.setDate(12, user.getUpdatedAt()); 
             pre.setInt(13, user.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {

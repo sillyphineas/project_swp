@@ -120,6 +120,18 @@
                 font-size: 14px;
                 color: #777;
             }
+            table td .btn {
+    display: inline-block;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    margin-right: 5px; /* Adjust the spacing between buttons */
+}
 
         </style>
     </head><!--/head-->
@@ -283,7 +295,7 @@
                                         <i  style="margin-right: 5px;"></i> Sort
                                     </button>
                                 </form>
-                                <a href="MarketingPostController?service=addBlog" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                <a href="UserDetailController?action=addUser" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
                                     <i style="margin-right: 5px;"></i> Add User
                                 </a>
                             </div>
@@ -333,14 +345,14 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <a href="MarketingPostController?service=view&id=<%= item.getId() %>" 
+                                        <a href="UserDetailController?action=details&userId=<%= item.getId() %>" 
                                            class="btn" 
                                            style="display: inline-block; padding: 7px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold; cursor: pointer; border: none;">
                                             View
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="UserController?service=TuDienthem&TuDienthem=<%= item.getId() %>" class="btn btn-primary">Update</a>
+                                        <a href="UserDetailController?action=updateUser&userId=<%= item.getId() %>" class = "btn btn-danger">Update</a>
                                     </td>
 
                                     <td>
