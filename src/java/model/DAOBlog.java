@@ -512,6 +512,31 @@ public class DAOBlog extends DBConnection {
             return 0;
         }
     }
+    
+    public List<Blog> getPaginatedSlider(int page, int pageSize) throws SQLException {
+        String sql = "SELECT * FROM Blogs WHERE isDisabled = 0 and isSlider = 1 ORDER BY postTime DESC LIMIT ? OFFSET ?";
+        List<Blog> blogs = new ArrayList<>();
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, pageSize);
+            pre.setInt(2, (page - 1) * pageSize);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("backlinks"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isSlider"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+        }
+        return blogs;
+    }
 
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();

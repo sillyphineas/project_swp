@@ -41,75 +41,58 @@
                 margin-bottom: 30px;
             }
 
-            /* Styling for Slider List Header */
-            .header-section h2 {
-                margin: 0;
-            }
-
-            /* Styling for Add Slider Button */
-            .add-setting-button .btn {
-                background-color: #f39c12;
-                color: white;
-                padding: 10px 20px;
-                font-size: 16px;
-                border-radius: 4px;
-                transition: background-color 0.3s;
-            }
-
-            .add-setting-button .btn:hover {
-                background-color: #e67e22;
-            }
-
-            /* Form Section for Filter and Search */
+            /* Container for Filter and Search Forms */
             .form-section {
                 display: flex;
-                justify-content: space-between;
+                justify-content: flex-start;
                 gap: 15px;
                 margin-bottom: 20px;
+                align-items: center; /* Căn giữa các phần tử theo chiều dọc */
             }
 
-            .form-section form {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-            }
-
-            /* Styling for Select and Button in Form */
+            /* Styling for Select, Button, and Input */
             form select, form button, form input {
                 padding: 10px;
                 font-size: 16px;
                 border-radius: 4px;
                 border: 1px solid #ccc;
+                height: 40px; /* Đảm bảo các phần tử có cùng chiều cao */
+                display: inline-block;
             }
 
-            /* Styling for Search Button */
+            /* Styling for Search and Filter Buttons */
             form button {
                 background-color: #f39c12;
                 color: white;
                 border: none;
                 cursor: pointer;
+                height: 40px; /* Đảm bảo chiều cao button giống các phần tử khác */
             }
 
-            form button:hover {
-                background-color: #e67e22;
+            /* Optional: Ensure the buttons are aligned properly */
+            .filter-form button, .search-form button {
+                margin-left: 10px; /* To add space between the input and button */
             }
 
-            /* Responsive Design */
+            /* Ensure that forms are in a single row */
+            .filter-form, .search-form {
+                display: flex;
+                align-items: center;
+                height: 40px; /* Giúp đảm bảo rằng tất cả phần tử có cùng chiều cao */
+            }
+
+            /* Responsive for small screens */
             @media screen and (max-width: 768px) {
-                .header-section {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
                 .form-section {
                     flex-direction: column;
                     align-items: flex-start;
                 }
 
-                .form-section form {
+                .filter-form, .search-form {
                     width: 100%;
                 }
             }
+
         </style>
     </head><!--/head-->
 
@@ -237,21 +220,22 @@
                             <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
                         </div>
                         <hr>
-                        <form action="${pageContext.request.contextPath}/SliderController" method="get">
-                            <select name="status" class="form-control">
-                                <option value="">All</option>
-                                <option value="0">Visible</option>
-                                <option value="1">Hidden</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary">Filter</button>
-                        </form>
-                        <hr>
-                        <div class="col-sm-2">
-                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="d-flex">
+                        <div class="form-section">
+                            <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
+                                <select name="status" class="form-control">
+                                    <option value="">All</option>
+                                    <option value="0">Visible</option>
+                                    <option value="1">Hidden</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
+
+                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
                                 <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control" />
                                 <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
                             </form>
                         </div>
+
 
 
                         <c:if test="${not empty message}">
