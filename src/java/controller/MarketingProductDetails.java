@@ -107,7 +107,9 @@ public class MarketingProductDetails extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("editProduct".equals(action)) {
+            
             int productId = Integer.parseInt(request.getParameter("id"));
+            System.out.println("productid" +productId);
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             int brandID = Integer.parseInt(request.getParameter("brandID"));
@@ -122,8 +124,6 @@ public class MarketingProductDetails extends HttpServlet {
             int batteryCapacity = Integer.parseInt(request.getParameter("batteryCapacity"));
             String os = request.getParameter("os");
             String connectivity = request.getParameter("connectivity");
-
-            // Lấy ngày tạo từ request, nếu không có thì dùng ngày hiện tại
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             java.util.Date createAtUtil = new java.util.Date();
             String createAtString = request.getParameter("createAt");

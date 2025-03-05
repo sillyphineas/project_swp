@@ -377,8 +377,10 @@ public class DAOProduct extends DBConnection {
         return total;
     }
 
+
     public int delete(int id) {
         int n = 0;
+
 
         String sqlDeleteCartItem = "DELETE FROM CartItem WHERE ProductVariantID = ?";
         String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE productID = ?";
@@ -390,7 +392,6 @@ public class DAOProduct extends DBConnection {
         PreparedStatement psDeleteOrderDetails = null;
         PreparedStatement psDeleteFeedbacks = null;
         PreparedStatement psDeleteProduct = null;
-
         try {
 
             conn.setAutoCommit(false);
@@ -1013,7 +1014,10 @@ public class DAOProduct extends DBConnection {
             e.printStackTrace();
         }
         return productList;
+
     }
+
+      
 
     public int addProduct(Product product) {
         int productId = -1;
