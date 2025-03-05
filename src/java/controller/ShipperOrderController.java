@@ -69,7 +69,7 @@ public class ShipperOrderController extends HttpServlet {
         if (user != null) {
             int shipperId = user.getId(); // Lấy ID shipper từ user
 
-            // Các tham số lọc và phân trang
+            // Lấy các tham số lọc và phân trang
             String statusFilter = request.getParameter("status") != null ? request.getParameter("status") : "";
             String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
             int page = Integer.parseInt(request.getParameter("page") != null ? request.getParameter("page") : "1");
@@ -79,35 +79,33 @@ public class ShipperOrderController extends HttpServlet {
             DAOOrder daoOrder = new DAOOrder();
             List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
 
-            // Lấy tên người mua cho mỗi đơn hàng và lưu vào Map
+            // Lấy tên người mua và voucherCode cho mỗi đơn hàng
             Map<Integer, String> buyerNames = new HashMap<>();
-            Map<Integer, String> voucherCodes = new HashMap<>(); // Map lưu voucherCode
+            Map<Integer, String> voucherCodes = new HashMap<>();
             DAOUser daoUser = new DAOUser();
-            DAOVoucher daoVoucher = new DAOVoucher(); // Giả sử bạn có một lớp DAO để truy vấn bảng Vouchers
+            DAOVoucher daoVoucher = new DAOVoucher();
             for (Order order : orders) {
-                User buyer = daoUser.getUserById(order.getBuyerID()); // Lấy thông tin người mua từ bảng User
+                User buyer = daoUser.getUserById(order.getBuyerID());
                 if (buyer != null) {
-                    buyerNames.put(order.getBuyerID(), buyer.getName()); // Lưu buyerName vào Map
+                    buyerNames.put(order.getBuyerID(), buyer.getName());
                 }
-
-                // Lấy voucherCode từ bảng Vouchers và lưu vào Map
                 String voucherCode = daoVoucher.getVoucherCodeByOrderId(order.getId());
-                voucherCodes.put(order.getId(), voucherCode); // Lưu voucherCode vào Map
+                voucherCodes.put(order.getId(), voucherCode);
             }
 
-            // Tổng số đơn hàng (dùng để tính số trang)
+            // Tính tổng số đơn hàng và số trang
             int totalOrders = daoOrder.getTotalOrdersForShipper(shipperId, statusFilter, searchQuery);
             int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
 
-            // Truyền thông tin vào request để JSP hiển thị
+            // Truyền các thông tin lên request và chuyển sang JSP hiển thị
             request.setAttribute("orders", orders);
-            request.setAttribute("buyerNames", buyerNames); // Truyền buyerNames vào request
-            request.setAttribute("voucherCodes", voucherCodes); // Truyền voucherCodes vào request
+            request.setAttribute("buyerNames", buyerNames);
+            request.setAttribute("voucherCodes", voucherCodes);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);
             request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
         } else {
-            // Nếu người dùng chưa đăng nhập, chuyển đến trang đăng nhập
+            // Nếu chưa đăng nhập chuyển về trang login
             request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
         }
     }
@@ -121,83 +119,55 @@ public class ShipperOrderController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    int orderId = Integer.parseInt(request.getParameter("orderId"));
-    String newStatus = request.getParameter("status");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int orderId = Integer.parseInt(request.getParameter("orderId"));
+        // Lấy trạng thái mới dưới dạng chuỗi (Processing, Shipped, Delivered)
+        String newStatus = request.getParameter("status");
 
-    // Chuyển đổi trạng thái chuỗi thành giá trị số tương ứng
-    int statusValue = 0;  // Mặc định là giá trị 0
-    switch (newStatus) {
-        case "Processing":
-            statusValue = 1;
-            break;
-        case "Shipped":
-            statusValue = 2;
-            break;
-        case "Delivered":
-            statusValue = 3;
-            break;
-        default:
-            // Nếu trạng thái không hợp lệ, có thể cần xử lý thêm
-            statusValue = 0; // hoặc báo lỗi nếu cần
-            break;
-    }
+        // Cập nhật trạng thái đơn hàng (DAOOrder.updateStatus đã được cập nhật để làm việc với cột orderStatus)
+        DAOOrder daoOrder = new DAOOrder();
+        boolean isUpdated = daoOrder.updateStatus(orderId, newStatus);
 
-    // Cập nhật trạng thái đơn hàng
-    DAOOrder daoOrder = new DAOOrder();
-    boolean isUpdated = daoOrder.updateStatus(orderId, statusValue); // Cập nhật với giá trị số
+        if (isUpdated) {
+            // Sau khi cập nhật, lấy lại danh sách đơn hàng theo các tham số hiện tại
+            User user = (User) request.getSession().getAttribute("user");
+            int shipperId = user.getId();
+            String statusFilter = request.getParameter("status") != null ? request.getParameter("status") : "";
+            String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
+            int page = Integer.parseInt(request.getParameter("page") != null ? request.getParameter("page") : "1");
+            int pageSize = Integer.parseInt(request.getParameter("pageSize") != null ? request.getParameter("pageSize") : "10");
 
-    if (isUpdated) {
-        // Lấy lại thông tin đơn hàng đã cập nhật, bao gồm các tham số lọc và phân trang
-        User user = (User) request.getSession().getAttribute("user");
-        int shipperId = user.getId(); // Lấy ID shipper từ user
+            List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
 
-        // Các tham số lọc và phân trang
-        String statusFilter = request.getParameter("status") != null ? request.getParameter("status") : "";
-        String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int page = Integer.parseInt(request.getParameter("page") != null ? request.getParameter("page") : "1");
-        int pageSize = Integer.parseInt(request.getParameter("pageSize") != null ? request.getParameter("pageSize") : "10");
-
-        // Gọi DAOOrder để lấy lại danh sách đơn hàng cho shipper
-        List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
-
-        // Lấy tên người mua cho mỗi đơn hàng và lưu vào Map
-        Map<Integer, String> buyerNames = new HashMap<>();
-        Map<Integer, String> voucherCodes = new HashMap<>(); // Map lưu voucherCode
-        DAOUser daoUser = new DAOUser();
-        DAOVoucher daoVoucher = new DAOVoucher(); // Giả sử bạn có một lớp DAO để truy vấn bảng Vouchers
-        for (Order order : orders) {
-            User buyer = daoUser.getUserById(order.getBuyerID()); // Lấy thông tin người mua từ bảng User
-            if (buyer != null) {
-                buyerNames.put(order.getBuyerID(), buyer.getName()); // Lưu buyerName vào Map
+            Map<Integer, String> buyerNames = new HashMap<>();
+            Map<Integer, String> voucherCodes = new HashMap<>();
+            DAOUser daoUser = new DAOUser();
+            DAOVoucher daoVoucher = new DAOVoucher();
+            for (Order order : orders) {
+                User buyer = daoUser.getUserById(order.getBuyerID());
+                if (buyer != null) {
+                    buyerNames.put(order.getBuyerID(), buyer.getName());
+                }
+                String voucherCode = daoVoucher.getVoucherCodeByOrderId(order.getId());
+                voucherCodes.put(order.getId(), voucherCode);
             }
 
-            // Lấy voucherCode từ bảng Vouchers và lưu vào Map
-            String voucherCode = daoVoucher.getVoucherCodeByOrderId(order.getId());
-            voucherCodes.put(order.getId(), voucherCode); // Lưu voucherCode vào Map
+            int totalOrders = daoOrder.getTotalOrdersForShipper(shipperId, statusFilter, searchQuery);
+            int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
+            request.setAttribute("orders", orders);
+            request.setAttribute("buyerNames", buyerNames);
+            request.setAttribute("voucherCodes", voucherCodes);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
+            request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
+        } else {
+            request.setAttribute("error", "Failed to update the order status.");
+            request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
         }
-
-        // Tổng số đơn hàng (dùng để tính số trang)
-        int totalOrders = daoOrder.getTotalOrdersForShipper(shipperId, statusFilter, searchQuery);
-        int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
-
-        // Truyền thông tin vào request để JSP hiển thị
-        request.setAttribute("orders", orders);
-        request.setAttribute("buyerNames", buyerNames); // Truyền buyerNames vào request
-        request.setAttribute("voucherCodes", voucherCodes); // Truyền voucherCodes vào request
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-
-        // Forward lại tới JSP để hiển thị danh sách đơn hàng mới
-        request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
-    } else {
-        // Xử lý trường hợp lỗi cập nhật
-        request.setAttribute("error", "Failed to update the order status.");
-        request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
     }
-}
-
 
     /**
      * Returns a short description of the servlet.
