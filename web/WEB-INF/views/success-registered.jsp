@@ -15,13 +15,13 @@
         <meta name="author" content="">
         <title>Registration Success | E-Shopper</title>
 
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/css/price-range.css" rel="stylesheet">
-        <link href="/css/animate.css" rel="stylesheet">
-        <link href="/css/main.css" rel="stylesheet">
-        <link href="/css/responsive.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/price-range.css" rel="stylesheet">
+        <link href="css/animate.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <style>
