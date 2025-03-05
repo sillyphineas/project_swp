@@ -186,22 +186,11 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                            <li><a href="MarketingProductDetails">Product Details</a></li> 
-                                        </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                    <li><a href="SliderController">Slider List</a></li>
+                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>

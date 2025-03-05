@@ -192,47 +192,48 @@ public class DAOOrder extends DBConnection {
 
     public List<Order> getOrdersForShipper(int shipperId, String statusFilter, String searchQuery, int page, int pageSize) {
         List<Order> orders = new ArrayList<>();
-        int offset = (page - 1) * pageSize; // Tính toán offset cho phân trang
+        int offset = (page - 1) * pageSize;
 
         String sql = "SELECT o.id AS orderId, o.buyerID, u.name AS buyerName, u.phoneNumber AS buyerPhone, v.VoucherCode, "
-                + "o.status AS orderStatus, o.shippingAddress, o.orderTime, o.totalPrice, o.discountedPrice, o.paymentMethod, "
+                + "o.orderStatus AS orderStatus, o.shippingAddress, o.orderTime, o.totalPrice, o.discountedPrice, o.paymentMethod, "
                 + "o.shippingDate, o.RecipientName, o.RecipientPhone, o.AssignedSaleId "
                 + "FROM Orders o "
                 + "JOIN Users u ON o.buyerID = u.id "
                 + "LEFT JOIN Vouchers v ON o.voucherID = v.VoucherID "
                 + "WHERE o.isDisabled = 0 "
-                + "AND (o.status LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
+                + "AND (o.orderStatus LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
                 + "AND EXISTS (SELECT 1 FROM Shipping s WHERE s.OrderID = o.id AND s.ShipperID = ?) "
                 + "LIMIT ? OFFSET ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + statusFilter + "%"); // Lọc theo trạng thái
-            ps.setString(2, "%" + searchQuery + "%"); // Tìm kiếm theo tên khách hàng hoặc mã đơn hàng
-            ps.setString(3, "%" + searchQuery + "%"); // Tìm kiếm theo mã đơn hàng
-            ps.setInt(4, shipperId); // Thông tin shipper
-            ps.setInt(5, pageSize);  // Số lượng đơn hàng mỗi trang
-            ps.setInt(6, offset);     // Offset cho phân trang
+            ps.setString(1, "%" + statusFilter + "%");
+            ps.setString(2, "%" + searchQuery + "%");
+            ps.setString(3, "%" + searchQuery + "%");
+            ps.setInt(4, shipperId);
+            ps.setInt(5, pageSize);
+            ps.setInt(6, offset);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                int orderId = rs.getInt("orderId");
-                int buyerId = rs.getInt("buyerID");
-                String buyerName = rs.getString("buyerName");
-                String voucherCode = rs.getString("VoucherCode");
-                String orderStatus = rs.getString("orderStatus");
-                String shippingAddress = rs.getString("shippingAddress");
-                Timestamp orderTime = rs.getTimestamp("orderTime");
-                double totalPrice = rs.getDouble("totalPrice");
-                double discountedPrice = rs.getDouble("discountedPrice");
-                int paymentMethod = rs.getInt("paymentMethod");
-                Date shippingDate = rs.getDate("shippingDate");
-                String recipientName = rs.getString("RecipientName");
-                String recipientPhone = rs.getString("RecipientPhone");
-                int assignedSaleId = rs.getInt("AssignedSaleId");
-                // Tạo đối tượng Order từ dữ liệu trong ResultSet và thêm vào danh sách
-                Order order = new Order(orderId, buyerId, orderTime, orderStatus, shippingDate, shippingAddress, totalPrice, discountedPrice, paymentMethod, false, null, recipientName, recipientPhone, assignedSaleId);
-                // Bạn có thể thêm logic để xử lý voucherCode nếu cần
-                orders.add(order);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int orderId = rs.getInt("orderId");
+                    int buyerId = rs.getInt("buyerID");
+                    String orderStatus = rs.getString("orderStatus");
+                    String shippingAddress = rs.getString("shippingAddress");
+                    Timestamp orderTime = rs.getTimestamp("orderTime");
+                    double totalPrice = rs.getDouble("totalPrice");
+                    double discountedPrice = rs.getDouble("discountedPrice");
+                    int paymentMethod = rs.getInt("paymentMethod");
+                    Date shippingDate = rs.getDate("shippingDate");
+                    String recipientName = rs.getString("RecipientName");
+                    String recipientPhone = rs.getString("RecipientPhone");
+                    int assignedSaleId = rs.getInt("AssignedSaleId");
+
+                    // Tạo đối tượng Order và thêm vào danh sách
+                    Order order = new Order(orderId, buyerId, orderTime, orderStatus,
+                            shippingDate, shippingAddress, totalPrice, discountedPrice,
+                            paymentMethod, false, null, recipientName, recipientPhone, assignedSaleId);
+                    orders.add(order);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -245,17 +246,19 @@ public class DAOOrder extends DBConnection {
                 + "JOIN Users u ON o.buyerID = u.id "
                 + "LEFT JOIN Vouchers v ON o.voucherID = v.VoucherID "
                 + "WHERE o.isDisabled = 0 "
-                + "AND (o.status LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
+                + "AND (o.orderStatus LIKE ? OR u.name LIKE ? OR o.id LIKE ?) "
                 + "AND EXISTS (SELECT 1 FROM Shipping s WHERE s.OrderID = o.id AND s.ShipperID = ?)";
+
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + statusFilter + "%");
             ps.setString(2, "%" + searchQuery + "%");
             ps.setString(3, "%" + searchQuery + "%");
             ps.setInt(4, shipperId);
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -263,10 +266,10 @@ public class DAOOrder extends DBConnection {
         return 0;
     }
 
-    public boolean updateStatus(int orderId, int newStatus) {
-        String sql = "UPDATE Orders SET status = ? WHERE id = ?";
+    public boolean updateStatus(int orderId, String newStatus) {
+        String sql = "UPDATE Orders SET orderStatus = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, newStatus); // Sử dụng giá trị trạng thái kiểu int
+            ps.setString(1, newStatus);  // cập nhật cột orderStatus kiểu chuỗi
             ps.setInt(2, orderId);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
