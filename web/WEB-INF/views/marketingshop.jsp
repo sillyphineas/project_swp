@@ -199,10 +199,8 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+<!--                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
@@ -281,35 +279,7 @@
                                 <a href="AddProductController?action=addProduct" class="btn btn-primary">Add Product</a>
                                 <a href="AddProductController?action=addProductVariant" class="btn btn-primary">Add ProductVariant</a>
                             </div>
-                            <!-- Sort By Section -->
-                            <div class="sort-box text-center">
-                                <h3 style="margin-bottom: 15px; font-weight: bold;">Sort By</h3>
-                                <form action="MarketingProductController" method="get" class="d-flex justify-content-center align-items-center flex-wrap">
-                                    <div class="btn-group mx-2">
-                                        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            ${sortBy == 'name' ? 'Name' : sortBy == 'price' ? 'Price' : 'All'}
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="?sortBy=name&sortOrder=${sortOrder}">Name</a></li>
-                                            <li><a href="?sortBy=price&sortOrder=${sortOrder}">Price</a></li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="btn-group mx-2">
-                                        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            ${sortOrder == 'asc' ? 'Ascending' : 'Descending'}
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="?sortBy=${sortBy}&sortOrder=asc">Ascending</a></li>
-                                            <li><a href="?sortBy=${sortBy}&sortOrder=desc">Descending</a></li>
-                                        </ul>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success mx-2">Sort</button>
-                                </form>
-                            </div>
+                            <br>
                             <h2>Filter Products</h2>
                             <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
 
@@ -364,27 +334,13 @@
                                     </c:forEach>
                                 </select>
 
-
+                                
                                 <!-- Nút Lọc -->
                                 <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
                             </form>
                         </div>
-                        <div class="price-range">
-
-                            <h2>Filter by Price</h2>
-                            <div class="well">
-                                <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
-                                    <label for="minPrice">Min Price ($)</label>
-                                    <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
-
-                                    <label for="maxPrice">Max Price ($)</label>
-                                    <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
-
-                                    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
-                                </form>
-                            </div>
-                        </div>
-
+                        
+                            <br>
 
 
                         <div class="latest-products">
