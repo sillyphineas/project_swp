@@ -152,8 +152,6 @@
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                         <% 
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
@@ -199,8 +197,6 @@
                                             <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
                                     </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>
                                 </ul>
                             </div>
                         </div>

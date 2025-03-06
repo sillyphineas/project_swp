@@ -147,13 +147,13 @@ public class UserDetailController extends HttpServlet {
             boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
             int roleId = Integer.parseInt(request.getParameter("roleId"));  
             
-            String passHash = password; 
+            String passHashed = BCrypt.hashpw(password, BCrypt.gensalt());
 
             User user = new User();
             user.setId(userId);
             user.setName(name);
             user.setEmail(email);
-            user.setPassHash(passHash);
+            user.setPassHash(passHashed);
             user.setGender(gender);
             user.setPhoneNumber(phoneNumber);
             try {
