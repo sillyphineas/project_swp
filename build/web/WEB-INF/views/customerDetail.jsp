@@ -12,13 +12,13 @@
             <meta name="description" content="">
             <meta name="author" content="">
             <title>Home | E-Shopper</title>
-            <link href="/css/bootstrap.min.css" rel="stylesheet">
-            <link href="/css/font-awesome.min.css" rel="stylesheet">
-            <link href="/css/prettyPhoto.css" rel="stylesheet">
-            <link href="/css/price-range.css" rel="stylesheet">
-            <link href="/css/animate.css" rel="stylesheet">
-            <link href="/css/main.css" rel="stylesheet">
-            <link href="/css/responsive.css" rel="stylesheet">
+            <link href="css/bootstrap.min.css" rel="stylesheet">
+            <link href="css/font-awesome.min.css" rel="stylesheet">
+            <link href="css/prettyPhoto.css" rel="stylesheet">
+            <link href="css/price-range.css" rel="stylesheet">
+            <link href="css/animate.css" rel="stylesheet">
+            <link href="css/main.css" rel="stylesheet">
+            <link href="css/responsive.css" rel="stylesheet">
             <!--[if lt IE 9]>
             <script src="js/html5shiv.js"></script>
             <script src="js/respond.min.js"></script>
@@ -40,7 +40,7 @@
                 }
 
                 /* Main Container */
-                
+
 
                 /* Heading Styles */
                 h2 {
@@ -92,7 +92,7 @@
                 /* Edit Link Styling */
                 a {
                     display: inline-block;
-                    
+
                     color: white;
                     padding: 10px 20px;
                     text-decoration: none;
@@ -157,6 +157,123 @@
                         padding: 10px;
                     }
                 }
+
+                /* CSS cho phần Customer Detail */
+
+
+                /* Tiêu đề Customer Detail */
+                h2 {
+                    text-align: center;
+                    color: #333;
+                    margin-bottom: 30px;
+                    font-size: 28px;
+                    font-weight: bold;
+                }
+
+                /* Phần thông báo */
+                .message {
+                    color: green;
+                    font-weight: bold;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    font-size: 16px;
+                }
+
+                /* Các nhóm form */
+                .form-group {
+                    margin-bottom: 20px;
+                }
+
+                /* Định dạng nhãn */
+                label {
+                    font-weight: bold;
+                    color: #333;
+                    font-size: 16px;
+                    margin-bottom: 8px;
+                    display: block;
+                }
+
+                /* Phần hiển thị thông tin */
+                p {
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    color: #333;
+                    margin: 0;
+                }
+
+                /* Định dạng liên kết "Edit" */
+                .edit-link {
+                    display: inline-block;
+                    padding: 12px 20px;
+                    background-color: #f39c12; /* Màu nền */
+                    color: #fff; /* Màu chữ */
+                    text-decoration: none;
+                    font-size: 16px;
+                    border-radius: 4px;
+                    text-align: center;
+                    transition: background-color 0.3s;
+                }
+
+                .edit-link:hover {
+                    background-color: #e67e22; /* Màu nền khi hover */
+                }
+
+                /* Table Styling */
+                table {
+                    width: 100%;
+                    margin-top: 30px;
+                    border-collapse: collapse;
+                }
+
+                table th, table td {
+                    padding: 12px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                    background-color: #f9f9f9;
+                }
+
+                table th {
+                    background-color: #f1c40f;
+                    color: white;
+                    font-weight: bold;
+                }
+
+                table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                table tr:hover {
+                    background-color: #f0e68c;
+                }
+
+                /* Responsive Design */
+                @media screen and (max-width: 768px) {
+                    .container {
+                        padding: 15px;
+                    }
+
+                    h2 {
+                        font-size: 22px;
+                    }
+
+                    label {
+                        font-size: 14px;
+                    }
+
+                    p {
+                        font-size: 14px;
+                    }
+
+                    table th, table td {
+                        font-size: 14px;
+                        padding: 10px;
+                    }
+                }
+
+
             </style>
 
 
@@ -283,233 +400,230 @@
 
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" value="${customer.name}" required>
+                    <p>${customer.name}</p>
                 </div>
 
                 <div class="form-group">
                     <label for="gender">Gender:</label>
-                    <select class="form-control" name="gender" id="gender">
-                        <option value="true" ${customer.gender == true ? 'selected' : ''}>Male</option>
-                        <option value="false" ${customer.gender == false ? 'selected' : ''}>Female</option>
-                    </select>
+                    <p>${customer.gender == true ? 'Male' : 'Female'}</p>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" value="${customer.email}" required>
+                    <p>${customer.email}</p>
                 </div>
 
                 <div class="form-group">
                     <label for="phoneNumber">Phone Number:</label>
-                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required>
+                    <p>${customer.phoneNumber}</p>
                 </div>
 
                 <div class="form-group">
                     <label for="status">Status:</label>
-                    <select class="form-control" name="status" id="status">
-                        <option value="true" ${customer.isDisabled == true ? 'selected' : ''}>Inactive</option>
-                        <option value="false" ${customer.isDisabled == false ? 'selected' : ''}>Active</option>
-                    </select>
+                    <p>${customer.isDisabled == true ? 'Inactive' : 'Active'}</p>
                 </div>
-
-                <a href="EditCustomerController?id=${customer.id}">Edit</a>
-
-
-                <h3>Change History</h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Name</th>
-                            <th>Gender</th>
-                            <th>Phone Number</th>
-                            <th>Updated By</th>
-                            <th>Updated At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="history" items="${changeHistory}">
-                            <tr>
-                                <td>${history['email']}</td>
-                                <td>${history['name']}</td>
-                                <td>${history['gender'] ? 'Male' : 'Female'}</td>
-                                <td>${history['phoneNumber']}</td>
-                                <td>${history['updatedByName']}</td>
-                                <td>${history['updatedAt']}</td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-
-
             </div>
 
 
-            <footer id="footer"><!--Footer-->
-                <div class="footer-top">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <div class="companyinfo">
-                                    <h2><span>e</span>-shopper</h2>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
-                                </div>
+            <a href="EditCustomerController?id=${customer.id}" class="edit-link">Edit</a>
+
+
+
+            <h3>Change History</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Phone Number</th>
+                        <th>Updated By</th>
+                        <th>Updated At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="history" items="${changeHistory}">
+                        <tr>
+                            <td>${history['email']}</td>
+                            <td>${history['name']}</td>
+                            <td>${history['gender'] ? 'Male' : 'Female'}</td>
+                            <td>${history['phoneNumber']}</td>
+                            <td>${history['updatedByName']}</td>
+                            <td>${history['updatedAt']}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+
+
+        </div>
+
+
+        <footer id="footer"><!--Footer-->
+            <div class="footer-top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="companyinfo">
+                                <h2><span>e</span>-shopper</h2>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
                             </div>
-                            <div class="col-sm-7">
-                                <div class="col-sm-3">
-                                    <div class="video-gallery text-center">
-                                        <a href="#">
-                                            <div class="iframe-img">
-                                                <img src="images/home/iframe1.png" alt="" />
-                                            </div>
-                                            <div class="overlay-icon">
-                                                <i class="fa fa-play-circle-o"></i>
-                                            </div>
-                                        </a>
-                                        <p>Circle of Hands</p>
-                                        <h2>24 DEC 2014</h2>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="video-gallery text-center">
-                                        <a href="#">
-                                            <div class="iframe-img">
-                                                <img src="images/home/iframe2.png" alt="" />
-                                            </div>
-                                            <div class="overlay-icon">
-                                                <i class="fa fa-play-circle-o"></i>
-                                            </div>
-                                        </a>
-                                        <p>Circle of Hands</p>
-                                        <h2>24 DEC 2014</h2>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="video-gallery text-center">
-                                        <a href="#">
-                                            <div class="iframe-img">
-                                                <img src="images/home/iframe3.png" alt="" />
-                                            </div>
-                                            <div class="overlay-icon">
-                                                <i class="fa fa-play-circle-o"></i>
-                                            </div>
-                                        </a>
-                                        <p>Circle of Hands</p>
-                                        <h2>24 DEC 2014</h2>
-                                    </div>
-                                </div>
-
-                                <div class="col-sm-3">
-                                    <div class="video-gallery text-center">
-                                        <a href="#">
-                                            <div class="iframe-img">
-                                                <img src="images/home/iframe4.png" alt="" />
-                                            </div>
-                                            <div class="overlay-icon">
-                                                <i class="fa fa-play-circle-o"></i>
-                                            </div>
-                                        </a>
-                                        <p>Circle of Hands</p>
-                                        <h2>24 DEC 2014</h2>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="col-sm-7">
                             <div class="col-sm-3">
-                                <div class="address">
-                                    <img src="images/home/map.png" alt="" />
-                                    <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe1.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
                                 </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe2.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe3.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="video-gallery text-center">
+                                    <a href="#">
+                                        <div class="iframe-img">
+                                            <img src="images/home/iframe4.png" alt="" />
+                                        </div>
+                                        <div class="overlay-icon">
+                                            <i class="fa fa-play-circle-o"></i>
+                                        </div>
+                                    </a>
+                                    <p>Circle of Hands</p>
+                                    <h2>24 DEC 2014</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="address">
+                                <img src="images/home/map.png" alt="" />
+                                <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="footer-widget">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-2">
-                                <div class="single-widget">
-                                    <h2>Service</h2>
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#">Online Help</a></li>
-                                        <li><a href="#">Contact Us</a></li>
-                                        <li><a href="#">Order Status</a></li>
-                                        <li><a href="#">Change Location</a></li>
-                                        <li><a href="#">FAQ’s</a></li>
-                                    </ul>
-                                </div>
+            <div class="footer-widget">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Service</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Online Help</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Order Status</a></li>
+                                    <li><a href="#">Change Location</a></li>
+                                    <li><a href="#">FAQ’s</a></li>
+                                </ul>
                             </div>
-                            <div class="col-sm-2">
-                                <div class="single-widget">
-                                    <h2>Quock Shop</h2>
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#">T-Shirt</a></li>
-                                        <li><a href="#">Mens</a></li>
-                                        <li><a href="#">Womens</a></li>
-                                        <li><a href="#">Gift Cards</a></li>
-                                        <li><a href="#">Shoes</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="single-widget">
-                                    <h2>Policies</h2>
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#">Terms of Use</a></li>
-                                        <li><a href="#">Privecy Policy</a></li>
-                                        <li><a href="#">Refund Policy</a></li>
-                                        <li><a href="#">Billing System</a></li>
-                                        <li><a href="#">Ticket System</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="single-widget">
-                                    <h2>About Shopper</h2>
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li><a href="#">Company Information</a></li>
-                                        <li><a href="#">Careers</a></li>
-                                        <li><a href="#">Store Location</a></li>
-                                        <li><a href="#">Affillate Program</a></li>
-                                        <li><a href="#">Copyright</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-sm-3 col-sm-offset-1">
-                                <div class="single-widget">
-                                    <h2>About Shopper</h2>
-                                    <form action="#" class="searchform">
-                                        <input type="text" placeholder="Your email address" />
-                                        <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-                                        <p>Get the most recent updates from <br />our site and be updated your self...</p>
-                                    </form>
-                                </div>
-                            </div>
-
                         </div>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Quock Shop</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">T-Shirt</a></li>
+                                    <li><a href="#">Mens</a></li>
+                                    <li><a href="#">Womens</a></li>
+                                    <li><a href="#">Gift Cards</a></li>
+                                    <li><a href="#">Shoes</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>Policies</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Terms of Use</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
+                                    <li><a href="#">Refund Policy</a></li>
+                                    <li><a href="#">Billing System</a></li>
+                                    <li><a href="#">Ticket System</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="single-widget">
+                                <h2>About Shopper</h2>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li><a href="#">Company Information</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Store Location</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
+                                    <li><a href="#">Copyright</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-sm-offset-1">
+                            <div class="single-widget">
+                                <h2>About Shopper</h2>
+                                <form action="#" class="searchform">
+                                    <input type="text" placeholder="Your email address" />
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+            </div>
 
-                <div class="footer-bottom">
-                    <div class="container">
-                        <div class="row">
-                            <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-                            <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-                        </div>
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="row">
+                        <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
+                        <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
                     </div>
                 </div>
+            </div>
 
-            </footer><!--/Footer-->
+        </footer><!--/Footer-->
 
 
 
-            <script src="js/jquery.js"></script>
-            <script src="js/bootstrap.min.js"></script>
-            <script src="js/jquery.scrollUp.min.js"></script>
-            <script src="js/price-range.js"></script>
-            <script src="js/jquery.prettyPhoto.js"></script>
-            <script src="js/main.js"></script>
-        </body>
-    </html>
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/price-range.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

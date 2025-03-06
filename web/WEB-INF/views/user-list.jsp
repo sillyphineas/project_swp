@@ -1,4 +1,3 @@
-
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -17,13 +16,13 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <title>Home | E-Shopper</title>
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/css/prettyPhoto.css" rel="stylesheet">
-        <link href="/css/price-range.css" rel="stylesheet">
-        <link href="/css/animate.css" rel="stylesheet">
-        <link href="/css/main.css" rel="stylesheet">
-        <link href="/css/responsive.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/price-range.css" rel="stylesheet">
+        <link href="css/animate.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
@@ -315,7 +314,6 @@
                                     <th>Change Status</th>
                                     <th>View</th>
                                     <th>Update</th>
-                                    <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody id="user-list">
@@ -355,11 +353,6 @@
                                         <a href="UserDetailController?action=updateUser&userId=<%= item.getId() %>" class = "btn btn-danger">Update</a>
                                     </td>
 
-                                    <td>
-                                        <button type="button" class="btn btn-danger" onclick="deleteUser('<%= item.getId() %>')">
-                                            Delete
-                                        </button>
-                                    </td>
                                 </tr>
                                 <% 
                                     }
@@ -588,37 +581,6 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-                                            function deleteUser(userId) {
-                                                if (confirm('Are you sure you want to delete this user?')) {
-                                                    $.ajax({
-                                                        url: "UserController?service=removeUser",
-                                                        type: "POST",
-                                                        data: {userId: userId},
-                                                        dataType: "json",
-                                                        success: function (response) {
-                                                            if (response.status === "success") {
-                                                                $("#user-" + userId).fadeOut(10, function () {
-                                                                    $(this).remove();
-                                                                    if ($("#user-list").children().length === 0) {
-                                                                        window.history.back();
-                                                                    } else {
-                                                                        window.location.reload();
-                                                                    }
-                                                                });
-                                                            } else {
-                                                                alert(response.message);
-                                                            }
-                                                        },
-                                                        error: function () {
-                                                            alert("Error while deleting user. Please try again.");
-                                                        }
-                                                    });
-                                                }
-                                            }
-
-
-        </script>
         <script>
 
             function changeStatus(userId, currentStatus) {

@@ -42,6 +42,20 @@ public class DAOShipping extends DBConnection {
         return vector;
     }
 
+    public boolean updateShippingStatus(int orderId, int shipperId, String newStatus) {
+        String sql = "UPDATE Shipping SET ShippingStatus = ? WHERE OrderID = ? AND ShipperID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, orderId);
+            ps.setInt(3, shipperId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Shipping getShippingById(int shippingId) {
         String sql = "SELECT * FROM Shipping WHERE ShippingID = ?";
         Shipping shipping = null;

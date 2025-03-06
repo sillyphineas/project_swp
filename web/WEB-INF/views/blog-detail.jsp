@@ -221,7 +221,7 @@
                             <ul class="list-group">
                                 <c:forEach var="newProduct" items="${newProducts}">
                                     <li class="list-group-item">
-                                        <a href="ProductDetailServlet?id=${newProduct.id}">${newProduct.name}</a> - $${newProduct.price}
+                                        <a href="ProductDetailController?id=${newProduct.id}">${newProduct.name}</a>
                                     </li>
                                 </c:forEach>
                             </ul>

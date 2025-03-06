@@ -1,5 +1,3 @@
-
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -7,6 +5,7 @@
 package controller;
 
 import entity.User;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,7 +42,17 @@ public class AdminUserController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         DAOUser dao = new DAOUser();
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            //Authorize
+            HttpSession session = request.getSession(false);
+            User user = null;
+            if (session != null) {
+                user = (User) session.getAttribute("user");
+            }
+            if (!Authorize.isAccepted(user, "/UserController")) {
+                request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+                return;
+            }
+
             String service = request.getParameter("service");
             if (service == null) {
                 service = "listAllUser";
@@ -87,29 +97,6 @@ public class AdminUserController extends HttpServlet {
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/user-list.jsp");
                 dispatcher.forward(request, response);
-            }
-            if (service.equals("removeUser")) {
-                String userIdStr = request.getParameter("userId");
-
-                if (userIdStr != null && !userIdStr.isEmpty()) {
-                    try {
-                        int userId = Integer.parseInt(userIdStr);
-                        int checked = dao.deleteUser(userId);
-
-                        response.setContentType("application/json");
-                        if (checked > 0) {
-                            response.getWriter().write("{\"status\":\"success\", \"message\":\"User deleted successfully\"}");
-                        } else {
-                            response.getWriter().write("{\"status\":\"error\", \"message\":\"Error deleting user\"}");
-                        }
-                    } catch (NumberFormatException e) {
-                        response.setContentType("application/json");
-                        response.getWriter().write("{\"status\":\"error\", \"message\":\"Invalid user ID\"}");
-                    }
-                } else {
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"status\":\"error\", \"message\":\"User ID not provided\"}");
-                }
             }
             if (service.equals("search")) {
                 String query = request.getParameter("query");

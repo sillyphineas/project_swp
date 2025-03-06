@@ -115,8 +115,9 @@ public class VerifyAccountController extends HttpServlet {
             user.setPassHash(hashedPassword);
             user.setRoleId(5);
             user.setIsDisabled(false);
+            user.setUpdatedBy(1);
 
-            if (daoUser.addUser(user) != 0) {
+            if (daoUser.addUser2(user) != 0) {
                 session.removeAttribute("verificationCode");
 
                 response.sendRedirect("VerifyAccountController?service=confirmRegister");

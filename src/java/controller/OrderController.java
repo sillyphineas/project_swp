@@ -9,6 +9,7 @@ import entity.User;
 import entity.Cart;
 import entity.Order;
 import entity.OrderDetail;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,6 +27,10 @@ import model.DAOCartItem;
 import model.DAOOrder;
 import model.DAOOrderDetail;
 import model.DAOProductVariant;
+import helper.EmailUtil;
+import java.util.HashMap;
+import java.util.Map;
+import model.DAOProduct;
 
 /**
  *
@@ -72,6 +77,16 @@ public class OrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/OrderController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         String service = request.getParameter("service");
 
         if (service.equals("orderSuccess")) {
@@ -158,12 +173,21 @@ public class OrderController extends HttpServlet {
                 }
                 if (OrderId > 0) {
                     DAOProductVariant daoProductVariant = new DAOProductVariant();
+                    DAOProduct daoProduct = new DAOProduct();
+                    Map<Integer, String> variantNames = new HashMap<>();
                     for (CartItem item : selectedCartItems) {
                         int variantId = item.getProductVariantID();
                         int quantity = item.getQuantity();
+                        int productId = daoProductVariant.getProductVariantById(variantId).getProductID();
+                        String variantName = daoProduct.getProductById(productId).getName();
+                        variantNames.put(variantId, variantName);
                         daoProductVariant.reduceStock(variantId, quantity);
                     }
                     daoCartItem.clearCart(customerID);
+
+                    List<OrderDetail> details = daoOrderDetail.getOrderDetailsByOrderId(OrderId);
+
+                    EmailUtil.sendOrderMail(user.getEmail(), newOrder, details, variantNames);
                     response.sendRedirect("OrderController?service=orderSuccess");
                 } else {
                     response.sendRedirect("order-fail.jsp");

@@ -9,6 +9,7 @@ import entity.CartItem;
 import entity.Order;
 import entity.OrderDetail;
 import entity.User;
+import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -73,7 +74,17 @@ public class VNPayReturnServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/vnpay_return")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
+        session = request.getSession();
 
         Map<String, String[]> paramMap = request.getParameterMap();
         Map<String, String> vnp_Params = new HashMap<>();
@@ -91,7 +102,7 @@ public class VNPayReturnServlet extends HttpServlet {
             daoOrder.updateOrderStatus(vnp_TxnRef, "Paid");
             session.setAttribute("paymentStatus", "success");
 
-            User user = (User) session.getAttribute("user");
+            user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
