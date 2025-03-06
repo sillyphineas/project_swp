@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.DAOSetting;
 import entity.Setting;
 import entity.SettingType;
+import entity.User;
+import helper.Authorize;
+import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAORole;
@@ -64,6 +67,16 @@ public class SettingController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/SettingController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         DAOSetting daoSetting = new DAOSetting();
         String service = request.getParameter("service");
         DAOSettingType daoSettingType = new DAOSettingType();

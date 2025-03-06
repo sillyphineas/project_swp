@@ -328,9 +328,11 @@
                                         <p><b>Storage:</b>
                                             <select id="storageSelector" class="form-control" name="storage">
                                                 <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.storage}" data-price="${variant.price}" data-color="${variant.color}">
+                                                    <option value="${variant.storage}" 
+                                                            data-price="${variant.price}" 
+                                                            data-color="${variant.color}"
+                                                            data-stock="${variant.stock}">
                                                         ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
-
                                                     </option>
                                                 </c:forEach>
                                             </select>
@@ -343,13 +345,11 @@
                                             </select>
                                         </p>
 
-
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
 
-
-                                        <p><b>Availability: </b> <label style="color: black"></label></p>
+                                        <p><b>Availability: </b> <label id="availabilityLabel" style="color: black"></label></p>
                                         <p><b>Condition:</b> New</p>
 
                                         <c:forEach var="brand" items="${brands}">
@@ -358,15 +358,14 @@
                                             </c:if>
                                         </c:forEach>
 
-
                                         <p><b>Description:</b> ${product.description}</p>
 
                                         <!-- Nút "Add to cart" -->
-                                        <button type="submit" class="btn btn-default cart">
+                                        <button type="submit" id="addToCartBtn" class="btn btn-default cart">
                                             <i class="fa fa-shopping-cart"></i>
                                             Add to cart
                                         </button>
-                                        
+
                                     </div>
                                 </form>
                             </div>
@@ -613,27 +612,45 @@
 
         <script src="js/cart.js"></script>
         <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                            var storageSelector = document.getElementById("storageSelector");
-                    var productPrice = document.getElementById("productPrice");
-                    var colorSelector = document.getElementById("colorSelector");
-                    // Lắng nghe sự kiện khi người dùng chọn storage
-                    storageSelector.addEventListener("change", function () {
-                    var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-                    var price = selectedOption.getAttribute("data-price");
-                    var color = selectedOption.getAttribute("data-color");
-                    productPrice.textContent = "$" + price;
-                    for (var i = 0; i < colorSelector.options.length; i++) {
-                    if (colorSelector.options[i].value === color) {
-                    colorSelector.selectedIndex = i;
-                    break;
-                    }
-                    }
-                    });
-                });
-        
-        </script>
+        document.addEventListener("DOMContentLoaded", function () {
+                    var storageSelector = document.getElementById("storageSelector");
+            var productPrice = document.getElementById("productPrice");
+            var colorSelector = document.getElementById("colorSelector");
+            // Lắng nghe sự kiện khi người dùng chọn storage
+            storageSelector.addEventListener("change", function () {
+            var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+            var price = selectedOption.getAttribute("data-price");
+            var color = selectedOption.getAttribute("data-color");
+            productPrice.textContent = "$" + price;
+            for (var i = 0; i < colorSelector.options.length; i++) {
+            if (colorSelector.options[i].value === color) {
+            colorSelector.selectedIndex = i;
+            break;
+            }
+            }
+            });
+        });
+</script>
+        <script>
+            function checkStock() {
+                var storageSelector = document.getElementById("storageSelector");
+                var availabilityLabel = document.getElementById("availabilityLabel");
+                var addToCartBtn = document.getElementById("addToCartBtn");
+                // Lấy option đang được chọn
+                var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+                var stock = parseInt(selectedOption.getAttribute("data-stock"));
+                if (stock <= 0) {
+                availabilityLabel.textContent = "Hết hàng";
+                addToCartBtn.disabled = true;
+                } else {
+                availabilityLabel.textContent = "Còn hàng";
+                addToCartBtn.disabled = false;
+                }
+                }
 
+                document.addEventListener("DOMContentLoaded", checkStock);
+                document.getElementById("storageSelector").addEventListener("change", checkStock);
+        </script>
     </body>
 </html>
 

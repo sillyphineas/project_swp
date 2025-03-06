@@ -13,11 +13,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import entity.User;
+import helper.Authorize;
+import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import model.DAORole;
 import model.DAOUser;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -64,6 +67,16 @@ public class UserDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/UserDetailController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         String action = request.getParameter("action");
         if (action == null) {
             action = "display";
@@ -79,7 +92,7 @@ public class UserDetailController extends HttpServlet {
             int userId = Integer.parseInt(request.getParameter("userId"));
             System.out.println("Get     "+userId);
             DAOUser daoUser = new DAOUser();
-            User user = daoUser.getUserById(userId);
+            user = daoUser.getUserById(userId);
             System.out.println("Get         "+user.toString());
 
             request.setAttribute("user", user);
@@ -92,7 +105,7 @@ public class UserDetailController extends HttpServlet {
         try {
             int userId = Integer.parseInt(request.getParameter("userId"));
             DAOUser daoUser = new DAOUser();
-            User user = daoUser.getUserById(userId);
+            user = daoUser.getUserById(userId);
             request.setAttribute("user", user);
 
             DAORole daoRole = new DAORole();
@@ -164,6 +177,7 @@ public class UserDetailController extends HttpServlet {
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        String passHashed = BCrypt.hashpw(password, BCrypt.gensalt());
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String phoneNumber = request.getParameter("phoneNumber");
         String resetToken = request.getParameter("resetToken");
@@ -200,12 +214,11 @@ public class UserDetailController extends HttpServlet {
             return;
         
         }
-        String passHash = password; 
         User user = new User();
         user.setId(userId);
         user.setName(name);
         user.setEmail(email);
-        user.setPassHash(passHash);
+        user.setPassHash(passHashed);
         user.setGender(gender);
         user.setPhoneNumber(phoneNumber);
         user.setResetToken(resetToken);
