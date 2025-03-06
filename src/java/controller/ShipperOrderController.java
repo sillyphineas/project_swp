@@ -2,6 +2,7 @@ package controller;
 
 import entity.OrderShippingView;
 import entity.User;
+import helper.Authorize;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.DAOOrder;
 import model.DAOShipping;
 
@@ -19,12 +21,17 @@ public class ShipperOrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Kiểm tra user (shipper) đã đăng nhập chưa
-        User user = (User) request.getSession(false).getAttribute("user");
-        if (user == null) {
-            request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/ShipperOrderController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
+
         int shipperId = user.getId();
 
         // Lấy tham số filter (trạng thái) và search (tìm theo buyerName hoặc OrderID)
