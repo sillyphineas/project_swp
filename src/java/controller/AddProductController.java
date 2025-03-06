@@ -19,6 +19,10 @@ import model.DAOProductVariant;
 import entity.Brand;
 import entity.Product;
 import entity.ProductVariant;
+import entity.User;
+import helper.Authorize;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 
 /**
@@ -66,6 +70,16 @@ public class AddProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/AddProductController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         
         DAOBrand daoBrand = new DAOBrand();
         Vector<Brand> brandList = daoBrand.getAllBrands();
