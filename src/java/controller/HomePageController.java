@@ -115,7 +115,7 @@ public class HomePageController extends HttpServlet {
 
         java.util.List<Blog> latestBlogs = null;
         try {
-            latestBlogs = daoBlog.getPaginatedBlogs(1, 3);
+            latestBlogs = daoBlog.getPaginatedSlider(1, 3);
         } catch (SQLException ex) {
             Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
         }

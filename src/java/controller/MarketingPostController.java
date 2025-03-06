@@ -7,6 +7,8 @@
 package controller;
 
 import entity.Blog;
+import entity.User;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +17,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.*;
 import java.util.List;
 import java.util.Vector;
@@ -40,6 +43,16 @@ public class MarketingPostController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
+        //Authorize
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/MarketingPostController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         response.setContentType("text/html;charset=UTF-8");
         DAOBlog dao = new DAOBlog();
         try (PrintWriter out = response.getWriter()) {

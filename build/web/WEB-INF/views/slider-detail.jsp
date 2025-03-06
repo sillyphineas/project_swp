@@ -12,13 +12,13 @@
             <meta name="description" content="">
             <meta name="author" content="">
             <title>Home | E-Shopper</title>
-            <link href="/css/bootstrap.min.css" rel="stylesheet">
-            <link href="/css/font-awesome.min.css" rel="stylesheet">
-            <link href="/css/prettyPhoto.css" rel="stylesheet">
-            <link href="/css/price-range.css" rel="stylesheet">
-            <link href="/css/animate.css" rel="stylesheet">
-            <link href="/css/main.css" rel="stylesheet">
-            <link href="/css/responsive.css" rel="stylesheet">
+            <link href="css/bootstrap.min.css" rel="stylesheet">
+            <link href="css/font-awesome.min.css" rel="stylesheet">
+            <link href="css/prettyPhoto.css" rel="stylesheet">
+            <link href="css/price-range.css" rel="stylesheet">
+            <link href="css/animate.css" rel="stylesheet">
+            <link href="css/main.css" rel="stylesheet">
+            <link href="css/responsive.css" rel="stylesheet">
             <!--[if lt IE 9]>
             <script src="js/html5shiv.js"></script>
             <script src="js/respond.min.js"></script>
@@ -242,10 +242,7 @@
                 <th>Title</th>
                 <td>${slider.title}</td>
             </tr>
-            <tr>
-                <th>Content</th>
-                <td>${slider.content}</td>
-            </tr>
+            
             <tr>
                 <th>Image</th>
                 <td><img src="${slider.imageURL}" alt="Slider Image" width="200"></td>

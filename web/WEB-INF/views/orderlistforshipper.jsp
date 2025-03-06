@@ -12,13 +12,13 @@
             <meta name="description" content="">
             <meta name="author" content="">
             <title>Home | E-Shopper</title>
-            <link href="/css/bootstrap.min.css" rel="stylesheet">
-            <link href="/css/font-awesome.min.css" rel="stylesheet">
-            <link href="/css/prettyPhoto.css" rel="stylesheet">
-            <link href="/css/price-range.css" rel="stylesheet">
-            <link href="/css/animate.css" rel="stylesheet">
-            <link href="/css/main.css" rel="stylesheet">
-            <link href="/css/responsive.css" rel="stylesheet">
+            <link href="css/bootstrap.min.css" rel="stylesheet">
+            <link href="css/font-awesome.min.css" rel="stylesheet">
+            <link href="css/prettyPhoto.css" rel="stylesheet">
+            <link href="css/price-range.css" rel="stylesheet">
+            <link href="css/animate.css" rel="stylesheet">
+            <link href="css/main.css" rel="stylesheet">
+            <link href="css/responsive.css" rel="stylesheet">
             <!--[if lt IE 9]>
             <script src="js/html5shiv.js"></script>
             <script src="js/respond.min.js"></script>
@@ -265,54 +265,70 @@
             </header><!--/header-->
             <h2>Order List</h2>
             <!-- Bộ lọc tìm kiếm và trạng thái -->
+            <!-- Form filter và search (chỉ search theo Buyer Name) -->
             <form action="ShipperOrderController" method="get">
-                <!-- Thay các option cũ bằng các option khớp với DB -->
-                <select name="status">
-                    <option value="Pending"  ${param.status eq 'Pending'  ? 'selected' : ''}>Pending</option>
-                    <option value="Paid"     ${param.status eq 'Paid'     ? 'selected' : ''}>Paid</option>
-                    <!-- Có thể thêm các trạng thái khác nếu bạn có thêm cột hoặc giá trị khác trong DB -->
+                <label for="status">Shipping Status:</label>
+                <select name="status" id="status">
+                    <option value="" ${statusFilter == "" ? 'selected' : ''}>All</option>
+                    <option value="Pending" ${statusFilter eq 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Shipped" ${statusFilter eq 'Shipped' ? 'selected' : ''}>Shipped</option>
+                    <option value="Delivered" ${statusFilter eq 'Delivered' ? 'selected' : ''}>Delivered</option>
                 </select>
-                Search: <input type="text" name="search" value="${param.search}" />
-                <input type="submit" value="Search" />
+                &nbsp;&nbsp;
+                <label for="search">Order id:</label>
+                <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order id" />
+                &nbsp;&nbsp;
+                <button type="submit">Filter</button>
             </form>
 
             <!-- Bảng hiển thị danh sách đơn hàng -->
-            <table border="1">
+            <table>
                 <thead>
                     <tr>
                         <th>Order ID</th>
                         <th>Buyer Name</th>
-                        <th>Voucher Code</th>
-                        <th>Status</th>
+                        <th>Order Time</th>
+                        <th>Order Status</th>
                         <th>Shipping Address</th>
                         <th>Total Price</th>
-                        <th>Actions</th>
+                        <th>Recipient Name</th>
+                        <th>Recipient Phone</th>
+                        <th>Shipping Status</th>
+                        <th>Estimated Arrival</th>
+                        <th>Actual Arrival</th>
+                        <th>Shipping Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="order" items="${orders}">
+                    <c:forEach var="osv" items="${orderShippingList}">
                         <tr>
-                            <td>${order.id}</td>
-                            <td>${buyerNames[order.buyerID]}</td>
-                            <td>${voucherCodes[order.id]}</td>
+                            <td>${osv.orderId}</td>
+                            <td>${osv.buyerName}</td>
+                            <td>${osv.orderTime}</td>
+                            <td>${osv.orderStatus}</td>
+                            <td>${osv.shippingAddress}</td>
+                            <td>${osv.totalPrice}</td>
+                            <td>${osv.recipientName}</td>
+                            <td>${osv.recipientPhone}</td>
+                            <td>${osv.shippingStatus}</td>
+                            <td>${osv.estimatedArrival}</td>
+                            <td>${osv.actualArrival}</td>
+                            <td>${osv.shippingDate}</td>
                             <td>
-                                <!-- Hiển thị đúng các giá trị thực tế trong DB -->
-                                <c:choose>
-                                    <c:when test="${order.orderStatus eq 'Pending'}">Pending</c:when>
-                                    <c:when test="${order.orderStatus eq 'Paid'}">Paid</c:when>
-                                    <c:otherwise>Unknown</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>${order.shippingAddress}</td>
-                            <td>${order.totalPrice}</td>
-                            <td>
+                                <!-- Form cập nhật ShippingStatus -->
                                 <form action="ShipperOrderController" method="post">
-                                    <input type="hidden" name="orderId" value="${order.id}" />
-                                    <!-- Dropdown cập nhật trạng thái khớp với DB -->
+                                    <input type="hidden" name="orderId" value="${osv.orderId}" />
+                                    <!-- Duy trì các tham số filter/search -->
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+
                                     <select name="status">
-                                        <option value="Pending" ${order.orderStatus eq 'Pending' ? 'selected' : ''}>Pending</option>
-                                        <option value="Paid"    ${order.orderStatus eq 'Paid'    ? 'selected' : ''}>Paid</option>
-                                        <!-- Nếu có trạng thái khác, thêm tiếp ở đây -->
+                                        <option value="Pending" ${osv.shippingStatus eq 'Pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="Shipped" ${osv.shippingStatus eq 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                        <option value="Delivered" ${osv.shippingStatus eq 'Delivered' ? 'selected' : ''}>Delivered</option>
                                     </select>
                                     <button type="submit">Update</button>
                                 </form>
@@ -325,8 +341,8 @@
 
             <!-- Phân trang -->
             <div class="pagination">
-                <c:forEach begin="1" end="${totalPages}" var="page">
-                    <a href="?page=${page}&status=${param.status}&search=${param.search}">${page}</a>
+                <c:forEach begin="1" end="${totalPages}" var="p">
+                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}">${p}</a>
                 </c:forEach>
             </div>
             <footer id="footer"><!--Footer-->
