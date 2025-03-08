@@ -229,6 +229,39 @@ public class DAOProductVariant extends DBConnection {
             Logger.getLogger(DAOProductVariant.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public Vector<String> getDistinctColorsByProductId(int productID) {
+    Vector<String> colors = new Vector<>();
+    String sql = "SELECT DISTINCT color FROM ProductVariants WHERE productID = ?";
 
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, productID);
+        ResultSet rs = ps.executeQuery();
 
+        while (rs.next()) {
+            colors.add(rs.getString("color"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return colors;
+}
+  public Vector<String> getDistinctStorageByProductId(int productID) {
+    Vector<String> storages = new Vector<>();
+    String sql = "SELECT DISTINCT storage FROM ProductVariants WHERE productID = ?";
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, productID);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            storages.add(rs.getString("storage"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return storages;
+}
+    
 }

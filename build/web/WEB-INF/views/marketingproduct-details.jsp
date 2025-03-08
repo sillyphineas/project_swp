@@ -151,13 +151,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navstbar-nav">
-<!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -217,7 +217,7 @@
                             <div class="brands_products">
                                 <h2>Brands</h2> 
                                 <div class="brands-name">
-                                    
+
                                     <ul class="nav nav-pills nav-stacked">
                                         <li> 
                                             <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=0">All Brands</a> 
@@ -321,27 +321,27 @@
                                         <p><b>Storage:</b>
                                             <select id="storageSelector" class="form-control" name="storage">
                                                 <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.storage}" data-price="${variant.price}"
-                                                            data-color="${variant.color}"
+                                                    <option value="${variant.storage}" 
+                                                            data-price="${variant.price}" 
+                                                            data-color="${variant.color}" 
                                                             data-stock="${variant.stock}">
                                                         ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
-                                                        
-
                                                     </option>
                                                 </c:forEach>
                                             </select>
                                         </p>
+
                                         <p><b>Color:</b>
                                             <select id="colorSelector" class="form-control" name="color">
-                                                <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.color}">${variant.color}</option>
+                                                <c:forEach var="color" items="${distinctColors}">
+                                                    <option value="${color}">${color}</option>
                                                 </c:forEach>
                                             </select>
                                         </p>
-                                        <p><b>Quantity:</b>
-                                            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
-                                        </p>
-                                       
+
+                                        <p><span id="stockInfo">Select storage and color</span></p>
+
+
                                         <p><b>Condition:</b> New</p>
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
@@ -349,9 +349,9 @@
                                             </c:if>
                                         </c:forEach>
                                         <p><b>Description:</b> ${product.description}</p>
-                                        <p><b>Stock:</b> <span id="stockInfo"></span></p>
-   
-        <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
+                                        
+
+                                        <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
                                         </p>
                                     </div>
                                 </form>
@@ -376,7 +376,7 @@
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
 
-                                                            
+
 
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
                                                             <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
@@ -594,31 +594,38 @@
         <script src="js/main.js"></script>
 
         <script src="js/cart.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-        var storageSelector = document.getElementById("storageSelector");
-        var productPrice = document.getElementById("productPrice");
-        var colorSelector = document.getElementById("colorSelector");
-        var stockInfo = document.getElementById("stockInfo");
-
-        // Lắng nghe sự kiện khi người dùng chọn storage
-        storageSelector.addEventListener("change", function () {
-            var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-            var price = selectedOption.getAttribute("data-price");
-            var color = selectedOption.getAttribute("data-color");
-            var stock = selectedOption.getAttribute("data-stock");
-
-            productPrice.textContent = "$" + price;
-            for (var i = 0; i < colorSelector.options.length; i++) {
-            if (colorSelector.options[i].value === color) {
-            colorSelector.selectedIndex = i;
-            break;
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+                    var storageSelector = document.getElementById("storageSelector");
+            var colorSelector = document.getElementById("colorSelector");
+            var stockInfo = document.getElementById("stockInfo");
+            var productPrice = document.getElementById("productPrice");
+            // Lắng nghe sự kiện khi người dùng chọn storage hoặc màu sắc
+            function updateStockAndPrice() {
+            var selectedStorageOption = storageSelector.options[storageSelector.selectedIndex];
+            var selectedColor = colorSelector.value;
+            // Lấy giá, màu sắc, và stock từ thuộc tính dữ liệu
+            var price = selectedStorageOption.getAttribute("data-price");
+            var color = selectedStorageOption.getAttribute("data-color");
+            var stock = selectedStorageOption.getAttribute("data-stock");
+            // Cập nhật giá và stock tương ứng
+            productPrice.textContent = "₫" + price;
+            stockInfo.textContent = "Stock: " + stock;
+            // Nếu màu sắc không phù hợp, sẽ không hiển thị stock
+            if (selectedColor !== color) {
+            stockInfo.textContent = "Stock: Don't have product";
             }
             }
-            });
-        });
 
-        </script>
+            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn storage
+            storageSelector.addEventListener("change", updateStockAndPrice);
+            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn màu sắc
+            colorSelector.addEventListener("change", updateStockAndPrice);
+            // Gọi hàm để cập nhật giá và stock khi trang load
+            updateStockAndPrice();
+                });
+            
+            </script>
 
     </body>
 </html>
