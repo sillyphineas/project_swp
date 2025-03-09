@@ -8,6 +8,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -96,13 +97,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -208,7 +209,7 @@
                             <!-- Content -->
                             <div class="form-group">
                                 <label for="content">Content</label>
-                                <textarea name="content" class="form-control" rows="5" required><%= blog.getContent() %></textarea>
+                                <textarea name="content" class="form-control" id="content" rows="5" required><%= blog.getContent() %></textarea>
                             </div>
 
                             <!-- Image URL -->
@@ -232,10 +233,10 @@
                                 </select>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
-                            <button type="submit" name="submit" value="updateBlog"class="btn btn-primary" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">Save Changes</button>
-                            <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                <button type="submit" name="submit" value="updateBlog"class="btn btn-primary" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">Save Changes</button>
+                                <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
                                     Back
-                            </a>
+                                </a>
                             </div>
                         </form>
 
@@ -404,7 +405,14 @@
 
         </footer><!--/Footer-->
 
-
+        <script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('content', {
+                height: 200, // Chiều cao của textarea
+                filebrowserUploadUrl: '/upload', // URL để upload ảnh
+                filebrowserUploadMethod: 'form' // Phương thức upload
+            });
+        </script>
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
