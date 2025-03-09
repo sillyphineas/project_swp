@@ -11,12 +11,47 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Add Product & Variants</title>
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Home | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
-        
-    </head>
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/prettyPhoto.css" rel="stylesheet">
+        <link href="css/price-range.css" rel="stylesheet">
+        <link href="css/animate.css" rel="stylesheet">
+        <link href="css/main.css" rel="stylesheet">
+        <link href="css/responsive.css" rel="stylesheet">
+        <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <script src="js/respond.min.js"></script>
+        <![endif]-->       
+        <link rel="shortcut icon" href="images/ico/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .inactive-status {
+                color: red; /* Màu đỏ cho trạng thái Inactive */
+                font-weight: bold;
+            }
+
+            .active-status {
+                color: green; /* Màu xanh cho trạng thái Active */
+                font-weight: bold;
+            }
+           .add-pr {
+    text-align: center;
+    color: black;
+    
+    margin-bottom: 20px; 
+}
+
+        </style>
+    </head><!--/head-->
+
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -79,13 +114,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                        <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                                                            <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
+<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -112,10 +147,7 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
@@ -128,9 +160,12 @@
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
+        </header>
+                                
+                                
+                                
         <div class="container">
-            <h2>Add Product Variants</h2>
+            <h2 class="add-pr" cols="10">Add Product Variants</h2>
             <form action="AddProductController" method="post">
                 <input type="hidden" name="action" value="addProductVariant">
                 <div class="form-group">
@@ -164,11 +199,13 @@
                 </div>
 
                 <button type="submit" class="btn btn-success">Add Variant</button>
-                <a href="MarketingProductController" class="btn btn-secondary">Cancel</a>
+                <a href="MarketingProductController" class="btn btn-success">Cancel</a>
             </form>
         </div>
+                                <br>
+                                <br>
 
-        <footer id="footer"><!--Footer-->
+          <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">
@@ -325,7 +362,14 @@
             </div>
 
         </footer><!--/Footer-->
+
+
+
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/price-range.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/main.js"></script>
     </body>
 </html>
