@@ -98,12 +98,12 @@ public class DAOCartItem extends DBConnection {
         int n = 0;
         String sql = "DELETE FROM CartItem WHERE CartItemID = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
-            pre.setInt(1, id); // Set parameter id
-            n = pre.executeUpdate(); // Thực thi câu lệnh xóa
+            pre.setInt(1, id);
+            n = pre.executeUpdate(); 
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return n; // Trả về số dòng bị ảnh hưởng
+        return n;
     }
 
     public List<CartItem> getCartDetails(int customerId) throws SQLException {
@@ -157,7 +157,7 @@ public class DAOCartItem extends DBConnection {
     public CartItem getCartItemByCartIDAndProductID(int cartID, int productID) {
         CartItem cartItem = null;
 
-        // Câu truy vấn SQL để lấy thông tin từ CartItem và Products
+
         String sql = "SELECT "
                 + "    ci.CartItemID, "
                 + "    ci.CartID, "

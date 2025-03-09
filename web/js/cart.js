@@ -1,4 +1,4 @@
-cart.js
+
 function addToCart() {
     let productId = document.getElementById("productID").value;
     let color = document.getElementById("colorSelector").value;
