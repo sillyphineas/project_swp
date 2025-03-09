@@ -199,13 +199,13 @@
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-<!--                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
+                                <!--                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                <% 
+                                    Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                    User user = (User) session.getAttribute("user");
+                                    if (isLoggedIn != null && isLoggedIn) {
+                                %>
                                 <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                 <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                     <% } else { %>
@@ -280,6 +280,29 @@
                                 <a href="AddProductController?action=addProductVariant" class="btn btn-primary">Add ProductVariant</a>
                             </div>
                             <br>
+
+
+                           <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
+    <label for="sortby">Sort By:</label>
+    <select id="sortby" name="sortby" class="form-control">
+        <option value="price" ${sortby == 'price' ? 'selected' : ''}>Price</option>
+        <option value="name" ${sortby == 'name' ? 'selected' : ''}>Name</option>
+        <option value="ram" ${sortby == 'ram' ? 'selected' : ''}>RAM</option>
+        <option value="batteryCapacity" ${sortby == 'batteryCapacity' ? 'selected' : ''}>Battery Capacity</option>
+        <option value="screenSize" ${sortby == 'screenSize' ? 'selected' : ''}>Screen Size</option>
+        <option value="feedbackCount" ${sortby == 'feedbackCount' ? 'selected' : ''}>Feedback Count</option>
+    </select>
+
+    <label for="sortOrder">Sort Order:</label>
+    <select id="sortOrder" name="sortOrder" class="form-control">
+        <option value="asc" ${sortOrder == 'asc' ? 'selected' : ''}>Ascending</option>
+        <option value="desc" ${sortOrder == 'desc' ? 'selected' : ''}>Descending</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Sort</button>
+</form>
+
+                            <br>
                             <h2>Filter Products</h2>
                             <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
 
@@ -333,14 +356,37 @@
                                         <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
                                     </c:forEach>
                                 </select>
+<!--                               Price-->
+                                   <label for="minPrice">Min Price:</label>
+                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
 
-                                
+                                    <label for="maxPrice">Max Price:</label>
+                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
+
+
                                 <!-- Nút Lọc -->
                                 <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
                             </form>
                         </div>
-                        
-                            <br>
+                        <br>
+<!--                        <div class="left-sidebar">
+                            <div class="filter-box">
+                                <h2>Filter by Price</h2>
+                                <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
+                                    <label for="minPrice">Min Price:</label>
+                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
+
+                                    <label for="maxPrice">Max Price:</label>
+                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
+
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Filter</button>
+                                </form>
+                            </div>
+                        </div>-->
+
+
+
+                        <br>
 
 
                         <div class="latest-products">

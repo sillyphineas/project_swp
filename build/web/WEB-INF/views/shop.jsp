@@ -295,17 +295,17 @@
                                 <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
                             </form>
                         </div>
-                        <div class="price-range">
-                            <h2>Filter by Price</h2>
-                            <div class="well">
+                        <div class="left-sidebar">
+                            <div class="filter-box">
+                                <h2>Filter by Price</h2>
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <label for="minPrice">Min Price ($)</label>
-                                    <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+                                    <label for="minPrice">Min Price:</label>
+                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
 
-                                    <label for="maxPrice">Max Price ($)</label>
-                                    <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+                                    <label for="maxPrice">Max Price:</label>
+                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
 
-                                    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
+                                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Filter</button>
                                 </form>
                             </div>
                         </div>
