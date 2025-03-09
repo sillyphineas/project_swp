@@ -972,83 +972,70 @@ public class DAOProduct extends DBConnection {
 
         return productList;
     }
+public Vector<Product> getProductsByFilterAdmin(int brandID, String searchQuery, double minPrice, double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity, int ram, String screenType, String sortby, String sortOrder, int currentPage, int itemsPerPage) {
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (currentPage - 1) * itemsPerPage;
 
-    public Vector<Product> getProductsByFilterAdmin(int brandID, String searchQuery, double minPrice, double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity, int ram, String screenType, int currentPage, int itemsPerPage) {
-        Vector<Product> productList = new Vector<>();
-        int startIndex = (currentPage - 1) * itemsPerPage;
+    String sql = "SELECT p.*, MIN(v.price) AS minPrice "
+            + "FROM Products p "
+            + "LEFT JOIN ProductVariants v ON p.id = v.productID "
+            + "WHERE 1 = 1 ";
 
-        String sql = "SELECT p.*, MIN(v.price) AS minPrice "
-                + "FROM Products p "
-                + "LEFT JOIN ProductVariants v ON p.id = v.productID "
-                + "WHERE 1 = 1 ";
+    // Áp dụng các điều kiện lọc
+    if (brandID > 0) sql += " AND p.brandID = " + brandID;
+    if (searchQuery != null && !searchQuery.trim().isEmpty()) sql += " AND p.name LIKE '%" + searchQuery + "%'";
+    if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) sql += " AND v.price BETWEEN " + minPrice + " AND " + maxPrice;
+    if (os != null && !os.isEmpty()) sql += " AND p.os = '" + os + "'";
+    if (connectivity != null && !connectivity.isEmpty()) sql += " AND p.connectivity = '" + connectivity + "'";
+    if (ram > 0) sql += " AND p.ram = " + ram;
+    if (screenType != null && !screenType.isEmpty()) sql += " AND p.screenType = '" + screenType + "'";
+    if (screenSize > 0) sql += " AND p.screenSize = " + screenSize;
+    if (batteryCapacity > 0) sql += " AND p.batteryCapacity = " + batteryCapacity;
 
-        // Thêm các điều kiện lọc
-        if (brandID > 0) {
-            sql += " AND p.brandID = " + brandID;
-        }
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            sql += " AND p.name LIKE '%" + searchQuery + "%'";
-        }
-        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
-            sql += " AND v.price BETWEEN " + minPrice + " AND " + maxPrice;
-        }
-        if (os != null && !os.isEmpty()) {
-            sql += " AND p.os = '" + os + "'";
-        }
-        if (connectivity != null && !connectivity.isEmpty()) {
-            sql += " AND p.connectivity = '" + connectivity + "'";
-        }
-        if (ram > 0) {
-            sql += " AND p.ram = " + ram;
-        }
-        if (screenType != null && !screenType.isEmpty()) {
-            sql += " AND p.screenType = '" + screenType + "'";
-        }
-        if (screenSize > 0) {
-            sql += " AND p.screenSize = " + screenSize;
-        }
-        if (batteryCapacity > 0) {
-            sql += " AND p.batteryCapacity = " + batteryCapacity;
-        }
-
-        // Phân trang
-        sql += " GROUP BY p.id "
-                + "ORDER BY p.createAt DESC LIMIT " + itemsPerPage + " OFFSET " + startIndex;
-
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                Product product = new Product(
-                        rs.getInt("id"),
-                        rs.getInt("brandID"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getBoolean("isDisabled"),
-                        rs.getInt("feedbackCount"),
-                        rs.getString("status"),
-                        rs.getString("imageURL"),
-                        rs.getString("chipset"),
-                        rs.getInt("ram"),
-                        rs.getDouble("screenSize"),
-                        rs.getString("screenType"),
-                        rs.getString("resolution"),
-                        rs.getInt("batteryCapacity"),
-                        rs.getString("cameraSpecs"),
-                        rs.getString("os"),
-                        rs.getString("simType"),
-                        rs.getString("connectivity"),
-                        rs.getDate("createAt"),
-                        rs.getInt("createdBy")
-                );
-                // Lưu trữ giá thấp nhất của biến thể sản phẩm
-                product.setVariantPrice(rs.getDouble("minPrice"));
-                productList.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return productList;
+    // Kiểm tra sortOrder và đảm bảo nó là 'asc' hoặc 'desc', nếu không sẽ mặc định là 'asc'
+    if (sortOrder == null || sortOrder.isEmpty()) {
+        sortOrder = "asc"; // Mặc định là sắp xếp tăng dần
     }
+    
+    // Sắp xếp theo sortby và sortOrder
+    sql += " GROUP BY p.id "
+            + "ORDER BY " + sortby + " " + sortOrder  // Sử dụng sortby và sortOrder
+            + " LIMIT " + itemsPerPage + " OFFSET " + startIndex;
+
+    try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        while (rs.next()) {
+            Product product = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+            product.setVariantPrice(rs.getDouble("minPrice"));
+            productList.add(product);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return productList;
+}
+
 
     public int addProduct(Product product) {
         int productId = -1;

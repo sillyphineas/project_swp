@@ -57,6 +57,8 @@ public class MarketingProductDetails extends HttpServlet {
             double minPrice = daoProductVariants.getMinPriceByProductId(productID);
             Vector<String> distinctColors = daoProductVariants.getDistinctColorsByProductId(productID);
             request.setAttribute("distinctColors", distinctColors);
+            Vector<String> distinctStorages = daoProductVariants.getDistinctStorageByProductId(productID);
+            request.setAttribute(" distinctStorages",distinctStorages);
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                 return;
@@ -65,8 +67,7 @@ public class MarketingProductDetails extends HttpServlet {
             request.setAttribute("minPrice", minPrice);
             request.setAttribute("brands", brandList);
             request.setAttribute("product", product);
-            Vector<String> distinctStorages = daoProductVariants.getDistinctStorageByProductId(productID);
-            request.setAttribute(" distinctStorages",distinctStorages);
+            
 
             request.getRequestDispatcher("WEB-INF/views/marketingproduct-details.jsp").forward(request, response);
         }
