@@ -100,7 +100,9 @@ public class MarketingProductController extends HttpServlet {
         String screenType = request.getParameter("screenType");
         String batteryCapacityStr = request.getParameter("batteryCapacity");
         String screenSizeStr = request.getParameter("screenSize");
-
+        String sortby = request.getParameter("sortby");
+        String sortOrder = request.getParameter("sortOrder");
+        
         int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0.0;
         double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
@@ -110,10 +112,10 @@ public class MarketingProductController extends HttpServlet {
         double screenSize = (screenSizeStr != null && !screenSizeStr.isEmpty()) ? Double.parseDouble(screenSizeStr) : 0.0;
         int itemsPerPage = 6;
 
-        int totalProducts = dao.getTotalProductsByFiltersbyAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
+        int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
         int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
 
-        Vector<Product> productList = dao.getProductsByFilterbyAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
+        Vector<Product> productList = dao.getProductsByFilterAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, sortby, sortOrder, currentPage, itemsPerPage);
         Product latestProduct = dao.getLatestProduct();
 
         for (Product product : productList) {
@@ -153,7 +155,9 @@ public class MarketingProductController extends HttpServlet {
                 session.setAttribute("productStatusMessage", "Không thể hiển thị sản phẩm.");
             }
             response.sendRedirect("MarketingProductController");
-        } else {
+        } 
+       
+        else {
 
             request.setAttribute("productList", productList);
             request.setAttribute("brands", brandList);

@@ -27,69 +27,125 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
-            /* Global Styles */
-            h2 {
-                color: #333;
-                margin-bottom: 20px;
-            }
-
-            /* Container for the Header Section (Slider List and Add Slider) */
-            .header-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 30px;
-            }
-
-            /* Container for Filter and Search Forms */
+            /* Search and Filter Form */
+            /* Cập nhật lại form để các phần tử căn chỉnh đúng */
             .form-section {
                 display: flex;
-                justify-content: flex-start;
-                gap: 15px;
+                justify-content: flex-start;  /* Căn trái các phần tử */
+                gap: 10px;  /* Giảm khoảng cách giữa các phần tử */
+                align-items: center;  /* Căn giữa theo chiều dọc */
                 margin-bottom: 20px;
-                align-items: center; /* Căn giữa các phần tử theo chiều dọc */
             }
 
-            /* Styling for Select, Button, and Input */
-            form select, form button, form input {
-                padding: 10px;
-                font-size: 16px;
-                border-radius: 4px;
-                border: 1px solid #ccc;
-                height: 40px; /* Đảm bảo các phần tử có cùng chiều cao */
-                display: inline-block;
-            }
-
-            /* Styling for Search and Filter Buttons */
-            form button {
-                background-color: #f39c12;
-                color: white;
-                border: none;
-                cursor: pointer;
-                height: 40px; /* Đảm bảo chiều cao button giống các phần tử khác */
-            }
-
-            /* Optional: Ensure the buttons are aligned properly */
-            .filter-form button, .search-form button {
-                margin-left: 10px; /* To add space between the input and button */
-            }
-
-            /* Ensure that forms are in a single row */
-            .filter-form, .search-form {
+            form {
                 display: flex;
                 align-items: center;
-                height: 40px; /* Giúp đảm bảo rằng tất cả phần tử có cùng chiều cao */
+                justify-content: flex-start;
+                gap: 10px;
+                margin-bottom: 20px;
             }
 
-            /* Responsive for small screens */
+            form input, form select {
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px;  /* Giữ chiều rộng đồng nhất */
+                height: 40px;  /* Căn chỉnh chiều cao cho đồng nhất */
+            }
+
+            form button {
+                padding: 10px 20px;
+                font-size: 16px;
+                border: none;
+                background-color: #f39c12;
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+                height: 40px;  /* Đảm bảo chiều cao button giống các phần tử khác */
+                width: auto;  /* Đảm bảo không bị kéo dài quá mức */
+            }
+
+            form button:hover {
+                background-color: #e67e22;
+            }
+
+            /* Responsive cho màn hình nhỏ */
             @media screen and (max-width: 768px) {
                 .form-section {
+                    flex-direction: column;
+                    align-items: flex-start;  /* Stack các phần tử theo chiều dọc */
+                }
+
+                form input, form select, form button {
+                    width: 100%;  /* Đảm bảo tất cả các phần tử chiếm toàn bộ chiều rộng */
+                    margin-bottom: 10px;
+                }
+            }
+
+
+            /* Pagination Styling */
+            .pagination {
+                text-align: center;
+                margin-top: 20px;
+            }
+
+            .pagination a {
+                margin: 0 5px;
+                padding: 8px 16px;
+                background-color: #f39c12;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+            }
+
+            .pagination a:hover {
+                background-color: #e67e22;
+            }
+
+            /* Table Styling */
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 30px;
+            }
+
+            table th, table td {
+                padding: 12px;
+                text-align: left;
+                border: 1px solid #ddd;
+                background-color: #f9f9f9;
+            }
+
+            table th {
+                background-color: #f1c40f;
+                color: white;
+                font-weight: bold;
+            }
+
+            table tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            table tr:hover {
+                background-color: #f0e68c;
+            }
+
+            /* Responsive Styling */
+            @media screen and (max-width: 768px) {
+                form {
                     flex-direction: column;
                     align-items: flex-start;
                 }
 
-                .filter-form, .search-form {
+                form input, form select {
                     width: 100%;
+                }
+
+                form button {
+                    width: 100%;
+                    margin-top: 10px;
                 }
             }
 
@@ -158,13 +214,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -218,21 +274,23 @@
                             <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
                         </div>
                         <hr>
+                        <!-- Search and Filter Form -->
                         <div class="form-section">
                             <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
-                                <select name="status" class="form-control">
+                                <select name="status" class="form-control d-inline-block">
                                     <option value="">All</option>
                                     <option value="0">Visible</option>
                                     <option value="1">Hidden</option>
                                 </select>
-                                <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit" class="btn btn-warning">Filter</button>
                             </form>
 
                             <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
-                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control" />
-                                <button type="submit" name="action" value="search" class="btn btn-primary">Search</button>
+                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control d-inline-block" />
+                                <button type="submit" name="action" value="search" class="btn btn-warning">Search</button>
                             </form>
                         </div>
+
 
                         <c:if test="${not empty message}">
                             <div class="alert alert-${messageType}">
@@ -240,6 +298,8 @@
                             </div>
                         </c:if>
                         <hr>
+
+                        <!-- Slider Table -->
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -284,16 +344,15 @@
                                                 <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="view-detail-link">View Detail</a>
                                             </form>
                                         </td>
-
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
+
+                        <!-- Pagination -->
                         <div>
-                            <!-- Kiểm tra xem có nhiều hơn 1 trang không -->
                             <c:if test="${totalPages >= 1}">
                                 <ul class="pagination">
-                                    <!-- Lặp qua các trang từ 1 đến totalPages để tạo liên kết phân trang -->
                                     <c:forEach var="i" begin="1" end="${totalPages}">
                                         <li class="${i == currentPage ? 'active' : ''}">
                                             <a href="SliderController?page=${i}">${i}</a>
@@ -301,18 +360,15 @@
                                     </c:forEach>
                                 </ul>
                             </c:if>
-
-                            <!-- Nếu totalPages nhỏ hơn hoặc bằng 1, hiển thị thông báo -->
                             <c:if test="${totalPages < 1}">
-                                <p>No pages available.</p> <!-- Thông báo nếu không có trang nào hoặc chỉ có 1 trang -->
+                                <p>No pages available.</p>
                             </c:if>
                         </div>
-
-
                     </div>
                 </div>
             </div>
         </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

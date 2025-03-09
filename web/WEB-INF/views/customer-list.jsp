@@ -142,9 +142,7 @@
                         margin-top: 10px;
                     }
 
-                    .pagination a {
-                        margin: 5px;
-                    }
+                    
                 }
                 /* Global Styles for the Search Section */
                 .form-group {

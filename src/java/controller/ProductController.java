@@ -58,6 +58,7 @@ public class ProductController extends HttpServlet {
         String screenType = request.getParameter("screenType");
         String batteryCapacityStr = request.getParameter("batteryCapacity");
         String screenSizeStr = request.getParameter("screenSize");
+       
 
         int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
         double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0.0;
@@ -68,10 +69,10 @@ public class ProductController extends HttpServlet {
         double screenSize = (screenSizeStr != null && !screenSizeStr.isEmpty()) ? Double.parseDouble(screenSizeStr) : 0.0;
         int itemsPerPage = 6;
 
-        int totalProducts = dao.getTotalProductsByFiltersbyAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
+        int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
         int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
 
-        Vector<Product> productList = dao.getProductsByFilterbyAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
+        Vector<Product> productList = dao.getProductsByFilter(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
         Product latestProduct = dao.getLatestProduct();
 
         for (Product product : productList) {
