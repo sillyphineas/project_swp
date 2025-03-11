@@ -387,7 +387,14 @@
 
         </footer><!--/Footer-->
 
-
+        <script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('content', {
+                height: 200, // Chiều cao của textarea
+                filebrowserUploadUrl: '/upload', // URL để upload ảnh
+                filebrowserUploadMethod: 'form' // Phương thức upload
+            });
+        </script>
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
