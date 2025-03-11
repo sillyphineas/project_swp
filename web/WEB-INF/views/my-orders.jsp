@@ -1,12 +1,16 @@
+<%-- 
+    Document   : my-orders
+    Created on : Mar 11, 2025, 8:41:15 AM
+    Author     : HP
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
+
     <head>
+
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
@@ -28,8 +32,125 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
+        <title>Quản lý đơn hàng</title>
+        <style>
+            /* Chỉ áp dụng trong vùng #my-orders-section */
+            #my-orders-section {
+                background: #f9f9f9; /* Nền xám nhạt toàn khu vực */
+                padding: 15px;
+                border-radius: 4px;
+            }
 
+            /* Thanh tabs */
+            #my-orders-section .my-order-tabs button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                margin-right: 5px;
+                cursor: pointer;
+                border-radius: 4px;
+            }
+            #my-orders-section .my-order-tabs button.active {
+                border-bottom: 2px solid #e74c3c;
+                font-weight: bold;
+            }
+
+            /* Card đơn hàng */
+            #my-orders-section .my-order-card {
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                padding: 15px;
+            }
+
+            /* Header đơn hàng */
+            #my-orders-section .order-header {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            #my-orders-section .shop-info {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            #my-orders-section .shop-name {
+                font-weight: bold;
+            }
+            #my-orders-section .order-status {
+                font-weight: bold;
+                color: #e74c3c;
+            }
+            #my-orders-section .order-status.completed {
+                color: #27ae60;
+            }
+            #my-orders-section .order-status.canceled {
+                color: #e74c3c;
+            }
+
+            /* Body đơn hàng */
+            #my-orders-section .order-body {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 10px;
+            }
+            #my-orders-section .product-image img {
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+            }
+            #my-orders-section .product-info {
+                flex: 1;
+            }
+            #my-orders-section .product-name {
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            #my-orders-section .product-price {
+                color: #e67e22;
+                margin-bottom: 5px;
+            }
+            #my-orders-section .product-quantity {
+                font-size: 14px;
+                color: #777;
+            }
+
+            /* Footer đơn hàng */
+            #my-orders-section .order-footer {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            #my-orders-section .total-label {
+                font-weight: bold;
+            }
+            #my-orders-section .total-price {
+                font-weight: bold;
+                color: #e67e22;
+            }
+            #my-orders-section button {
+                padding: 8px 12px;
+                border: 1px solid #ddd;
+                background: #fff;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            #my-orders-section button:hover {
+                background: #f3f3f3;
+            }
+            #my-orders-section .btn-link {
+                color: #3498db;
+                text-decoration: none;
+            }
+            #my-orders-section .btn-link:hover {
+                text-decoration: underline;
+            }
+
+
+        </style>
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -140,152 +261,72 @@
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
-
-        <section id="slider">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div id="slider-carousel" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-                                <li data-target="#slider-carousel" data-slide-to="1"></li>
-                                <li data-target="#slider-carousel" data-slide-to="2"></li>
-                            </ol>
-
-                            <div class="carousel-inner">
-                                <!-- Hiển thị 3 bài viết đầu tiên -->
-                                <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
-                                    <div class="item ${status.index == 0 ? 'active' : ''}">
-                                        <div class="col-sm-6">
-                                            <h1><span>E</span>-SHOPPER</h1>
-                                            <h2>${blog.title}</h2>
-                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
-
-                                            <a href="${blog.backlinks}" class="btn btn-primary">
-                                                Read More
-                                            </a>
-
-
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
-                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
-                                        </div>
-                                    </div>
-                                </c:forEach>
-                            </div>
-
-                            <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </div>
-                    </div>
+        <section id="my-orders-section" class="container" style="margin-top: 30px;">
+            <!-- Thanh tab -->
+            <div class="my-order-tabs row" style="margin-bottom: 20px;">
+                <div class="col-sm-12">
+                    <button class="active">Tất cả</button>
+                    <button>Chờ thanh toán</button>
+                    <button>Đang giao hàng</button>
+                    <button>Đã giao hàng</button>
+                    <button>Hủy</button>
+                    <button>Trả hàng/Hoàn tiền</button>
                 </div>
             </div>
-        </section>
 
-
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">
-                            <div class="brands_products">
-                                <h2>Brands</h2> 
-                                <div class="brands-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
-                                        </li> 
-                                        <c:forEach var="brand" items="${brands}">
-                                            <li> 
-                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
-                                            </li> 
-                                        </c:forEach> 
-                                    </ul> 
-                                </div>
-                            </div>
-
-                            <div class="price-range">
-                                <h2>Filter by Price</h2>
-                                <div class="well">
-                                    <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                        <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
-
-                                        <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
-
-                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
+            <!-- Đơn hàng 1 -->
+            <div class="my-order-card">
+                <div class="order-header">
+                    <div class="shop-info">
+                        <span class="shop-name">Ladies shoe store</span>
+                        <a href="#">Xem Shop</a>
                     </div>
-
-                    <div class="col-sm-9 padding-right">
-                        <div class="features_items"><!--features_items-->
-                            <h2 class="title text-center">Features Items</h2>                             
-                            <c:forEach var="product" items="${products}">
-                                <div class="col-sm-4">
-                                    <div class="product-image-wrapper">
-                                        <div class="single-products">
-                                            <div class="productinfo text-center">
-                                                <img src="${product.imageURL}" alt="Product Image" />
-                                                <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                                <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
-                                                <p>${product.name}</p>
-                                                <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>  
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div><!--features_items-->
-
-                        <!-- Phân trang -->
-                        <div class="text-center">
-                            <c:if test="${currentPage > 1}">
-                                <a href="?page=${currentPage - 1}" class="btn btn-default">Previous</a>
-                            </c:if>
-                            <c:forEach var="i" begin="1" end="${totalPages}">
-                                <a href="?page=${i}" class="btn btn-default">${i}</a>
-                            </c:forEach>
-                            <c:if test="${currentPage < totalPages}">
-                                <a href="?page=${currentPage + 1}" class="btn btn-default">Next</a>
-                            </c:if>
-                        </div>
-                        <br/>
-                        <br/>
-                        <div class="blog_items">
-                            <h2 class="title text-center">Blogs</h2>
-
-                            <c:forEach var="blog" items="${recentBlogs}">
-                                <div class="single-blog-post" style="margin-bottom: 30px;">
-
-                                    <div class="col-sm-4">
-                                        <img src="${blog.imageURL}" alt="Blog Image" class="img-responsive" />
-                                    </div>
-
-
-                                    <div class="col-sm-8">
-                                        <h3 style="margin-top: 0;">${blog.title}</h3>
-
-                                        <p>${fn:substring(blog.content, 0, 200)}...</p>
-
-                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
-                                            Read More
-                                        </a>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </c:forEach>
-                        </div>
+                    <div class="order-status canceled">ĐÃ HỦY</div>
+                </div>
+                <div class="order-body">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/80x80?text=Shoes" alt="Product Image">
                     </div>
+                    <div class="product-info">
+                        <div class="product-name">
+                            Giày Sandal Dễ Dây Retro Nữ Mùa Hè 2024 ...
+                        </div>
+                        <div class="product-price">95.015₫</div>
+                        <div class="product-quantity">x1</div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <span class="total-label">Tổng tiền:</span>
+                    <span class="total-price">95.015₫</span>
+                    <button>Mua Lại</button>
+                    <a href="#" class="btn-link">Xem Chi Tiết Hủy Đơn</a>
+                </div>
+            </div>
+
+            <!-- Đơn hàng 2 -->
+            <div class="my-order-card">
+                <div class="order-header">
+                    <div class="shop-info">
+                        <span class="shop-name">Tổng kho sỉ Dũng đẹp</span>
+                        <a href="#">Xem Shop</a>
+                    </div>
+                    <div class="order-status completed">HOÀN THÀNH</div>
+                </div>
+                <div class="order-body">
+                    <div class="product-image">
+                        <img src="https://via.placeholder.com/80x80?text=Boxes" alt="Product Image">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">
+                            Combo 6 túi giấy T3 1g? TGi1 bao ở, lót đựng cho nhà giày...
+                        </div>
+                        <div class="product-price">35.000₫</div>
+                        <div class="product-quantity">x1</div>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <span class="total-label">Tổng tiền:</span>
+                    <span class="total-price">35.000₫</span>
                 </div>
             </div>
         </section>
@@ -440,19 +481,13 @@
             <div class="footer-bottom">
                 <div class="container">
                     <div class="row">
-                        <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
+                        <p class="pull-left">Copyright © 2013s E-SHOPPER Inc. All rights reserved.</p>
                         <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
                     </div>
                 </div>
             </div>
 
         </footer><!--/Footer-->
-
-
-        <div id="cart-notification" class="hidden">
-            <span class="checkmark">✔</span>
-            <p>Product added to cart successfully!</p>
-        </div>
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
@@ -462,3 +497,6 @@
         <script src="js/cart.js"></script>
     </body>
 </html>
+
+
+

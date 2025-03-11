@@ -37,31 +37,30 @@ public class DAOUser extends DBConnection {
         return n;
     }
 
-public int addUser(User user) {
-    int n = 0;
-    String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement pre = conn.prepareStatement(sql)) {
-        pre.setString(1, user.getName());               
-        pre.setString(2, user.getEmail());              
-        pre.setString(3, user.getPassHash());           
-        pre.setBoolean(4, user.isGender());             
-        pre.setString(5, user.getPhoneNumber());       
-        pre.setString(6, user.getResetToken());       
-        pre.setDate(7, user.getResetTokenExpired());  
-        pre.setDate(8, user.getDateOfBirth());         
-        pre.setInt(9, user.getRoleId());              
-        pre.setBoolean(10, user.isDisabled());      
-        pre.setInt(11, user.getUpdatedBy());
-        pre.setDate(12, user.getUpdatedAt()); 
+    public int addUser(User user) {
+        int n = 0;
+        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, user.getName());
+            pre.setString(2, user.getEmail());
+            pre.setString(3, user.getPassHash());
+            pre.setBoolean(4, user.isGender());
+            pre.setString(5, user.getPhoneNumber());
+            pre.setString(6, user.getResetToken());
+            pre.setDate(7, user.getResetTokenExpired());
+            pre.setDate(8, user.getDateOfBirth());
+            pre.setInt(9, user.getRoleId());
+            pre.setBoolean(10, user.isDisabled());
+            pre.setInt(11, user.getUpdatedBy());
+            pre.setDate(12, user.getUpdatedAt());
 
-        n = pre.executeUpdate();  // 
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+            n = pre.executeUpdate();  // 
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
     }
-    return n;  
-}
-
 
     public Vector<User> getUsers(String sql) {
         Vector<User> vector = new Vector<>();
@@ -152,7 +151,6 @@ public int addUser(User user) {
         return user;
     }
 
-
     public int updateUser(User user) {
         int n = 0;
         String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?,"
@@ -171,7 +169,7 @@ public int addUser(User user) {
             pre.setInt(9, user.getRoleId());
             pre.setBoolean(10, user.isIsDisabled());
             pre.setInt(11, user.getUpdatedBy());
-            pre.setDate(12, user.getUpdatedAt()); 
+            pre.setDate(12, user.getUpdatedAt());
             pre.setInt(13, user.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -291,20 +289,18 @@ public int addUser(User user) {
         return users;
     }
 
-
-    public boolean updateUserStatus(int id, boolean status) {
-        String query = "UPDATE Users SET isDisabled = ? WHERE id = ?";
+    public boolean updateUserStatus(int userId, boolean status) {
+        String query = "UPDATE Users SET isDisabled = ? WHERE id = ? AND roleId <> 1";
         try (PreparedStatement pst = conn.prepareStatement(query)) {
             pst.setBoolean(1, status);
-            pst.setInt(2, id);
+            pst.setInt(2, userId);
             int rowsUpdated = pst.executeUpdate();
-            return rowsUpdated > 0; 
+            return rowsUpdated > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
     public int getTotalUsers(Boolean gender, Integer roleId, Boolean isDisabled) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Users WHERE 1 = 1 ");
