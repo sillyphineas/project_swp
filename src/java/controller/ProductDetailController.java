@@ -84,34 +84,34 @@ public class ProductDetailController extends HttpServlet {
             return;
         }
 
-        // Get brands, variants, minPrice, colors, storages
+        
         Vector<Brand> brandList = daoBrand.getAllBrands();
         Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
         double minPrice = daoProductVariants.getMinPriceByProductId(productID);
         Vector<String> colors = daoProductVariants.getDistinctColorsByProductId1(productID);
         Vector<String> storages = daoProductVariants.getDistinctStorageByProductId1(productID);
 
-        // Get selected color and storage from request
+       
         String color = request.getParameter("color");
         String storage = request.getParameter("storage");
 
-        // If color and storage are selected, get price and stock
+      
         if (color != null && storage != null) {
             ProductVariant productVariant = daoProductVariants.getProductVariantDetails1(productID, color, storage);
             if (productVariant != null) {
-                // Return the price and stock in JSON format
+               
                 response.setContentType("application/json");
                 PrintWriter out = response.getWriter();
                 out.print("{\"price\":\"" + productVariant.getPrice() + "\", \"stock\":\"" + productVariant.getStock() + "\"}");
                 out.flush();
-                return; // Stop further processing as we have sent the response
+                return; 
             } else {
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
         }
         
-        // Set attributes to be used in JSP
+        
         request.setAttribute("colors", colors);
         request.setAttribute("storages", storages);
         request.setAttribute("variants", variants);
