@@ -144,16 +144,12 @@ public class VNPayPaymentServlet extends HttpServlet {
                         .append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8)).append('&');
             }
         }
-
-        // Xóa dấu `&` cuối cùng
         hashData.setLength(hashData.length() - 1);
         query.setLength(query.length() - 1);
 
-        // Tạo mã bảo mật
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.VNP_HASH_SECRET, hashData.toString());
         query.append("&vnp_SecureHash=").append(vnp_SecureHash);
 
-        // Chuyển hướng đến trang thanh toán VNPay
         String paymentUrl = VNPayConfig.VNP_URL + "?" + query.toString();
         response.sendRedirect(paymentUrl);
     }

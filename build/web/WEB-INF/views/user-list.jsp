@@ -197,13 +197,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -326,7 +326,7 @@
                                     <td><%= item.getEmail() %></td>
                                     <td><%= item.getPhoneNumber() %></td>
                                     <td>
-                                        <a href="UserController?service=userFilter&gender=<%= item.isGender()?"0" : "1"%>"><%= item.isGender() ? "Male" : "Female" %></a>
+                                        <a href="UserController?service=userFilter&gender=<%= item.isGender()%>"><%= item.isGender() ? "Male" : "Female" %></a>
                                     </td>
                                     <td><%= item.getDateOfBirth() %></td>
                                     <td>
@@ -581,30 +581,38 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
 
-            function changeStatus(userId, currentStatus) {
-                var newStatus = (currentStatus === "true") ? false : true;
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "UserController?service=changeStatus", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.send("id=" + userId + "&status=" + newStatus);
+                                            function changeStatus(userId, currentStatus) {
+                                                var newStatus = (currentStatus === "true") ? false : true;
+                                                var xhr = new XMLHttpRequest();
+                                                xhr.open("POST", "UserController?service=changeStatus", true);
+                                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                                xhr.send("id=" + userId + "&status=" + newStatus);
 
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        var newStatusText = newStatus ? "Disabled" : "Active";
-                        document.getElementById("status_" + userId).innerHTML =
-                                '<a href="UserController?service=userFilter&status=' + newStatus + '">' + newStatusText + '</a>';
+                                                xhr.onload = function () {
+                                                    if (xhr.status === 200) {
+                                                        var responseText = xhr.responseText.trim();
 
-                        var changeButton = document.getElementById("changeButton_" + userId);
-                        changeButton.setAttribute("onclick", "changeStatus(" + userId + ", '" + newStatus + "')");
+                                                        if (responseText === "Status updated") {
+                                                            var newStatusText = newStatus ? "Disabled" : "Active";
+                                                            document.getElementById("status_" + userId).innerHTML =
+                                                                    '<a href="UserController?service=userFilter&status=' + newStatus + '">' + newStatusText + '</a>';
 
-                        changeButton.innerHTML = "Change";
-                    } else {
-                        alert("Lỗi khi cập nhật trạng thái.");
-                    }
-                };
-            }
+                                                            var changeButton = document.getElementById("changeButton_" + userId);
+                                                            changeButton.setAttribute("onclick", "changeStatus(" + userId + ", '" + newStatus + "')");
+                                                            changeButton.innerHTML = "Change";
+                                                        } else if (responseText === "Error: You cannot change your own status.") {
+                                                            alert("You cannot change your own status!");
+                                                        } else {
+                                                            alert("Error updating status: " + responseText);
+                                                        }
+                                                    } else {
+                                                        alert("Connection error with the server.");
+                                                    }
+                                                };
+                                            }
 
 
         </script>
+
     </body>
 </html>
