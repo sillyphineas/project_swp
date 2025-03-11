@@ -317,29 +317,29 @@
                                     <div class="product-information">
                                         <h2><%= product.getName()%></h2>
                                         <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
-
+                                        
                                         <p><b>Storage:</b>
-                                            <select id="storageSelector" class="form-control" name="storage">
-                                                <c:forEach var="variant" items="${variants}">
-                                                    <option value="${variant.storage}" 
-                                                            data-price="${variant.price}" 
-                                                            data-color="${variant.color}" 
-                                                            data-stock="${variant.stock}">
-                                                        ${variant.storage} GB - ₫${String.format("%,.2f", variant.price)}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
+                                            <c:forEach var="storages" items="${distinctStorages}">
+                                            <h1>abc</h1>
+                                                
+                                            <option value="${storages}" data-price="${price}" data-stock="${stock}">
+                                                ${storages}
+                                            </option>
+                                        </c:forEach>
                                         </p>
 
                                         <p><b>Color:</b>
                                             <select id="colorSelector" class="form-control" name="color">
                                                 <c:forEach var="color" items="${distinctColors}">
-                                                    <option value="${color}">${color}</option>
+                                                    <option value="${color}" data-price="${price}" data-stock="${stock}">
+                                                        ${color}
+                                                    </option>
                                                 </c:forEach>
                                             </select>
                                         </p>
 
                                         <p><span id="stockInfo">Select storage and color</span></p>
+                                        <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
 
 
                                         <p><b>Condition:</b> New</p>
@@ -349,7 +349,7 @@
                                             </c:if>
                                         </c:forEach>
                                         <p><b>Description:</b> ${product.description}</p>
-                                        
+
 
                                         <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
                                         </p>
@@ -595,37 +595,38 @@
 
         <script src="js/cart.js"></script>
         <script>
-        document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
                     var storageSelector = document.getElementById("storageSelector");
             var colorSelector = document.getElementById("colorSelector");
             var stockInfo = document.getElementById("stockInfo");
             var productPrice = document.getElementById("productPrice");
-            // Lắng nghe sự kiện khi người dùng chọn storage hoặc màu sắc
             function updateStockAndPrice() {
-            var selectedStorageOption = storageSelector.options[storageSelector.selectedIndex];
+            var selectedStorage = storageSelector.value;
             var selectedColor = colorSelector.value;
-            // Lấy giá, màu sắc, và stock từ thuộc tính dữ liệu
+            // Lấy các option tương ứng từ `storage` và `color`
+            var selectedStorageOption = storageSelector.querySelector(`option[value="${selectedStorage}"]`);
+            var selectedColorOption = colorSelector.querySelector(`option[value="${selectedColor}"]`);
+            if (selectedStorageOption && selectedColorOption) {
+            // Lấy giá trị từ các thuộc tính `data-price` và `data-stock`
             var price = selectedStorageOption.getAttribute("data-price");
-            var color = selectedStorageOption.getAttribute("data-color");
             var stock = selectedStorageOption.getAttribute("data-stock");
-            // Cập nhật giá và stock tương ứng
+            // Cập nhật giá và số lượng
             productPrice.textContent = "₫" + price;
             stockInfo.textContent = "Stock: " + stock;
-            // Nếu màu sắc không phù hợp, sẽ không hiển thị stock
-            if (selectedColor !== color) {
-            stockInfo.textContent = "Stock: Don't have product";
+            } else {
+            stockInfo.textContent = "Please select both storage and color.";
             }
             }
 
-            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn storage
+            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn
             storageSelector.addEventListener("change", updateStockAndPrice);
-            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn màu sắc
             colorSelector.addEventListener("change", updateStockAndPrice);
             // Gọi hàm để cập nhật giá và stock khi trang load
             updateStockAndPrice();
                 });
-            
-            </script>
+                console.log("Selected Storage:", selectedStorage);
+                console.log("Selected Color:", selectedColor);
+                  </script>
 
     </body>
 </html>

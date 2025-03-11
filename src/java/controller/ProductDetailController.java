@@ -7,8 +7,9 @@
 package controller;
 
 import entity.Brand;
-import entity.Product;
 
+import entity.Product;
+import entity.ProductVariant;
 import entity.User;
 import entity.ProductVariant;
 
@@ -24,6 +25,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
+
+
 
 import model.DAOProductVariant;
 
@@ -70,43 +73,55 @@ public class ProductDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-                //Authorize
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-        if (!Authorize.isAccepted(user, "/ProductDetailController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
-            return;
-        }
-       DAOProduct dao = new DAOProduct();
+        DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
-
         DAOProductVariant daoProductVariants = new DAOProductVariant();
 
-        Vector productList = new Vector();
-        Product latestProduct = dao.getLatestProduct();
         int productID = Integer.parseInt(request.getParameter("id"));
         Product product = dao.getProductById(productID);
-        Vector<Brand> brandList = daoBrand.getAllBrands();
-        Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
-            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
-
-       
-        if(product == null){
-            response.sendError(HttpServletResponse.SC_NOT_FOUND,"Product not found");
+        if (product == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
             return;
         }
-        Vector<ProductVariant> productVariants = daoProductVariants.getVariantsByProductId(productID);
+
+        // Get brands, variants, minPrice, colors, storages
+        Vector<Brand> brandList = daoBrand.getAllBrands();
+        Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
+        double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+        Vector<String> colors = daoProductVariants.getDistinctColorsByProductId1(productID);
+        Vector<String> storages = daoProductVariants.getDistinctStorageByProductId1(productID);
+
+        // Get selected color and storage from request
+        String color = request.getParameter("color");
+        String storage = request.getParameter("storage");
+
+        // If color and storage are selected, get price and stock
+        if (color != null && storage != null) {
+            ProductVariant productVariant = daoProductVariants.getProductVariantDetails1(productID, color, storage);
+            if (productVariant != null) {
+                // Return the price and stock in JSON format
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print("{\"price\":\"" + productVariant.getPrice() + "\", \"stock\":\"" + productVariant.getStock() + "\"}");
+                out.flush();
+                return; // Stop further processing as we have sent the response
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }
+        
+        // Set attributes to be used in JSP
+        request.setAttribute("colors", colors);
+        request.setAttribute("storages", storages);
         request.setAttribute("variants", variants);
         request.setAttribute("minPrice", minPrice);
         request.setAttribute("brands", brandList);
         request.setAttribute("product", product);
-        request.setAttribute("latestProduct", latestProduct);
+        
+        // Forward to product-details.jsp
         request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
-    } 
-
+    }
     /** 
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
