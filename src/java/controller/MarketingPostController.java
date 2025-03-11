@@ -1,5 +1,3 @@
-
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -135,8 +133,6 @@ public class MarketingPostController extends HttpServlet {
                     response.getWriter().write("{\"status\":\"error\", \"message\":\"Blog ID not provided\"}");
                 }
             }
-            
-            
 
             if (service.equals("blogFilter")) {
                 String idStr = request.getParameter("id");
@@ -273,7 +269,9 @@ public class MarketingPostController extends HttpServlet {
             if (service.equals("addBlog")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    ResultSet rsAuthor = dao.getData("SELECT id, name FROM Users");
+                    Integer adminId = (Integer) request.getSession().getAttribute("userID");
+                    ResultSet rsAuthor = dao.getData("SELECT id, name FROM Users where id=" + adminId);
+
                     request.setAttribute("rsAuthor", rsAuthor);
                     request.getRequestDispatcher("/WEB-INF/views/AddBlog.jsp").forward(request, response);
                 } else {
