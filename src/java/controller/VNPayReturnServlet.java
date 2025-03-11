@@ -147,6 +147,17 @@ public class VNPayReturnServlet extends HttpServlet {
 
             int OrderId = daoOrder.addOrder(newOrder);
 
+            for (CartItem item : selectedCartItems) {
+                OrderDetail newOrderDetail = new OrderDetail();
+                newOrderDetail.setOrderId(OrderId);
+                newOrderDetail.setProductVariantID(item.getProductVariantID());
+                newOrderDetail.setQuantity(item.getQuantity());
+                System.out.println("OrderId" + newOrderDetail.getOrderId());
+                System.out.println("ProductVariantID" + newOrderDetail.getProductVariantID());
+                System.out.println("Quantity" + newOrderDetail.getQuantity());
+                daoOrderDetail.addOrderDetail(newOrderDetail);
+            }
+
             if (OrderId > 0) {
                 DAOProductVariant daoProductVariant = new DAOProductVariant();
                 DAOProduct daoProduct = new DAOProduct();

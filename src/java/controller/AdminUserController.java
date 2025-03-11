@@ -174,16 +174,26 @@ public class AdminUserController extends HttpServlet {
 
             if (service.equals("changeStatus")) {
                 String idStr = request.getParameter("id");
+                System.out.println("id: " + idStr);
                 Integer id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : null;
 
                 String statusStr = request.getParameter("status");
-                boolean status = statusStr.equals("true");  // true means active, false means disabled
+                boolean status = statusStr.equals("true");
 
-                if (id != null) {
-                    boolean success = dao.updateUserStatus(id, status);
+                Integer adminId = (Integer) request.getSession().getAttribute("userID");
+                System.out.println("admin: " + adminId);
 
-                    response.setContentType("text/plain");
-                    response.getWriter().write(success ? "Status updated" : "Failed to update status");
+                response.setContentType("text/plain");
+
+                if (id != null && adminId != null) {
+                    if (adminId.equals(id)) {
+                        response.getWriter().write("Error: You cannot change your own status.");
+                    } else {
+                        boolean success = dao.updateUserStatus(id, status);
+                        response.getWriter().write(success ? "Status updated" : "You cannot change the status of another administrator.");
+                    }
+                } else {
+                    response.getWriter().write("Error: Invalid request. Missing id or adminId.");
                 }
             }
 
