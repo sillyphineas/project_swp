@@ -334,7 +334,7 @@
                                     <div class="product-information">
                                         <h2>${product.name}</h2>
 
-                                        <p><b>Price: </b> <span id="productPrice">₫${String.format("%,.0f",price)}</span></p>
+                                       
                                         <p><b>Color:</b>
                                             <select id="color" name="color" class="form-control">
                                                 <c:forEach var="color" items="${colors}">
@@ -364,7 +364,7 @@
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
-
+                                        <p><b>Price: </b> <span id="productPrice">₫${String.format("%,.0f",price)}</span></p>
 
                                         <button type="button" class="btn btn-default cart" onclick="addToCart()">
                                             <i class="fa fa-shopping-cart"></i> Add to cart
