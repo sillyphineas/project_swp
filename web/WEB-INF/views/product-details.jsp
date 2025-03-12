@@ -331,46 +331,45 @@
                                                         </form>-->
                                 <form id="productForm">
                                     <input type="hidden" name="id" value="${product.id}"> 
-                                                                <div class="product-information">
-                                                                        <h2>${product.name}</h2>
-                                                                        <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
-                                   
-                                    <p><b>Color:</b>
-                                        <select id="color" name="color" class="form-control">
-                                            <c:forEach var="color" items="${colors}">
-                                                <option value="${color}" ${color == param.color ? 'selected' : ''}>${color}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </p>
+                                    <div class="product-information">
+                                        <h2>${product.name}</h2>
 
-                                    
-                                    <p><b>Storage:</b>
-                                        <select id="storage" name="storage" class="form-control">
-                                            <c:forEach var="storage" items="${storages}">
-                                                <option value="${storage}" ${storage == param.storage ? 'selected' : ''}>${storage}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </p>
+                                        <p><b>Price: </b> <span id="productPrice">₫${String.format("%,.0f",price)}</span></p>
+                                        <p><b>Color:</b>
+                                            <select id="color" name="color" class="form-control">
+                                                <c:forEach var="color" items="${colors}">
+                                                    <option value="${color}" ${color == param.color ? 'selected' : ''}>${color}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </p>
+
+                                        <p><b>Storage:</b>
+                                            <select id="storage" name="storage" class="form-control">
+                                                <c:forEach var="storage" items="${storages}">
+                                                    <option value="${storage}" ${storage == param.storage ? 'selected' : ''}>${storage}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </p>
                                         <p><b>Description:</b> ${product.description}</p>
-                                   
-                                 
-                                    <p><b>Stock:</b> <span id="productStock">${stock}</span></p>
 
-                                         <c:forEach var="brand" items="${brands}">
-                                    <c:if test="${brand.id == product.brandID}">
-                                        <p><b>Brand: </b>${brand.name}</p>
-                                    </c:if>
-                                </c:forEach>
-                                    
-                                    <p><b>Quantity:</b>
-                                        <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
-                                    </p>
 
-                                  
-                                    <button type="button" class="btn btn-default cart" onclick="addToCart()">
-                                        <i class="fa fa-shopping-cart"></i> Add to cart
-                                    </button>
-                                                                </div>
+                                        <p><b>Stock:</b> <span id="productStock">${stock}</span></p>
+
+                                        <c:forEach var="brand" items="${brands}">
+                                            <c:if test="${brand.id == product.brandID}">
+                                                <p><b>Brand: </b>${brand.name}</p>
+                                            </c:if>
+                                        </c:forEach>
+
+                                        <p><b>Quantity:</b>
+                                            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
+                                        </p>
+
+
+                                        <button type="button" class="btn btn-default cart" onclick="addToCart()">
+                                            <i class="fa fa-shopping-cart"></i> Add to cart
+                                        </button>
+                                    </div>
                                 </form>
 
                             </div>
@@ -613,35 +612,64 @@
         <script src="js/main.js"></script>
 
         <script src="js/cart.js"></script>
-    <script>
+        <script>
+document.addEventListener("DOMContentLoaded",    function() {
 
+            var colorSelector = document.getElementById("color");
+            var storageSelector = document.getElementById("storage");
+            var defaultColor = colorSelector.options[0].value;
+            var defaultStorage = storageSelector.options[0].value;
+            updateProductInfo(defaultColor, defaultStorage);
+            colorSelector.addEventListener("change", function() {
+            var selectedColor = colorSelector.value;
+            var selectedStorage = storageSelector.value;
+            updateProductInfo(selectedColor, selectedStorage);
+            });
+            storageSelector.addEventListener("change", function() {
+            var selectedColor = colorSelector.value;
+            var selectedStorage = storageSelector.value;
+            updateProductInfo(selectedColor, selectedStorage);
+            });
+});
         
-        function updateProductInfo() {
-                    var color = document.getElementById("color").value;
-            var storage = document.getElementById("storage").value;
-            var productId = '${product.id}';
+        function updateProductInfo(color, storage) {
+                    var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onload = function() {
             if (xhr.status == 200) {
             var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng
-            document.getElementById("productPrice").innerText = '₫' + data.price;
+            // Cập nhật giá và số lượng sản phẩm
+            document.getElementById("productPrice").innerText = '₫' + data.price; ;
             document.getElementById("productStock").innerText = data.stock;
             } else {
-
             alert("Không tìm thấy sản phẩm với lựa chọn này.");
             }
             };
-                xhr.send();
-        }
-        
-                // Gọi hàm `updateProductInfo` khi thay đổi lựa chọn màu sắc hoặc dung lượng lưu trữ
-        document.getElementById("color").addEventListener("change", updateProductInfo);
-        document.getElementById("storage").addEventListener("change", updateProductInfo);
-        
-        </script>
-    </body>
+            xhr.send();
+                }
+                function formatPrice(price) {
+                    
+                    return price.toLocaleString();
+                }
+</script>
+<!--            <script>
+            function checkStock() {
+                    var storageSelector = document.getElementById("storageSelector");
+            var availabilityLabel = document.getElementById("availabilityLabel");
+            var addToCartBtn = document.getElementById("addToCartBtn");
+            // Lấy option đang được chọn
+            var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+            var stock = parseInt(selectedOption.getAttribute("data-stock"));
+            if (stock <= 0) {
+            availabilityLabel.textContent = "Hết hàng";
+            addToCartBtn.disabled = true;
+            } else {             availabilityLabel.textContent = "Còn hàng";
+                addToCartBtn.disabled = false; }     }
+                document.addEventListener("DOMContentLoaded", checkStock);
+                document.getElementById("storageSelector").addEventListener("change", checkStock);
+                </script>-->
+</body>
 </html>
 
