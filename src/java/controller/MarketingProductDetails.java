@@ -57,8 +57,12 @@ public class MarketingProductDetails extends HttpServlet {
             double minPrice = daoProductVariants.getMinPriceByProductId(productID);
             Vector<String> distinctColors = daoProductVariants.getDistinctColorsByProductId(productID);
             request.setAttribute("distinctColors", distinctColors);
+            System.out.println(distinctColors);
             Vector<String> distinctStorages = daoProductVariants.getDistinctStorageByProductId(productID);
+            System.out.println("storage"+distinctStorages);
             request.setAttribute(" distinctStorages",distinctStorages);
+            
+
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                 return;
@@ -187,8 +191,8 @@ public class MarketingProductDetails extends HttpServlet {
             int storage = Integer.parseInt(request.getParameter("storage"));
             double price = Double.parseDouble(request.getParameter("price"));
             int stock = Integer.parseInt(request.getParameter("stock"));
-
-            ProductVariant updatedVariant = new ProductVariant(variantId, productID, color, storage, price, stock);
+//
+//            ProductVariant updatedVariant = new ProductVariant(variantId, productID, color, storage, price, stock);
             daoVariant.updateProductVariant(updatedVariant);
             response.sendRedirect("MarketingProductDetails?id=" + productID);
         }

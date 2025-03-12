@@ -9,23 +9,25 @@ package entity;
  * @author HP
  */
 public class ProductVariant {
-    private int id;
-    private int productID;
-    private String color;
-    private int storage; // Dung lượng bộ nhớ trong GB
-    private double price;
-    private int stock;
+   private int id;
+   private int product_id;
+   private int color_id;
+   private int storage_id;
+   private double price;
+   private int stock;
+   private boolean status;
 
     public ProductVariant() {
     }
 
-    public ProductVariant(int id, int productID, String color, int storage, double price, int stock) {
+    public ProductVariant(int id, int product_id, int color_id, int storage_id, double price, int stock, boolean status) {
         this.id = id;
-        this.productID = productID;
-        this.color = color;
-        this.storage = storage;
+        this.product_id = product_id;
+        this.color_id = color_id;
+        this.storage_id = storage_id;
         this.price = price;
         this.stock = stock;
+        this.status = status;
     }
 
     public int getId() {
@@ -36,28 +38,28 @@ public class ProductVariant {
         this.id = id;
     }
 
-    public int getProductID() {
-        return productID;
+    public int getProduct_id() {
+        return product_id;
     }
 
-    public void setProductID(int productID) {
-        this.productID = productID;
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
     }
 
-    public String getColor() {
-        return color;
+    public int getColor_id() {
+        return color_id;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setColor_id(int color_id) {
+        this.color_id = color_id;
     }
 
-    public int getStorage() {
-        return storage;
+    public int getStorage_id() {
+        return storage_id;
     }
 
-    public void setStorage(int storage) {
-        this.storage = storage;
+    public void setStorage_id(int storage_id) {
+        this.storage_id = storage_id;
     }
 
     public double getPrice() {
@@ -76,16 +78,18 @@ public class ProductVariant {
         this.stock = stock;
     }
 
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
-        return "ProductVariant{" +
-                "id=" + id +
-                ", productID=" + productID +
-                ", color='" + color + '\'' +
-                ", storage=" + storage +
-                ", price=" + price +
-                ", stock=" + stock +
-                '}';
+        return "ProductVariant{" + "id=" + id + ", product_id=" + product_id + ", color_id=" + color_id + ", storage_id=" + storage_id + ", price=" + price + ", stock=" + stock + ", status=" + status + '}';
     }
+   
 }
 
