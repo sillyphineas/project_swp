@@ -6,8 +6,12 @@ package model;
 
 import entity.Cart;
 import entity.CartItem;
+import entity.Color;
 import entity.Order;
 import entity.OrderDetail;
+import entity.Product;
+import entity.ProductVariant;
+import entity.Storage;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -175,23 +179,55 @@ public class DAOCart extends DBConnection {
 
     public List<CartItem> getCartItemsByCartID1(int cartID) {
         List<CartItem> cartItems = new ArrayList<>();
-        String sql = "SELECT * FROM CartItem WHERE CartID = ? AND isDisabled = false";
+        String sql = "SELECT ci.CartItemID AS CartItemID, ci.CartID, ci.ProductVariantID, ci.Quantity, ci.Price, ci.TotalPrice, "
+                + "pv.product_id, p.name AS productName, p.imageURL, "
+                + "pv.color_id, c.colorName, pv.storage_id, pv.stock, s.capacity "
+                + "FROM cartitem ci "
+                + "JOIN productvariants pv ON ci.ProductVariantID = pv.id "
+                + "JOIN products p ON pv.product_id = p.id "
+                + "JOIN colors c ON pv.color_id = c.id "
+                + "JOIN storages s ON pv.storage_id = s.id "
+                + "WHERE ci.CartID = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, cartID);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    CartItem item = new CartItem();
-                    item.setCartItemID(rs.getInt("CartItemID"));
-                    item.setCartID(rs.getInt("CartID"));
-                    item.setProductVariantID(rs.getInt("ProductVariantID"));
-                    item.setPrice(rs.getDouble("Price"));
-                    item.setQuantity(rs.getInt("Quantity"));
-                    item.setDiscountAmount(rs.getDouble("DiscountAmount"));
-                    item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
-                    item.setDisabled(rs.getBoolean("isDisabled"));
-                    cartItems.add(item);
-                }
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                CartItem item = new CartItem();
+                item.setCartItemID(rs.getInt("CartItemID"));
+                item.setCartID(rs.getInt("CartID"));
+                item.setProductVariantID(rs.getInt("ProductVariantID")); 
+                item.setQuantity(rs.getInt("Quantity"));
+                item.setPrice(rs.getDouble("Price"));
+                item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
+
+                
+                ProductVariant prova = new ProductVariant();
+                prova.setId(rs.getInt("ProductVariantID")); 
+                prova.setStock(rs.getInt("stock"));
+                item.setProductVariant(prova);
+
+                
+                Product product = new Product();
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("productName"));
+                product.setImageURL(rs.getString("imageURL"));
+                item.setProduct(product);
+
+                
+                Color color = new Color();
+                color.setId(rs.getInt("color_id"));
+                color.setColorName(rs.getString("colorName"));
+                item.setColor(color);
+
+                
+                Storage storage = new Storage();
+                storage.setId(rs.getInt("storage_id"));
+                storage.setCapacity(rs.getString("capacity"));
+                item.setStorage(storage);
+
+                cartItems.add(item);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -201,26 +237,54 @@ public class DAOCart extends DBConnection {
 
     public List<CartItem> getCartItemsByCartID(int cartID, int page, int pageSize) {
         List<CartItem> cartItems = new ArrayList<>();
-        String sql = "SELECT * FROM CartItem WHERE CartID = ? AND isDisabled = false LIMIT ? OFFSET ?";
+        String sql = "SELECT ci.CartItemID AS CartItemID, ci.CartID, ci.ProductVariantID, ci.Quantity, ci.Price, ci.TotalPrice, "
+                + "pv.product_id, p.name AS productName, p.imageURL, "
+                + // Thêm p.imageURL
+                "pv.color_id, c.colorName, pv.storage_id,pv.stock, s.capacity "
+                + "FROM cartitem ci "
+                + "JOIN productvariants pv ON ci.ProductVariantID = pv.id "
+                + "JOIN products p ON pv.product_id = p.id "
+                + "JOIN colors c ON pv.color_id = c.id "
+                + "JOIN storages s ON pv.storage_id = s.id "
+                + "WHERE CartID = ? LIMIT ? OFFSET ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, cartID);
             stmt.setInt(2, pageSize);
             stmt.setInt(3, (page - 1) * pageSize);
+            ResultSet rs = stmt.executeQuery();
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    CartItem item = new CartItem();
-                    item.setCartItemID(rs.getInt("CartItemID"));
-                    item.setCartID(rs.getInt("CartID"));
-                    item.setProductVariantID(rs.getInt("ProductVariantID"));
-                    item.setPrice(rs.getDouble("Price"));
-                    item.setQuantity(rs.getInt("Quantity"));
-                    item.setDiscountAmount(rs.getDouble("DiscountAmount"));
-                    item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
-                    item.setDisabled(rs.getBoolean("isDisabled"));
-                    cartItems.add(item);
-                }
+            while (rs.next()) {
+                CartItem item = new CartItem();
+                item.setCartItemID(rs.getInt("CartItemID"));
+                item.setQuantity(rs.getInt("Quantity"));
+                item.setPrice(rs.getDouble("Price"));
+                item.setTotalPrice(rs.getBigDecimal("TotalPrice"));
+
+                ProductVariant prova = new ProductVariant();
+                prova.setId(rs.getInt("ProductVariantID"));
+                prova.setStock(rs.getInt("stock"));
+                item.setProductVariant(prova);
+                // Set product
+                Product product = new Product();
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("productName"));
+                product.setImageURL(rs.getString("imageURL")); // Gán imageURL
+                item.setProduct(product);
+
+                // Set color
+                Color color = new Color();
+                color.setId(rs.getInt("color_id"));
+                color.setColorName(rs.getString("colorName"));
+                item.setColor(color);
+
+                // Set storage
+                Storage storage = new Storage();
+                storage.setId(rs.getInt("storage_id"));
+                storage.setCapacity(rs.getString("capacity"));
+                item.setStorage(storage);
+
+                cartItems.add(item);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -279,9 +343,9 @@ public class DAOCart extends DBConnection {
 
     public static void main(String[] args) {
         DAOCart dao = new DAOCart();
-//        System.out.println(dao.getCartItemsByCartID1(1));
-        Cart cart = new Cart(1, 4,"active",0.00, "2025-02-23", "2025-02-23");
-        System.out.println(dao.updateCart(cart));
+        System.out.println(dao.getCartItemsByCartID1(1));
+//        Cart cart = new Cart(1, 4, "active", 0.00, "2025-02-23", "2025-02-23");
+//        System.out.println(dao.updateCart(cart));
 //        System.out.println(dao.getCartByCustomerID(4));
 //        Cart cart = dao.getCartByCustomerID(8);
 //        System.out.println(cart);

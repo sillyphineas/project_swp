@@ -27,7 +27,7 @@ public class DAOColor extends DBConnection {
         String sql = "INSERT INTO Color (colorName, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
-            pre.setBoolean(2, color.isStatus());
+            pre.setString(2, color.isStatus());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -44,7 +44,7 @@ public class DAOColor extends DBConnection {
                 Color color = new Color(
                         rs.getInt("id"),
                         rs.getString("colorName"),
-                        rs.getBoolean("status")
+                        rs.getString("status")
                 );
                 vector.add(color);
             }
@@ -54,26 +54,25 @@ public class DAOColor extends DBConnection {
         return vector;
     }
 
-    
     public Vector<Color> getColorById(int id) {
-    Vector<Color> colors = new Vector<>();
-    String sql = "SELECT * FROM Color WHERE id = ?";
-    try (PreparedStatement pre = conn.prepareStatement(sql)) {
-        pre.setInt(1, id);
-        ResultSet rs = pre.executeQuery();
-        while (rs.next()) {
-            Color color = new Color(
-                    rs.getInt("id"),
-                    rs.getString("colorName"),
-                    rs.getBoolean("status")
-            );
-            colors.add(color);
+        Vector<Color> colors = new Vector<>();
+        String sql = "SELECT * FROM Color WHERE id = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Color color = new Color(
+                        rs.getInt("id"),
+                        rs.getString("colorName"),
+                        rs.getString("status")
+                );
+                colors.add(color);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+        return colors;
     }
-    return colors;
-}
 
     // Cập nhật thông tin màu
     public int updateColor(Color color) {
@@ -81,7 +80,7 @@ public class DAOColor extends DBConnection {
         String sql = "UPDATE Color SET colorName = ?, status = ? WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
-            pre.setBoolean(2, color.isStatus());
+            pre.setString(2, color.isStatus());
             pre.setInt(3, color.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -114,9 +113,49 @@ public class DAOColor extends DBConnection {
             while (rs.next()) {
                 colors.add(new Color(rs.getInt("id"),
                         rs.getString("colorName"),
-                        rs.getBoolean("status")));
+                        rs.getString("status")));
             }
         }
         return colors;
+    }
+
+    public int getColorIDByName(String colorName) {
+        String query = "SELECT id FROM colors WHERE colorName = ? AND status = 'Active'";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, colorName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public Color getColorById1 (int colorId) {
+        String sql = "SELECT id, colorName, status FROM colors WHERE id = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, colorId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) { 
+                return new Color(
+                        rs.getInt("id"),
+                        rs.getString("colorName"),
+                        rs.getString("status")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null; 
+    }
+    
+
+    public static void main(String[] args) {
+        DAOColor dao = new DAOColor();
+//        System.out.println(dao.getColorIDByName("Đen"));
+        System.out.println(dao.getColorById1(1));
     }
 }

@@ -325,6 +325,8 @@
                             <tbody id="blog-list">
                                 <%
                                 List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+                                
+                                
                                 if (blogs != null && !blogs.isEmpty()) {
                                     DAOBlog dao = new DAOBlog();
                                     for (Blog blog : blogs){
