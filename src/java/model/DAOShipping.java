@@ -80,4 +80,27 @@ public class DAOShipping extends DBConnection {
         return shipping;
     }
 
+    public Shipping getShippingByOrderId(int orderId) {
+        String sql = "SELECT * FROM Shipping WHERE OrderID = ?";
+        Shipping shipping = null;
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, orderId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                shipping = new Shipping(
+                        rs.getInt("ShippingID"),
+                        rs.getInt("OrderID"),
+                        rs.getInt("ShipperID"),
+                        rs.getString("ShippingStatus"),
+                        rs.getDate("EstimatedArrival"),
+                        rs.getDate("ActualArrival"),
+                        rs.getDate("ShippingDate")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return shipping;
+    }
+
 }

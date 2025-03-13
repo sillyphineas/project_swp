@@ -147,7 +147,6 @@ public class OrderController extends HttpServlet {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(orderTime);
                 calendar.add(Calendar.DATE, 3);
-                newOrder.setShippingDate(calendar.getTime());
                 newOrder.setShippingAddress(request.getParameter("addressSelect"));
                 newOrder.setTotalPrice(totalAmount);
                 newOrder.setDiscountedPrice(0.0);

@@ -134,11 +134,10 @@ public class VNPayReturnServlet extends HttpServlet {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(orderTime);
             calendar.add(Calendar.DATE, 3);
-            newOrder.setShippingDate(calendar.getTime());
             newOrder.setShippingAddress((String) session.getAttribute("addressSelect"));
             newOrder.setTotalPrice(totalAmount);
             newOrder.setDiscountedPrice(0.0);
-            newOrder.setPaymentMethod(1);
+            newOrder.setPaymentMethod(2);
             newOrder.setDisabled(false);
             newOrder.setVoucherID(null);
             newOrder.setRecipientName((String) session.getAttribute("newFullName"));

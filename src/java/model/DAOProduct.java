@@ -171,7 +171,7 @@ public class DAOProduct extends DBConnection {
 
     public double getMinPriceForProduct(int productId) {
         double minPrice = 0;
-        String sql = "SELECT MIN(price) as minPrice FROM ProductVariants WHERE productID = ?";
+        String sql = "SELECT MIN(price) as minPrice FROM ProductVariants WHERE product_id = ?";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, productId);
