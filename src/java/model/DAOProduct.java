@@ -176,6 +176,7 @@ public class DAOProduct extends DBConnection {
                 + "JOIN colors c ON pv.color_id = c.id "
                 + "JOIN storages s ON pv.storage_id = s.id "
                 + "WHERE pv.product_id = ? AND pv.status = 'Active' AND c.status = 'Active' AND s.status = 'Active'";
+
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, productId);

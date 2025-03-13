@@ -3,9 +3,11 @@
     Created on : Mar 11, 2025, 8:41:15 AM
     Author     : HP
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User"%>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -88,6 +90,15 @@
             #my-orders-section .order-status.canceled {
                 color: #e74c3c;
             }
+            #my-orders-section .order-status.pending {
+                color: #f1c40f;
+            }
+            #my-orders-section .order-status.shipping {
+                color: #3498db;
+            }
+            #my-orders-section .order-status.returning {
+                color: #9b59b6;
+            }
 
             /* Body đơn hàng */
             #my-orders-section .order-body {
@@ -148,6 +159,28 @@
                 text-decoration: underline;
             }
 
+            /* Ẩn mặc định các section (trừ Tất cả) - ta sẽ dùng JS điều khiển hiển thị */
+            .order-section {
+                margin-bottom: 30px;
+            }
+
+            .product-info {
+                display: flex; /* Hiển thị ảnh và thông tin theo hàng ngang */
+                align-items: center; /* Căn giữa theo chiều dọc */
+                gap: 10px; /* Tạo khoảng cách giữa ảnh và mô tả */
+                padding: 10px; /* Tạo khoảng cách bên trong */
+            }
+
+            .product-image img {
+                display: block; /* Đảm bảo ảnh hiển thị đúng */
+                max-width: 100px; /* Giới hạn kích thước ảnh */
+                height: auto; /* Giữ nguyên tỉ lệ ảnh */
+            }
+
+            .product-details {
+                display: flex;
+                flex-direction: column; /* Hiển thị thông tin theo cột */
+            }
 
         </style>
     </head>
@@ -191,22 +224,19 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
                                     <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+                                        <%
+                                            } else {
+                                        %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
                                         <% } %>
                                 </ul>
@@ -243,8 +273,6 @@
                                             <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
                                     </li> 
-                                    <!--                                    <li><a href="404.html">404</a></li>
-                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
@@ -252,7 +280,6 @@
                             <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
-
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
@@ -261,12 +288,14 @@
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
+
         <section id="my-orders-section" class="container" style="margin-top: 30px;">
+
             <!-- Thanh tab -->
             <div class="my-order-tabs row" style="margin-bottom: 20px;">
                 <div class="col-sm-12">
                     <button class="active">Tất cả</button>
-                    <button>Chờ thanh toán</button>
+                    <button>Chờ lấy hàng</button>
                     <button>Đang giao hàng</button>
                     <button>Đã giao hàng</button>
                     <button>Hủy</button>
@@ -274,62 +303,327 @@
                 </div>
             </div>
 
-            <!-- Đơn hàng 1 -->
-            <div class="my-order-card">
-                <div class="order-header">
-                    <div class="shop-info">
-                        <span class="shop-name">Ladies shoe store</span>
-                        <a href="#">Xem Shop</a>
-                    </div>
-                    <div class="order-status canceled">ĐÃ HỦY</div>
-                </div>
-                <div class="order-body">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/80x80?text=Shoes" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name">
-                            Giày Sandal Dễ Dây Retro Nữ Mùa Hè 2024 ...
+            <!-- TẤT CẢ ĐƠN HÀNG -->
+            <div id="tab-all" class="order-section">
+                <c:forEach var="order" items="${allOrders}">
+                    <div class="my-order-card">
+                        <!-- Header -->
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>
+                                <br>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <br>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status ${order.orderStatus}">
+                                ${order.orderStatus}
+                            </div>
                         </div>
-                        <div class="product-price">95.015₫</div>
-                        <div class="product-quantity">x1</div>
+
+                        <!-- Body -->
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+
+                                <!-- Thông tin sản phẩm -->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="order-footer">
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <!-- Các nút hành động tuỳ theo trạng thái -->
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="order-footer">
-                    <span class="total-label">Tổng tiền:</span>
-                    <span class="total-price">95.015₫</span>
-                    <button>Mua Lại</button>
-                    <a href="#" class="btn-link">Xem Chi Tiết Hủy Đơn</a>
-                </div>
+                </c:forEach>
             </div>
 
-            <!-- Đơn hàng 2 -->
-            <div class="my-order-card">
-                <div class="order-header">
-                    <div class="shop-info">
-                        <span class="shop-name">Tổng kho sỉ Dũng đẹp</span>
-                        <a href="#">Xem Shop</a>
-                    </div>
-                    <div class="order-status completed">HOÀN THÀNH</div>
-                </div>
-                <div class="order-body">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/80x80?text=Boxes" alt="Product Image">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name">
-                            Combo 6 túi giấy T3 1g? TGi1 bao ở, lót đựng cho nhà giày...
+            <!-- CHỜ XÁC NHẬN -->
+            <div id="tab-pending" class="order-section" style="display:none;">
+                <h3>Chờ lấy hàng</h3>
+                <c:forEach var="order" items="${choXacNhanList}">
+                    <div class="my-order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status pending">
+                                ${order.orderStatus}
+                            </div>
                         </div>
-                        <div class="product-price">35.000₫</div>
-                        <div class="product-quantity">x1</div>
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
                     </div>
-                </div>
-                <div class="order-footer">
-                    <span class="total-label">Tổng tiền:</span>
-                    <span class="total-price">35.000₫</span>
-                </div>
+                </c:forEach>
+            </div>
+
+            <!-- ĐANG GIAO HÀNG -->
+            <div id="tab-shipping" class="order-section" style="display:none;">
+                <h3>Đang giao hàng</h3>
+                <c:forEach var="order" items="${dangGiaoHangList}">
+                    <div class="my-order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>
+                                <br>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <br>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status pending">
+                                ${order.orderStatus}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <!-- ĐÃ GIAO HÀNG -->
+            <div id="tab-delivered" class="order-section" style="display:none;">
+                <h3>Đã giao hàng</h3>
+                <c:forEach var="order" items="${daGiaoHangList}">
+                    <div class="my-order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>
+                                <br>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <br>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status completed">
+                                ${order.orderStatus}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <!-- HỦY -->
+            <div id="tab-canceled" class="order-section" style="display:none;">
+                <h3>Hủy</h3>
+                <c:forEach var="order" items="${huyList}">
+                    <div class="my-order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status canceled">
+                                ${order.orderStatus}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <button>Mua Lại</button>
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+
+            <!-- TRẢ HÀNG/HOÀN TIỀN -->
+            <div id="tab-return" class="order-section" style="display:none;">
+                <h3>Trả hàng/Hoàn tiền</h3>
+                <c:forEach var="order" items="${traLaiList}">
+                    <div class="my-order-card">
+                        <div class="order-header">
+                            <div class="order-info">
+<!--                                <span class="recipient-name">Người nhận: ${order.recipientName}</span>-->
+                                <span class="order-id">Mã đơn: ${order.id}</span>
+                                <span>Thanh toán: ${order.paymentName}</span>
+                            </div>
+                            <div class="order-status returning">
+                                ${order.orderStatus}
+                            </div>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-details">
+<!--                                <div>
+                                    Thời gian đặt:
+                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                                </div>
+                                <div>
+                                    Địa chỉ giao:
+                                    ${order.address}, ${order.district}, ${order.city}
+                                </div>
+                                <div>
+                                    Điện thoại: ${order.recipientPhone}
+                                </div>
+                                <div>
+                                    Trạng thái vận chuyển: ${order.shippingStatus}
+                                </div>-->
+                                <div class="product-info">
+                                    <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
+                                    <div>Sản phẩm: ${order.productName}</div>
+                                    <div>Màu: ${order.colorName}, Dung lượng: ${order.capacity}</div>
+                                    <div><strong>Giá: <fmt:formatNumber value="${order.price}" type="number" groupingUsed="true"/> ₫</strong></div>
+                                    <div>Số lượng: ${order.quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="total-label">Tổng tiền:</span>
+                            <span class="total-price">
+    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+</span>
+                            <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                        </div>
+                    </div>
+                </c:forEach>
             </div>
         </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -488,6 +782,8 @@
             </div>
 
         </footer><!--/Footer-->
+
+        <!-- Script JS đơn giản để chuyển tab không cần load lại trang -->
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
@@ -495,8 +791,44 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
+
+        <script>
+            // Lấy tất cả các button tab
+            const tabButtons = document.querySelectorAll('.my-order-tabs button');
+
+            // Lấy các section tương ứng
+            const allSection = document.getElementById('tab-all');
+            const pendingSection = document.getElementById('tab-pending');
+            const shippingSection = document.getElementById('tab-shipping');
+            const deliveredSection = document.getElementById('tab-delivered');
+            const canceledSection = document.getElementById('tab-canceled');
+            const returnSection = document.getElementById('tab-return');
+
+            // Gom các section vào 1 mảng để tiện xử lý
+            const sections = [allSection, pendingSection, shippingSection, deliveredSection, canceledSection, returnSection];
+
+            // Lắng nghe sự kiện click trên từng nút
+            tabButtons.forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    // Bỏ class 'active' khỏi tất cả nút
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    // Thêm class 'active' cho nút được click
+                    button.classList.add('active');
+
+                    // Ẩn tất cả các section
+                    sections.forEach(sec => {
+                        sec.style.display = 'none';
+                    });
+
+                    // Nếu là tab "Tất cả" (index = 0) thì hiển thị tất cả
+                    // Ẩn tất cả
+                    sections.forEach(sec => sec.style.display = 'none');
+
+                    // Chỉ hiển thị 1 section tương ứng
+                    sections[index].style.display = 'block';
+
+                });
+            });
+        </script>
     </body>
 </html>
-
-
-

@@ -91,7 +91,11 @@ public class LoginController extends HttpServlet {
         String password = request.getParameter("password");
         User user = daouser.getUserByEmail(email);
 
+        System.out.println(email);
+        System.out.println(password);
+        System.out.println(user.getPassHash());
         if (Validate.checkLoginValidUser(email, password)) {
+            System.out.println("true");
             HttpSession session = request.getSession(true);
             session.setAttribute("isLoggedIn", true);
             session.setAttribute("user", daouser.getUserByEmail(email));
