@@ -9,18 +9,37 @@ package entity;
  * @author HP
  */
 public class ProductVariant {
-   private int id;
-   private int product_id;
-   private int color_id;
-   private int storage_id;
-   private double price;
-   private int stock;
-   private boolean status;
+
+    private int id;
+    private int product_id;
+    private int color_id;
+    private int storage_id;
+    private double price;
+    private int stock;
+    private String status;
+    private Color color;
+    private Storage storage;
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
 
     public ProductVariant() {
     }
 
-    public ProductVariant(int id, int product_id, int color_id, int storage_id, double price, int stock, boolean status) {
+    public ProductVariant(int id, int product_id, int color_id, int storage_id, double price, int stock, String status) {
         this.id = id;
         this.product_id = product_id;
         this.color_id = color_id;
@@ -78,11 +97,11 @@ public class ProductVariant {
         this.stock = stock;
     }
 
-    public boolean isStatus() {
+    public String isStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -90,6 +109,5 @@ public class ProductVariant {
     public String toString() {
         return "ProductVariant{" + "id=" + id + ", product_id=" + product_id + ", color_id=" + color_id + ", storage_id=" + storage_id + ", price=" + price + ", stock=" + stock + ", status=" + status + '}';
     }
-   
-}
 
+}

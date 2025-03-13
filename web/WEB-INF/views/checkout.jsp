@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant,entity.Address" %>
+<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant,entity.Address,entity.Storage,entity.Color" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -277,20 +277,29 @@
                                     for (CartItem item : cartItems) {
                                         Product product = item.getProduct();
                                         ProductVariant productVariant = item.getProductVariant();
+                                        Color color = item.getColor();
+                                        Storage storage = item.getStorage();
                             %>
                             <div style="display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
                                 <img src="<%= product.getImageURL() %>" alt="Product" style="width: 80px; height: 80px; border-radius: 5px; margin-right: 15px;">
                                 <div>
                                     <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
-                                    <p style="margin: 2px 0; color: #666; font-size: 14px;">Color: <%= productVariant.getColor() %> / Storage: <%= productVariant.getStorage() %>GB</p>
-                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">₫<%= String.format("%,.0f", productVariant.getPrice()) %> x <%= item.getQuantity() %></p>
-                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">Total: ₫₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %></p>
+                                    <p style="margin: 2px 0; color: #666; font-size: 14px;">
+                                        Color: <%= item.getColor().getColorName() %> / Storage: <%= item.getStorage().getCapacity() %>GB
+                                    </p>
+                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">
+                                        ₫<%= String.format("%,.0f", item.getPrice()) %> x <%= item.getQuantity() %>
+                                    </p>
+                                    <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">
+                                        Total: ₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %>
+                                    </p>
                                 </div>
                             </div>
                             <% } } else { %>
-                            <tr><td colspan="6">Your cart is empty!</td></tr>
+                            <p style="text-align: center; font-size: 16px; color: #777;">Your cart is empty!</p>
                             <% } %>
                         </div>
+
 
                         <div class="payment-options" style="margin-top: 10px;">
                             <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
