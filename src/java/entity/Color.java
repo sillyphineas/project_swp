@@ -38,7 +38,8 @@ public class Color {
         this.colorName = colorName;
     }
 
-    public String isStatus() {
+
+    public String getStatus() {
         return status;
     }
 
@@ -50,5 +51,7 @@ public class Color {
     public String toString() {
         return "Color{" + "id=" + id + ", colorName=" + colorName + ", status=" + status + '}';
     }
+
+    
     
 }

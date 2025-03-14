@@ -38,7 +38,8 @@ public class Storage {
         this.capacity = capacity;
     }
 
-    public String isStatus() {
+
+    public String getStatus() {
         return status;
     }
 
@@ -50,6 +51,8 @@ public class Storage {
     public String toString() {
         return "Storage{" + "id=" + id + ", capacity=" + capacity + ", status=" + status + '}';
     }
+
+    
     
     
 }

@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Vector;
+import model.DAOColor;
+import model.DAOStorage;
 import model.DAOBrand;
 import model.DAOProduct;
 import model.DAOProductVariant;
@@ -20,6 +22,8 @@ import entity.Brand;
 import entity.Product;
 import entity.ProductVariant;
 import entity.User;
+import entity.Color;
+import entity.Storage;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpSession;
@@ -80,14 +84,19 @@ public class AddProductController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        
+
         DAOBrand daoBrand = new DAOBrand();
+        DAOColor daocolor = new DAOColor();
+        DAOStorage daostorage = new DAOStorage();
         Vector<Brand> brandList = daoBrand.getAllBrands();
+        Vector<Color> colorlist = daocolor.getAllColors();
+        Vector<Storage> storagelist = daostorage.getAllStorages();
         String action = request.getParameter("action");
         DAOProduct daoProduct = new DAOProduct();
-         Vector<Product> productList = daoProduct.getProducts("SELECT * FROM Products WHERE isDisabled = 0");
+        
+        Vector<Product> productList = daoProduct.getProducts("SELECT * FROM Products WHERE isDisabled = 0");
 
-    request.setAttribute("products", productList);
+        request.setAttribute("products", productList);
 
         if (action == null) {
             action = "display";
@@ -97,7 +106,17 @@ public class AddProductController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/add_product.jsp").forward(request, response);
         }
         if (action.equals("addProductVariant")) {
+            request.setAttribute("brands", brandList);
+            request.setAttribute("colorlist", colorlist);
+            request.setAttribute("storagelist", storagelist);
             request.getRequestDispatcher("WEB-INF/views/add_productvariant.jsp").forward(request, response);
+
+        }
+        if (action.equals("addColor")) {
+            request.getRequestDispatcher("WEB-INF/views/add_color.jsp").forward(request, response);
+        }
+        if (action.equals("addStorage")) {
+            request.getRequestDispatcher("WEB-INF/views/add_storage.jsp").forward(request, response);
         }
 
     }
@@ -115,6 +134,8 @@ public class AddProductController extends HttpServlet {
             throws ServletException, IOException {
         DAOProduct daoProduct = new DAOProduct();
         DAOProductVariant daoVariant = new DAOProductVariant();
+        DAOColor daocolor = new DAOColor();
+        DAOStorage daostorage = new DAOStorage();
 
         String action = request.getParameter("action");
 
@@ -141,7 +162,6 @@ public class AddProductController extends HttpServlet {
             int feedbackCount = parseIntSafe(request.getParameter("feedbackCount"), 0);
             String cameraSpecs = request.getParameter("cameraSpecs");
             String simType = request.getParameter("simType");
-             
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date createAt = new Date();
@@ -161,15 +181,35 @@ public class AddProductController extends HttpServlet {
         if (action != null && "addProductVariant".equals(action)) {
             int variantId = parseIntSafe(request.getParameter("variantId"), 0);
             int productID = parseIntSafe(request.getParameter("productID"), 0);
-            String color = request.getParameter("color");
+            int color_id = parseIntSafe(request.getParameter("color_id"), 0);
             String priceStr = request.getParameter("price");
             double price = parseDoubleSafe(request.getParameter("price"), 0.0);
-            int storage = parseIntSafe(request.getParameter("storage"), 0);
+            int storage_id = parseIntSafe(request.getParameter("storage_id"), 0);
             int stock = parseIntSafe(request.getParameter("stock"), 0);
-            ProductVariant addVariant = new ProductVariant(0, productID, color, storage, price, stock);
+
+            String status = request.getParameter("status");
+            ProductVariant addVariant = new ProductVariant(stock, productID, color_id, storage_id, price, stock, status);
             daoVariant.addProductVariant(addVariant);
             response.sendRedirect("MarketingProductController");
         }
+        if (action != null && "addColor".equals(action)) {
+            int colorid = parseIntSafe(request.getParameter("colorid"), 0);
+            String colorName = request.getParameter("colorName");
+            String status = request.getParameter("status");
+            Color color = new Color(colorid, colorName, status);
+             daocolor.addColor(color);
+            response.sendRedirect("MarketingProductController");
+        }
+        if (action != null && "addStorage".equals(action)) {
+            int storageid = parseIntSafe(request.getParameter("storage_id"), 0);
+            String capacity = request.getParameter("capacity");
+            String status = request.getParameter("status");
+            Storage storage = new Storage(storageid, capacity, status);
+            daostorage.addStorage(storage);
+            response.sendRedirect("MarketingProductController");
+           
+        }
+
     }
 
     /**
@@ -189,11 +229,12 @@ public class AddProductController extends HttpServlet {
             return defaultValue;
         }
     }
+
     private double parseDoubleSafe(String param, double defaultValue) {
-    try {
-        return (param != null && !param.isEmpty()) ? Double.parseDouble(param) : defaultValue;
-    } catch (NumberFormatException e) {
-        return defaultValue;
+        try {
+            return (param != null && !param.isEmpty()) ? Double.parseDouble(param) : defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
-}
 }

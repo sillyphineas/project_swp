@@ -31,6 +31,7 @@ public class Shipping {
         this.ActualArrival = ActualArrival;
         this.ShippingDate = ShippingDate;
     }
+    
 
     public int getShippingID() {
         return ShippingID;

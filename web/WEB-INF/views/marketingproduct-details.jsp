@@ -6,7 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User, entity.Product"%>
+<%@page import="entity.User"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -150,14 +150,14 @@
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
-                                <ul class="nav navstbar-nav">
-                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
+                                <ul class="nav navbar-nav">
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -183,20 +183,19 @@
                                 </button>
                             </div>
                             <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-
-                                </ul>
+                                  <ul class="nav navbar-nav collapse navbar-collapse">
+                                <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                <li><a href="SliderController">Slider List</a></li>
+                                <li><a href="CustomerController">Customer List</a></li>
+                                <li><a href="MarketingProductController">Product List</a></li>
+                            </ul>
+                                
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
+                                <form action="${pageContext.request.contextPath}/MarketingProductDetails" method="get">
                                     <input type="text" name="search" value="${param.search}" />
 
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -217,7 +216,6 @@
                             <div class="brands_products">
                                 <h2>Brands</h2> 
                                 <div class="brands-name">
-
                                     <ul class="nav nav-pills nav-stacked">
                                         <li> 
                                             <a href="${pageContext.request.contextPath}/MarketingProductController?brandID=0">All Brands</a> 
@@ -236,10 +234,10 @@
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
                                         <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="5000000000000" step="10" class="form-control">
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
 
                                         <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="5000000000000" step="10" class="form-control">
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
 
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
                                     </form>
@@ -273,89 +271,51 @@
                                     <img src="${product.imageURL}" alt="" />
 
                                 </div>
-                                <div id="similar-product" class="carousel slide" data-ride="carousel">
-
-                                    <!--                                     Wrapper for slides -->
-                                    <!--                                    <div class="carousel-inner">
-                                                                            <div class="item active">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                                                            <div class="item">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                                                            <div class="item">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                    
-                                                                        </div>-->
-
-                                    <!--                                     Controls -->
-                                    <!--                                    <a class="left item-control" href="#similar-product" data-slide="prev">
-                                                                            <i class="fa fa-angle-left"></i>
-                                                                        </a>
-                                                                        <a class="right item-control" href="#similar-product" data-slide="next">
-                                                                            <i class="fa fa-angle-right"></i>
-                                                                        </a>-->
-                                </div>
-
-                            </div>
+                               </div>
                             <div class="col-sm-7">
 
-                                <form action="CartURL" method="POST" onsubmit="event.preventDefault(); addToCart();">
-                                    <input type="hidden" id="productID" name="productID" value="${product.id}">
-                                    <input type="hidden" name="service" value="add2cart">
-                                    <%
-                                        Product product = (Product)  request.getAttribute("product");
-                                    %>
-                                    <!-- Thông tin sản phẩm -->
+                                <form id="productForm">
+                                    <input type="hidden" name="id" value="${product.id}"> 
                                     <div class="product-information">
-                                        <h2><%= product.getName()%></h2>
-                                        <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
-                                        
-                                        <p><b>Storage:</b>
-                                            <c:forEach var="storages" items="${distinctStorages}">
-                                            <h1>abc</h1>
-                                                
-                                            <option value="${storages}" data-price="${price}" data-stock="${stock}">
-                                                ${storages}
-                                            </option>
-                                        </c:forEach>
-                                        </p>
+                                        <h2>${product.name}</h2>
 
+                                       
                                         <p><b>Color:</b>
-                                            <select id="colorSelector" class="form-control" name="color">
-                                                <c:forEach var="color" items="${distinctColors}">
-                                                    <option value="${color}" data-price="${price}" data-stock="${stock}">
-                                                        ${color}
-                                                    </option>
+                                            <select id="color" name="color" class="form-control">
+                                                <c:forEach var="color" items="${colors}">
+                                                    <option value="${color}" ${color == param.color ? 'selected' : ''}>${color}</option>
                                                 </c:forEach>
                                             </select>
                                         </p>
 
-                                        <p><span id="stockInfo">Select storage and color</span></p>
-                                        <p><b>Price:</b> <span id="productPrice">₫${String.format("%,.0f", minPrice)}</span></p>
+                                        <p><b>Storage:</b>
+                                            <select id="storage" name="storage" class="form-control">
+                                                <c:forEach var="storage" items="${storages}">
+                                                    <option value="${storage}" ${storage == param.storage ? 'selected' : ''}>${storage}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </p>
+                                        <p><b>Description:</b> ${product.description}</p>
 
 
-                                        <p><b>Condition:</b> New</p>
+                                        <p><b>Stock:</b> <span id="productStock">${stock}</span></p>
+
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
                                                 <p><b>Brand: </b>${brand.name}</p>
                                             </c:if>
                                         </c:forEach>
-                                        <p><b>Description:</b> ${product.description}</p>
 
-
-                                        <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
+                                        <p><b>Quantity:</b>
+                                            <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
+                                        <p><b>Price: </b> <span id="productPrice">₫${String.format("%,.0f",price)}</span></p>
+                                        <a href="MarketingProductDetails?action=editProduct&id=${product.id}" class="btn btn-group cart">Edit Product</a>
                                     </div>
                                 </form>
+
                             </div>
+
                         </div><!--/product-details-->
 
                         <div class="category-tab shop-details-tab"><!--category-tab-->
@@ -376,7 +336,7 @@
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
 
-
+                                                            <li class="list-group-item"><b>Availability:</b></li>
 
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
                                                             <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
@@ -595,39 +555,48 @@
 
         <script src="js/cart.js"></script>
         <script>
-document.addEventListener("DOMContentLoaded", function () {
-                    var storageSelector = document.getElementById("storageSelector");
-            var colorSelector = document.getElementById("colorSelector");
-            var stockInfo = document.getElementById("stockInfo");
-            var productPrice = document.getElementById("productPrice");
-            function updateStockAndPrice() {
-            var selectedStorage = storageSelector.value;
+document.addEventListener("DOMContentLoaded",    function() {
+
+            var colorSelector = document.getElementById("color");
+            var storageSelector = document.getElementById("storage");
+            var defaultColor = colorSelector.options[0].value;
+            var defaultStorage = storageSelector.options[0].value;
+            updateProductInfo(defaultColor, defaultStorage);
+            colorSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
-            // Lấy các option tương ứng từ `storage` và `color`
-            var selectedStorageOption = storageSelector.querySelector(`option[value="${selectedStorage}"]`);
-            var selectedColorOption = colorSelector.querySelector(`option[value="${selectedColor}"]`);
-            if (selectedStorageOption && selectedColorOption) {
-            // Lấy giá trị từ các thuộc tính `data-price` và `data-stock`
-            var price = selectedStorageOption.getAttribute("data-price");
-            var stock = selectedStorageOption.getAttribute("data-stock");
-            // Cập nhật giá và số lượng
-            productPrice.textContent = "₫" + price;
-            stockInfo.textContent = "Stock: " + stock;
+            var selectedStorage = storageSelector.value;
+            updateProductInfo(selectedColor, selectedStorage);
+            });
+            storageSelector.addEventListener("change", function() {
+            var selectedColor = colorSelector.value;
+            var selectedStorage = storageSelector.value;
+            updateProductInfo(selectedColor, selectedStorage);
+            });
+});
+        
+        function updateProductInfo(color, storage) {
+                    var productId = '${product.id}';
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+            if (xhr.status == 200) {
+            var data = JSON.parse(xhr.responseText);
+            // Cập nhật giá và số lượng sản phẩm
+            document.getElementById("productPrice").innerText = '₫' + data.price; ;
+            document.getElementById("productStock").innerText = data.stock;
             } else {
-            stockInfo.textContent = "Please select both storage and color.";
+            alert("Không tìm thấy sản phẩm với lựa chọn này.");
             }
-            }
+            };
+            xhr.send();
+                }
+                function formatPrice(price) {
+                    
+                    return price.toLocaleString();
+                }
+</script>
 
-            // Lắng nghe sự kiện khi người dùng thay đổi lựa chọn
-            storageSelector.addEventListener("change", updateStockAndPrice);
-            colorSelector.addEventListener("change", updateStockAndPrice);
-            // Gọi hàm để cập nhật giá và stock khi trang load
-            updateStockAndPrice();
-                });
-                console.log("Selected Storage:", selectedStorage);
-                console.log("Selected Color:", selectedColor);
-                  </script>
-
-    </body>
+</body>
 </html>
 

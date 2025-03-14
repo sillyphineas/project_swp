@@ -134,11 +134,10 @@ public class VNPayReturnServlet extends HttpServlet {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(orderTime);
             calendar.add(Calendar.DATE, 3);
-            newOrder.setShippingDate(calendar.getTime());
             newOrder.setShippingAddress((String) session.getAttribute("addressSelect"));
             newOrder.setTotalPrice(totalAmount);
             newOrder.setDiscountedPrice(0.0);
-            newOrder.setPaymentMethod(1);
+            newOrder.setPaymentMethod(2);
             newOrder.setDisabled(false);
             newOrder.setVoucherID(null);
             newOrder.setRecipientName((String) session.getAttribute("newFullName"));
@@ -165,7 +164,7 @@ public class VNPayReturnServlet extends HttpServlet {
                 for (CartItem item : selectedCartItems) {
                     int variantId = item.getProductVariantID();
                     int quantity = item.getQuantity();
-                    int productId = daoProductVariant.getProductVariantById(variantId).getProductID();
+                    int productId = daoProductVariant.getProductVariantById(variantId).getProduct_id();
                     String variantName = daoProduct.getProductById(productId).getName();
                     variantNames.put(variantId, variantName);
                     daoProductVariant.reduceStock(variantId, quantity);

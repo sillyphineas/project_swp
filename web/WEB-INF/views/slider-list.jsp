@@ -86,8 +86,12 @@
 
             /* Pagination Styling */
             .pagination {
-                text-align: center;
+                text-align: center; /* Căn giữa các liên kết phân trang */
                 margin-top: 20px;
+                display: flex;
+                justify-content: center; /* Căn giữa phần tử con (nút phân trang) */
+                align-items: center; /* Đảm bảo rằng phần tử được căn giữa theo chiều dọc */
+                width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
             }
 
             .pagination a {
@@ -103,6 +107,7 @@
             .pagination a:hover {
                 background-color: #e67e22;
             }
+
 
             /* Table Styling */
             table {
