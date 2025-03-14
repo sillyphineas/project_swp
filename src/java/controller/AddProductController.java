@@ -166,8 +166,8 @@ public class AddProductController extends HttpServlet {
             double price = parseDoubleSafe(request.getParameter("price"), 0.0);
             int storage = parseIntSafe(request.getParameter("storage"), 0);
             int stock = parseIntSafe(request.getParameter("stock"), 0);
-            ProductVariant addVariant = new ProductVariant(0, productID, color, storage, price, stock);
-            daoVariant.addProductVariant(addVariant);
+//            ProductVariant addVariant = new ProductVariant(0, productID, color, storage, price, stock);
+//            daoVariant.addProductVariant(addVariant);
             response.sendRedirect("MarketingProductController");
         }
     }

@@ -363,9 +363,9 @@
                         <div class="product-info" style="margin-top: 10px;">
                             <p class="product-name" style="font-weight: bold; font-size: 16px; color: #333; margin-bottom: 5px;">${product.name}</p>
                             <p class="product-price" style="font-weight: bold; color: #e74c3c; font-size: 16px; margin-bottom: 10px;">₫${String.format("%,.0f", product.variantPrice)}</p>
-                            <a href="javascript:void(0);" onclick="addToCart(${product.id})"
+                            <a href="ProductDetailController?id=${product.id}"
                                style="display: block; background-color: #e67e22; color: white; padding: 8px; border-radius: 5px; text-decoration: none; font-weight: bold;">
-                                <i class="fa fa-shopping-cart"></i> Add to Cart
+                                <i class="fa fa-shopping-cart"></i> Detail
                             </a>
                         </div>
                     </div>

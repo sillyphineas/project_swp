@@ -193,7 +193,7 @@ public class MarketingProductDetails extends HttpServlet {
             int stock = Integer.parseInt(request.getParameter("stock"));
 //
 //            ProductVariant updatedVariant = new ProductVariant(variantId, productID, color, storage, price, stock);
-            daoVariant.updateProductVariant(updatedVariant);
+//            daoVariant.updateProductVariant(updatedVariant);
             response.sendRedirect("MarketingProductDetails?id=" + productID);
         }
     }

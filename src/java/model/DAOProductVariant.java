@@ -178,7 +178,7 @@ public class DAOProductVariant extends DBConnection {
 
     public Vector<ProductVariant> getVariantsByProductId(int productId) {
         Vector<ProductVariant> variants = new Vector<>();
-        String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, c.colorName, s.capacity "
+        String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, c.colorName, s.capacity, pv.status "
                 + "FROM productVariants pv "
                 + "JOIN colors c ON pv.color_id = c.id "
                 + "JOIN storages s ON pv.storage_id = s.id "
@@ -339,7 +339,7 @@ public class DAOProductVariant extends DBConnection {
 
     public static void main(String[] args) {
         DAOProductVariant dao = new DAOProductVariant();
-        System.out.println(dao.getProductVariantById(1));
+        dao.reduceStock(196, 2);
 
     }
 
