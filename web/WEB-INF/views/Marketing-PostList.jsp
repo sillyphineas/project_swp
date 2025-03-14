@@ -9,7 +9,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User,java.util.List,jakarta.servlet.http.HttpSession,model.DAOUser"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -76,7 +77,7 @@
 
             .new-pagination-area {
                 text-align: center;
-                margin-bottom: 20px; /* khoảng cách giữa phân trang và footer */
+                margin-bottom: 20px;
             }
 
             .new-pagination {
@@ -87,35 +88,34 @@
             }
 
             .new-pagination li {
-                margin: 0 3px; /* giảm khoảng cách giữa các trang */
+                margin: 0 5px;
             }
 
             .new-pagination li a {
                 display: inline-block;
-                width: 30px; /* giảm kích thước nút phân trang */
-                height: 30px;
+                width: 35px;
+                height: 35px;
                 text-align: center;
-                line-height: 30px; /* căn giữa số trang */
-                border-radius: 50%; /* tạo hình tròn */
+                line-height: 35px;
+                border-radius: 50%;
                 background-color: #f1f1f1;
                 color: #333;
                 text-decoration: none;
                 font-weight: bold;
-                font-size: 14px; /* giảm kích thước chữ */
+                font-size: 14px;
+                transition: 0.3s;
             }
 
-            .new-pagination li a.new-active {
-                background-color: #ff8c00; /* màu sắc cho nút active */
-                color: white;
+            /* Cập nhật lại phần active */
+            .new-pagination li.new-active a {
+                background-color: #ff8c00 !important;
+                color: white !important;
             }
 
-            .new-pagination li a.new-disabled {
+            .new-pagination li a:hover {
                 background-color: #ddd;
-                color: #aaa;
-                pointer-events: none;
             }
 
-            /* Tách footer */
             .footer {
                 margin-top: 50px; /* khoảng cách từ phân trang tới footer */
                 text-align: center;
@@ -209,13 +209,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -251,16 +251,20 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <form action="MarketingPostController" method="get">
+                            <form action="MarketingPostController" method="get" onsubmit="return validateSearch()">
                                 <input type="hidden" value="search" name="service">
-                                <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
-                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
-                                    <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
-                                        <i class="fa fa-search"></i> 
-                                    </button>
+                                <div class="search_box pull-right" style="position: relative; display: flex; flex-direction: column; align-items: start; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
+                                    <div style="display: flex; align-items: center; width: 100%;">
+                                        <input type="text" id="searchQuery" name="query" placeholder="Search" value="${param.query}" 
+                                               style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                        <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
+                                            <i class="fa fa-search"></i> 
+                                        </button>
+                                    </div>
+
                                 </div>
                             </form>
-                        </div>
+                        </div
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -298,7 +302,20 @@
                                         <i style="margin-right: 5px;"></i> Sort
                                     </button>
                                 </form>
+                                <label for="categoryID" style="font-size: 13px; margin-right: 8px; color: #555;">Category:</label>
+                                <%
+                                    List<Category> categories = (List<Category>) request.getAttribute("categories");
+                                    int selectedCategoryID = request.getAttribute("categoryID") != null ? (int) request.getAttribute("categoryID") : -1;
+                                %>
 
+                                <select id="categoryID" name="categoryID" onchange="filterByCategory()" style="width: 150px; font-size: 13px; padding: 6px; border-radius: 4px; border: 1px solid #ccc;">
+                                    <option value="">All Categories</option>
+                                    <% for (Category category : categories) { %>
+                                    <option value="<%= category.getId() %>" <%= (category.getId() == selectedCategoryID) ? "selected" : "" %>>
+                                        <%= category.getCategoryName() %>
+                                    </option>
+                                    <% } %>
+                                </select>
                                 <!-- Add Blog Button -->
                                 <a href="MarketingPostController?service=addBlog" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
                                     <i style="margin-right: 5px;"></i> Add Blog
@@ -325,6 +342,8 @@
                             <tbody id="blog-list">
                                 <%
                                 List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+                                
+                                
                                 if (blogs != null && !blogs.isEmpty()) {
                                     DAOBlog dao = new DAOBlog();
                                     for (Blog blog : blogs){
@@ -380,226 +399,242 @@
 
                         <div class="new-pagination-area">
                             <ul class="new-pagination">
-                                <% 
-                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
-                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
-                                    String service = request.getParameter("service");
-                                    if (service == null) {
-                                        service = "listAllBlogs";
-                                    }
-                                    String sortBy = (String) request.getAttribute("sortBy");
-                                    String sortOrder = (String) request.getAttribute("sortOrder");
-                                    String query = (String) request.getAttribute("query");
+                                <%
+                                Integer totalPages = (Integer) request.getAttribute("totalPages");
+                                Integer currentPage = (Integer) request.getAttribute("currentPage");
+                                String service = request.getParameter("service");
+                                if (service == null) {
+                                    service = "listAllBlogs";
+                                }
 
-                                    // Xử lý filter tránh null
-                                    String filterId = (request.getAttribute("id") != null) ? request.getAttribute("id").toString() : "";
-                                    String filterAuthorId = (request.getAttribute("authorID") != null) ? request.getAttribute("authorID").toString() : "";
-                                    String filterStatus = (request.getAttribute("status") != null) ? request.getAttribute("status").toString() : "";
+                                // Lấy các tham số để duy trì filter
+                                String sortBy = (String) request.getAttribute("sortBy");
+                                String sortOrder = (String) request.getAttribute("sortOrder");
+                                String query = (String) request.getAttribute("query");
 
-                                    // Tạo chuỗi filter
-                                    StringBuilder filterParams = new StringBuilder();
-                                    if ("blogFilter".equals(service)) {
-                                        if (!filterId.isEmpty()) filterParams.append("&id=").append(filterId);
-                                        if (!filterAuthorId.isEmpty()) filterParams.append("&authorID=").append(filterAuthorId);
-                                        if (!filterStatus.isEmpty()) filterParams.append("&status=").append(filterStatus);
-                                    }
+                                String filterId = (request.getAttribute("id") != null) ? request.getAttribute("id").toString() : "";
+                                String filterAuthorId = (request.getAttribute("authorID") != null) ? request.getAttribute("authorID").toString() : "";
+                                String filterStatus = (request.getAttribute("status") != null) ? request.getAttribute("status").toString() : "";
 
-                                    if (totalPages != null && totalPages > 0) {
-                                        for (int i = 1; i <= totalPages; i++) {    
+                                // Lấy categoryID nếu service là CateWithID
+                                String categoryID = (request.getAttribute("categoryID") != null) ? request.getAttribute("categoryID").toString() : "";
+
+                                // Tạo chuỗi query string filter
+                                StringBuilder filterParams = new StringBuilder();
+                                if (query != null && !query.isEmpty()) {
+                                    filterParams.append("&query=").append(query);
+                                }
+                                if (sortBy != null && !sortBy.isEmpty()) {
+                                    filterParams.append("&sortBy=").append(sortBy);
+                                }
+                                if (sortOrder != null && !sortOrder.isEmpty()) {
+                                    filterParams.append("&sortOrder=").append(sortOrder);
+                                }
+                                if (!filterId.isEmpty()) filterParams.append("&id=").append(filterId);
+                                if (!filterAuthorId.isEmpty()) filterParams.append("&authorID=").append(filterAuthorId);
+                                if (!filterStatus.isEmpty()) filterParams.append("&status=").append(filterStatus);
+                                if (!categoryID.isEmpty()) filterParams.append("&categoryID=").append(categoryID); // Thêm categoryID vào URL
+
+                                if (totalPages != null && totalPages > 0) {
                                 %>
+                                <!-- Nút Previous -->
+                                <% if (currentPage > 1) { %>
                                 <li>
-                                    <a href="MarketingPostController?service=<%= service %>&page=<%= i %><%= filterParams.toString() %>">
-                                        <%= i %>
-                                    </a>
-                                </li>
-                                <% 
-                                        } 
-                                %>
-                                <% if (currentPage < totalPages) { %>
-                                <li>
-                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage + 1 %><%= filterParams.toString() %>">
-                                        Next
-                                    </a>
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage - 1 %><%= filterParams.toString() %>"><<</a>
                                 </li>
                                 <% } %>
-                                <% 
-                                    } 
-                                %>
+
+                                <!-- Hiển thị các trang -->
+                                <% for (int i = 1; i <= totalPages; i++) { %>
+                                <li class="<%= (i == currentPage) ? "new-active" : "" %>">
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= i %><%= filterParams.toString() %>"><%= i %></a>
+                                </li>
+                                <% } %>
+
+                                <!-- Nút Next -->
+                                <% if (currentPage < totalPages) { %>
+                                <li>
+                                    <a href="MarketingPostController?service=<%= service %>&page=<%= currentPage + 1 %><%= filterParams.toString() %>">>></a>
+                                </li>
+                                <% } %>
+                                <% } %>
+
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <footer id="footer"><!--Footer-->
-            <div class="footer-top">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <div class="companyinfo">
-                                <h2><span>e</span>-shopper</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
-                            </div>
+    <footer id="footer"><!--Footer-->
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="companyinfo">
+                            <h2><span>e</span>-shopper</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
                         </div>
-                        <div class="col-sm-7">
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe1.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe2.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe3.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-3">
-                                <div class="video-gallery text-center">
-                                    <a href="#">
-                                        <div class="iframe-img">
-                                            <img src="images/home/iframe4.png" alt="" />
-                                        </div>
-                                        <div class="overlay-icon">
-                                            <i class="fa fa-play-circle-o"></i>
-                                        </div>
-                                    </a>
-                                    <p>Circle of Hands</p>
-                                    <h2>24 DEC 2014</h2>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="col-sm-7">
                         <div class="col-sm-3">
-                            <div class="address">
-                                <img src="images/home/map.png" alt="" />
-                                <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+                            <div class="video-gallery text-center">
+                                <a href="#">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe1.png" alt="" />
+                                    </div>
+                                    <div class="overlay-icon">
+                                        <i class="fa fa-play-circle-o"></i>
+                                    </div>
+                                </a>
+                                <p>Circle of Hands</p>
+                                <h2>24 DEC 2014</h2>
                             </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="#">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe2.png" alt="" />
+                                    </div>
+                                    <div class="overlay-icon">
+                                        <i class="fa fa-play-circle-o"></i>
+                                    </div>
+                                </a>
+                                <p>Circle of Hands</p>
+                                <h2>24 DEC 2014</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="#">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe3.png" alt="" />
+                                    </div>
+                                    <div class="overlay-icon">
+                                        <i class="fa fa-play-circle-o"></i>
+                                    </div>
+                                </a>
+                                <p>Circle of Hands</p>
+                                <h2>24 DEC 2014</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="#">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe4.png" alt="" />
+                                    </div>
+                                    <div class="overlay-icon">
+                                        <i class="fa fa-play-circle-o"></i>
+                                    </div>
+                                </a>
+                                <p>Circle of Hands</p>
+                                <h2>24 DEC 2014</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="address">
+                            <img src="images/home/map.png" alt="" />
+                            <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="footer-widget">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Service</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Online Help</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">Order Status</a></li>
-                                    <li><a href="#">Change Location</a></li>
-                                    <li><a href="#">FAQ’s</a></li>
-                                </ul>
-                            </div>
+        <div class="footer-widget">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="single-widget">
+                            <h2>Service</h2>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="#">Online Help</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                                <li><a href="#">Order Status</a></li>
+                                <li><a href="#">Change Location</a></li>
+                                <li><a href="#">FAQ’s</a></li>
+                            </ul>
                         </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Quock Shop</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">T-Shirt</a></li>
-                                    <li><a href="#">Mens</a></li>
-                                    <li><a href="#">Womens</a></li>
-                                    <li><a href="#">Gift Cards</a></li>
-                                    <li><a href="#">Shoes</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>Policies</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privecy Policy</a></li>
-                                    <li><a href="#">Refund Policy</a></li>
-                                    <li><a href="#">Billing System</a></li>
-                                    <li><a href="#">Ticket System</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="single-widget">
-                                <h2>About Shopper</h2>
-                                <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Company Information</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                    <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affillate Program</a></li>
-                                    <li><a href="#">Copyright</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-3 col-sm-offset-1">
-                            <div class="single-widget">
-                                <h2>About Shopper</h2>
-                                <form action="#" class="searchform">
-                                    <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
-                                </form>
-                            </div>
-                        </div>
-
                     </div>
+                    <div class="col-sm-2">
+                        <div class="single-widget">
+                            <h2>Quock Shop</h2>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="#">T-Shirt</a></li>
+                                <li><a href="#">Mens</a></li>
+                                <li><a href="#">Womens</a></li>
+                                <li><a href="#">Gift Cards</a></li>
+                                <li><a href="#">Shoes</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="single-widget">
+                            <h2>Policies</h2>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="#">Terms of Use</a></li>
+                                <li><a href="#">Privecy Policy</a></li>
+                                <li><a href="#">Refund Policy</a></li>
+                                <li><a href="#">Billing System</a></li>
+                                <li><a href="#">Ticket System</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="single-widget">
+                            <h2>About Shopper</h2>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="#">Company Information</a></li>
+                                <li><a href="#">Careers</a></li>
+                                <li><a href="#">Store Location</a></li>
+                                <li><a href="#">Affillate Program</a></li>
+                                <li><a href="#">Copyright</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-sm-offset-1">
+                        <div class="single-widget">
+                            <h2>About Shopper</h2>
+                            <form action="#" class="searchform">
+                                <input type="text" placeholder="Your email address" />
+                                <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                <p>Get the most recent updates from <br />our site and be updated your self...</p>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+        </div>
 
-            <div class="footer-bottom">
-                <div class="container">
-                    <div class="row">
-                        <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-                        <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-                    </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
+                    <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
                 </div>
             </div>
+        </div>
 
-        </footer><!--/Footer-->
+    </footer><!--/Footer-->
 
 
 
-        <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
                                             function deleteBlog(blogId) {
                                                 if (confirm('Are you sure you want to delete this blog?')) {
                                                     $.ajax({
@@ -628,54 +663,60 @@
                                             }
 
 
-        </script>
-        <script>
-            function changeStatus(blogId, currentStatus) {
-                var newStatus = (currentStatus === true) ? false : true;
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "MarketingPostController?service=changeStatus", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.send("id=" + blogId + "&status=" + newStatus);
+    </script>
+    <script>
+        function changeStatus(blogId, currentStatus) {
+            var newStatus = (currentStatus === true) ? false : true;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "MarketingPostController?service=changeStatus", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.send("id=" + blogId + "&status=" + newStatus);
 
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        var newStatusText = newStatus ? "Disabled" : "Active";
-                        document.getElementById("status_" + blogId).innerHTML =
-                                '<a href="MarketingPostController?service=blogFilter&status=' + newStatus + '">' + newStatusText + '</a>';
-                        var changeButton = document.getElementById("changeButton_" + blogId);
-                        changeButton.setAttribute("onclick", "changeStatus(" + blogId + ", " + newStatus + ")");
-                        changeButton.innerHTML = "Change";
-                    } else {
-                        alert("Lỗi khi cập nhật trạng thái.");
-                    }
-                };
-            }
-
-        </script>
-        <script>
-            function showNotification(message) {
-                var notification = document.getElementById('notification');
-                var messageElement = document.getElementById('notification-message');
-
-                messageElement.textContent = message;
-
-                notification.classList.add('show');
-
-                setTimeout(function () {
-                    notification.classList.remove('show');
-                }, 1000);
-            }
-
-            window.onload = function () {
-                var urlParams = new URLSearchParams(window.location.search);
-                var message = urlParams.get('message');
-                if (message) {
-                    showNotification(message);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var newStatusText = newStatus ? "Inactive" : "Active";
+                    document.getElementById("status_" + blogId).innerHTML =
+                            '<a href="MarketingPostController?service=blogFilter&status=' + newStatus + '">' + newStatusText + '</a>';
+                    var changeButton = document.getElementById("changeButton_" + blogId);
+                    changeButton.setAttribute("onclick", "changeStatus(" + blogId + ", " + newStatus + ")");
+                    changeButton.innerHTML = "Change";
+                } else {
+                    alert("Lỗi khi cập nhật trạng thái.");
                 }
             };
-        </script>
-        <div id="notification" class="alert alert-info" style="display: none;">
-            <p id="notification-message">Blog Added successfully!</p>
-        </div>
-    </body>
+        }
+
+    </script>
+    <script>
+        function showNotification(message) {
+            var notification = document.getElementById('notification');
+            var messageElement = document.getElementById('notification-message');
+
+            messageElement.textContent = message;
+
+            notification.classList.add('show');
+
+            setTimeout(function () {
+                notification.classList.remove('show');
+            }, 1000);
+        }
+
+        window.onload = function () {
+            var urlParams = new URLSearchParams(window.location.search);
+            var message = urlParams.get('message');
+            if (message) {
+                showNotification(message);
+            }
+        };
+    </script>
+    <script>
+        function filterByCategory() {
+            var selectedCategory = document.getElementById("categoryID").value;
+            window.location.href = "MarketingPostController?service=CatewithID&categoryID=" + selectedCategory;
+        }
+    </script>
+    <div id="notification" class="alert alert-info" style="display: none;">
+        <p id="notification-message">Blog Added successfully!</p>
+    </div>
+</body>
 </html>

@@ -38,6 +38,7 @@ public class Color {
         this.colorName = colorName;
     }
 
+
     public String getStatus() {
         return status;
     }

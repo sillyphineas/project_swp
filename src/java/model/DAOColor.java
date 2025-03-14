@@ -36,7 +36,9 @@ public class DAOColor extends DBConnection {
                 Color color = new Color(
                         rs.getInt("id"),
                         rs.getString("colorName"),
+
                         rs.getString("status")  // Dùng String cho status
+
                 );
                 vector.add(color);
             }
@@ -46,7 +48,6 @@ public class DAOColor extends DBConnection {
         return vector;
     }
 
-    // Lấy màu theo ID
     public Vector<Color> getColorById(int id) {
         Vector<Color> colors = new Vector<>();
         String sql = "SELECT * FROM Color WHERE id = ?";
@@ -57,7 +58,9 @@ public class DAOColor extends DBConnection {
                 Color color = new Color(
                         rs.getInt("id"),
                         rs.getString("colorName"),
+
                         rs.getString("status")  // Dùng String cho status
+
                 );
                 colors.add(color);
             }
@@ -73,7 +76,10 @@ public class DAOColor extends DBConnection {
         String sql = "UPDATE Color SET colorName = ?, status = ? WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
+
+
             pre.setString(2, color.getStatus());  // Dùng String cho status
+
             pre.setInt(3, color.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -106,11 +112,14 @@ public class DAOColor extends DBConnection {
             while (rs.next()) {
                 colors.add(new Color(rs.getInt("id"),
                         rs.getString("colorName"),
+
                         rs.getString("status")));  // Dùng String cho status
+
             }
         }
         return colors;
     }
+
 
     // Lấy tất cả màu sắc có trạng thái 'Active'
     public Vector<Color> getAllColors() {
@@ -131,6 +140,7 @@ public class DAOColor extends DBConnection {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
         return colors;
     }
 }

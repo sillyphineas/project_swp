@@ -9,6 +9,7 @@ package entity;
  * @author HP
  */
 public class ProductVariant {
+
    private int id;
    private int product_id;
    private int color_id;
@@ -16,6 +17,7 @@ public class ProductVariant {
    private double price;
    private int stock;
    private String status;
+
 
     public ProductVariant() {
     }
@@ -90,6 +92,5 @@ public class ProductVariant {
     public String toString() {
         return "ProductVariant{" + "id=" + id + ", product_id=" + product_id + ", color_id=" + color_id + ", storage_id=" + storage_id + ", price=" + price + ", stock=" + stock + ", status=" + status + '}';
     }
-   
-}
 
+}

@@ -147,7 +147,6 @@ public class OrderController extends HttpServlet {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(orderTime);
                 calendar.add(Calendar.DATE, 3);
-                newOrder.setShippingDate(calendar.getTime());
                 newOrder.setShippingAddress(request.getParameter("addressSelect"));
                 newOrder.setTotalPrice(totalAmount);
                 newOrder.setDiscountedPrice(0.0);
@@ -178,10 +177,13 @@ public class OrderController extends HttpServlet {
                     for (CartItem item : selectedCartItems) {
                         int variantId = item.getProductVariantID();
                         int quantity = item.getQuantity();
-                        int productId = daoProductVariant.getProductVariantById(variantId).getProductID();
+                        int productId = daoProductVariant.getProductVariantById(variantId).getProduct_id();
                         String variantName = daoProduct.getProductById(productId).getName();
                         variantNames.put(variantId, variantName);
+                        System.out.println(variantId);
+                        System.out.println(quantity);
                         daoProductVariant.reduceStock(variantId, quantity);
+                        
                     }
                     daoCartItem.clearCart(customerID);
 

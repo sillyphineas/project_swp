@@ -175,71 +175,89 @@
                         <form action="MarketingPostController" method="post">
                             <input type="hidden" name="service" value="updateBlog" />
                             <input type="hidden" name="id" value="<%= blog.getId() %>">
+
                             <!-- Title -->
                             <div class="form-group">
                                 <label for="title">Title</label>
                                 <input type="text" name="title" class="form-control" value="<%= blog.getTitle() %>" required />
                             </div>
 
-                            <!-- Author -->
-                            <div class="form-group">
-                                <label for="authorID">Author</label>
-                                <select name="authorID" class="form-control" required>
-                                    <%
-                                        ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
-                                        while (rsAuthor.next()) {
-                                            int authorId = rsAuthor.getInt("id");
-                                            String authorName = rsAuthor.getString("name");
-                                    %>
-                                    <option value="<%= authorId %>"<%= blog.getAuthorID() == authorId ? "selected" : "" %>  %>
-                                        <%= authorName %>
-                                    </option>
-                                    <%
-                                        }
-                                    %>
-                                </select>
+                            <!-- Author & Category -->
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="authorID">Author</label>
+                                    <select name="authorID" class="form-control" required>
+                                        <%
+                                            ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
+                                            while (rsAuthor.next()) {
+                                                int authorId = rsAuthor.getInt("id");
+                                                String authorName = rsAuthor.getString("name");
+                                        %>
+                                        <option value="<%= authorId %>" <%= (blog.getAuthorID() == authorId) ? "selected" : "" %>><%= authorName %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="categoryID">Category</label>
+                                    <select name="categoryID" class="form-control" required>
+                                        <%
+                                            ResultSet rsCategory = (ResultSet) request.getAttribute("rsCategory");
+                                            while (rsCategory.next()) {
+                                                int categoryId = rsCategory.getInt("id");
+                                                String categoryName = rsCategory.getString("categoryName");
+                                        %>
+                                        <option value="<%= categoryId %>" <%= (blog.getCategoryID() == categoryId) ? "selected" : "" %>><%= categoryName %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
 
-                            <!-- Post Time -->
-                            <div class="form-group">
-                                <label for="postTime">Post Time</label>
-                                <input type="datetime-local" name="postTime" class="form-control" value="<%= blog.getPostTime() %>" required />
+                            <!-- Post Time & Status -->
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="postTime">Post Time</label>
+                                    <input type="datetime-local" name="postTime" id="postTime" class="form-control" value="<%= blog.getPostTime() %>" required />
+                                </div>
+
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="isDisabled">Status</label>
+                                    <select name="isDisabled" class="form-control" required>
+                                        <option value="false" <%= !blog.isIsDisabled() ? "selected" : "" %>>Active</option>
+                                        <option value="true" <%= blog.isIsDisabled() ? "selected" : "" %>>Disable</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <!-- Content -->
                             <div class="form-group">
                                 <label for="content">Content</label>
-                                <textarea name="content" class="form-control" id="content" rows="5" required><%= blog.getContent() %></textarea>
+                                <textarea name="content" class="form-control" rows="5" required><%= blog.getContent() %></textarea>
                             </div>
 
-                            <!-- Image URL -->
+                            <!-- Image URL & Backlinks -->
                             <div class="form-group">
                                 <label for="imageURL">Image URL</label>
                                 <input type="text" name="imageURL" class="form-control" value="<%= blog.getImageURL() %>" />
                             </div>
 
-                            <!-- Backlinks -->
                             <div class="form-group">
                                 <label for="backlinks">Backlinks</label>
                                 <input type="text" name="backlinks" class="form-control" value="<%= blog.getBacklinks() %>" />
                             </div>
 
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label for="isDisabled">Status</label>
-                                <select name="isDisabled" class="form-control" required>
-                                    <option value="false" <%= "false".equals(blog.isIsDisabled()) ? "selected" : "" %>>Active</option>
-                                    <option value="true" <%= "true".equals(blog.isIsDisabled()) ? "selected" : "" %>>Disable</option>
-                                </select>
-                            </div>
+                            <!-- Buttons -->
                             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
-                                <button type="submit" name="submit" value="updateBlog"class="btn btn-primary" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">Save Changes</button>
-                                <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                <button type="submit" name="submit" value="updateBlog" class="btn" 
+                                        style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; transition: all 0.3s ease;">
+                                    Save Changes
+                                </button>
+                                <a href="MarketingPostController?service=view&id=<%= blog.getId() %>" class="btn" 
+                                   style="padding: 10px 20px; background-color: #ff4d4d; color: white; border: 2px solid #ff4d4d; border-radius: 5px; font-weight: bold; transition: all 0.3s ease;">
                                     Back
                                 </a>
                             </div>
                         </form>
-
                         <% 
                         }
                         %>

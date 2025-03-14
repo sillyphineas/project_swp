@@ -93,7 +93,6 @@ public class EmailUtil {
             sb.append("<p><strong>Order ID:</strong> ").append(od.getId()).append("</p>");
             sb.append("<p><strong>Order Time:</strong> ").append(od.getOrderTime()).append("</p>");
             sb.append("<p><strong>Order Status:</strong> ").append(od.getOrderStatus()).append("</p>");
-            sb.append("<p><strong>Shipping Date:</strong> ").append(od.getShippingDate()).append("</p>");
             sb.append("<p><strong>Shipping Address:</strong> ").append(od.getShippingAddress()).append("</p>");
             sb.append("<p><strong>Recipient Name:</strong> ").append(od.getRecipientName()).append("</p>");
             sb.append("<p><strong>Recipient Phone:</strong> ").append(od.getRecipientPhone()).append("</p>");

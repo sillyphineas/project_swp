@@ -176,6 +176,7 @@ public class DAOProduct extends DBConnection {
                 + "JOIN colors c ON pv.color_id = c.id "
                 + "JOIN storages s ON pv.storage_id = s.id "
                 + "WHERE pv.product_id = ? AND pv.status = 'Active' AND c.status = 'Active' AND s.status = 'Active'";
+
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, productId);
@@ -829,7 +830,7 @@ public class DAOProduct extends DBConnection {
         Vector<Product> products = new Vector<>();
         String sql = "SELECT p.*, MIN(v.price) AS variantPrice "
                 + "FROM Products p "
-                + "JOIN ProductVariants v ON p.id = v.productID "
+                + "JOIN ProductVariants v ON p.id = v.product_id "
                 + "WHERE p.isDisabled = FALSE "
                 + "GROUP BY p.id "
                 + "ORDER BY p.createAt DESC LIMIT 10";
@@ -885,12 +886,6 @@ public class DAOProduct extends DBConnection {
             ex.printStackTrace();
         }
         return n;
-    }
-
-    public static void main(String[] args) {
-        String password = "123456";
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        System.out.println(hashedPassword);
     }
 
     public Vector<Product> getProductsByFilter(int brandID, String searchQuery, double minPrice,
@@ -1221,7 +1216,5 @@ public class DAOProduct extends DBConnection {
 
     return productList;
 }
-
-
 
 }
