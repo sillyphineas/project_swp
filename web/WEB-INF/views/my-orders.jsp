@@ -82,7 +82,7 @@
             }
             #my-orders-section .order-status {
                 font-weight: bold;
-                color: #e74c3c;
+                color: #f1c40f;
             }
             #my-orders-section .order-status.completed {
                 color: #27ae60;
@@ -324,20 +324,20 @@
                         <!-- Body -->
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
 
                                 <!-- Thông tin sản phẩm -->
                                 <div class="product-info">
@@ -354,8 +354,8 @@
                         <div class="order-footer">
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <!-- Các nút hành động tuỳ theo trạng thái -->
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
                         </div>
@@ -380,20 +380,20 @@
                         </div>
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
                                 <div class="product-info">
                                     <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
                                     <div>Sản phẩm: ${order.productName}</div>
@@ -406,9 +406,10 @@
                         <div class="order-footer">
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
+                            <a href="#" style="color: red; font-weight: bold;">Huỷ đơn</a>
                         </div>
                     </div>
                 </c:forEach>
@@ -433,20 +434,20 @@
                         </div>
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
                                 <div class="product-info">
                                     <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
                                     <div>Sản phẩm: ${order.productName}</div>
@@ -459,8 +460,8 @@
                         <div class="order-footer">
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
                         </div>
                     </div>
@@ -486,20 +487,20 @@
                         </div>
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
                                 <div class="product-info">
                                     <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
                                     <div>Sản phẩm: ${order.productName}</div>
@@ -512,8 +513,8 @@
                         <div class="order-footer">
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
                         </div>
                     </div>
@@ -537,20 +538,20 @@
                         </div>
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
                                 <div class="product-info">
                                     <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
                                     <div>Sản phẩm: ${order.productName}</div>
@@ -564,8 +565,8 @@
                             <button>Mua Lại</button>
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
                         </div>
                     </div>
@@ -589,20 +590,20 @@
                         </div>
                         <div class="order-body">
                             <div class="order-details">
-<!--                                <div>
-                                    Thời gian đặt:
-                                    <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
-                                </div>
-                                <div>
-                                    Địa chỉ giao:
-                                    ${order.address}, ${order.district}, ${order.city}
-                                </div>
-                                <div>
-                                    Điện thoại: ${order.recipientPhone}
-                                </div>
-                                <div>
-                                    Trạng thái vận chuyển: ${order.shippingStatus}
-                                </div>-->
+                                <!--                                <div>
+                                                                    Thời gian đặt:
+                                <fmt:formatDate value="${order.orderTime}" pattern="dd/MM/yyyy HH:mm"/>
+                            </div>
+                            <div>
+                                Địa chỉ giao:
+                                ${order.address}, ${order.district}, ${order.city}
+                            </div>
+                            <div>
+                                Điện thoại: ${order.recipientPhone}
+                            </div>
+                            <div>
+                                Trạng thái vận chuyển: ${order.shippingStatus}
+                            </div>-->
                                 <div class="product-info">
                                     <img src="${order.imageURL}" alt="Ảnh sản phẩm" width="100" height="100">
                                     <div>Sản phẩm: ${order.productName}</div>
@@ -615,8 +616,8 @@
                         <div class="order-footer">
                             <span class="total-label">Tổng tiền:</span>
                             <span class="total-price">
-    <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
-</span>
+                                <fmt:formatNumber value="${order.totalPrice}" type="number" groupingUsed="true"/> ₫
+                            </span>
                             <a href="#" class="btn-link">Xem Chi Tiết Đơn</a>
                         </div>
                     </div>

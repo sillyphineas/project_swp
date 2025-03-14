@@ -177,10 +177,13 @@ public class OrderController extends HttpServlet {
                     for (CartItem item : selectedCartItems) {
                         int variantId = item.getProductVariantID();
                         int quantity = item.getQuantity();
-                        int productId = daoProductVariant.getProductVariantById(variantId).getProductID();
+                        int productId = daoProductVariant.getProductVariantById(variantId).getProduct_id();
                         String variantName = daoProduct.getProductById(productId).getName();
                         variantNames.put(variantId, variantName);
+                        System.out.println(variantId);
+                        System.out.println(quantity);
                         daoProductVariant.reduceStock(variantId, quantity);
+                        
                     }
                     daoCartItem.clearCart(customerID);
 
