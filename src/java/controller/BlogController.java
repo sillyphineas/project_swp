@@ -6,6 +6,7 @@ package controller;
 
 import entity.Blog;
 import entity.Brand;
+import entity.Category;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -24,6 +25,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DAOBlog;
 import model.DAOBrand;
+import model.DAOCart;
+import model.DAOCategory;
 
 /**
  *
@@ -57,12 +60,15 @@ public class BlogController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         DAOBlog dao = new DAOBlog();
         DAOBrand daoBrand = new DAOBrand();
-
+        DAOCategory daoCate = new DAOCategory();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
             Vector<Brand> brandList = daoBrand.getAllBrands();
             request.setAttribute("brands", brandList);
+            List<Category> categories = daoCate.getAllCategories();
+            request.setAttribute("categories", categories);
+
             if (service == null) {
                 service = "listAllBlogs";
             }
@@ -84,22 +90,22 @@ public class BlogController extends HttpServlet {
                 String pageStr = request.getParameter("page");
                 int page = 1;
                 int pageSize = 10;
-                query =query.toLowerCase();
+
                 if (query == null || query.trim().isEmpty()) {
-                    request.setAttribute("error", "Please enter a search!!");
-                    request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
+                    response.sendRedirect("BlogURL?service=listAllBlogs");
                     return;
                 }
+
+                query = query.toLowerCase();
 
                 try {
                     if (pageStr != null && !pageStr.isEmpty()) {
                         page = Integer.parseInt(pageStr);
                     }
                 } catch (NumberFormatException e) {
-                    page = 1; 
+                    page = 1;
                 }
 
-                // Gọi DAO để lấy danh sách blog theo trang
                 List<Blog> blogs = dao.searchBlogs(query, page, pageSize);
                 int totalBlogs = dao.countTotalBlogsForSearch(query);
                 int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
@@ -110,6 +116,44 @@ public class BlogController extends HttpServlet {
 
                 request.setAttribute("blogs", blogs);
                 request.setAttribute("query", query);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+
+                request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
+            }
+
+            if (service.equals("CatewithID")) {
+                String categoryIdParam = request.getParameter("categoryID");
+                System.out.println("id" + categoryIdParam);
+                String pageParam = request.getParameter("page");
+                int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
+                int pageSize = 3;
+
+                if (categoryIdParam == null || categoryIdParam.trim().isEmpty()) {
+                    request.setAttribute("error", "Category ID is required!");
+                    request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
+                    return;
+                }
+
+                int categoryID = 0;
+                try {
+                    categoryID = Integer.parseInt(categoryIdParam);
+                } catch (NumberFormatException e) {
+                    request.setAttribute("error", "Invalid Category ID format.");
+                    request.getRequestDispatcher("/WEB-INF/views/blog.jsp").forward(request, response);
+                    return;
+                }
+
+                List<Blog> blogs = dao.getPaginatedBlogsByCategory(categoryID, page, pageSize);
+                int totalBlogs = dao.getTotalBlogsByCategory(categoryID);
+                int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
+
+                if (blogs.isEmpty()) {
+                    request.setAttribute("message", "No blogs found for this category.");
+                }
+                request.setAttribute("blogs", blogs);
+
+                request.setAttribute("categoryID", categoryID);
                 request.setAttribute("currentPage", page);
                 request.setAttribute("totalPages", totalPages);
 

@@ -8,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -151,14 +151,14 @@
                         %>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form  action="BlogURL" method="get">
+                                <form action="BlogURL" method="get">
                                     <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" >
-                                    <button type="submit" >Search</button>
+                                    <input type="text" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>">
+                                    <button type="submit">Search</button>
                                 </form>
-
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -167,65 +167,57 @@
         <section>
             <div class="container">
                 <div class="row">
-                    <!--                    <div class="col-sm-3">
-                                            <div class="left-sidebar">  
-                                                <div class="brands_products">
-                                                    <h2>Brands</h2> 
-                                                    <div class="brands-name">
-                                                        <ul class="nav nav-pills nav-stacked">
-                                                            <li> 
-                                                                <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
-                                                            </li> 
-                    <c:forEach var="brand" items="${brands}">
-                        <li> 
-                            <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
-                        </li> 
-                    </c:forEach> 
-                </ul> 
-            </div>
-        </div>                                                       
-    </div>
-</div>-->
-                    <%
-                        String message = (String) request.getAttribute("message");
-                        String error = (String) request.getAttribute("error");
-                        if (message != null) {
-                    %>
-                    <div style="color: red; font-weight: bold;text-align: center;">
-                        <%= message %>
+                    <div class="col-sm-3">
+                        <div class="left-sidebar">  
+                            <div class="categories_products">
+                                <h2>Categories</h2> 
+                                <div class="categories-name">
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li> 
+                                            <a href="BlogURL?service=listAllBlogs">All Categories</a> 
+                                        </li> 
+                                        <% 
+                                        List<Category> categories = (List<Category>) request.getAttribute("categories");
+                                        if (categories != null && !categories.isEmpty()) {
+                                            for (Category category : categories) {
+                                        %>
+
+                                        <li> 
+                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>">
+                                                <%= category.getCategoryName() %>
+                                            </a>
+                                        </li> 
+                                        <% 
+                                            }
+                                        }
+                                        %> 
+                                    </ul> 
+                                </div>
+                            </div>                                                       
+                        </div>
                     </div>
-                    <%
-                        }
-                    %>
-                    <%
-                        if (error != null) {
-                    %>
-                    <div style="color: red; font-weight: bold;text-align: center;">
-                        <%= error %>
-                    </div>
-                    <%
-                        }
-                    %>
-                    <%
-                        List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
-                        
-                        if (blogs != null && !blogs.isEmpty()) {
-                    %>
+
                     <div class="col-sm-9">
                         <div class="blog-post-area">
                             <h2 class="title text-center">Latest From our Blog</h2>
-                            <%
-                            DAOBlog dao = new DAOBlog();
-                            for (Blog blog : blogs){
-                            int authorID = blog.getAuthorID();
-                            String authname = dao.getAuthorNameById(blog.getAuthorID());
+                            <c:if test="${not empty message}">
+                                <div class="alert alert-warning">${message}</div>
+                            </c:if> 
+                            <% 
+                            List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+
+                            if (blogs != null && !blogs.isEmpty()) {
+                                DAOBlog dao = new DAOBlog();
+                                for (Blog blog : blogs){
+                                    int authorID = blog.getAuthorID();
+                                    String authname = dao.getAuthorNameById(blog.getAuthorID());
                             %>
                             <div class="single-blog-post">
-                                <h3><%=blog.getTitle()%></h3>
+                                <h3><%= blog.getTitle() %></h3>
                                 <div class="post-meta">
                                     <ul>
-                                        <li><i class="fa fa-user"></i><%=authname%> </li>
-                                        <li><i class="fa fa-calendar"></i><%=blog.getPostTime()%></li>
+                                        <li><i class="fa fa-user"></i><%= authname %></li>
+                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime() %></li>
                                     </ul>
                                     <span>
                                         <i class="fa fa-star"></i>
@@ -237,34 +229,38 @@
                                 </div>
                                 <div style="display: flex;">
                                     <a href="">
-                                        <img src="<%=blog.getImageURL()%>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
+                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
                                     </a>
                                     <p style="color: #808080;"><%= blog.getSubContent() %></p>
                                 </div>
-
-                                <a  class="btn btn-primary" href="${pageContext.request.contextPath}/BlogDetailServlet?id=<%=blog.getId()%>">Read More</a>
-
+                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>">Read More</a>
                             </div>
-                            <%}
-                            }   
+                            <% 
+                                }
+                            }
                             %>
+
                             <div class="pagination-area">
                                 <ul class="pagination">
                                     <% 
-                                        Integer totalPages = (Integer) request.getAttribute("totalPages");
-                                        Integer currentPage = (Integer) request.getAttribute("currentPage");
-                                        String service = request.getParameter("service");
-                                        query = request.getParameter("query") != null ? request.getParameter("query") : "";
-                                        String baseURL = "BlogURL?service=" + service;
+                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
+                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
+                                    String service = request.getParameter("service");
+                                    String baseURL = "BlogURL?service=" + service;
 
-                                        if (service.equals("search") && !query.isEmpty()) {
-                                            baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
-                                        } else if (service.equals("listAllBlogs")) {
-                                            baseURL = "BlogURL?service=listAllBlogs";
+                                    if (service.equals("search") && request.getParameter("query") != null) {
+                                        query = request.getParameter("query");
+                                        baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
+                                    }
+                                     if ("CatewithID".equals(service)) {
+                                        String categoryIdParam = request.getParameter("categoryID");
+                                        if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
+                                            baseURL += "&categoryID=" + categoryIdParam;  // Add category ID to the base URL
                                         }
+                                    }
 
-                                        if (totalPages != null && totalPages > 0) {
-                                            for (int i = 1; i <= totalPages; i++) {
+                                    if (totalPages != null && totalPages > 0) {
+                                        for (int i = 1; i <= totalPages; i++) {
                                     %>
                                     <li>
                                         <a href="<%= baseURL %>&page=<%= i %>" 
@@ -273,24 +269,15 @@
                                         </a>
                                     </li>
                                     <% 
-                                            } 
-                                    %>
-                                    <li>
-                                        <a href="<%= baseURL %>&page=<%= currentPage + 1 %>" 
-                                           <%= (currentPage >= totalPages) ? "style='pointer-events: none; color: gray;'" : "" %> >
-                                            <i class="fa fa-angle-double-right"></i>
-                                        </a>
-                                    </li>
-                                    <% 
-                                        } 
+                                        }
+                                    }
                                     %>
                                 </ul>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 
