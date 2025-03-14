@@ -4,15 +4,16 @@
  */
 package controller;
 
-
 import entity.Address;
 
 import entity.Cart;
 import entity.CartItem;
+import entity.Color;
 import entity.Order;
 import entity.OrderDetail;
 import entity.Product;
 import entity.ProductVariant;
+import entity.Storage;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -42,7 +43,8 @@ import model.DAOProduct;
 import model.DAOProductVariant;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
+import model.DAOColor;
+import model.DAOStorage;
 
 /**
  *
@@ -61,7 +63,6 @@ public class CartController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-
             throws ServletException, IOException, SQLException {
         //Authorize
         HttpSession session = request.getSession(false);
@@ -83,12 +84,14 @@ public class CartController extends HttpServlet {
         DAOOrder daoOrder = new DAOOrder();
         DAOOrderDetail daoOD = new DAOOrderDetail();
         DAOAddress daoAdd = new DAOAddress();
+        DAOColor daoColor = new DAOColor();
+        DAOStorage daoStorage = new DAOStorage();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
             Vector<Product> listpro = daoPro.getLatestProducts();
             request.setAttribute("listpro", listpro);
-            
+
             List<Address> addresses = daoAdd.getAddressesByUserId(customerID);
             request.setAttribute("userAddresses", addresses);
             
@@ -112,25 +115,13 @@ public class CartController extends HttpServlet {
                     List<CartItem> allCartItems = dao.getCartItemsByCartID1(cart.getCartID());
                     int totalItems = allCartItems.size();
                     int totalPages = (int) Math.ceil((double) totalItems / pageSize);
-
+                    
                     List<CartItem> cartItems = dao.getCartItemsByCartID(cart.getCartID(), page, pageSize);
 
                     BigDecimal totalOrderPrice = BigDecimal.ZERO;
                     for (CartItem item : cartItems) {
-                        ProductVariant productVariant = daoProVariant.getProductVariantById(item.getProductVariantID());
-                        if (productVariant == null) {
-                            continue;
-                        }
-
-                        Product product = daoPro.getProductById(productVariant.getProductID());
-                        if (product == null) {
-                            continue;
-                        }
-
-                        item.setProduct(product);
-                        item.setProductVariant(productVariant);
                         BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
-                        BigDecimal price = BigDecimal.valueOf(productVariant.getPrice());
+                        BigDecimal price = BigDecimal.valueOf(item.getPrice());
                         BigDecimal totalPrice = quantity.multiply(price).setScale(2, RoundingMode.HALF_UP);
                         item.setTotalPrice(totalPrice);
                         totalOrderPrice = totalOrderPrice.add(totalPrice);
@@ -138,7 +129,6 @@ public class CartController extends HttpServlet {
 
                     request.setAttribute("cartItems", cartItems);
                     request.setAttribute("totalOrderPrice", totalOrderPrice);
-
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
                 } else {
@@ -220,51 +210,98 @@ public class CartController extends HttpServlet {
 
             if (service.equals("checkOut")) {
                 String[] selectedItems = request.getParameterValues("selectedItems");
+
                 if (selectedItems == null || selectedItems.length == 0) {
+                    System.out.println("Vào đến bc 1");
                     Cart cart = dao.getCartByCustomerID(customerID);
                     if (cart != null) {
+                        System.out.println("Vào đến bc 2");
                         List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
+  
                         request.setAttribute("cartItems", cartItems);
                         request.setAttribute("error", "Bạn chưa chọn sản phẩm nào để thanh toán.");
                         request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
                     }
                 } else {
-                    for (String selectedItemID : selectedItems) {
-                        int cartItemId = Integer.parseInt(selectedItemID);
-                        String quantityParam = request.getParameter("quantity_" + cartItemId);
-
-                        if (quantityParam != null) {
-                            int newQuantity = Integer.parseInt(quantityParam);
-                            CartItem cartItem = daoItem.getCartItemById(cartItemId);
-                            if (cartItem != null) {
-                                cartItem.setQuantity(newQuantity);
-                                BigDecimal price = BigDecimal.valueOf(cartItem.getPrice()); // Chuyển từ double sang BigDecimal
-                                BigDecimal newquantity = BigDecimal.valueOf(newQuantity); // Chuyển newQuantity thành BigDecimal
-                                BigDecimal totalPrice = price.multiply(newquantity).setScale(2, RoundingMode.HALF_UP); // Nhân và làm tròn
-                                cartItem.setTotalPrice(totalPrice);
-                                daoItem.updateCartItem(cartItem);
-                            }
-                        }
-                    }
+                    System.out.println("Vào đến bc 3");
                     BigDecimal totalOrderPrice = BigDecimal.ZERO;
                     List<CartItem> selectedCartItems = new ArrayList<>();
                     Cart cart = dao.getCartByCustomerID(customerID);
+
                     if (cart != null) {
                         List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
+                        System.out.println("Vào đến bc 4");
+                        System.out.println("Vào đến bc 4"+cartItems);
                         for (CartItem item : cartItems) {
+                             System.out.println("CartItemID: " + item.getCartItemID() + ", ProductVariantID: " + item.getProductVariantID());
                             for (String selectedItemID : selectedItems) {
                                 if (Integer.toString(item.getCartItemID()).equals(selectedItemID)) {
+                                    System.out.println("in ra "+Integer.toString(item.getCartItemID()).equals(selectedItemID));
+                                    
                                     ProductVariant productVariant = daoProVariant.getProductVariantById(item.getProductVariantID());
-                                    if (productVariant != null) {
-                                        Product product = daoPro.getProductById(productVariant.getProductID());
-                                        if (product != null) {
-                                            item.setProduct(product);
-                                            item.setProductVariant(productVariant);
-                                            totalOrderPrice = totalOrderPrice.add(item.getTotalPrice()).setScale(2, RoundingMode.HALF_UP);
-                                            selectedCartItems.add(item);
-                                        }
+                                    System.out.println(item.getProductVariantID());
+                                    if (productVariant == null) {
+                                        System.out.println("Vào đến bc productVariant");
+                                        request.setAttribute("error", "Sản phẩm không còn tồn tại.");
+                                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                                        return;
                                     }
-                                    break;
+
+                                    // Kiểm tra tồn kho
+                                    String quantityParam = request.getParameter("quantity_" + item.getCartItemID());
+                                    System.out.println("quantity"+quantityParam);
+                                    int newQuantity = (quantityParam != null) ? Integer.parseInt(quantityParam) : item.getQuantity();
+
+                                    if (newQuantity > productVariant.getStock()) {
+                                        System.out.println("Vào đến bc getStock");
+                                        request.setAttribute("error", "Sản phẩm " + item.getProduct().getName() + " không đủ hàng trong kho.");
+                                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                                        return;
+                                    }
+
+                                    // Lấy Product
+                                    Product product = daoPro.getProductById(productVariant.getProduct_id());
+                                    if (product == null) {
+                                        System.out.println("Vào đến bc product");
+                                        request.setAttribute("error", "Thông tin sản phẩm không hợp lệ.");
+                                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                                        return;
+                                    }
+
+                                    // Lấy Color
+                                    Color color = daoColor.getColorById1(productVariant.getColor_id());
+                                    System.out.println("color"+productVariant.getColor_id());
+                                    if (color == null) {
+                                        System.out.println("Vào đến bc color");
+                                        request.setAttribute("error", "Không lấy được thông tin màu sắc.");
+                                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                                        return;
+                                    }
+
+                                    // Lấy Storage
+                                    Storage storage = daoStorage.getStorageById1(productVariant.getStorage_id());
+                                    if (storage == null) {
+                                        System.out.println("Vào đến bc storage");
+                                        request.setAttribute("error", "Không lấy được thông tin dung lượng.");
+                                        request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
+                                        return;
+                                    }
+
+                                    // Cập nhật thông tin sản phẩm trong cartItem
+                                    item.setQuantity(newQuantity);
+                                    item.setTotalPrice(BigDecimal.valueOf(item.getPrice()).multiply(BigDecimal.valueOf(newQuantity)));
+                                    item.setProduct(product);
+                                    item.setProductVariant(productVariant);
+                                    item.setColor(color);
+                                    item.setStorage(storage);
+
+
+                                    productVariant.setStock(productVariant.getStock() - newQuantity);
+                                    daoProVariant.updateProductVariantStock(productVariant);
+
+
+                                    totalOrderPrice = totalOrderPrice.add(item.getTotalPrice()).setScale(2, RoundingMode.HALF_UP);
+                                    selectedCartItems.add(item);
                                 }
                             }
                         }
@@ -275,7 +312,9 @@ public class CartController extends HttpServlet {
                         request.setAttribute("totalOrderPrice", totalOrderPrice);
                         request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
                         session.setAttribute("selectedCartItems", selectedCartItems);
+                        System.out.println("Selected CartItem"+selectedCartItems);
                     } else {
+                        System.out.println("CartItem Null");
                         request.setAttribute("error", "Bạn chưa chọn sản phẩm nào để thanh toán.");
                         request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
                     }
@@ -284,35 +323,51 @@ public class CartController extends HttpServlet {
 
             if (service.equals("add2cart")) {
                 int productID = Integer.parseInt(request.getParameter("productID"));
-                String color = request.getParameter("color");
-                int storage = Integer.parseInt(request.getParameter("storage"));
+                String colorName = request.getParameter("color");
+                String storageCapacity = request.getParameter("storage");
                 int quantity = Integer.parseInt(request.getParameter("quantity"));
-                System.out.println(productID + "," + color + "," + storage + "," + quantity);
-                ProductVariant productVariant = daoProVariant.getProductVariantByDetails(productID, color, storage);
 
+
+                int colorID = daoColor.getColorIDByName(colorName);
+                if (colorID == -1) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Color not found!\"}");
+                    return;
+                }
+
+                int storageID = daoStorage.getStorageIDByCapacity(storageCapacity);
+                if (storageID == -1) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Storage capacity not found!\"}");
+                    return;
+                }
+
+                ProductVariant productVariant = daoProVariant.getProductVariantByDetails(productID, colorID, storageID);
                 if (productVariant == null) {
                     response.setContentType("application/json");
                     response.getWriter().write("{\"status\": \"error\", \"message\": \"Product variant not found!\"}");
                     return;
                 }
+
                 if (productVariant.getStock() < quantity) {
                     response.setContentType("application/json");
                     response.getWriter().write("{\"status\": \"error\", \"message\": \"Not enough stock available! Only " + productVariant.getStock() + " units left.\"}");
                     return;
                 }
+
                 Cart cart = dao.getCartByCustomerID(customerID);
                 if (cart == null) {
-
                     cart = new Cart();
                     cart.setCustomerID(customerID);
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     String createdAt = sdf.format(new Date());
                     cart.setCreatedAt(createdAt);
-
                     cart.setCartStatus("active");
+
                     int cartID = dao.addCart(cart);
                     cart.setCartID(cartID);
                 }
+
                 CartItem existingItem = daoItem.getCartItemByCartIDAndProductVariantID(cart.getCartID(), productVariant.getId());
                 if (existingItem != null) {
                     int newQuantity = existingItem.getQuantity() + quantity;
@@ -321,23 +376,25 @@ public class CartController extends HttpServlet {
                         response.getWriter().write("{\"status\": \"error\", \"message\": \"Not enough stock available! Only " + productVariant.getStock() + " units left.\"}");
                         return;
                     }
+
                     BigDecimal price = BigDecimal.valueOf(productVariant.getPrice());
-                    BigDecimal newquantity = BigDecimal.valueOf(newQuantity);
-                    BigDecimal totalPrice = price.multiply(newquantity).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal newQty = BigDecimal.valueOf(newQuantity);
+                    BigDecimal totalPrice = price.multiply(newQty).setScale(2, RoundingMode.HALF_UP);
+
                     existingItem.setQuantity(newQuantity);
-                    System.out.println(totalPrice);
                     existingItem.setTotalPrice(totalPrice);
-                    System.out.println("sau" + existingItem.getQuantity());
-                    System.out.println(daoItem.updateCartItem(existingItem));
+                    daoItem.updateCartItem(existingItem);
                 } else {
                     CartItem newItem = new CartItem();
                     newItem.setCartID(cart.getCartID());
                     newItem.setProductVariantID(productVariant.getId());
                     newItem.setQuantity(quantity);
                     newItem.setPrice(productVariant.getPrice());
-                    BigDecimal price = BigDecimal.valueOf(productVariant.getPrice()); // Chuyển từ double sang BigDecimal
-                    BigDecimal qty = BigDecimal.valueOf(quantity); // Chuyển quantity thành BigDecimal
+
+                    BigDecimal price = BigDecimal.valueOf(productVariant.getPrice());
+                    BigDecimal qty = BigDecimal.valueOf(quantity);
                     BigDecimal totalPrice = price.multiply(qty).setScale(2, RoundingMode.HALF_UP);
+
                     newItem.setTotalPrice(totalPrice);
                     daoItem.addCartItem(newItem);
                 }
@@ -398,7 +455,6 @@ public class CartController extends HttpServlet {
 //                    response.sendRedirect("order-fail.jsp");
 //                }
 //            }
-
         }
     }
 

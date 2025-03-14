@@ -265,14 +265,7 @@
                                     </c:forEach>
                                 </select>
 
-                                <!-- Lọc theo RAM -->
-                                <label for="ram">RAM (GB)</label>
-                                <select id="ram" name="ram" class="form-control">
-                                    <option value="0">All</option>
-                                    <c:forEach var="ramItem" items="${ramList}">
-                                        <option value="${ramItem}" ${ram == ramItem ? 'selected' : ''}>${ramItem} GB</option>
-                                    </c:forEach>
-                                </select>
+                                
                                 <label for="batteryCapacity">Battery Capacity (mAh)</label>
                                 <select id="batteryCapacity" name="batteryCapacity" class="form-control">
                                     <option value="0">All</option>
@@ -289,29 +282,21 @@
                                         <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
                                     </c:forEach>
                                 </select>
+                                 <label for="minPrice">Min Price:</label>
+                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
+
+                                    <label for="maxPrice">Max Price:</label>
+                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
 
 
                                 <!-- Nút Lọc -->
                                 <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
                             </form>
                         </div>
-                        <div class="left-sidebar">
-                            <div class="filter-box">
-                                <h2>Filter by Price</h2>
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <label for="minPrice">Min Price:</label>
-                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
-
-                                    <label for="maxPrice">Max Price:</label>
-                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
-
-                                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Filter</button>
-                                </form>
-                            </div>
-                        </div>
+                       
 
 
-
+                        <br>
                         <div class="latest-products">
 
                             <c:if test="${not empty latestProduct}">
@@ -361,33 +346,6 @@
 
                     </div>
 
-                    <!--                                <div class="col-sm-4">  
-                                                        <div class="product-image-wrapper">
-                                                            <div class="single-products">
-                                                                <div class="productinfo text-center">
-                                                                    <img src="${product.imageURL}" alt="" />
-                                                                    <h2></h2>
-                                                                    <p>${product.name}</p>
-                                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                                    <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                                                </div>
-                                                                <div class="product-overlay">
-                                                                    <div class="overlay-content">
-                                                                        <h2></h2>
-                                                                        <p></p>
-                                                                        <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
-                                                                        <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="choose">
-                                                                <ul class="nav nav-pills nav-justified">
-                                                                    <li><a href=""><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
-                                                                    <li><a href=""><i class="fa fa-plus-square"></i>Add to compare</a></li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>-->
                     <div class ="text-center">
                         <div class="pagination">
                             <c:if test="${currentPage > 1}">
@@ -403,7 +361,6 @@
                             </c:if>
                         </div>
 
-
                     </div>
                     <!--                            </div>-->
                 </div><!--features_items-->
@@ -411,7 +368,7 @@
         </div>
     </div>
 </section>
-
+<br>
 <footer id="footer"><!--Footer-->
     <div class="footer-top">
         <div class="container">

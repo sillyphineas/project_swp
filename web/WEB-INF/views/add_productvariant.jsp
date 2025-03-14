@@ -4,7 +4,7 @@
     Author     : Admin
 --%>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ page import="entity.Product, entity.ProductVariant, java.util.Vector, entity.Brand" %>
+<%@ page import="entity.Product, entity.ProductVariant, java.util.Vector, entity.Brand, entity.Color, entity.Storage" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="entity.User"%>
 
@@ -42,12 +42,12 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
-           .add-pr {
-    text-align: center;
-    color: black;
-    
-    margin-bottom: 20px; 
-}
+            .add-pr {
+                text-align: center;
+                color: black;
+
+                margin-bottom: 20px;
+            }
 
         </style>
     </head><!--/head-->
@@ -114,13 +114,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -161,9 +161,9 @@
                 </div>
             </div><!--/header-bottom-->
         </header>
-                                
-                                
-                                
+
+
+
         <div class="container">
             <h2 class="add-pr" cols="10">Add Product Variants</h2>
             <form action="AddProductController" method="post">
@@ -180,12 +180,22 @@
 
                 <div class="form-group">
                     <label for="color">Color:</label>
-                    <input type="text" class="form-control" name="color" required>
+                    <select class="form-control" name="color_id" required>
+                        
+                        <c:forEach var="color" items="${colorlist}">
+                            <option value="${color.id}">${color.colorName}</option>
+                        </c:forEach>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="storage">Storage (GB):</label>
-                    <input type="number" class="form-control" name="storage" required>
+                    <select class="form-control" name="storage_id" required>
+                      
+                        <c:forEach var="storage" items="${storagelist}">
+                            <option value="${storage.id}">${storage.capacity} GB</option>
+                        </c:forEach>
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -197,15 +207,23 @@
                     <label for="stock">Stock:</label>
                     <input type="number" class="form-control" name="stock" required>
                 </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                
 
                 <button type="submit" class="btn btn-success">Add Variant</button>
                 <a href="MarketingProductController" class="btn btn-success">Cancel</a>
             </form>
         </div>
-                                <br>
-                                <br>
+        <br>
+        <br>
 
-          <footer id="footer"><!--Footer-->
+        <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">

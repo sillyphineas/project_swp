@@ -237,10 +237,11 @@
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <form action="UserController" method="get">
-                                <input type="hidden" value="search" name="service">
+                            <form action="UserController" method="get" onsubmit="return checkQuery()">
+                                <input type="hidden" id="service" name="service" value="search">
                                 <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
-                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                    <input type="text" name="query" id="query" placeholder="Search" value="${param.query}" 
+                                           style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
                                     <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
                                         <i class="fa fa-search"></i> 
                                     </button>
@@ -613,6 +614,17 @@
 
 
         </script>
+        <script>
+            function checkQuery() {
+                var query = document.getElementById("query").value.trim();
+                var serviceInput = document.getElementById("service");
 
+                if (query === "") {
+                    serviceInput.value = "listAllUser";
+                }
+
+                return true; // Tiếp tục submit form
+            }
+        </script>
     </body>
 </html>

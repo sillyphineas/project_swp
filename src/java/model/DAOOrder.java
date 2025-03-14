@@ -10,37 +10,30 @@ public class DAOOrder extends DBConnection {
 
     // 1. Thêm một đơn hàng
     public int addOrder(Order order) {
-        String sql = "INSERT INTO Orders (buyerID, orderTime, orderStatus, ShippingDate, ShippingAddress, "
+        String sql = "INSERT INTO Orders (buyerID, orderTime, orderStatus, ShippingAddress, "
                 + "totalPrice, discountedPrice, paymentMethod, isDisabled, voucherID, "
                 + "recipientName, recipientPhone, AssignedSaleId) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, order.getBuyerID());
             ps.setTimestamp(2, new Timestamp(order.getOrderTime().getTime()));
             ps.setString(3, order.getOrderStatus());
-
-            if (order.getShippingDate() != null) {
-                ps.setDate(4, new java.sql.Date(order.getShippingDate().getTime()));
-            } else {
-                ps.setNull(4, java.sql.Types.DATE);
-            }
-
-            ps.setString(5, order.getShippingAddress());
-            ps.setDouble(6, order.getTotalPrice());
-            ps.setDouble(7, order.getDiscountedPrice());
-            ps.setInt(8, order.getPaymentMethod());
-            ps.setBoolean(9, order.isDisabled());
+            ps.setString(4, order.getShippingAddress());
+            ps.setDouble(5, order.getTotalPrice());
+            ps.setDouble(6, order.getDiscountedPrice());
+            ps.setInt(7, order.getPaymentMethod());
+            ps.setBoolean(8, order.isDisabled());
 
             if (order.getVoucherID() != null) {
-                ps.setInt(10, order.getVoucherID());
+                ps.setInt(9, order.getVoucherID());
             } else {
-                ps.setNull(10, java.sql.Types.INTEGER);
+                ps.setNull(9, java.sql.Types.INTEGER);
             }
 
-            ps.setString(11, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
-            ps.setString(12, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
-            ps.setInt(13, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
+            ps.setString(10, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
+            ps.setString(11, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
+            ps.setInt(12, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -70,7 +63,6 @@ public class DAOOrder extends DBConnection {
                 int buyerID = rs.getInt("buyerID");
                 Timestamp orderTime = rs.getTimestamp("orderTime");
                 String orderStatus = rs.getString("orderStatus");
-                Date shippingDate = rs.getDate("shippingDate");
                 String shippingAddress = rs.getString("shippingAddress");
                 double totalPrice = rs.getDouble("totalPrice");
                 double discountedPrice = rs.getDouble("discountedPrice");
@@ -89,7 +81,6 @@ public class DAOOrder extends DBConnection {
                         buyerID,
                         orderTime,
                         orderStatus,
-                        shippingDate,
                         shippingAddress,
                         totalPrice,
                         discountedPrice,
@@ -121,7 +112,6 @@ public class DAOOrder extends DBConnection {
                     int buyerID = rs.getInt("buyerID");
                     Timestamp orderTime = rs.getTimestamp("orderTime");
                     String orderStatus = rs.getString("orderStatus");
-                    Date shippingDate = rs.getDate("shippingDate");
                     String shippingAddress = rs.getString("shippingAddress");
                     double totalPrice = rs.getDouble("totalPrice");
                     double discountedPrice = rs.getDouble("discountedPrice");
@@ -140,7 +130,6 @@ public class DAOOrder extends DBConnection {
                             buyerID,
                             orderTime,
                             orderStatus,
-                            shippingDate,
                             shippingAddress,
                             totalPrice,
                             discountedPrice,
@@ -163,7 +152,7 @@ public class DAOOrder extends DBConnection {
     public int updateOrder(Order order) {
         int result = 0;
         String sql = "UPDATE Orders "
-                + "SET buyerID = ?, orderTime = ?, orderStatus = ?, shippingDate = ?, "
+                + "SET buyerID = ?, orderTime = ?, orderStatus = ?, "
                 + "    shippingAddress = ?, totalPrice = ?, discountedPrice = ?, paymentMethod = ?, "
                 + "    isDisabled = ?, voucherID = ?, recipientName = ?, recipientPhone = ?, AssignedSaleId = ? "
                 + "WHERE id = ?";
@@ -172,28 +161,23 @@ public class DAOOrder extends DBConnection {
             preparedStatement.setInt(1, order.getBuyerID());
             preparedStatement.setTimestamp(2, new Timestamp(order.getOrderTime().getTime()));
             preparedStatement.setString(3, order.getOrderStatus());
-            if (order.getShippingDate() != null) {
-                preparedStatement.setDate(4, new java.sql.Date(order.getShippingDate().getTime()));
-            } else {
-                preparedStatement.setNull(4, Types.DATE);
-            }
-            preparedStatement.setString(5, order.getShippingAddress());
-            preparedStatement.setDouble(6, order.getTotalPrice());
-            preparedStatement.setDouble(7, order.getDiscountedPrice());
-            preparedStatement.setInt(8, order.getPaymentMethod());
-            preparedStatement.setBoolean(9, order.isDisabled());
+            preparedStatement.setString(4, order.getShippingAddress());
+            preparedStatement.setDouble(5, order.getTotalPrice());
+            preparedStatement.setDouble(6, order.getDiscountedPrice());
+            preparedStatement.setInt(7, order.getPaymentMethod());
+            preparedStatement.setBoolean(8, order.isDisabled());
 
             if (order.getVoucherID() != null) {
-                preparedStatement.setInt(10, order.getVoucherID());
+                preparedStatement.setInt(9, order.getVoucherID());
             } else {
-                preparedStatement.setNull(10, Types.INTEGER);
+                preparedStatement.setNull(9, Types.INTEGER);
             }
 
-            preparedStatement.setString(11, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
-            preparedStatement.setString(12, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
-            preparedStatement.setInt(13, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
+            preparedStatement.setString(10, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
+            preparedStatement.setString(11, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
+            preparedStatement.setInt(12, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
 
-            preparedStatement.setInt(14, order.getId());
+            preparedStatement.setInt(13, order.getId());
 
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -288,7 +272,6 @@ public class DAOOrder extends DBConnection {
                             buyerId,
                             orderTime,
                             orderStatus,
-                            shippingDate,
                             shippingAddress,
                             totalPrice,
                             discountedPrice,
@@ -471,7 +454,6 @@ public class DAOOrder extends DBConnection {
                 System.out.println("Total Price: " + order.getTotalPrice());
                 System.out.println("Discounted Price: " + order.getDiscountedPrice());
                 System.out.println("Payment Method: " + order.getPaymentMethod());
-                System.out.println("Shipping Date: " + order.getShippingDate());
                 System.out.println("Recipient Name: " + order.getRecipientName());
                 System.out.println("Recipient Phone: " + order.getRecipientPhone());
                 System.out.println("Assigned Sale ID: " + order.getAssignedSaleId());

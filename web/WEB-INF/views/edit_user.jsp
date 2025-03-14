@@ -112,13 +112,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -216,19 +216,23 @@
                                 <label for="roleId">Role</label>
                                 <select class="form-control" id="roleId" name="roleId" required>
                                     <c:forEach var="role" items="${roles}">
-                                        <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
+                                         <c:if test="${role.roleId != 1}">
+                <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
+            </c:if>
                                     </c:forEach>
+                                        
+                                        
                                 </select>
                             </div>
 
-                          <!-- Status -->
-<div class="form-group">
-    <label for="isDisabled">Status</label>
-    <select class="form-control" id="isDisabled" name="isDisabled" required>
-        <option value="false" ${!user.disabled ? 'selected' : ''}>Active</option>
-        <option value="true" ${user.disabled ? 'selected' : ''}>Inactive</option>
-    </select>
-</div>
+                            <!-- Status -->
+                            <div class="form-group">
+                                <label for="isDisabled">Status</label>
+                                <select class="form-control" id="isDisabled" name="isDisabled" required>
+                                    <option value="false" ${!user.disabled ? 'selected' : ''}>Active</option>
+                                    <option value="true" ${user.disabled ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
 
 
                             <button type="submit" class="btn btn-primary">Update User</button>

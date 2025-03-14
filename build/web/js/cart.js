@@ -10,7 +10,7 @@ function addToCart() {
         showCartNotification("An error occurred, please check the product information.");
         return;
     }
-
+    console.log(`Sending request with productID=${productId}, color=${color}, storage=${storage}, quantity=${quantity}`);
     fetch(`CartURL?service=add2cart&productID=${productId}&color=${encodeURIComponent(color)}&storage=${storage}&quantity=${quantity}`, {
         method: "POST",
     })

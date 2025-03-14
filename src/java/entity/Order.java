@@ -7,7 +7,6 @@ public class Order {
     private int buyerID;            // INT(11) FK -> Users(id)
     private Date orderTime;         // DATETIME
     private String orderStatus;     // VARCHAR(50)
-    private Date shippingDate;      // DATE
     private String shippingAddress; // VARCHAR(255)
     private double totalPrice;      // DECIMAL(15,2)
     private double discountedPrice; // DECIMAL(15,2)
@@ -22,8 +21,7 @@ public class Order {
     }
 
     // Constructor đầy đủ, khớp với cột DB
-    public Order(int id, int buyerID, Date orderTime, String orderStatus,
-                 Date shippingDate, String shippingAddress,
+    public Order(int id, int buyerID, Date orderTime, String orderStatus, String shippingAddress,
                  double totalPrice, double discountedPrice,
                  int paymentMethod, boolean isDisabled,
                  Integer voucherID, String recipientName,
@@ -32,7 +30,6 @@ public class Order {
         this.buyerID = buyerID;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
-        this.shippingDate = shippingDate;
         this.shippingAddress = shippingAddress;
         this.totalPrice = totalPrice;
         this.discountedPrice = discountedPrice;
@@ -71,13 +68,6 @@ public class Order {
     }
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public Date getShippingDate() {
-        return shippingDate;
-    }
-    public void setShippingDate(Date shippingDate) {
-        this.shippingDate = shippingDate;
     }
 
     public String getShippingAddress() {
@@ -150,7 +140,6 @@ public class Order {
                 + ", buyerID=" + buyerID
                 + ", orderTime=" + orderTime
                 + ", orderStatus='" + orderStatus + '\''
-                + ", shippingDate=" + shippingDate
                 + ", shippingAddress='" + shippingAddress + '\''
                 + ", totalPrice=" + totalPrice
                 + ", discountedPrice=" + discountedPrice

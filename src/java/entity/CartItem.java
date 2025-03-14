@@ -22,6 +22,16 @@ public class CartItem {
     private boolean isDisabled;
     private Product product;
     private ProductVariant productVariant;
+    private Color color; 
+    private Storage storage;
+
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
 
     public CartItem(int CartItemID, int CartID, int ProductVariantID, Double Price, int Quantity, double DiscountAmount, BigDecimal TotalPrice, boolean isDisabled) {
         this.CartItemID = CartItemID;
@@ -117,6 +127,14 @@ public class CartItem {
         return product;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     @Override
     public String toString() {
         return "CartItem{" + "CartItemID=" + CartItemID + ", CartID=" + CartID + ", ProductVariantID=" + ProductVariantID + ", Price=" + Price + ", Quantity=" + Quantity + ", DiscountAmount=" + DiscountAmount + ", TotalPrice=" + TotalPrice + ", isDisabled=" + isDisabled + '}';
@@ -133,5 +151,7 @@ public class CartItem {
     public void setProductVariant(ProductVariant productVariant) {
         this.productVariant = productVariant;
     }
+
+
 
 }
