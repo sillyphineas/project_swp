@@ -15,12 +15,12 @@ public class ProductVariant {
    private int storage_id;
    private double price;
    private int stock;
-   private boolean status;
+   private String status;
 
     public ProductVariant() {
     }
 
-    public ProductVariant(int id, int product_id, int color_id, int storage_id, double price, int stock, boolean status) {
+    public ProductVariant(int id, int product_id, int color_id, int storage_id, double price, int stock, String status) {
         this.id = id;
         this.product_id = product_id;
         this.color_id = color_id;
@@ -78,11 +78,11 @@ public class ProductVariant {
         this.stock = stock;
     }
 
-    public boolean isStatus() {
+    public String isStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

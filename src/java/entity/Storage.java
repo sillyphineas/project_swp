@@ -10,13 +10,13 @@ package entity;
  */
 public class Storage {
     private int id;
-    private int capacity;
-    private boolean status;
+    private String capacity;
+    private String status;
 
     public Storage() {
     }
 
-    public Storage(int id, int capacity, boolean status) {
+    public Storage(int id, String capacity, String status) {
         this.id = id;
         this.capacity = capacity;
         this.status = status;
@@ -30,19 +30,19 @@ public class Storage {
         this.id = id;
     }
 
-    public int getCapacity() {
+    public String getCapacity() {
         return capacity;
     }
 
-    public void setCapacity(int capacity) {
+    public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -50,5 +50,7 @@ public class Storage {
     public String toString() {
         return "Storage{" + "id=" + id + ", capacity=" + capacity + ", status=" + status + '}';
     }
+
+    
     
 }

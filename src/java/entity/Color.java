@@ -11,12 +11,12 @@ package entity;
 public class Color {
     private int id;
     private String colorName;
-    private boolean status;
+    private String status;
 
     public Color() {
     }
 
-    public Color(int id, String colorName, boolean status) {
+    public Color(int id, String colorName, String status) {
         this.id = id;
         this.colorName = colorName;
         this.status = status;
@@ -38,11 +38,11 @@ public class Color {
         this.colorName = colorName;
     }
 
-    public boolean isStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -50,5 +50,7 @@ public class Color {
     public String toString() {
         return "Color{" + "id=" + id + ", colorName=" + colorName + ", status=" + status + '}';
     }
+
+    
     
 }

@@ -8,6 +8,8 @@ import entity.Brand;
 import entity.Product;
 import entity.ProductVariant;
 import entity.User;
+import entity.Color;
+import entity.Storage;
 import helper.Authorize;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,12 +19,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 import model.DAOBrand;
 import model.DAOProduct;
 import model.DAOProductVariant;
+import model.DAOColor;
+import model.DAOStorage;
 
 @WebServlet(name = "MarketingProductDetails", urlPatterns = {"/MarketingProductDetails"})
 public class MarketingProductDetails extends HttpServlet {
@@ -43,6 +48,8 @@ public class MarketingProductDetails extends HttpServlet {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         DAOProductVariant daoProductVariants = new DAOProductVariant();
+        DAOColor daocolor = new DAOColor();
+        DAOStorage daoStorage = new DAOStorage();
 
         String action = request.getParameter("action");
         if (action == null) {
@@ -52,27 +59,46 @@ public class MarketingProductDetails extends HttpServlet {
         if ("listall".equals(action)) {
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
-            Vector<Brand> brandList = daoBrand.getAllBrands();
-            Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
-            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
-            Vector<String> distinctColors = daoProductVariants.getDistinctColorsByProductId(productID);
-            request.setAttribute("distinctColors", distinctColors);
-            System.out.println(distinctColors);
-            Vector<String> distinctStorages = daoProductVariants.getDistinctStorageByProductId(productID);
-            System.out.println("storage"+distinctStorages);
-            request.setAttribute(" distinctStorages",distinctStorages);
-            
-
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                 return;
             }
+            
+            Vector<Brand> brandList = daoBrand.getAllBrands();
+            Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
+            double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+            Vector<String> colors = daoProductVariants.getDistinctColorsByProductId1(productID);
+            Vector<String> storages = daoProductVariants.getDistinctStorageByProductId1(productID);
+             Vector<Color> colorlist = daocolor.getAllColors();
+            Vector<Storage> storagelist = daoStorage.getAllStorages();
+            
+
+            String color = request.getParameter("color");
+            String storage = request.getParameter("storage");
+
+            if (color != null && storage != null) {
+                ProductVariant productVariant = daoProductVariants.getProductVariantDetails1(productID, color, storage);
+                if (productVariant != null) {
+                    response.setContentType("application/json");
+                    DecimalFormat df = new DecimalFormat("###,###,###.##");
+                    String formattedPrice = df.format(productVariant.getPrice());
+                    PrintWriter out = response.getWriter();
+                    out.print("{\"price\":\"" + formattedPrice + "\", \"stock\":\"" + productVariant.getStock() + "\"}");
+                    out.flush();
+                    return;
+                } else {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+            }
+            request.setAttribute("colorlist", colorlist);
+            request.setAttribute("storagelist", storagelist);
+            request.setAttribute("colors", colors);
+            request.setAttribute("storages", storages);
             request.setAttribute("variants", variants);
             request.setAttribute("minPrice", minPrice);
             request.setAttribute("brands", brandList);
             request.setAttribute("product", product);
-            
-
             request.getRequestDispatcher("WEB-INF/views/marketingproduct-details.jsp").forward(request, response);
         }
         if ("editVariant".equals(action)) {
@@ -81,30 +107,38 @@ public class MarketingProductDetails extends HttpServlet {
             Vector<Brand> brandList = daoBrand.getAllBrands();
             Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
             double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+            Vector<Color> colorlist = daocolor.getAllColors();
+            Vector<Storage> storagelist = daoStorage.getAllStorages();
 
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                 return;
             }
-
+            request.setAttribute("colorlist", colorlist);
+            request.setAttribute("storagelist", storagelist);
             request.setAttribute("variants", variants);
             request.setAttribute("minPrice", minPrice);
             request.setAttribute("brands", brandList);
             request.setAttribute("product", product);
             request.getRequestDispatcher("WEB-INF/views/edit_product.jsp").forward(request, response);
         }
+
         if ("editProduct".equals(action)) {
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
             Vector<Brand> brandList = daoBrand.getAllBrands();
             Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
             double minPrice = daoProductVariants.getMinPriceByProductId(productID);
+            Vector<Color> colorlist = daocolor.getAllColors();
+            Vector<Storage> storagelist = daoStorage.getAllStorages();
+            
 
             if (product == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
                 return;
             }
-
+            request.setAttribute("colorlist", colorlist);
+            request.setAttribute("storagelist", storagelist);
             request.setAttribute("variants", variants);
             request.setAttribute("minPrice", minPrice);
             request.setAttribute("brands", brandList);
@@ -127,10 +161,9 @@ public class MarketingProductDetails extends HttpServlet {
 
         String action = request.getParameter("action");
 
-        if ("editProduct".equals(action)) {
+         if ("editProduct".equals(action)) {
             
             int productId = Integer.parseInt(request.getParameter("id"));
-            System.out.println("productid" +productId);
             String name = request.getParameter("name");
             String description = request.getParameter("description");
             int brandID = Integer.parseInt(request.getParameter("brandID"));
@@ -185,15 +218,18 @@ public class MarketingProductDetails extends HttpServlet {
         }
 
         if ("editVariant".equals(action)) {
+            
             int variantId = Integer.parseInt(request.getParameter("id"));
             int productID = Integer.parseInt(request.getParameter("productID"));
-            String color = request.getParameter("color");
-            int storage = Integer.parseInt(request.getParameter("storage"));
+            
+            int color_id = Integer.parseInt(request.getParameter("color_id"));
+            int storage_id = Integer.parseInt(request.getParameter("storage_id"));
             double price = Double.parseDouble(request.getParameter("price"));
             int stock = Integer.parseInt(request.getParameter("stock"));
-//
-//            ProductVariant updatedVariant = new ProductVariant(variantId, productID, color, storage, price, stock);
-            daoVariant.updateProductVariant(updatedVariant);
+             String status = request.getParameter("status");
+             System.out.println(variantId+" "+ productID +" " +color_id+" "+ storage_id+"  "+price);
+            ProductVariant updatedVariant =  new ProductVariant(variantId, productID, color_id, storage_id, price, stock, status);
+             daoVariant.updateProductVariant(updatedVariant);
             response.sendRedirect("MarketingProductDetails?id=" + productID);
         }
     }
