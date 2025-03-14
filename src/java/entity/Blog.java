@@ -15,8 +15,16 @@ import org.eclipse.jdt.internal.compiler.ast.TrueLiteral;
 public class Blog {
 
     private int id;
-    private int authorID;
 
+    public int getCategoryID() {
+        return categoryID;
+    }
+
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
+    private int authorID;
+    private int categoryID;
     private String postTime,
             title,
             content,
@@ -26,6 +34,21 @@ public class Blog {
     private boolean isSlider;
     private boolean isDisabled;
     private String authorName;
+
+    public Blog(int id, int authorID, int categoryID, String postTime, String title, String content, String backlinks, String imageURL, String status, boolean isSlider, boolean isDisabled, String authorName) {
+        this.id = id;
+        this.authorID = authorID;
+        this.categoryID = categoryID;
+        this.postTime = postTime;
+        this.title = title;
+        this.content = content;
+        this.backlinks = backlinks;
+        this.imageURL = imageURL;
+        this.status = status;
+        this.isSlider = isSlider;
+        this.isDisabled = isDisabled;
+        this.authorName = authorName;
+    }
     
     public Blog(int id, int authorID, String postTime, String title, String content, String backlinks, String imageURL, String status, boolean isSlider, boolean isDisabled) {
         this.id = id;
@@ -145,7 +168,7 @@ public class Blog {
 
     public String getIsDisabled() {
         if (this.isDisabled == true) {
-            return "Disabled";
+            return "Inactive";
         }
         return "Active";
     }

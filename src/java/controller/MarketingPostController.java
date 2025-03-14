@@ -5,6 +5,7 @@
 package controller;
 
 import entity.Blog;
+import entity.Category;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -22,6 +23,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.DAOBlog;
+import model.DAOCategory;
 
 /**
  *
@@ -53,9 +55,12 @@ public class MarketingPostController extends HttpServlet {
         }
         response.setContentType("text/html;charset=UTF-8");
         DAOBlog dao = new DAOBlog();
+        DAOCategory daoCate = new DAOCategory();
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
+            List<Category> categories = daoCate.getAllCategories();
+            request.setAttribute("categories", categories);
             if (service == null) {
                 service = "listAllBlogs";
             }
@@ -80,7 +85,7 @@ public class MarketingPostController extends HttpServlet {
                 query = query.toLowerCase();
                 if (query == null || query.trim().isEmpty()) {
                     request.setAttribute("error", "Please enter a search!!");
-                    request.getRequestDispatcher("/WEB-INF/views/Marketing-PostList.jsp").forward(request, response);
+                    response.sendRedirect("MarketingPostController?service=listAllBlogs");
                     return;
                 }
 
@@ -238,10 +243,10 @@ public class MarketingPostController extends HttpServlet {
                     System.out.println("id blog" + blogId);
                     Blog blog = dao.getBlogDetails(blogId);
                     request.setAttribute("blog", blog);
-
+                    ResultSet rsCategory = dao.getData("SELECT id, categoryName FROM categoryblog");
                     ResultSet rsAuthor = dao.getData("SELECT id, name FROM Users");
                     request.setAttribute("rsAuthor", rsAuthor);
-
+                    request.setAttribute("rsCategory", rsCategory);
                     request.getRequestDispatcher("/WEB-INF/views/UpdateBlog.jsp").forward(request, response);
                 } else {
                     int BlogID = Integer.parseInt(request.getParameter("id"));
@@ -270,14 +275,17 @@ public class MarketingPostController extends HttpServlet {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     Integer adminId = (Integer) request.getSession().getAttribute("userID");
-                    ResultSet rsAuthor = dao.getData("SELECT id, name FROM Users where id=" + adminId);
+                    ResultSet rsAuthor = dao.getData("SELECT id, name FROM Users WHERE id=" + adminId);
+                    ResultSet rsCategory = dao.getData("SELECT id, categoryName FROM categoryblog");
 
                     request.setAttribute("rsAuthor", rsAuthor);
+                    request.setAttribute("rsCategory", rsCategory);
                     request.getRequestDispatcher("/WEB-INF/views/AddBlog.jsp").forward(request, response);
                 } else {
                     String title = request.getParameter("title");
                     String content = request.getParameter("content");
                     String authorID = request.getParameter("authorID");
+                    String categoryID = request.getParameter("categoryID"); // Nhận category từ form
                     String postTime = request.getParameter("postTime");
                     String imageURL = request.getParameter("imageURL");
                     String backlinks = request.getParameter("backlinks");
@@ -289,19 +297,62 @@ public class MarketingPostController extends HttpServlet {
                     String isDisabled = request.getParameter("isDisabled");
 
                     int authorId = Integer.parseInt(authorID);
+                    int categoryId = Integer.parseInt(categoryID); // Convert categoryID sang int
                     boolean slider = (isSlider != null && isSlider.equals("on"));
                     boolean disabled = Boolean.parseBoolean(isDisabled);
 
-                    Blog blog = new Blog(0, authorId, postTime, title, content, backlinks, imageURL, status, slider, disabled);
+                    Blog blog = new Blog(0, authorId, categoryId, postTime, title, content, backlinks, imageURL, status, slider, disabled, authorID);
 
                     int n = dao.addBlog(blog);
 
                     if (n > 0) {
                         response.sendRedirect("MarketingPostController?service=listAllBlogs&message=Blog+added+successfully!");
                     } else {
-                        response.sendRedirect("MarketingPostController?service=listAllBlogs&message=Failed+to+added+blog.");
+                        response.sendRedirect("MarketingPostController?service=listAllBlogs&message=Failed+to+add+blog.");
                     }
                 }
+            }
+
+            if (service.equals("CatewithID")) {
+                String categoryIdParam = request.getParameter("categoryID");
+                System.out.println("id: " + categoryIdParam);
+
+                String pageParam = request.getParameter("page");
+                int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
+                int pageSize = 5;
+
+                int categoryID = 0;
+                if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
+                    try {
+                        categoryID = Integer.parseInt(categoryIdParam);
+                    } catch (NumberFormatException e) {
+                        request.setAttribute("error", "Invalid Category ID format.");
+                        request.getRequestDispatcher("/WEB-INF/views/Marketing-PostList.jsp").forward(request, response);
+                        return;
+                    }
+                }
+
+                List<Blog> blogs;
+                int totalBlogs;
+                if (categoryID == 0) {
+                    blogs = dao.MaketingBlogs(page, pageSize);
+                    totalBlogs = dao.getTotalBlogs();
+                } else {
+                    blogs = dao.MaketinggetPaginatedBlogsByCategory(categoryID, page, pageSize);
+                    totalBlogs = dao.getTotalBlogsByCategory(categoryID);
+                }
+
+                int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
+
+                if (blogs.isEmpty()) {
+                    request.setAttribute("message", "No blogs found for this category.");
+                }
+                request.setAttribute("blogs", blogs);
+                request.setAttribute("categoryID", categoryID);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+
+                request.getRequestDispatcher("/WEB-INF/views/Marketing-PostList.jsp").forward(request, response);
             }
 
         }
