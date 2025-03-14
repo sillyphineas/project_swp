@@ -270,10 +270,6 @@
                                     <input type="text" name="title" value="${slider.title}" required><br>
                                 </div>
                                 <div>
-                                    <label for="content">Content:</label>
-                                    <textarea name="content" required>${slider.content}</textarea><br>
-                                </div>
-                                <div>
                                     <label for="imageURL">Image URL:</label>
                                     <input type="text" name="imageURL" value="${slider.imageURL}" required><br>
                                 </div>
@@ -281,15 +277,9 @@
                                     <label for="backlinks">Backlinks:</label>
                                     <input type="text" name="backlinks" value="${slider.backlinks}" required><br>
                                 </div>
-                                <div>
-                                    <label for="status">Status:</label>
-                                    <select name="status">
-                                        <option value="0" ${slider.isDisabled == '0' ? 'selected' : ''}>Visible</option>
-                                        <option value="1" ${slider.isDisabled == '1' ? 'selected' : ''}>Hidden</option>
-                                    </select><br><br>
-                                </div>
                                 <button type="submit" name="action" value="updateSlider">Update</button>
                             </form>
+
                         </div>
                     </div>
                 </div>

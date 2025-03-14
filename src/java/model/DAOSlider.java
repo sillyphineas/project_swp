@@ -75,20 +75,18 @@ public class DAOSlider extends DBConnection {
 
     public int UpdateSlider(Blog other) {
         int n = 0;
-        // Sửa câu lệnh SQL để luôn gán isSlider = 1
-        String sql = "UPDATE Blogs SET authorID = ?, postTime = ?, title = ?, content = ?, imageURL = ?, backlinks = ?, status = ?, isSlider = 1, isDisabled = ? WHERE id = ?";
+        // Cập nhật câu lệnh SQL, bỏ qua content và status
+        String sql = "UPDATE Blogs SET authorID = ?, postTime = ?, title = ?, imageURL = ?, backlinks = ?, isDisabled = ? WHERE id = ?";
 
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, other.getAuthorID());
             pre.setString(2, other.getPostTime());
             pre.setString(3, other.getTitle());
-            pre.setString(4, other.getContent());
-            pre.setString(5, other.getImageURL());
-            pre.setString(6, other.getBacklinks());
-            pre.setString(7, other.getStatus());
-            pre.setBoolean(8, other.isIsDisabled());  // Giữ giá trị của isDisabled
-            pre.setInt(9, other.getId());  // Lọc theo ID của slider cần cập nhật
+            pre.setString(4, other.getImageURL());
+            pre.setString(5, other.getBacklinks());
+            pre.setBoolean(6, other.isIsDisabled());  // Giữ giá trị của isDisabled
+            pre.setInt(7, other.getId());  // Lọc theo ID của slider cần cập nhật
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
