@@ -66,126 +66,129 @@ public class MarketingProductController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        //Authorize
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-        if (!Authorize.isAccepted(user, "/MarketingProductController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
-            return;
-        }
-        DAOProduct dao = new DAOProduct();
-        DAOBrand daoBrand = new DAOBrand();
-
-        Vector<Brand> brandList = daoBrand.getAllBrands();
-        Vector<String> osList = dao.getDistinctOS();
-        Vector<String> connectivityList = dao.getDistinctConnectivity();
-        Vector<Integer> ramList = dao.getDistinctRAM();
-        Vector<String> screenTypeList = dao.getDistinctScreenType();
-        Vector<Integer> batteryCapacityList = dao.getDistinctBatteryCapacity();
-        Vector<Double> screenSizeList = dao.getDistinctScreenSize();
-
-        String brandIDStr = request.getParameter("brandID");
-        String searchQuery = request.getParameter("search");
-        String minPriceStr = request.getParameter("minPrice");
-        String maxPriceStr = request.getParameter("maxPrice");
-        String pageStr = request.getParameter("page");
-        String os = request.getParameter("os");
-        String connectivity = request.getParameter("connectivity");
-        String ramStr = request.getParameter("ram");
-        String screenType = request.getParameter("screenType");
-        String batteryCapacityStr = request.getParameter("batteryCapacity");
-        String screenSizeStr = request.getParameter("screenSize");
-        String sortby = request.getParameter("sortby");
-        String sortOrder = request.getParameter("sortOrder");
-        
-        int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
-        double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0.0;
-        double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
-        int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
-        int ram = (ramStr != null && !ramStr.isEmpty()) ? Integer.parseInt(ramStr) : 0;
-        int batteryCapacity = (batteryCapacityStr != null && !batteryCapacityStr.isEmpty()) ? Integer.parseInt(batteryCapacityStr) : 0;
-        double screenSize = (screenSizeStr != null && !screenSizeStr.isEmpty()) ? Double.parseDouble(screenSizeStr) : 0.0;
-        int itemsPerPage = 6;
-
-        int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
-        int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
-
-        Vector<Product> productList = dao.getProductsByFilterAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, sortby, sortOrder, currentPage, itemsPerPage);
-        Product latestProduct = dao.getLatestProduct();
-
-        for (Product product : productList) {
-            double productMinPrice = dao.getMinPriceForProduct(product.getId());
-            request.setAttribute("minPrice_" + product.getId(), productMinPrice);
-        }
-        session = request.getSession(false);
-        String action = request.getParameter("action");
-        if ("delete".equals(action)) {
-            int productId = Integer.parseInt(request.getParameter("id"));
-            int result = dao.delete(productId);
-
-            if (result > 0) {
-                session.setAttribute("deleteMessage", "Sản phẩm đã được xóa thành công.");
-
-            } else {
-                session.setAttribute("deleteMessage", "Không thể xóa sản phẩm.");
-            }
-            response.sendRedirect("MarketingProductController");
-        } else if ("hide".equals(action)) {
-            int productId = Integer.parseInt(request.getParameter("id"));
-            int result = dao.hideProduct(productId);
-
-            if (result > 0) {
-                session.setAttribute("productStatusMessage", "Sản phẩm đã được ẩn.");
-            } else {
-                session.setAttribute("productStatusMessage", "Không thể ẩn sản phẩm.");
-            }
-            response.sendRedirect("MarketingProductController");
-        } else if ("show".equals(action)) {
-            int productId = Integer.parseInt(request.getParameter("id"));
-            int result = dao.showProduct(productId);
-
-            if (result > 0) {
-                session.setAttribute("productStatusMessage", "Sản phẩm đã được hiển thị.");
-            } else {
-                session.setAttribute("productStatusMessage", "Không thể hiển thị sản phẩm.");
-            }
-            response.sendRedirect("MarketingProductController");
-        } 
-       
-        else {
-
-            request.setAttribute("productList", productList);
-            request.setAttribute("brands", brandList);
-            request.setAttribute("osList", osList);
-            request.setAttribute("connectivityList", connectivityList);
-            request.setAttribute("ramList", ramList);
-            request.setAttribute("screenTypeList", screenTypeList);
-            request.setAttribute("batteryCapacityList", batteryCapacityList);
-            request.setAttribute("screenSizeList", screenSizeList);
-
-            request.setAttribute("latestProduct", latestProduct);
-            request.setAttribute("currentPage", currentPage);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("brandID", brandID);
-            request.setAttribute("os", os);
-            request.setAttribute("connectivity", connectivity);
-            request.setAttribute("ram", ram);
-            request.setAttribute("screenType", screenType);
-            request.setAttribute("batteryCapacity", batteryCapacity);
-            request.setAttribute("screenSize", screenSize);
-            request.setAttribute("minPrice", minPrice);
-            request.setAttribute("maxPrice", maxPrice);
-
-            RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/marketingshop.jsp");
-            rd.forward(request, response);
-
-        }
+   
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    // Lấy session và user từ session
+    HttpSession session = request.getSession(false);
+    User user = null;
+    if (session != null) {
+        user = (User) session.getAttribute("user");
     }
+    if (!Authorize.isAccepted(user, "/MarketingProductController")) {
+        request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+        return;
+    }
+
+    // Khởi tạo các DAO và lấy dữ liệu từ cơ sở dữ liệu
+    DAOProduct dao = new DAOProduct();
+    DAOBrand daoBrand = new DAOBrand();
+    Vector<Brand> brandList = daoBrand.getAllBrands();
+    Vector<String> osList = dao.getDistinctOS();
+    Vector<String> connectivityList = dao.getDistinctConnectivity();
+    Vector<Integer> ramList = dao.getDistinctRAM();
+    Vector<String> screenTypeList = dao.getDistinctScreenType();
+    Vector<Integer> batteryCapacityList = dao.getDistinctBatteryCapacity();
+    Vector<Double> screenSizeList = dao.getDistinctScreenSize();
+
+    // Lấy các tham số từ request (filter, sort, pagination)
+    String brandIDStr = request.getParameter("brandID");
+    String searchQuery = request.getParameter("search");
+    String minPriceStr = request.getParameter("minPrice");
+    String maxPriceStr = request.getParameter("maxPrice");
+    String pageStr = request.getParameter("page");
+    String os = request.getParameter("os");
+    String connectivity = request.getParameter("connectivity");
+    String ramStr = request.getParameter("ram");
+    String screenType = request.getParameter("screenType");
+    String batteryCapacityStr = request.getParameter("batteryCapacity");
+    String screenSizeStr = request.getParameter("screenSize");
+    String sortby = request.getParameter("sortby");
+    String sortOrder = request.getParameter("sortOrder");
+    String statusFilter = request.getParameter("statusFilter");
+
+    // Chuyển đổi các tham số lấy được từ request
+    int brandID = (brandIDStr != null && !brandIDStr.isEmpty()) ? Integer.parseInt(brandIDStr) : 0;
+    double minPrice = (minPriceStr != null && !minPriceStr.isEmpty()) ? Double.parseDouble(minPriceStr) : 0.0;
+    double maxPrice = (maxPriceStr != null && !maxPriceStr.isEmpty()) ? Double.parseDouble(maxPriceStr) : Double.MAX_VALUE;
+    int currentPage = (pageStr != null && !pageStr.isEmpty()) ? Integer.parseInt(pageStr) : 1;
+    int ram = (ramStr != null && !ramStr.isEmpty()) ? Integer.parseInt(ramStr) : 0;
+    int batteryCapacity = (batteryCapacityStr != null && !batteryCapacityStr.isEmpty()) ? Integer.parseInt(batteryCapacityStr) : 0;
+    double screenSize = (screenSizeStr != null && !screenSizeStr.isEmpty()) ? Double.parseDouble(screenSizeStr) : 0.0;
+    int itemsPerPage = 8; // Số sản phẩm hiển thị mỗi trang
+
+    // Lấy tổng số sản phẩm theo bộ lọc
+    int totalProducts = dao.getTotalProductsByFilters(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType);
+    int totalPages = Math.max((int) Math.ceil((double) totalProducts / itemsPerPage), 1);
+
+    // Lấy danh sách sản phẩm đã lọc và phân trang
+    Vector<Product> productList = dao.getProductsByFilterAdmin(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage, statusFilter);
+
+    // Lấy sản phẩm mới nhất (nếu cần)
+    Product latestProduct = dao.getLatestProduct();
+
+    // Xử lý các hành động như xóa, ẩn hoặc hiển thị sản phẩm
+    String action = request.getParameter("action");
+    if ("delete".equals(action)) {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        int result = dao.delete(productId);
+        if (result > 0) {
+            session.setAttribute("deleteMessage", "Sản phẩm đã được xóa thành công.");
+        } else {
+            session.setAttribute("deleteMessage", "Không thể xóa sản phẩm.");
+        }
+        response.sendRedirect("MarketingProductController");
+    } else if ("hide".equals(action)) {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        int result = dao.hideProduct(productId);
+        if (result > 0) {
+            session.setAttribute("productStatusMessage", "Sản phẩm đã được ẩn.");
+        } else {
+            session.setAttribute("productStatusMessage", "Không thể ẩn sản phẩm.");
+        }
+        response.sendRedirect("MarketingProductController");
+    } else if ("show".equals(action)) {
+        int productId = Integer.parseInt(request.getParameter("id"));
+        int result = dao.showProduct(productId);
+        if (result > 0) {
+            session.setAttribute("productStatusMessage", "Sản phẩm đã được hiển thị.");
+        } else {
+            session.setAttribute("productStatusMessage", "Không thể hiển thị sản phẩm.");
+        }
+        response.sendRedirect("MarketingProductController");
+    } else if ("sort".equals(action)) {
+        Vector<Product> sortProduct = dao.sortProducts(sortby, sortOrder, currentPage, itemsPerPage);
+        request.setAttribute("sortProduct", sortProduct);
+    } else {
+        request.setAttribute("productList", productList);
+        request.setAttribute("latestProduct", latestProduct);
+        request.setAttribute("brands", brandList);
+        request.setAttribute("osList", osList);
+        request.setAttribute("connectivityList", connectivityList);
+        request.setAttribute("ramList", ramList);
+        request.setAttribute("screenTypeList", screenTypeList);
+        request.setAttribute("batteryCapacityList", batteryCapacityList);
+        request.setAttribute("screenSizeList", screenSizeList);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("brandID", brandID);
+        request.setAttribute("os", os);
+        request.setAttribute("connectivity", connectivity);
+        request.setAttribute("ram", ram);
+        request.setAttribute("screenType", screenType);
+        request.setAttribute("batteryCapacity", batteryCapacity);
+        request.setAttribute("screenSize", screenSize);
+        request.setAttribute("minPrice", minPrice);
+        request.setAttribute("maxPrice", maxPrice);
+        request.setAttribute("sortby", sortby);
+        request.setAttribute("sortOrder", sortOrder);
+
+        // Forward request tới JSP để hiển thị sản phẩm
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/marketingshop.jsp");
+        rd.forward(request, response);
+    }
+}
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
