@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author Admin
- */
 import entity.Storage;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -21,13 +13,14 @@ import java.util.logging.Logger;
 
 public class DAOStorage extends DBConnection {
 
-    // Thêm Storage mới
+    
     public int addStorage(Storage storage) {
         int n = 0;
-        String sql = "INSERT INTO Storage (capacity, status) VALUES (?, ?)";
+        String sql = "INSERT INTO Storages (capacity, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, storage.getCapacity());
-            pre.setString(2, storage.isStatus());
+
+            pre.setString(2, storage.getStatus());  
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -89,7 +82,6 @@ public class DAOStorage extends DBConnection {
         return n;
     }
 
-    // Xóa Storage
     public int deleteStorage(int id) {
         int n = 0;
         String sql = "DELETE FROM Storage WHERE id = ?";
@@ -129,16 +121,26 @@ public class DAOStorage extends DBConnection {
                         rs.getString("capacity"),
                         rs.getString("status") // Nếu status là ENUM
                 );
+    // Lấy tất cả dung lượng lưu trữ có trạng thái 'Active'
+    public Vector<Storage> getAllStorages() {
+        Vector<Storage> storages = new Vector<>();
+        String sql = "SELECT * FROM Storages WHERE status = 'Active'";  
+
+        try (Statement stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                // Tạo đối tượng Storage và thêm vào vector
+                Storage storage = new Storage(
+                        rs.getInt("id"),
+                        rs.getString("capacity"),
+                        rs.getString("status"));
+                storages.add(storage);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return null;
-    }
-    
-    public static void main(String[] args) {
-        DAOStorage dao = new DAOStorage();
-        System.out.println(dao.getStorageIDByCapacity("128GB"));
+
+        return storages;
     }
 
 }

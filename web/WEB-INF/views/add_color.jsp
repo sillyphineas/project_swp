@@ -1,16 +1,13 @@
 <%-- 
-    Document   : edit_user
-    Created on : Mar 3, 2025, 5:04:46 PM
+    Document   : add_color
+    Created on : Mar 14, 2025, 12:04:23 PM
     Author     : Admin
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.Setting"%>
-<%@page import="model.DAOSetting"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="entity.Product, entity.ProductVariant, java.util.Vector, entity.Brand" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="entity.User"%>
-<%@page import="model.DAOUser"%>
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,17 +33,22 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <style>
+         <style>
             .inactive-status {
-                color: red; /* Màu đỏ cho trạng thái Inactive */
+                color: red;
                 font-weight: bold;
             }
 
             .active-status {
-                color: green; /* Màu xanh cho trạng thái Active */
+                color: green;
                 font-weight: bold;
             }
 
+            .add-pr {
+                text-align: center;
+                color: black;
+                margin-bottom: 20px;
+            }
         </style>
     </head><!--/head-->
 
@@ -112,13 +114,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
+<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -146,7 +148,7 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -158,94 +160,28 @@
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
-
-        <section id="update-setting-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h2>Edit User</h2>
-
-
-                        <!-- Lấy thông tin người dùng và điền vào form -->
-                        <form action="UserDetailController?action=updateUser" method="post">
-                            <c:set var="user" value="${user}" />
-                            <input type="text" name="userId" value="${user.id}"/>
-
-                            <!-- User Name -->
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
-                            </div>
-
-                            <!-- Email -->
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required />
-                            </div>
-
-                            <!-- Password -->
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" />
-                            </div>
-
-                            <!-- Gender -->
-                            <div class="form-group">
-                                <label for="gender">Gender</label>
-                                <select class="form-control" id="gender" name="gender">
-                                    <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
-                                    <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
-                                </select>
-                            </div>
-
-                            <!-- Phone Number -->
-                            <div class="form-group">
-                                <label for="phoneNumber">Phone Number</label>
-                                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="${user.phoneNumber}" />
-                            </div>
-
-                            <!-- Date of Birth -->
-                            <div class="form-group">
-                                <label for="dateOfBirth">Date of Birth</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="${user.dateOfBirth}" />
-                            </div>
-
-                            <!-- Role -->
-                            <div class="form-group">
-                                <label for="roleId">Role</label>
-                                <select class="form-control" id="roleId" name="roleId" required>
-                                    <c:forEach var="role" items="${roles}">
-                                         <c:if test="${role.roleId != 1}">
-                <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
-            </c:if>
-                                    </c:forEach>
-                                        
-                                        
-                                </select>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="form-group">
-                                <label for="isDisabled">Status</label>
-                                <select class="form-control" id="isDisabled" name="isDisabled" required>
-                                    <option value="false" ${!user.disabled ? 'selected' : ''}>Active</option>
-                                    <option value="true" ${user.disabled ? 'selected' : ''}>Inactive</option>
-                                </select>
-                            </div>
-
-
-                            <button type="submit" class="btn btn-primary">Update User</button>
-                            <a href="UserController" class="btn btn-danger">Cancel</a>
-
-                        </form>
-
-                    </div>
+        </header>
+                                 <div class="container">
+            <h2 class="add-pr">Add Color</h2>
+            <form action="AddProductController?action=addColor" method="post">
+                <div class="form-group">
+                    <label for="colorName">Color Name:</label>
+                    <input type="text" class="form-control" name="colorName" required />
                 </div>
-            </div>
-        </section>
 
-        <footer id="footer"><!--Footer-->
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">Add Color</button>
+                <a href="MarketingProductController" class="btn btn-success">Cancel</a>
+            </form>
+        </div>
+                                  <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">

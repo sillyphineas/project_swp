@@ -118,7 +118,7 @@ public class SliderController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/edit-slider.jsp").forward(request, response);
         } else {
             String status = request.getParameter("status");
-            
+
             if (status != null) {
                 List<Blog> filteredSliders = null;
                 try {
@@ -205,14 +205,12 @@ public class SliderController extends HttpServlet {
         } else if ("updateSlider".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             String title = request.getParameter("title");
-            String content = request.getParameter("content");
             String imageURL = request.getParameter("imageURL");
             String backlinks = request.getParameter("backlinks");
-            String status = request.getParameter("status");
             Integer authorID = (Integer) session.getAttribute("userID");
 
             if (authorID == null) {
-                request.setAttribute("message", "You must be logged in to add a slider.");
+                request.setAttribute("message", "You must be logged in to update a slider.");
                 request.setAttribute("messageType", "error");
                 request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
                 return;
@@ -221,10 +219,8 @@ public class SliderController extends HttpServlet {
             Blog slider = new Blog();
             slider.setId(id);
             slider.setTitle(title);
-            slider.setContent(content);
             slider.setImageURL(imageURL);
             slider.setBacklinks(backlinks);
-            slider.setStatus(status);
             slider.setPostTime(postTime);
             slider.setAuthorID(authorID);
             int result = daoSlider.UpdateSlider(slider);

@@ -254,8 +254,8 @@ public class DAOBlog extends DBConnection {
 
         return blogs;
     }
-    
-     public List<Blog> MaketingSearchBlogs(String query, int page, int pageSize) throws SQLException {
+
+    public List<Blog> MaketingSearchBlogs(String query, int page, int pageSize) throws SQLException {
 
         String sql = "SELECT * FROM Blogs WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(content) LIKE LOWER(?)) LIMIT ? OFFSET ?;";
 
@@ -289,6 +289,7 @@ public class DAOBlog extends DBConnection {
 
         return blogs;
     }
+
     public int countTotalBlogsForSearch(String query) throws SQLException {
         String sql = "SELECT COUNT(*) FROM Blogs WHERE (LOWER(title) LIKE LOWER(?) OR LOWER(content) LIKE LOWER(?)) AND isDisabled = 0;";
 
@@ -512,7 +513,7 @@ public class DAOBlog extends DBConnection {
             return 0;
         }
     }
-    
+
     public List<Blog> getPaginatedSlider(int page, int pageSize) throws SQLException {
         String sql = "SELECT * FROM Blogs WHERE isDisabled = 0 and isSlider = 1 ORDER BY postTime DESC LIMIT ? OFFSET ?";
         List<Blog> blogs = new ArrayList<>();
@@ -538,13 +539,98 @@ public class DAOBlog extends DBConnection {
         return blogs;
     }
 
+    public int getTotalBlogsByCategory(int categoryID) {
+        int totalBlogs = 0;
+
+        String sql = "SELECT COUNT(*) FROM Blogs WHERE categoryID = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, categoryID);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                totalBlogs = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totalBlogs;
+    }
+
+    public List<Blog> getPaginatedBlogsByCategory(int categoryID, int page, int pageSize) {
+        List<Blog> blogs = new ArrayList<>();
+        String sql = "SELECT * FROM Blogs WHERE categoryID = ? ORDER BY postTime DESC LIMIT ?, ?";
+
+        try ( PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, categoryID);
+            stmt.setInt(2, (page - 1) * pageSize); 
+            stmt.setInt(3, pageSize);  
+
+            ResultSet rs = stmt.executeQuery();
+
+            // Process the result set
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("backlinks"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isSlider"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return blogs;
+    }
+
+    public List<Blog> MaketinggetPaginatedBlogsByCategory(int categoryID, int page, int pageSize) {
+        List<Blog> blogs = new ArrayList<>();
+        String sql = "SELECT * FROM Blogs WHERE categoryID = ? ORDER BY id LIMIT ?, ?";
+
+        try ( PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, categoryID);
+            stmt.setInt(2, (page - 1) * pageSize); 
+            stmt.setInt(3, pageSize);  
+
+            ResultSet rs = stmt.executeQuery();
+
+            // Process the result set
+            while (rs.next()) {
+                blogs.add(new Blog(
+                        rs.getInt("id"),
+                        rs.getInt("authorID"),
+                        rs.getString("postTime"),
+                        rs.getString("title"),
+                        rs.getString("content"),
+                        rs.getString("backlinks"),
+                        rs.getString("imageURL"),
+                        rs.getString("status"),
+                        rs.getBoolean("isSlider"),
+                        rs.getBoolean("isDisabled")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return blogs;
+    }
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();
-        try {
-            System.out.println(dao.getFilteredBlogs(1, 5, 1, 0, true));
-        } catch (SQLException ex) {
-            Logger.getLogger(DAOBlog.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.println(dao.getPaginatedBlogsByCategory(1, 1, 2));
     }
 
 }

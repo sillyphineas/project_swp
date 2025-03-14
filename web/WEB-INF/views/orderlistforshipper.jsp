@@ -107,8 +107,12 @@
 
                 /* Pagination Styling */
                 .pagination {
-                    text-align: center;
+                    text-align: center; /* Căn giữa các liên kết phân trang */
                     margin-top: 20px;
+                    display: flex;
+                    justify-content: center; /* Căn giữa phần tử con (nút phân trang) */
+                    align-items: center; /* Đảm bảo rằng phần tử được căn giữa theo chiều dọc */
+                    width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
                 }
 
                 .pagination a {
@@ -218,13 +222,13 @@
                             <div class="col-sm-8">
                                 <div class="shop-menu pull-right">
                                     <ul class="nav navbar-nav">
-<!--                                        <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                            <% 
-                                                Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                                User user = (User) session.getAttribute("user");
-                                                if (isLoggedIn != null && isLoggedIn) {
-                                            %>
+                                        <!--                                        <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                                <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
                                         <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                         <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                             <% } else { %>

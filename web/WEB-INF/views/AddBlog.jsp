@@ -95,13 +95,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>-->
-                                    
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>-->
+
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -172,24 +172,56 @@
                                 <input type="text" name="title" class="form-control" required />
                             </div>
 
-                            <div class="form-group">
-                                <label for="authorID">Author</label>
-                                <select name="authorID" class="form-control" required>
-                                    <%
-                                        ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
-                                        while (rsAuthor.next()) {
-                                            int authorId = rsAuthor.getInt("id");
-                                            String authorName = rsAuthor.getString("name");
-                                    %>
-                                    <option value="<%= authorId %>"><%= authorName %></option>
-                                    <% } %>
-                                </select>
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="authorID">Author</label>
+                                    <select name="authorID" class="form-control" required 
+                                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                        <%
+                                            ResultSet rsAuthor = (ResultSet) request.getAttribute("rsAuthor");
+                                            while (rsAuthor.next()) {
+                                                int authorId = rsAuthor.getInt("id");
+                                                String authorName = rsAuthor.getString("name");
+                                        %>
+                                        <option value="<%= authorId %>"><%= authorName %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="categoryID">Category</label>
+                                    <select name="categoryID" class="form-control" required 
+                                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                        <%
+                                            ResultSet rsCategory = (ResultSet) request.getAttribute("rsCategory");
+                                            while (rsCategory.next()) {
+                                                int categoryId = rsCategory.getInt("id");
+                                                String categoryName = rsCategory.getString("categoryName");
+                                        %>
+                                        <option value="<%= categoryId %>"><%= categoryName %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="postTime">Post Time</label>
-                                <input type="datetime-local" name="postTime" class="form-control" required />
+
+                            <div style="display: flex; gap: 20px; align-items: center;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="postTime">Post Time</label>
+                                    <input type="datetime-local" name="postTime" id="postTime" class="form-control" required 
+                                           style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                </div>
+
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="isDisabled">Status</label>
+                                    <select name="isDisabled" class="form-control" required 
+                                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                        <option value="false">Active</option>
+                                        <option value="true">Disable</option>
+                                    </select>
+                                </div>
                             </div>
+
 
                             <div class="form-group">
                                 <label for="content">Content</label>
@@ -206,14 +238,6 @@
                                 <input type="text" name="backlinks" class="form-control" />
                             </div>
 
-                            <div class="form-group">
-                                <label for="isDisabled">Status</label>
-                                <select name="isDisabled" class="form-control" required>
-                                    <option value="false">Active</option>
-                                    <option value="true">Disable</option>
-                                </select>
-                            </div>
-
                             <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
                                 <button type="submit" name="submit" value="addBlog" class="btn" style="padding: 10px 20px; background-color: #ff8c00; color: white; border: 2px solid #ff8c00; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
                                     Add Blog
@@ -222,8 +246,8 @@
                                     Back to List
                                 </a>
                             </div>
-
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -395,7 +419,25 @@
                 filebrowserUploadMethod: 'form' // Phương thức upload
             });
         </script>
+        <script>
+            // Lấy ngày giờ hiện tại và định dạng lại
+            function setMinDateTime() {
+                let now = new Date();
+                let year = now.getFullYear();
+                let month = String(now.getMonth() + 1).padStart(2, '0');
+                let day = String(now.getDate()).padStart(2, '0');
+                let hours = String(now.getHours()).padStart(2, '0');
+                let minutes = String(now.getMinutes()).padStart(2, '0');
 
+                let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+                        // Gán giá trị min cho input
+                        document.getElementById("postTime").setAttribute("min", minDateTime);
+                    }
+
+                    // Gọi hàm khi trang tải xong
+                    window.onload = setMinDateTime;
+        </script>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
