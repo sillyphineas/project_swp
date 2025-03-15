@@ -1,71 +1,120 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entity;
+
 import java.util.Date;
-/**
- *
- * @author HP
- */
+
 public class Payment {
-    private int PaymentID;
-    private int OrderID;
-    private String PaymentMethod;
-    private String PaymentStatus;
-    private Date PaymentDate;
+    private int paymentId;
+    private int orderId;             // Mới thêm
+    private String paymentStatus;
+    private Date paymentTime;
+    private int paymentMethodId;
+    private double amount;
+    private String note;
+    private int confirmBy;
+    private Date createdDate;
+    private Date updatedDate;
     private boolean isDisabled;
 
+    // Constructor không đối số
     public Payment() {
     }
 
-    public Payment(int PaymentID, int OrderID, String PaymentMethod, String PaymentStatus, Date PaymentDate, boolean isDisabled) {
-        this.PaymentID = PaymentID;
-        this.OrderID = OrderID;
-        this.PaymentMethod = PaymentMethod;
-        this.PaymentStatus = PaymentStatus;
-        this.PaymentDate = PaymentDate;
+    // Constructor đầy đủ
+    public Payment(int paymentId, int orderId, String paymentStatus, Date paymentTime,
+                   int paymentMethodId, double amount, String note, int confirmBy,
+                   Date createdDate, Date updatedDate, boolean isDisabled) {
+        this.paymentId = paymentId;
+        this.orderId = orderId;
+        this.paymentStatus = paymentStatus;
+        this.paymentTime = paymentTime;
+        this.paymentMethodId = paymentMethodId;
+        this.amount = amount;
+        this.note = note;
+        this.confirmBy = confirmBy;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
         this.isDisabled = isDisabled;
     }
 
-    public int getPaymentID() {
-        return PaymentID;
+    // Getter & Setter
+    public int getPaymentId() {
+        return paymentId;
     }
 
-    public void setPaymentID(int PaymentID) {
-        this.PaymentID = PaymentID;
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public int getOrderID() {
-        return OrderID;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setOrderID(int OrderID) {
-        this.OrderID = OrderID;
-    }
-
-    public String getPaymentMethod() {
-        return PaymentMethod;
-    }
-
-    public void setPaymentMethod(String PaymentMethod) {
-        this.PaymentMethod = PaymentMethod;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public String getPaymentStatus() {
-        return PaymentStatus;
+        return paymentStatus;
     }
 
-    public void setPaymentStatus(String PaymentStatus) {
-        this.PaymentStatus = PaymentStatus;
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
-    public Date getPaymentDate() {
-        return PaymentDate;
+    public Date getPaymentTime() {
+        return paymentTime;
     }
 
-    public void setPaymentDate(Date PaymentDate) {
-        this.PaymentDate = PaymentDate;
+    public void setPaymentTime(Date paymentTime) {
+        this.paymentTime = paymentTime;
+    }
+
+    public int getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    public void setPaymentMethodId(int paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public int getConfirmBy() {
+        return confirmBy;
+    }
+
+    public void setConfirmBy(int confirmBy) {
+        this.confirmBy = confirmBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public Date getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(Date updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     public boolean isIsDisabled() {
@@ -78,8 +127,18 @@ public class Payment {
 
     @Override
     public String toString() {
-        return "Payment{" + "PaymentID=" + PaymentID + ", OrderID=" + OrderID + ", PaymentMethod=" + PaymentMethod + ", PaymentStatus=" + PaymentStatus + ", PaymentDate=" + PaymentDate + ", isDisabled=" + isDisabled + '}';
+        return "Payment{" +
+                "paymentId=" + paymentId +
+                ", orderId=" + orderId +
+                ", paymentStatus='" + paymentStatus + '\'' +
+                ", paymentTime=" + paymentTime +
+                ", paymentMethodId=" + paymentMethodId +
+                ", amount=" + amount +
+                ", note='" + note + '\'' +
+                ", confirmBy=" + confirmBy +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                ", isDisabled=" + isDisabled +
+                '}';
     }
-    
-    
 }

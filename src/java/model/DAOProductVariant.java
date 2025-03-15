@@ -1,15 +1,15 @@
 package model;
 
-import entity.Color;
 import java.sql.SQLException;
 import entity.ProductVariant;
-import entity.Storage;
 import model.DBConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import entity.Color;
+import entity.Storage;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -87,30 +87,28 @@ public class DAOProductVariant extends DBConnection {
         return productVariant;
     }
 
-
     public int addProductVariant(ProductVariant variant) {
-    int n = 0;
-    
-    String sql = "INSERT INTO productVariants (product_id, color_id, storage_id, price, stock, status) VALUES (?, ?, ?, ?, ?, ?)";
+        int n = 0;
 
-    try {
-        PreparedStatement pre = conn.prepareStatement(sql);
-        pre.setInt(1, variant.getProduct_id());  
-        pre.setInt(2, variant.getColor_id());    
-        pre.setInt(3, variant.getStorage_id());  
-        pre.setDouble(4, variant.getPrice());   
-        pre.setInt(5, variant.getStock());       
-        pre.setString(6, variant.isStatus());   
+        String sql = "INSERT INTO productVariants (product_id, color_id, storage_id, price, stock, status) VALUES (?, ?, ?, ?, ?, ?)";
 
-        n = pre.executeUpdate();
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, variant.getProduct_id());
+            pre.setInt(2, variant.getColor_id());
+            pre.setInt(3, variant.getStorage_id());
+            pre.setDouble(4, variant.getPrice());
+            pre.setInt(5, variant.getStock());
+            pre.setString(6, variant.isStatus());
+
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
     }
-    return n;
-}
 
-
-   public int updateProductVariant(ProductVariant variant) {
+    public int updateProductVariant(ProductVariant variant) {
         int n = 0;
         String sql = "UPDATE productVariants SET color_id = ?, storage_id = ?, price = ?, stock = ?, status = ? WHERE id = ?";
 
@@ -129,6 +127,20 @@ public class DAOProductVariant extends DBConnection {
             ex.printStackTrace();
         }
         return n;
+    }
+
+    public boolean updateProductVariantStock(ProductVariant productVariant) {
+        String sql = "UPDATE productVariants SET stock = ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, productVariant.getStock());
+            stmt.setInt(2, productVariant.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public int deleteProductVariant(int id) {
@@ -187,48 +199,41 @@ public class DAOProductVariant extends DBConnection {
         return minPrice;
     }
 
-
-  public Vector<ProductVariant> getVariantsByProductId(int productId) {
-    Vector<ProductVariant> variants = new Vector<>();
-    String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, c.colorName, s.capacity, pv.status "
-               + "FROM productVariants pv "
-               + "JOIN colors c ON pv.color_id = c.id "
-               + "JOIN storages s ON pv.storage_id = s.id "
-               + "WHERE pv.product_id = ? AND c.status = 'Active' AND s.status = 'Active'";
+    public Vector<ProductVariant> getVariantsByProductId(int productId) {
+        Vector<ProductVariant> variants = new Vector<>();
+        String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, c.colorName, s.capacity "
+                + "FROM productVariants pv "
+                + "JOIN colors c ON pv.color_id = c.id "
+                + "JOIN storages s ON pv.storage_id = s.id "
+                + "WHERE pv.product_id = ? AND c.status = 'Active' AND s.status = 'Active'";
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, productId);  // Gán giá trị productId vào câu truy vấn
             ResultSet rs = pre.executeQuery();  // Thực thi câu truy vấn
 
-
-        while (rs.next()) {
-            // Tạo đối tượng ProductVariant từ kết quả truy vấn
-            ProductVariant variant = new ProductVariant(
-                    rs.getInt("id"),           
-                    rs.getInt("product_id"),   
-                    rs.getInt("color_id"),      
-                    rs.getInt("storage_id"),    
-                    rs.getDouble("price"),      
-                    rs.getInt("stock"),          
-                    rs.getString("status")
-            );
-            variants.add(variant);  
+            while (rs.next()) {
+                // Tạo đối tượng ProductVariant từ kết quả truy vấn
+                ProductVariant variant = new ProductVariant(
+                        rs.getInt("id"),
+                        rs.getInt("product_id"),
+                        rs.getInt("color_id"),
+                        rs.getInt("storage_id"),
+                        rs.getDouble("price"),
+                        rs.getInt("stock"),
+                        rs.getString("status")
+                );
+                variants.add(variant);  // Thêm sản phẩm variant vào danh sách
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();  // In lỗi nếu có
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace(); 
+        return variants;  // Trả về danh sách các sản phẩm variant
     }
-      System.out.println("" +variants);
-    return variants;  
-}
-
-
 
     public static void main(String[] args) {
         DAOProductVariant variant = new DAOProductVariant();
 //        System.out.println(variant.getProductVariantById(58));
-        System.out.println(variant.getProductVariantByDetails(1, "Đen", 128));
     }
-
 
     public void reduceStock(int variantId, int quantity) {
         String sql = "UPDATE ProductVariants "
@@ -242,6 +247,32 @@ public class DAOProductVariant extends DBConnection {
         } catch (SQLException ex) {
             Logger.getLogger(DAOProductVariant.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public ProductVariant getProductVariantDetails1(int productID, String color, String storage) {
+        String sql = "SELECT pv.price, pv.stock "
+                + "FROM productVariants pv "
+                + "JOIN colors c ON pv.color_id = c.id "
+                + "JOIN storages s ON pv.storage_id = s.id "
+                + "WHERE pv.product_id = ? AND c.colorName = ? AND s.capacity = ?";
+
+        ProductVariant productVariant = null;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productID);
+            ps.setString(2, color);
+            ps.setString(3, storage);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                productVariant = new ProductVariant();
+                productVariant.setPrice(rs.getDouble("price"));
+                productVariant.setStock(rs.getInt("stock"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return productVariant;
     }
 
     public Vector<String> getDistinctColorsByProductId(int productID) {
@@ -278,32 +309,6 @@ public class DAOProductVariant extends DBConnection {
         }
 
         return storages;
-    }
-   
-   public ProductVariant getProductVariantDetails1(int productID, String color, String storage) {
-    String sql = "SELECT pv.price, pv.stock "
-               + "FROM productVariants pv "
-               + "JOIN colors c ON pv.color_id = c.id "
-               + "JOIN storages s ON pv.storage_id = s.id "
-               + "WHERE pv.product_id = ? AND c.colorName = ? AND s.capacity = ?";
-
-        ProductVariant productVariant = null;
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, productID);
-            ps.setString(2, color);
-            ps.setString(3, storage);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                productVariant = new ProductVariant();
-                productVariant.setPrice(rs.getDouble("price"));
-                productVariant.setStock(rs.getInt("stock"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return productVariant;
     }
 
     public Vector<String> getDistinctStorageByProductId1(int productID) {
@@ -344,26 +349,6 @@ public class DAOProductVariant extends DBConnection {
         }
 
         return colors;
-    }
-
-    public boolean updateProductVariantStock(ProductVariant productVariant) {
-        String sql = "UPDATE productVariants SET stock = ? WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, productVariant.getStock());
-            stmt.setInt(2, productVariant.getId());
-
-            int rowsUpdated = stmt.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static void main(String[] args) {
-        DAOProductVariant dao = new DAOProductVariant();
-        dao.reduceStock(196, 2);
-
     }
 
 }

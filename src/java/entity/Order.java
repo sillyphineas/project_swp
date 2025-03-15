@@ -10,7 +10,6 @@ public class Order {
     private String shippingAddress; // VARCHAR(255)
     private double totalPrice;      // DECIMAL(15,2)
     private double discountedPrice; // DECIMAL(15,2)
-    private int paymentMethod;      // TINYINT(1)
     private boolean isDisabled;     // TINYINT(1) -> boolean
     private Integer voucherID;      // INT(11) FK -> Vouchers(id)
     private String recipientName;   // VARCHAR(255)
@@ -22,8 +21,7 @@ public class Order {
 
     // Constructor đầy đủ, khớp với cột DB
     public Order(int id, int buyerID, Date orderTime, String orderStatus, String shippingAddress,
-                 double totalPrice, double discountedPrice,
-                 int paymentMethod, boolean isDisabled,
+                 double totalPrice, double discountedPrice, boolean isDisabled,
                  Integer voucherID, String recipientName,
                  String recipientPhone, Integer assignedSaleId) {
         this.id = id;
@@ -33,7 +31,6 @@ public class Order {
         this.shippingAddress = shippingAddress;
         this.totalPrice = totalPrice;
         this.discountedPrice = discountedPrice;
-        this.paymentMethod = paymentMethod;
         this.isDisabled = isDisabled;
         this.voucherID = voucherID;
         this.recipientName = recipientName;
@@ -91,13 +88,6 @@ public class Order {
         this.discountedPrice = discountedPrice;
     }
 
-    public int getPaymentMethod() {
-        return paymentMethod;
-    }
-    public void setPaymentMethod(int paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     public boolean isDisabled() {
         return isDisabled;
     }
@@ -143,7 +133,6 @@ public class Order {
                 + ", shippingAddress='" + shippingAddress + '\''
                 + ", totalPrice=" + totalPrice
                 + ", discountedPrice=" + discountedPrice
-                + ", paymentMethod=" + paymentMethod
                 + ", isDisabled=" + isDisabled
                 + ", voucherID=" + voucherID
                 + ", recipientName=" + recipientName
