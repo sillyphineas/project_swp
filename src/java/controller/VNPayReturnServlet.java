@@ -150,11 +150,12 @@ public class VNPayReturnServlet extends HttpServlet {
 
             newPayment.setPaymentStatus("Paid");
             newPayment.setPaymentTime(time);
+            newPayment.setPaymentMethodId(2);
             calendar.setTime(time);
             calendar.add(Calendar.DATE, 3);
-            newPayment.setPaymentMethodId(2);
             newPayment.setAmount(totalAmount);
             newPayment.setNote("");
+            newPayment.setConfirmBy(null);
 
             int OrderId = daoOrder.addOrder(newOrder);
 
