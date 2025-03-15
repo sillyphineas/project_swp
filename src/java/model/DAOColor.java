@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
+/**
+ *
+ * @author Admin
+ */
 import entity.Color;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -16,10 +24,10 @@ public class DAOColor extends DBConnection {
     // Thêm màu mới
     public int addColor(Color color) {
         int n = 0;
-        String sql = "INSERT INTO Colors (colorName, status) VALUES (?, ?)";
+        String sql = "INSERT INTO Color (colorName, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
-            pre.setString(2, color.getStatus());  // Dùng String cho status
+            pre.setString(2, color.getStatus());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -36,9 +44,7 @@ public class DAOColor extends DBConnection {
                 Color color = new Color(
                         rs.getInt("id"),
                         rs.getString("colorName"),
-
-                        rs.getString("status")  // Dùng String cho status
-
+                        rs.getString("status")
                 );
                 vector.add(color);
             }
@@ -58,9 +64,7 @@ public class DAOColor extends DBConnection {
                 Color color = new Color(
                         rs.getInt("id"),
                         rs.getString("colorName"),
-
-                        rs.getString("status")  // Dùng String cho status
-
+                        rs.getString("status")
                 );
                 colors.add(color);
             }
@@ -76,10 +80,7 @@ public class DAOColor extends DBConnection {
         String sql = "UPDATE Color SET colorName = ?, status = ? WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
-
-
-            pre.setString(2, color.getStatus());  // Dùng String cho status
-
+            pre.setString(2, color.getStatus());
             pre.setInt(3, color.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -112,16 +113,45 @@ public class DAOColor extends DBConnection {
             while (rs.next()) {
                 colors.add(new Color(rs.getInt("id"),
                         rs.getString("colorName"),
-
-                        rs.getString("status")));  // Dùng String cho status
-
+                        rs.getString("status")));
             }
         }
         return colors;
     }
 
+    public int getColorIDByName(String colorName) {
+        String query = "SELECT id FROM colors WHERE colorName = ? AND status = 'Active'";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, colorName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
 
-    // Lấy tất cả màu sắc có trạng thái 'Active'
+    public Color getColorById1 (int colorId) {
+        String sql = "SELECT id, colorName, status FROM colors WHERE id = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setInt(1, colorId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) { 
+                return new Color(
+                        rs.getInt("id"),
+                        rs.getString("colorName"),
+                        rs.getString("status")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null; 
+    }
+    
     public Vector<Color> getAllColors() {
         Vector<Color> colors = new Vector<>();
         String sql = "SELECT * FROM Colors WHERE status = 'Active'"; // Truy vấn lấy tất cả màu sắc có trạng thái 'Active'
@@ -140,7 +170,12 @@ public class DAOColor extends DBConnection {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
         return colors;
+    }
+
+    public static void main(String[] args) {
+        DAOColor dao = new DAOColor();
+//        System.out.println(dao.getColorIDByName("Đen"));
+        System.out.println(dao.getColorById1(1));
     }
 }

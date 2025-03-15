@@ -22,18 +22,17 @@ public class DAOOrder extends DBConnection {
             ps.setString(4, order.getShippingAddress());
             ps.setDouble(5, order.getTotalPrice());
             ps.setDouble(6, order.getDiscountedPrice());
-            ps.setInt(7, order.getPaymentMethod());
-            ps.setBoolean(8, order.isDisabled());
+            ps.setBoolean(7, order.isDisabled());
 
             if (order.getVoucherID() != null) {
-                ps.setInt(9, order.getVoucherID());
+                ps.setInt(8, order.getVoucherID());
             } else {
-                ps.setNull(9, java.sql.Types.INTEGER);
+                ps.setNull(8, java.sql.Types.INTEGER);
             }
 
-            ps.setString(10, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
-            ps.setString(11, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
-            ps.setInt(12, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
+            ps.setString(9, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
+            ps.setString(10, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
+            ps.setInt(11, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -66,7 +65,6 @@ public class DAOOrder extends DBConnection {
                 String shippingAddress = rs.getString("shippingAddress");
                 double totalPrice = rs.getDouble("totalPrice");
                 double discountedPrice = rs.getDouble("discountedPrice");
-                int paymentMethod = rs.getByte("paymentMethod");
                 boolean isDisabled = rs.getBoolean("isDisabled");
                 Integer voucherID = rs.getInt("voucherID");
                 if (rs.wasNull()) {
@@ -84,7 +82,6 @@ public class DAOOrder extends DBConnection {
                         shippingAddress,
                         totalPrice,
                         discountedPrice,
-                        paymentMethod,
                         isDisabled,
                         voucherID,
                         recipientName,
@@ -115,7 +112,6 @@ public class DAOOrder extends DBConnection {
                     String shippingAddress = rs.getString("shippingAddress");
                     double totalPrice = rs.getDouble("totalPrice");
                     double discountedPrice = rs.getDouble("discountedPrice");
-                    int paymentMethod = rs.getByte("paymentMethod");
                     boolean isDisabled = rs.getBoolean("isDisabled");
                     Integer voucherID = rs.getInt("voucherID");
                     if (rs.wasNull()) {
@@ -133,7 +129,6 @@ public class DAOOrder extends DBConnection {
                             shippingAddress,
                             totalPrice,
                             discountedPrice,
-                            paymentMethod,
                             isDisabled,
                             voucherID,
                             recipientName,
@@ -164,7 +159,6 @@ public class DAOOrder extends DBConnection {
             preparedStatement.setString(4, order.getShippingAddress());
             preparedStatement.setDouble(5, order.getTotalPrice());
             preparedStatement.setDouble(6, order.getDiscountedPrice());
-            preparedStatement.setInt(7, order.getPaymentMethod());
             preparedStatement.setBoolean(8, order.isDisabled());
 
             if (order.getVoucherID() != null) {
@@ -255,7 +249,6 @@ public class DAOOrder extends DBConnection {
                     Timestamp orderTime = rs.getTimestamp("orderTime");
                     double totalPrice = rs.getDouble("totalPrice");
                     double discountedPrice = rs.getDouble("discountedPrice");
-                    int paymentMethod = rs.getInt("paymentMethod");
                     Date shippingDate = rs.getDate("shippingDate");
                     String recipientName = rs.getString("RecipientName");
                     String recipientPhone = rs.getString("RecipientPhone");
@@ -275,7 +268,6 @@ public class DAOOrder extends DBConnection {
                             shippingAddress,
                             totalPrice,
                             discountedPrice,
-                            paymentMethod,
                             isDisabled,
                             voucherID,
                             recipientName,
@@ -453,7 +445,6 @@ public class DAOOrder extends DBConnection {
                 System.out.println("Shipping Address: " + order.getShippingAddress());
                 System.out.println("Total Price: " + order.getTotalPrice());
                 System.out.println("Discounted Price: " + order.getDiscountedPrice());
-                System.out.println("Payment Method: " + order.getPaymentMethod());
                 System.out.println("Recipient Name: " + order.getRecipientName());
                 System.out.println("Recipient Phone: " + order.getRecipientPhone());
                 System.out.println("Assigned Sale ID: " + order.getAssignedSaleId());

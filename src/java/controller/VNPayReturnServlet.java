@@ -8,6 +8,7 @@ import entity.Cart;
 import entity.CartItem;
 import entity.Order;
 import entity.OrderDetail;
+import entity.Payment;
 import entity.User;
 import helper.Authorize;
 import helper.EmailUtil;
@@ -28,6 +29,7 @@ import model.DAOCart;
 import model.DAOCartItem;
 import model.DAOOrder;
 import model.DAOOrderDetail;
+import model.DAOPayment;
 import model.DAOProduct;
 import model.DAOProductVariant;
 
@@ -112,13 +114,14 @@ public class VNPayReturnServlet extends HttpServlet {
             int customerID = user.getId();
             DAOCart daoCart = new DAOCart();
             DAOCartItem daoCartItem = new DAOCartItem();
+            DAOPayment daoPayment = new DAOPayment();
 
             List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
             if (selectedCartItems == null || selectedCartItems.isEmpty()) {
                 response.sendRedirect("checkout.jsp?error=EmptyCart");
                 return;
             }
-            Date orderTime = new Date();
+            Date time = new Date();
             double totalAmount = 0.0;
 
             if (selectedCartItems != null) {
@@ -129,22 +132,34 @@ public class VNPayReturnServlet extends HttpServlet {
 
             Order newOrder = new Order();
             newOrder.setBuyerID(customerID);
-            newOrder.setOrderTime(orderTime);
-            newOrder.setOrderStatus("Paid");
+            newOrder.setOrderTime(time);
+            newOrder.setOrderStatus("Awaiting Pickup");
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(orderTime);
+            calendar.setTime(time);
             calendar.add(Calendar.DATE, 3);
             newOrder.setShippingAddress((String) session.getAttribute("addressSelect"));
             newOrder.setTotalPrice(totalAmount);
             newOrder.setDiscountedPrice(0.0);
-            newOrder.setPaymentMethod(2);
             newOrder.setDisabled(false);
             newOrder.setVoucherID(null);
             newOrder.setRecipientName((String) session.getAttribute("newFullName"));
             newOrder.setRecipientPhone((String) session.getAttribute("newPhone"));
             newOrder.setAssignedSaleId(3);
 
+            Payment newPayment = new Payment();
+
+            newPayment.setPaymentStatus("Paid");
+            newPayment.setPaymentTime(time);
+            calendar.setTime(time);
+            calendar.add(Calendar.DATE, 3);
+            newPayment.setPaymentMethodId(2);
+            newPayment.setAmount(totalAmount);
+            newPayment.setNote("");
+
             int OrderId = daoOrder.addOrder(newOrder);
+
+            newPayment.setOrderId(OrderId);
+            daoPayment.addPayment(newPayment);
 
             for (CartItem item : selectedCartItems) {
                 OrderDetail newOrderDetail = new OrderDetail();
