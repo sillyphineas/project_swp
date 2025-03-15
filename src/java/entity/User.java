@@ -17,6 +17,7 @@ public class User {
     private boolean isDisabled;    // Trạng thái vô hiệu hóa
     private int updatedBy;         // Người cập nhật (tham chiếu đến id)
     private Date updatedAt;        // Thời gian cập nhật
+    private byte[] image;          // Avatar người dùng (dữ liệu hình ảnh dưới dạng byte)
 
     // Constructor không tham số
     public User() {
@@ -24,9 +25,9 @@ public class User {
 
     // Constructor đầy đủ tham số
     public User(int id, String name, String email, String passHash, boolean gender,
-            String phoneNumber, String resetToken, Date resetTokenExpired,
-            Date dateOfBirth, int roleId, boolean isDisabled,
-            int updatedBy, Date updatedAt) {
+                String phoneNumber, String resetToken, Date resetTokenExpired,
+                Date dateOfBirth, int roleId, boolean isDisabled,
+                int updatedBy, Date updatedAt, byte[] image) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -40,6 +41,7 @@ public class User {
         this.isDisabled = isDisabled;
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
+        this.image = image;
     }
 
     // Getters và Setters cho từng thuộc tính
@@ -172,6 +174,15 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    // Getter và Setter cho trường image (avatar)
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
     public String getStatus() {
         if (this.isDisabled == true) {
             return "Disabled";
@@ -180,23 +191,23 @@ public class User {
     }
 
     // Override toString() để dễ dàng hiển thị thông tin user
-
     @Override
     public String toString() {
         return "User{"
                 + "id=" + id
-                + ", name='" + name + '\''
-                + ", email='" + email + '\''
-                + ", passHash='" + passHash + '\''
-                + ", gender=" + gender
-                + ", phoneNumber='" + phoneNumber + '\''
-                + ", resetToken='" + resetToken + '\''
-                + ", resetTokenExpired=" + resetTokenExpired
-                + ", dateOfBirth=" + dateOfBirth
-                + ", roleId=" + roleId
-                + ", isDisabled=" + isDisabled
-                + ", updatedBy=" + updatedBy
-                + ", updatedAt=" + updatedAt
+                + ", name='" + name + '\'' 
+                + ", email='" + email + '\'' 
+                + ", passHash='" + passHash + '\'' 
+                + ", gender=" + gender 
+                + ", phoneNumber='" + phoneNumber + '\'' 
+                + ", resetToken='" + resetToken + '\'' 
+                + ", resetTokenExpired=" + resetTokenExpired 
+                + ", dateOfBirth=" + dateOfBirth 
+                + ", roleId=" + roleId 
+                + ", isDisabled=" + isDisabled 
+                + ", updatedBy=" + updatedBy 
+                + ", updatedAt=" + updatedAt 
+                + ", image=" + (image != null ? "[image data]" : "null") // không hiển thị toàn bộ ảnh trong toString
                 + '}';
     }
 }

@@ -50,6 +50,7 @@
                 }
 
                 h3 {
+                    text-align: center;
                     color: #333;
                     margin-bottom: 10px;
                 }
@@ -119,11 +120,11 @@
                     background-color: #f9f9f9;
                 }
 
-                table th {
+/*                table th {
                     background-color: #f1c40f;
                     color: white;
                     font-weight: bold;
-                }
+                }*/
 
                 table tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -235,11 +236,11 @@
                     background-color: #f9f9f9;
                 }
 
-                table th {
+/*                table th {
                     background-color: #f1c40f;
                     color: white;
                     font-weight: bold;
-                }
+                }*/
 
                 table tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -374,10 +375,11 @@
                                 </div>
                                 <div class="mainmenu pull-left">
                                     <ul class="nav navbar-nav collapse navbar-collapse">
-                                        <li><a href="MarketingDashboardController" >Home</a></li>
+                                        <li><a href="MarketingDashboardController">Home</a></li>
                                         <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
                                         <li><a href="SliderController">Slider List</a></li>
                                         <li><a href="CustomerController" class="active">Customer List</a></li>
+                                        <li><a href="MarketingProductController">Product List</a></li>
                                     </ul>
                                 </div>
                             </div>

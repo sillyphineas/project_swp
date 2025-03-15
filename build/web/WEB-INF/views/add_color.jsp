@@ -1,6 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%-- 
+    Document   : add_color
+    Created on : Mar 14, 2025, 12:04:23 PM
+    Author     : Admin
+--%>
+
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="entity.Product, entity.ProductVariant, java.util.Vector, entity.Brand" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,158 +33,25 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+         <style>
+            .inactive-status {
+                color: red;
+                font-weight: bold;
+            }
+
+            .active-status {
+                color: green;
+                font-weight: bold;
+            }
+
+            .add-pr {
+                text-align: center;
+                color: black;
+                margin-bottom: 20px;
+            }
+        </style>
     </head><!--/head-->
-    <style>
-        /* Tổng thể giao diện */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
 
-        /* Định dạng form */
-        .form-control {
-            font-size: 16px;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 100%; /* Đảm bảo form rộng 100% */
-            box-sizing: border-box; /* Bao gồm padding và border trong kích thước */
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        /* Button */
-        .btn {
-            font-size: 16px;
-            padding: 12px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        /* Tạo khoảng cách giữa các phần tử */
-        .container {
-            margin-top: 30px;
-        }
-
-        /* Định dạng bảng */
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table th, table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        table tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        /* Liên kết "View Detail" */
-        a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        a:hover {
-            color: #0056b3;
-        }
-
-        /* Phân trang */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .pagination li {
-            margin-right: 5px;
-        }
-
-        .pagination li a {
-            padding: 8px 16px;
-            background-color: #f1f1f1;
-            color: #007bff;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .pagination li a:hover {
-            background-color: #ddd;
-        }
-
-        .pagination li.active a {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-control {
-                width: 100%;
-            }
-
-            .container {
-                margin-top: 20px;
-            }
-
-            table th, table td {
-                padding: 10px;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-
-    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -273,43 +147,41 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController" class="active">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
-
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
-
-        <div class="container">
-            <h2>Add Slider</h2>
-            <!-- Display success or error message -->
-            <c:if test="${not empty message}">
-                <div class="alert alert-${messageType}">
-                    ${message}
+        </header>
+                                 <div class="container">
+            <h2 class="add-pr">Add Color</h2>
+            <form action="AddProductController?action=addColor" method="post">
+                <div class="form-group">
+                    <label for="colorName">Color Name:</label>
+                    <input type="text" class="form-control" name="colorName" required />
                 </div>
-            </c:if>
-            <form action="${pageContext.request.contextPath}/SliderController" method="post">
-                <input type="text" name="title" placeholder="Title" class="form-control" required /><br>
-                <textarea name="content" placeholder="Content" class="form-control" required></textarea><br>
-                <input type="text" name="imageURL" placeholder="Image URL" class="form-control" /><br>
-                <input type="text" name="backlinks" placeholder="Backlinks" class="form-control" /><br>
-                <select name="status" class="form-control">
-                    <option value="visible">Visible</option>
-                    <option value="hidden">Hidden</option>
-                </select><br><br>
-                <button type="submit" name="action" value="add" class="btn btn-success">Add Slider</button>
-            </form>
-            <a href="${pageContext.request.contextPath}/SliderController">Back to Slider List</a>
-        </div>
 
-        <footer id="footer"><!--Footer-->
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-success">Add Color</button>
+                <a href="MarketingProductController" class="btn btn-success">Cancel</a>
+            </form>
+        </div>
+                                  <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">

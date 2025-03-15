@@ -83,7 +83,7 @@
                                                                         <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
@@ -127,7 +127,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+<!--                        <div class="col-sm-3">
                             <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
@@ -135,7 +135,7 @@
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
-                        </div>
+                        </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
