@@ -54,34 +54,43 @@
                 height: 40px;  /* Căn chỉnh chiều cao cho đồng nhất */
             }
 
-            form button {
+            /* Cập nhật các button trong form để có kích thước bằng nhau */
+            /* Đảm bảo các button có chiều cao và chiều rộng đồng nhất */
+            button, .btn {
                 padding: 10px 20px;
                 font-size: 16px;
                 border: none;
-                background-color: #f39c12;
-                color: white;
                 border-radius: 4px;
                 cursor: pointer;
-                height: 40px;  /* Đảm bảo chiều cao button giống các phần tử khác */
-                width: auto;  /* Đảm bảo không bị kéo dài quá mức */
+                height: 35px;  /* Đảm bảo chiều cao giống nhau */
+                width: 100px;  /* Chiều rộng đồng nhất cho các button */
+                text-align: center;  /* Căn giữa chữ trong button */
             }
 
-            form button:hover {
-                background-color: #e67e22;
+            button:hover, .btn:hover {
+                opacity: 0.8; /* Thêm hiệu ứng hover */
             }
 
-            /* Responsive cho màn hình nhỏ */
+            /* Responsive cho các button trên màn hình nhỏ */
             @media screen and (max-width: 768px) {
-                .form-section {
-                    flex-direction: column;
-                    align-items: flex-start;  /* Stack các phần tử theo chiều dọc */
-                }
-
-                form input, form select, form button {
-                    width: 100%;  /* Đảm bảo tất cả các phần tử chiếm toàn bộ chiều rộng */
-                    margin-bottom: 10px;
+                button, .btn {
+                    width: 100%;  /* Button chiếm toàn bộ chiều rộng trên thiết bị nhỏ */
                 }
             }
+
+            /* Đảm bảo button trong bảng có cùng kích thước */
+            .table button {
+                width: 100px;
+                height: 35px;
+            }
+
+            /* Thêm một chút padding cho các button bên ngoài bảng (form) */
+            .form-section button {
+                width: 100px;
+                height: 35px;
+            }
+
+
 
 
             /* Pagination Styling */
@@ -123,11 +132,11 @@
                 background-color: #f9f9f9;
             }
 
-            table th {
-                background-color: #f1c40f;
-                color: white;
-                font-weight: bold;
-            }
+            /*            table th {
+                            background-color: #f1c40f;
+                            color: white;
+                            font-weight: bold;
+                        }*/
 
             table tr:nth-child(even) {
                 background-color: #f2f2f2;
@@ -252,17 +261,20 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="MarketingDashboardController">Home</a></li>
                                     <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
+                                    <li><a href="SliderController" class="active">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                            <div>
+                                <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
+                                    <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control d-inline-block" />
+                                    <button type="submit" name="action" value="search" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Search</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -274,39 +286,29 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Slider List</h2>
-                        <div class="add-setting-button">
-                            <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success">Add Slider</a>
-                        </div>
-                        <hr>
+                        <h2>Slider List</h2>                        
                         <!-- Search and Filter Form -->
                         <div class="form-section">
                             <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
-                                <select name="status" class="form-control d-inline-block">
+                                <select name="status"  style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc; height: 35px">
                                     <option value="">All</option>
                                     <option value="0">Visible</option>
                                     <option value="1">Hidden</option>
                                 </select>
-                                <button type="submit" class="btn btn-warning">Filter</button>
-                            </form>
-
-                            <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
-                                <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control d-inline-block" />
-                                <button type="submit" name="action" value="search" class="btn btn-warning">Search</button>
+                                <button type="submit" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Filter</button>
+                                <div class="add-setting-button">
+                                    <a href="${pageContext.request.contextPath}/SliderController?service=addSlider" class="btn btn-success" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Add Slider</a>
+                                </div>
                             </form>
                         </div>
-
-
                         <c:if test="${not empty message}">
                             <div class="alert alert-${messageType}">
                                 ${message}
                             </div>
                         </c:if>
-                        <hr>
-
                         <!-- Slider Table -->
                         <table class="table table-bordered">
-                            <thead>
+                            <thead class="thead-dark">
                                 <tr>
                                     <th>ID</th>
                                     <th>Title</th>
@@ -326,10 +328,10 @@
                                         <td>
                                             <c:choose>
                                                 <c:when test="${slider.isDisabled}">
-                                                    Hidden
+                                                    Inactive
                                                 </c:when>
                                                 <c:otherwise>
-                                                    Visible
+                                                    Active
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
@@ -339,14 +341,14 @@
                                                 <c:choose>
                                                     <c:when test="${slider.isDisabled == true}">
                                                         <input type="hidden" name="isDisabled" value="false" />
-                                                        <button type="submit" name="action" value="toggleStatus">Show</button>
+                                                        <button type="submit" name="action" value="toggleStatus" class="btn btn-success " style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Activate</button>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <input type="hidden" name="isDisabled" value="true" />
-                                                        <button type="submit" name="action" value="toggleStatus">Hide</button>
+                                                        <button type="submit" name="action" value="toggleStatus" class="btn btn-warning btn-sm" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Deactivate</button>
                                                     </c:otherwise>
                                                 </c:choose>
-                                                <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="view-detail-link">View Detail</a>
+                                                <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="btn btn-info btn-sm" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">View Detail</a>
                                             </form>
                                         </td>
                                     </tr>
@@ -356,19 +358,24 @@
 
                         <!-- Pagination -->
                         <div>
-                            <c:if test="${totalPages >= 1}">
-                                <ul class="pagination">
-                                    <c:forEach var="i" begin="1" end="${totalPages}">
-                                        <li class="${i == currentPage ? 'active' : ''}">
-                                            <a href="SliderController?page=${i}">${i}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </c:if>
-                            <c:if test="${totalPages < 1}">
-                                <p>No pages available.</p>
-                            </c:if>
+                            <div class="pagination">
+                                <!-- Nút Previous -->
+                                <c:if test="${currentPage > 1}">
+                                    <a href="SliderController?page=${currentPage - 1}" aria-label="Previous">&laquo; Previous</a>
+                                </c:if>
+
+                                <!-- Các số trang -->
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <a href="SliderController?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+                                </c:forEach>
+
+                                <!-- Nút Next -->
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="SliderController?page=${currentPage + 1}" aria-label="Next">Next &raquo;</a>
+                                </c:if>
+                            </div>                                       
                         </div>
+
                     </div>
                 </div>
             </div>

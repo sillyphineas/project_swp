@@ -1,6 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%-- 
+    Document   : add_storage
+    Created on : Mar 14, 2025, 12:04:31 PM
+    Author     : Admin
+--%>
+
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="entity.Product, entity.ProductVariant, java.util.Vector, entity.Brand" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,158 +33,105 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
-    <style>
-        /* Tổng thể giao diện */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Định dạng form */
-        .form-control {
-            font-size: 16px;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 100%; /* Đảm bảo form rộng 100% */
-            box-sizing: border-box; /* Bao gồm padding và border trong kích thước */
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        /* Button */
-        .btn {
-            font-size: 16px;
-            padding: 12px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        /* Tạo khoảng cách giữa các phần tử */
-        .container {
-            margin-top: 30px;
-        }
-
-        /* Định dạng bảng */
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table th, table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        table tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        /* Liên kết "View Detail" */
-        a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        a:hover {
-            color: #0056b3;
-        }
-
-        /* Phân trang */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .pagination li {
-            margin-right: 5px;
-        }
-
-        .pagination li a {
-            padding: 8px 16px;
-            background-color: #f1f1f1;
-            color: #007bff;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .pagination li a:hover {
-            background-color: #ddd;
-        }
-
-        .pagination li.active a {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-control {
-                width: 100%;
+            <style>
+            /* General Styles */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f9f9f9;
+                margin: 0;
+                padding: 0;
             }
 
             .container {
+                max-width: 800px;
+                margin-top: 40px;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Form Styling */
+            h2.add-pr {
+                text-align: center;
+                color: #333;
+                margin-bottom: 30px;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-weight: bold;
+                color: #333;
+            }
+
+            input[type="number"], select {
+                width: 100%;
+                padding: 10px;
+                margin-top: 5px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 14px;
+                color: #555;
+            }
+
+            button[type="submit"], a.btn {
+                display: inline-block;
+                width: 100%;
+                padding: 10px;
+                background-color: #5cb85c;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                text-align: center;
+                cursor: pointer;
+                transition: background-color 0.3s;
                 margin-top: 20px;
             }
 
-            table th, table td {
+            button[type="submit"]:hover, a.btn:hover {
+                background-color: #4cae4c;
+            }
+
+            /* Status Options Styling */
+            select option {
                 padding: 10px;
             }
 
-            .btn {
-                width: 100%;
+            /* Footer Styling */
+            footer {
+                background-color: #f8f8f8;
+                padding: 30px 0;
+                text-align: center;
             }
-        }
 
-    </style>
+            footer p {
+                color: #777;
+                font-size: 14px;
+            }
+
+            /* Responsive */
+            @media (max-width: 767px) {
+                .container {
+                    padding: 15px;
+                }
+
+                h2.add-pr {
+                    font-size: 20px;
+                }
+
+                button[type="submit"], a.btn {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head><!--/head-->
+
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -273,43 +227,41 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController" class="active">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
-
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
-
-        <div class="container">
-            <h2>Add Slider</h2>
-            <!-- Display success or error message -->
-            <c:if test="${not empty message}">
-                <div class="alert alert-${messageType}">
-                    ${message}
+        </header>
+                               <div class="container">
+            <h2 class="add-pr">Add Storage</h2>
+            <form action="AddProductController?action=addStorage" method="post">
+                <div class="form-group">
+                    <label for="capacity">Storage Capacity (GB):</label>
+                    <input type="number" name="capacity" required />
                 </div>
-            </c:if>
-            <form action="${pageContext.request.contextPath}/SliderController" method="post">
-                <input type="text" name="title" placeholder="Title" class="form-control" required /><br>
-                <textarea name="content" placeholder="Content" class="form-control" required></textarea><br>
-                <input type="text" name="imageURL" placeholder="Image URL" class="form-control" /><br>
-                <input type="text" name="backlinks" placeholder="Backlinks" class="form-control" /><br>
-                <select name="status" class="form-control">
-                    <option value="visible">Visible</option>
-                    <option value="hidden">Hidden</option>
-                </select><br><br>
-                <button type="submit" name="action" value="add" class="btn btn-success">Add Slider</button>
-            </form>
-            <a href="${pageContext.request.contextPath}/SliderController">Back to Slider List</a>
-        </div>
 
-        <footer id="footer"><!--Footer-->
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select name="status" required>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit">Add Storage</button>
+                <a href="MarketingProductController" class="btn btn-success">Cancel</a>
+            </form>
+        </div>
+                                  <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">
