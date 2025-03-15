@@ -201,11 +201,12 @@ public class DAOProductVariant extends DBConnection {
 
     public Vector<ProductVariant> getVariantsByProductId(int productId) {
         Vector<ProductVariant> variants = new Vector<>();
-        String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, c.colorName, s.capacity "
-                + "FROM productVariants pv "
-                + "JOIN colors c ON pv.color_id = c.id "
-                + "JOIN storages s ON pv.storage_id = s.id "
-                + "WHERE pv.product_id = ? AND c.status = 'Active' AND s.status = 'Active'";
+        String sql = "SELECT pv.id, pv.product_id, pv.color_id, pv.storage_id, pv.price, pv.stock, "
+           + "c.colorName, s.capacity, pv.status "
+           + "FROM productVariants pv "
+           + "JOIN colors c ON pv.color_id = c.id "
+           + "JOIN storages s ON pv.storage_id = s.id "
+           + "WHERE pv.product_id = ? AND c.status = 'Active' AND s.status = 'Active'";
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, productId);  // Gán giá trị productId vào câu truy vấn
@@ -222,17 +223,17 @@ public class DAOProductVariant extends DBConnection {
                         rs.getInt("stock"),
                         rs.getString("status")
                 );
-                variants.add(variant);  // Thêm sản phẩm variant vào danh sách
+                variants.add(variant); 
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();  // In lỗi nếu có
+            ex.printStackTrace(); 
         }
-        return variants;  // Trả về danh sách các sản phẩm variant
+        return variants;
     }
 
     public static void main(String[] args) {
         DAOProductVariant variant = new DAOProductVariant();
-//        System.out.println(variant.getProductVariantById(58));
+    System.out.println(variant.getProductVariantById(8));
     }
 
     public void reduceStock(int variantId, int quantity) {
