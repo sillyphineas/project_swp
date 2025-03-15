@@ -91,11 +91,11 @@
                     background-color: #f9f9f9;
                 }
 
-                table th {
-                    background-color: #f1c40f;
-                    color: white;
-                    font-weight: bold;
-                }
+                /*                table th {
+                                    background-color: #f1c40f;
+                                    color: white;
+                                    font-weight: bold;
+                                }*/
 
                 table tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -255,8 +255,8 @@
                                 </div>
                                 <div class="mainmenu pull-left">
                                     <ul class="nav navbar-nav collapse navbar-collapse">
-                                        <li><a href="ShipperDashboardController" class="active">Home</a></li>
-                                        <li><a href="ShipperOrderController">Order List</a></li>
+                                        <li><a href="ShipperDashboardController">Home</a></li>
+                                        <li><a href="ShipperOrderController" class="active">Order List</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -265,88 +265,107 @@
                     </div>
                 </div><!--/header-bottom-->
             </header><!--/header-->
-            <h2>Order List</h2>
-            <!-- Bộ lọc tìm kiếm và trạng thái -->
-            <!-- Form filter và search (chỉ search theo Buyer Name) -->
-            <form action="ShipperOrderController" method="get">
-                <label for="status">Shipping Status:</label>
-                <select name="status" id="status">
-                    <option value="" ${statusFilter == "" ? 'selected' : ''}>All</option>
-                    <option value="Pending" ${statusFilter eq 'Pending' ? 'selected' : ''}>Pending</option>
-                    <option value="Shipped" ${statusFilter eq 'Shipped' ? 'selected' : ''}>Shipped</option>
-                    <option value="Delivered" ${statusFilter eq 'Delivered' ? 'selected' : ''}>Delivered</option>
-                </select>
-                &nbsp;&nbsp;
-                <label for="search">Order id:</label>
-                <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order id" />
-                &nbsp;&nbsp;
-                <button type="submit">Filter</button>
-            </form>
+            <section id="settings-section">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h2>Order List</h2>
+                            <!-- Bộ lọc tìm kiếm và trạng thái -->
+                            <!-- Form filter và search (chỉ search theo Buyer Name) -->
+                            <form action="ShipperOrderController" method="get">
+                                <label for="status">Shipping Status:</label>
+                                <select name="status" id="status" style="font-size: 13px">
+                                    <option value="" ${statusFilter == "" ? 'selected' : ''}>All</option>
+                                    <option value="Pending" ${statusFilter eq 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Shipped" ${statusFilter eq 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                    <option value="Delivered" ${statusFilter eq 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                </select>
+                                &nbsp;&nbsp;
+                                <label for="search">Order id:</label>
+                                <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order id" style="font-size: 13px"/>
+                                &nbsp;&nbsp;
+                                <button type="submit" style="font-size: 13px">Filter</button>
+                            </form>
 
-            <!-- Bảng hiển thị danh sách đơn hàng -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Buyer Name</th>
-                        <th>Order Time</th>
-                        <th>Order Status</th>
-                        <th>Shipping Address</th>
-                        <th>Total Price</th>
-                        <th>Recipient Name</th>
-                        <th>Recipient Phone</th>
-                        <th>Shipping Status</th>
-                        <th>Estimated Arrival</th>
-                        <th>Actual Arrival</th>
-                        <th>Shipping Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="osv" items="${orderShippingList}">
-                        <tr>
-                            <td>${osv.orderId}</td>
-                            <td>${osv.buyerName}</td>
-                            <td>${osv.orderTime}</td>
-                            <td>${osv.orderStatus}</td>
-                            <td>${osv.shippingAddress}</td>
-                            <td>${osv.totalPrice}</td>
-                            <td>${osv.recipientName}</td>
-                            <td>${osv.recipientPhone}</td>
-                            <td>${osv.shippingStatus}</td>
-                            <td>${osv.estimatedArrival}</td>
-                            <td>${osv.actualArrival}</td>
-                            <td>${osv.shippingDate}</td>
-                            <td>
-                                <!-- Form cập nhật ShippingStatus -->
-                                <form action="ShipperOrderController" method="post">
-                                    <input type="hidden" name="orderId" value="${osv.orderId}" />
-                                    <!-- Duy trì các tham số filter/search -->
-                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
-                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
-                                    <input type="hidden" name="page" value="${currentPage}" />
-                                    <input type="hidden" name="pageSize" value="10" />
+                            <!-- Bảng hiển thị danh sách đơn hàng -->
+                            <table style="font-size: 13px">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Buyer Name</th>
+                                        <th>Order Time</th>
+                                        <th>Order Status</th>
+                                        <th>Shipping Address</th>
+                                        <th>Total Price</th>
+                                        <th>Recipient Name</th>
+                                        <th>Recipient Phone</th>
+                                        <th>Shipping Status</th>
+                                        <th>Estimated Arrival</th>
+                                        <th>Actual Arrival</th>
+                                        <th>Shipping Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="osv" items="${orderShippingList}">
+                                        <tr>
+                                            <td>${osv.orderId}</td>
+                                            <td>${osv.buyerName}</td>
+                                            <td>${osv.orderTime}</td>
+                                            <td>${osv.orderStatus}</td>
+                                            <td>${osv.shippingAddress}</td>
+                                            <td>${osv.totalPrice}</td>
+                                            <td>${osv.recipientName}</td>
+                                            <td>${osv.recipientPhone}</td>
+                                            <td>${osv.shippingStatus}</td>
+                                            <td>${osv.estimatedArrival}</td>
+                                            <td>${osv.actualArrival}</td>
+                                            <td>${osv.shippingDate}</td>
+                                            <td>
+                                                <!-- Form cập nhật ShippingStatus -->
+                                                <form action="ShipperOrderController" method="post">
+                                                    <input type="hidden" name="orderId" value="${osv.orderId}" />
+                                                    <!-- Duy trì các tham số filter/search -->
+                                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                                    <input type="hidden" name="page" value="${currentPage}" />
+                                                    <input type="hidden" name="pageSize" value="10" />
 
-                                    <select name="status">
-                                        <option value="Pending" ${osv.shippingStatus eq 'Pending' ? 'selected' : ''}>Pending</option>
-                                        <option value="Shipped" ${osv.shippingStatus eq 'Shipped' ? 'selected' : ''}>Shipped</option>
-                                        <option value="Delivered" ${osv.shippingStatus eq 'Delivered' ? 'selected' : ''}>Delivered</option>
-                                    </select>
-                                    <button type="submit">Update</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
+                                                    <select name="status" style="font-size: 13px; width: 100px">
+                                                        <option value="Pending" ${osv.shippingStatus eq 'Pending' ? 'selected' : ''}>Pending</option>
+                                                        <option value="Shipped" ${osv.shippingStatus eq 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                                        <option value="Delivered" ${osv.shippingStatus eq 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                                    </select>
+                                                    <button type="submit" style="font-size: 13px">Update</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
 
 
-            <!-- Phân trang -->
-            <div class="pagination">
-                <c:forEach begin="1" end="${totalPages}" var="p">
-                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}">${p}</a>
-                </c:forEach>
-            </div>
+                            <!-- Phân trang -->
+                            <div class="pagination">
+                                <!-- Nút Previous -->
+                                <c:if test="${currentPage > 1}">
+                                    <a href="ShipperOrderController?page=${currentPage - 1}&status=${statusFilter}&search=${searchQuery}" aria-label="Previous">&laquo; Previous</a>
+                                </c:if>
+
+                                <!-- Các số trang -->
+                                <c:forEach begin="1" end="${totalPages}" var="p">
+                                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}" class="${p == currentPage ? 'active' : ''}">${p}</a>
+                                </c:forEach>
+
+                                <!-- Nút Next -->
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="ShipperOrderController?page=${currentPage + 1}&status=${statusFilter}&search=${searchQuery}" aria-label="Next">Next &raquo;</a>
+                                </c:if>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <footer id="footer"><!--Footer-->
                 <div class="footer-top">
                     <div class="container">

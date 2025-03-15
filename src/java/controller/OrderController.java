@@ -9,6 +9,7 @@ import entity.User;
 import entity.Cart;
 import entity.Order;
 import entity.OrderDetail;
+import entity.Payment;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import model.DAOProductVariant;
 import helper.EmailUtil;
 import java.util.HashMap;
 import java.util.Map;
+import model.DAOPayment;
 import model.DAOProduct;
 
 /**
@@ -122,6 +124,7 @@ public class OrderController extends HttpServlet {
             DAOCartItem daoCartItem = new DAOCartItem();
             DAOOrder daoOrder = new DAOOrder();
             DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
+            DAOPayment daoPayment = new DAOPayment();
             
 
             List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
@@ -131,7 +134,8 @@ public class OrderController extends HttpServlet {
                 return;
             }
             if ("1".equals(paymentMethod)) {
-                Date orderTime = new Date();
+                System.out.println("Bat dau ");
+                Date time = new Date();
                 double totalAmount = 0.0;
 
                 if (selectedCartItems != null) {
@@ -142,15 +146,14 @@ public class OrderController extends HttpServlet {
 
                 Order newOrder = new Order();
                 newOrder.setBuyerID(customerID);
-                newOrder.setOrderTime(orderTime);
-                newOrder.setOrderStatus("Pending");
+                newOrder.setOrderTime(time);
+                newOrder.setOrderStatus("Awaiting Pickup");
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(orderTime);
+                calendar.setTime(time);
                 calendar.add(Calendar.DATE, 3);
                 newOrder.setShippingAddress(request.getParameter("addressSelect"));
                 newOrder.setTotalPrice(totalAmount);
                 newOrder.setDiscountedPrice(0.0);
-                newOrder.setPaymentMethod(1);
                 newOrder.setDisabled(false);
                 newOrder.setVoucherID(null);
                 newOrder.setRecipientName(request.getParameter("newFullName"));
@@ -158,7 +161,18 @@ public class OrderController extends HttpServlet {
                 newOrder.setAssignedSaleId(3);
 
   
+                Payment newPayment = new Payment();
+                
+                newPayment.setPaymentStatus("Pending");
+                newPayment.setPaymentMethodId(1);
+                newPayment.setAmount(totalAmount);
+                newPayment.setNote("");
+                newPayment.setConfirmBy(null);
+                
                 int OrderId = daoOrder.addOrder(newOrder);
+                
+                newPayment.setOrderId(OrderId);
+                daoPayment.addPayment(newPayment);
                 
                 for (CartItem item : selectedCartItems) {
                     OrderDetail newOrderDetail = new OrderDetail();

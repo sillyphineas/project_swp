@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
+/**
+ *
+ * @author Admin
+ */
 import entity.Storage;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -11,10 +19,9 @@ import java.util.logging.Logger;
 
 public class DAOStorage extends DBConnection {
 
-    // Thêm Storage
     public int addStorage(Storage storage) {
         int n = 0;
-        String sql = "INSERT INTO Storages (capacity, status) VALUES (?, ?)";
+        String sql = "INSERT INTO Storage (capacity, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, storage.getCapacity());
             pre.setString(2, storage.getStatus());  
@@ -127,8 +134,6 @@ public class DAOStorage extends DBConnection {
         }
         return null;
     }
-
-    // Lấy tất cả Storage với trạng thái "Active"
     public Vector<Storage> getAllStorages() {
         Vector<Storage> storages = new Vector<>();
         String sql = "SELECT * FROM Storages WHERE status = 'Active'";  
@@ -146,8 +151,12 @@ public class DAOStorage extends DBConnection {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
         return storages;
+    }
+    
+    public static void main(String[] args) {
+        DAOStorage dao = new DAOStorage();
+        System.out.println(dao.getStorageIDByCapacity("128GB"));
     }
 
 }
