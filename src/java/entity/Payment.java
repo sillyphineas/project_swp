@@ -4,25 +4,22 @@ import java.util.Date;
 
 public class Payment {
     private int paymentId;
-    private int orderId;             // Mới thêm
+    private int orderId;
     private String paymentStatus;
     private Date paymentTime;
     private int paymentMethodId;
     private double amount;
     private String note;
-    private int confirmBy;
+    private Integer confirmBy; // Dùng kiểu Integer, cho phép null
     private Date createdDate;
     private Date updatedDate;
-    private boolean isDisabled;
 
-    // Constructor không đối số
     public Payment() {
     }
 
-    // Constructor đầy đủ
     public Payment(int paymentId, int orderId, String paymentStatus, Date paymentTime,
-                   int paymentMethodId, double amount, String note, int confirmBy,
-                   Date createdDate, Date updatedDate, boolean isDisabled) {
+                   int paymentMethodId, double amount, String note, Integer confirmBy,
+                   Date createdDate, Date updatedDate) {
         this.paymentId = paymentId;
         this.orderId = orderId;
         this.paymentStatus = paymentStatus;
@@ -30,10 +27,9 @@ public class Payment {
         this.paymentMethodId = paymentMethodId;
         this.amount = amount;
         this.note = note;
-        this.confirmBy = confirmBy;
+        this.confirmBy = confirmBy; // Integer
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
-        this.isDisabled = isDisabled;
     }
 
     // Getter & Setter
@@ -93,11 +89,11 @@ public class Payment {
         this.note = note;
     }
 
-    public int getConfirmBy() {
+    public Integer getConfirmBy() {
         return confirmBy;
     }
 
-    public void setConfirmBy(int confirmBy) {
+    public void setConfirmBy(Integer confirmBy) {
         this.confirmBy = confirmBy;
     }
 
@@ -117,14 +113,6 @@ public class Payment {
         this.updatedDate = updatedDate;
     }
 
-    public boolean isIsDisabled() {
-        return isDisabled;
-    }
-
-    public void setIsDisabled(boolean isDisabled) {
-        this.isDisabled = isDisabled;
-    }
-
     @Override
     public String toString() {
         return "Payment{" +
@@ -138,7 +126,6 @@ public class Payment {
                 ", confirmBy=" + confirmBy +
                 ", createdDate=" + createdDate +
                 ", updatedDate=" + updatedDate +
-                ", isDisabled=" + isDisabled +
                 '}';
     }
 }

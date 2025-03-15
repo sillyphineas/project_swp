@@ -49,6 +49,9 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
+            .form-control{
+                width: 86%;
+            }
 
         </style>
     </head><!--/head-->
@@ -115,13 +118,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -149,27 +152,28 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="UserController">Users List</a></li>
                                     <li><a href="SettingController">Settings List</a></li>
+
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
-
         <section id="add-user-section">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
+                        <c:if test="${not empty error}">
+                            <div style="color: red;">${error}</div>
+                        </c:if>
                         <h2>Add New User</h2>
+                       
                         <form action="UserDetailController?action=addUser" method="post">
-                             <c:set var="user" value="${user}" />
+                            <c:set var="user" value="${user}" />
                             <input type="hidden" type="text" name="userId" value="${user.id}"/>
                             <!-- User Name -->
                             <div class="form-group">
@@ -181,6 +185,7 @@
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required />
+
                             </div>
 
                             <!-- Password -->
@@ -205,20 +210,24 @@
                             </div>
 
                             <!-- Date of Birth -->
-                            <div class="form-group">
-                                <label for="dateOfBirth">Date of Birth</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" />
-                            </div>
+                           <div class="form-group">
+    <label for="dateOfBirth">Date of Birth</label>
+    <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
+           max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
+</div>
 
                             <!-- Role -->
+
                             <div class="form-group">
                                 <label for="roleId">Role</label>
                                 <select class="form-control" id="roleId" name="roleId" required>
-                                    <option value="1">Admin</option>
-                                    <option value="2">Marketing</option>
-                                    <option value="3">Sale</option>
-                                    <option value="4">Shipper</option>
-                                    <option value="5">Customer</option>
+                                    <c:forEach var="role" items="${roles}">
+                                        <c:if test="${role.roleId != 1}">
+                                            <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
+                                        </c:if>
+                                    </c:forEach>
+
+
                                 </select>
                             </div>
 
@@ -233,12 +242,14 @@
 
                             <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary">Add User</button>
-                            <a href="UserController" class="btn btn-danger">Cancel</a>
+                            <a href="UserController" class="btn btn-primary">Cancel</a>
                         </form>
                     </div>
                 </div>
             </div>
         </section>
+        <br>
+        <br>
 
 
 

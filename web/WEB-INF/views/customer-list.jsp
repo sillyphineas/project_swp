@@ -31,52 +31,88 @@
 
             <!-- Direct CSS for Style Enhancements -->
             <style>
-                /* Section Styling */
-                #settings-section {
-                    margin-top: 20px;
-                    margin-bottom: 40px;
-                    background-color: #fff;
-                    padding: 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-
                 /* Search and Filter Form */
-                .form-group {
-                    margin-bottom: 15px;
+                /* Cập nhật lại form để các phần tử căn chỉnh đúng */
+                .form-section {
+                    display: flex;
+                    justify-content: flex-start;  /* Căn trái các phần tử */
+                    gap: 10px;  /* Giảm khoảng cách giữa các phần tử */
+                    align-items: center;  /* Căn giữa theo chiều dọc */
+                    margin-bottom: 20px;
                 }
 
                 form {
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
-                    gap: 15px;
+                    justify-content: flex-start;
+                    gap: 10px;
                     margin-bottom: 20px;
                 }
 
-                /* Input Field and Select Box Styling */
-                form input, form select {
+                form input {
                     padding: 10px;
                     font-size: 16px;
                     border: 1px solid #ccc;
                     border-radius: 4px;
-                    width: 200px;
+                    width: 200px;  /* Giữ chiều rộng đồng nhất */
+                    height: 40px;  /* Căn chỉnh chiều cao cho đồng nhất */
                 }
 
-                /* Button Styling */
-                form button {
+                /* Cập nhật các button trong form để có kích thước bằng nhau */
+                /* Đảm bảo các button có chiều cao và chiều rộng đồng nhất */
+                button, .btn {
                     padding: 10px 20px;
                     font-size: 16px;
                     border: none;
-                    background-color: #f39c12;
-                    color: white;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    height: 35px;  /* Đảm bảo chiều cao giống nhau */
+                    width: 100px;  /* Chiều rộng đồng nhất cho các button */
+                    text-align: center;  /* Căn giữa chữ trong button */
+                }
+
+                button:hover, .btn:hover {
+                    opacity: 0.8; /* Thêm hiệu ứng hover */
+                }
+
+                /* Responsive cho các button trên màn hình nhỏ */
+                @media screen and (max-width: 768px) {
+                    button, .btn {
+                        width: 100%;  /* Button chiếm toàn bộ chiều rộng trên thiết bị nhỏ */
+                    }
+                }
+
+                /* Đảm bảo button trong bảng có cùng kích thước */
+                .table button {
+                    display: inline-block; /* Đảm bảo các button nằm cùng một hàng */
+                    width: auto;  /* Không cố định chiều rộng */
+                    margin-right: 10px; /* Khoảng cách giữa các button */
+                    height: 35px;
+                    padding: 6px 15px;
+                    font-size: 13px;
                     border-radius: 4px;
                     cursor: pointer;
                 }
 
-                form button:hover {
-                    background-color: #e67e22;
+                .table td a {
+                    display: inline-block; /* Đảm bảo liên kết nằm ngang */
+                    margin-right: 10px; /* Khoảng cách giữa các button */
+                    padding: 6px 15px;
+                    font-size: 13px;
+                    height: 35px;
+                    border-radius: 4px;
+                    cursor: pointer;
                 }
+
+
+                /* Thêm một chút padding cho các button bên ngoài bảng (form) */
+                .form-section button {
+                    width: 100px;
+                    height: 35px;
+                }
+
+
+
 
                 /* Pagination Styling */
                 .pagination {
@@ -117,11 +153,11 @@
                     background-color: #f9f9f9;
                 }
 
-                table th {
-                    background-color: #f1c40f;
-                    color: white;
-                    font-weight: bold;
-                }
+                /*            table th {
+                                background-color: #f1c40f;
+                                color: white;
+                                font-weight: bold;
+                            }*/
 
                 table tr:nth-child(even) {
                     background-color: #f2f2f2;
@@ -138,7 +174,7 @@
                         align-items: flex-start;
                     }
 
-                    form input, form select {
+                    form input{
                         width: 100%;
                     }
 
@@ -146,59 +182,8 @@
                         width: 100%;
                         margin-top: 10px;
                     }
-
-
-                }
-                /* Global Styles for the Search Section */
-                .form-group {
-                    margin-bottom: 0;
                 }
 
-                form {
-                    display: flex;
-                    align-items: center;  /* Align elements vertically */
-                    justify-content: flex-start;  /* Ensure they are aligned to the left */
-                    gap: 10px;  /* Add space between elements */
-                    margin-bottom: 20px;
-                }
-
-                /* Input field and Select box */
-                form input, form select {
-                    padding: 10px;
-                    font-size: 16px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    width: 200px;  /* Ensure input fields have a consistent width */
-                }
-
-                /* Button Styling */
-                form button {
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    background-color: #f39c12;
-                    color: white;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                }
-
-                form button:hover {
-                    background-color: #e67e22;
-                }
-
-                /* Responsive Design for smaller screens */
-                @media screen and (max-width: 768px) {
-                    form {
-                        flex-direction: column;
-                        align-items: flex-start;  /* Stack the elements vertically */
-                    }
-
-                    form input, form select, form button {
-                        width: 100%;  /* Make elements full width on smaller screens */
-                        margin-bottom: 10px;
-                    }
-                }
             </style>
 
         </head><!--/head-->
@@ -298,18 +283,24 @@
                                 </div>
                                 <div class="mainmenu pull-left">
                                     <ul class="nav navbar-nav collapse navbar-collapse">
-                                        <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                        <li><a href="MarketingDashboardController">Home</a></li>
                                         <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
                                         <li><a href="SliderController">Slider List</a></li>
-                                        <li><a href="CustomerController">Customer List</a></li>
+                                        <li><a href="CustomerController" class="active">Customer List</a></li>
                                         <li><a href="MarketingProductController">Product List</a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="col-sm-3">
-                                <div class="search_box pull-right">
-                                    <input type="text" placeholder="Search"/>
-                                </div>
+                                <form method="get" action="CustomerController">
+                                    <div >
+                                        <input type="text" name="search" class="form-control d-inline-block" placeholder="Search by Name, Email, Phone">
+                                    </div> 
+
+                                    <div >
+                                        <button type="submit" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Search</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -320,71 +311,83 @@
                     <div class="row">
                         <div class="col-sm-12">
 
-                            <div class="container">
-                                <div class="row d-flex justify-content-between align-items-center">
-                                    <div class="col-auto d-flex">
-                                        <!-- Search and Filter Form -->
-                                        <form method="get" action="CustomerController">
-                                            <div class="form-group mb-0 mr-2">
-                                                <input type="text" name="search" class="form-control d-inline-block" placeholder="Search by Name, Email, Phone">
-                                            </div> 
-                                            <div class="form-group mb-0 mr-2">
-                                                <select name="status" class="form-control d-inline-block">
-                                                    <option value="">All</option>
-                                                    <option value="false">Active</option>
-                                                    <option value="true">Inactive</option>
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-warning">Search</button>
-                                        </form>
-                                    </div>
+
+
+
+                            <!-- Search and Filter Form -->
+                            <form method="get" action="CustomerController">
+
+                                <div class="form-group mb-0 mr-2">
+                                    <select name="status" class="form-control d-inline-block">
+                                        <option value="">All</option>
+                                        <option value="false">Active</option>
+                                        <option value="true">Inactive</option>
+                                    </select>
                                 </div>
-                                <c:if test="${not empty mess}">
-                                    <div style="color: green; font-weight: bold;">${mess}</div>
-                                </c:if>
-                                <hr>
-                                <!-- Customer Table -->
-                                <table>
-                                    <thead>
+                                <div class="form-group mb-0 mr-2">
+                                    <button type="submit" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Filter</button>
+                                </div>
+                            </form>
+
+
+                            <c:if test="${not empty mess}">
+                                <div style="color: green; font-weight: bold;">${mess}</div>
+                            </c:if>
+
+                            <!-- Customer Table -->
+                            <table style="font-size: 13px">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Gender</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="customer" items="${customers}">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Gender</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
+                                            <td>${customer.id}</td>
+                                            <td>${customer.name}</td>
+                                            <td>${customer.gender ? 'Male' : 'Female'}</td>
+                                            <td>${customer.email}</td>
+                                            <td>${customer.phoneNumber}</td>
+                                            <td>${customer.isDisabled ? 'Inactive' : 'Active'}</td>
+                                            <td style="text-align: center">
+                                                <a href="CustomerController?service=changeStatus&id=${customer.id}" class="btn btn-info btn-sm" style="font-size: 13px; margin: 0 2px; display: inline-block;">Change</a>
+                                                <a href="CustomerDetailController?id=${customer.id}" class="btn btn-success" style="font-size: 13px; margin: 0 2px; display: inline-block;">View</a>
+                                                <a href="EditCustomerController?id=${customer.id}" class="btn btn-warning" style="font-size: 13px; margin: 0 2px; display: inline-block;">Edit</a>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="customer" items="${customers}">
-                                            <tr>
-                                                <td>${customer.id}</td>
-                                                <td>${customer.name}</td>
-                                                <td>${customer.gender ? 'Male' : 'Female'}</td>
-                                                <td>${customer.email}</td>
-                                                <td>${customer.phoneNumber}</td>
-                                                <td>${customer.isDisabled ? 'Inactive' : 'Active'}</td>
-                                                <td>
-                                                    <a href="CustomerDetailController?id=${customer.id}">View</a> | 
-                                                    <a href="EditCustomerController?id=${customer.id}">Edit</a> | 
-                                                    <a href="CustomerController?service=changeStatus&id=${customer.id}">Change Status</a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
             </section>
 
             <!-- Pagination -->
             <div class="pagination">
+                <!-- Nút Previous -->
+                <c:if test="${currentPage > 1}">
+                    <a href="CustomerController?page=${currentPage - 1}" aria-label="Previous">&laquo; Previous</a>
+                </c:if>
+
+                <!-- Các số trang -->
                 <c:forEach begin="1" end="${totalPages}" var="i">
-                    <a href="CustomerController?page=${i}">${i}</a>
+                    <a href="CustomerController?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
                 </c:forEach>
+
+                <!-- Nút Next -->
+                <c:if test="${currentPage < totalPages}">
+                    <a href="CustomerController?page=${currentPage + 1}" aria-label="Next">Next &raquo;</a>
+                </c:if>
             </div>
+
             <footer id="footer"><!--Footer-->
                 <div class="footer-top">
                     <div class="container">

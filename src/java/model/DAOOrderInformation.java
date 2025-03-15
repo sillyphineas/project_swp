@@ -17,7 +17,7 @@ public class DAOOrderInformation extends DBConnection {
         // Câu lệnh SELECT như bạn đã đưa ra
         String sql = """
                      SELECT o.id, o.orderTime, o.orderStatus, 
-                     o.totalPrice, pt.paymentName, o.recipientName,
+                     o.totalPrice, pt.paymentName ,o.recipientName,
                       o.recipientPhone, od.quantity, s.ShippingStatus, 
                       s.ShippingDate, s.EstimatedArrival, s.ActualArrival,
                       cl.colorName, str.capacity, pv.price, p.name,
@@ -28,17 +28,16 @@ public class DAOOrderInformation extends DBConnection {
                      LEFT JOIN shipping as s on o.id = s.OrderID
                      LEFT JOIN productvariants as pv on od.productVariantID = pv.id
                      LEFT JOIN products as p on pv.product_id = p.id
-                     LEFT JOIN paymentmethod as pt on o.paymentMethod = pt.id
+                     LEFT JOIN payment as pm on pm.orderId = o.id
+                     LEFT JOIN paymentmethod as pt on pm.paymentMethodId = pt.id
                      LEFT JOIN addresses as ad on o.ShippingAddress = ad.id
                      LEFT JOIN colors as cl on pv.color_id = cl.id
                      LEFT JOIN storages as str on pv.storage_id = str.id
                      ORDER BY o.id ASC
                      """;
 
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
-            
-            
+        try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+
             while (rs.next()) {
                 // Lấy dữ liệu từ ResultSet
                 int id = rs.getInt("id");
@@ -64,26 +63,26 @@ public class DAOOrderInformation extends DBConnection {
                 count++;
                 // Tạo đối tượng OrderInformation (dùng constructor đầy đủ 20 tham số)
                 OrderInformation oi = new OrderInformation(
-                    id,
-                    orderTime,
-                    orderStatus,
-                    totalPrice,
-                    paymentName,
-                    recipientName,
-                    recipientPhone,
-                    quantity,
-                    shippingStatus,
-                    shippingDate,
-                    estimatedArrival,
-                    actualArrival,
-                    colorName,
-                    capacity,
-                    price,
-                    productName,
-                    imageURL,
-                    address,
-                    district,
-                    city
+                        id,
+                        orderTime,
+                        orderStatus,
+                        totalPrice,
+                        paymentName,
+                        recipientName,
+                        recipientPhone,
+                        quantity,
+                        shippingStatus,
+                        shippingDate,
+                        estimatedArrival,
+                        actualArrival,
+                        colorName,
+                        capacity,
+                        price,
+                        productName,
+                        imageURL,
+                        address,
+                        district,
+                        city
                 );
 
                 list.add(oi);
@@ -94,7 +93,7 @@ public class DAOOrderInformation extends DBConnection {
         System.out.println(count);
         return list;
     }
-    
+
     public static void main(String[] args) {
         DAOOrderInformation dao = new DAOOrderInformation();
         List<OrderInformation> list = dao.getAllOrderInformation();
@@ -103,4 +102,3 @@ public class DAOOrderInformation extends DBConnection {
         }
     }
 }
-

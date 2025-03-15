@@ -134,6 +134,7 @@ public class OrderController extends HttpServlet {
                 return;
             }
             if ("1".equals(paymentMethod)) {
+                System.out.println("Bat dau ");
                 Date time = new Date();
                 double totalAmount = 0.0;
 
@@ -163,14 +164,13 @@ public class OrderController extends HttpServlet {
                 Payment newPayment = new Payment();
                 
                 newPayment.setPaymentStatus("Pending");
-                newPayment.setPaymentTime(time);
-                calendar.setTime(time);
-                calendar.add(Calendar.DATE, 3);
                 newPayment.setPaymentMethodId(1);
                 newPayment.setAmount(totalAmount);
                 newPayment.setNote("");
+                newPayment.setConfirmBy(null);
                 
                 int OrderId = daoOrder.addOrder(newOrder);
+                
                 newPayment.setOrderId(OrderId);
                 daoPayment.addPayment(newPayment);
                 

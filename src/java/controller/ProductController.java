@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.DAOBrand;
 import model.DAOProduct;
+import java.text.DecimalFormat;
 
 /**
  * ProductController Servlet
@@ -74,11 +75,15 @@ public class ProductController extends HttpServlet {
 
         Vector<Product> productList = dao.getProductsByFilter(brandID, searchQuery, minPrice, maxPrice, os, screenSize, batteryCapacity, connectivity, ram, screenType, currentPage, itemsPerPage);
         Product latestProduct = dao.getLatestProduct();
+        DecimalFormat df = new DecimalFormat("###,###,###.##");
+      for (Product product : productList) {
+    // Lấy giá trị minPrice cho sản phẩm và định dạng nó thành chuỗi
+    double productMinPrice = dao.getMinPriceForProduct(product.getId());
+    String formattedMinPrice = df.format(productMinPrice);
 
-        for (Product product : productList) {
-            double productMinPrice = dao.getMinPriceForProduct(product.getId());
-            request.setAttribute("minPrice_" + product.getId(), productMinPrice);
-        }
+    // Truyền giá trị đã được định dạng vào request
+    request.setAttribute("minPrice_" + product.getId(), formattedMinPrice);
+}
 
         // Truyền dữ liệu vào JSP
         request.setAttribute("productList", productList);
