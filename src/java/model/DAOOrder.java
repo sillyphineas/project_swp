@@ -11,9 +11,9 @@ public class DAOOrder extends DBConnection {
     // 1. Thêm một đơn hàng
     public int addOrder(Order order) {
         String sql = "INSERT INTO Orders (buyerID, orderTime, orderStatus, ShippingAddress, "
-                + "totalPrice, discountedPrice, paymentMethod, isDisabled, voucherID, "
+                + "totalPrice, discountedPrice, isDisabled, voucherID, "
                 + "recipientName, recipientPhone, AssignedSaleId) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, order.getBuyerID());
@@ -148,7 +148,7 @@ public class DAOOrder extends DBConnection {
         int result = 0;
         String sql = "UPDATE Orders "
                 + "SET buyerID = ?, orderTime = ?, orderStatus = ?, "
-                + "    shippingAddress = ?, totalPrice = ?, discountedPrice = ?, paymentMethod = ?, "
+                + "    shippingAddress = ?, totalPrice = ?, discountedPrice = ?, "
                 + "    isDisabled = ?, voucherID = ?, recipientName = ?, recipientPhone = ?, AssignedSaleId = ? "
                 + "WHERE id = ?";
 
@@ -221,7 +221,7 @@ public class DAOOrder extends DBConnection {
 
         String sql = "SELECT o.id AS orderId, o.buyerID, u.name AS buyerName, u.phoneNumber AS buyerPhone, "
                 + "       v.VoucherCode, o.orderStatus AS orderStatus, o.shippingAddress, "
-                + "       o.orderTime, o.totalPrice, o.discountedPrice, o.paymentMethod, "
+                + "       o.orderTime, o.totalPrice, o.discountedPrice, "
                 + "       o.shippingDate, o.RecipientName, o.RecipientPhone, o.AssignedSaleId, "
                 + "       o.isDisabled, o.voucherID "
                 + "FROM Orders o "
