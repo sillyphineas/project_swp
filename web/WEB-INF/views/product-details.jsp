@@ -6,7 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
+<%@page import="entity.User,entity.Feedback,java.util.List"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -87,7 +87,7 @@
                 text-align: center;
                 padding: 20px;
             }
-
+            
         </style>
 
         <header id="header"><!--header-->
@@ -267,7 +267,69 @@
                                     </div>
                                 </c:if>
                             </div>
+                            <%
+                            List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
+                            %>
+                            <div style="width: 60%; margin: auto; font-family: Arial, sans-serif; text-align: center;">
+                                <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
+                                    Product Reviews
+                                </h2>
+                                <%
+                                if (feedbacks != null && feedbacks.size() < 3) {
+                                %>
+                                <div style="text-align: center; margin-top: 20px;">
+                                    <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
+                                       style="color: #ff8c00; font-size: 16px; text-decoration: none; font-weight: bold;">
+                                        View All Reviews
+                                    </a>
+                                </div>
+                                <%
+                                    }
+                                %>
+                                <% if (feedbacks == null || feedbacks.isEmpty()) { %>
+                                <p style="color: #888; font-size: 16px;">No reviews yet. Be the first to review this product!</p>
+                                <% } else { %>
+                                <div style="text-align: left; margin-top: 20px;">
+                                    <% for (Feedback feedback : feedbacks) { %>
+                                    <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                        <div style="display: flex; align-items: center;">
+                                            <img src="avatar.png" alt="User Avatar" 
+                                                 style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
+                                            <div>
+                                                <span style="font-weight: bold; font-size: 16px;">
+                                                    <%= (feedback.getUser() != null) ? feedback.getUser().getName() : "Anonymous" %>
+                                                </span>
+                                                <br>
+                                                <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
+                                            </div>
+                                        </div>
 
+                                        <!-- Hiển thị sao -->
+                                        <div style="margin: 10px 0;">
+                                            <% for (int i = 1; i <= 5; i++) { %>
+                                            <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc" %>;">★</span>
+                                            <% } %>
+                                        </div>
+
+                                        <!-- Nội dung đánh giá -->
+                                        <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
+                                            <%= feedback.getContent() %>
+                                        </p>
+
+                                        <!-- Hiển thị ảnh từ JSON (nếu có) -->
+                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { %>
+                                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                            <% for (String image : feedback.getImages()) { %>
+                                            <img src="<%= image %>" alt="Review Image" 
+                                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                            <% } %>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
 
@@ -312,7 +374,7 @@
                             </div>
                             <div class="col-sm-7">
 
-                                
+
 
 
                                 <form id="productForm" action="CartURL" method="POST" onsubmit="event.preventDefault(); addToCart();">
@@ -420,10 +482,13 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
+
+
+
+
         </section>
 
         <footer id="footer"><!--Footer-->
@@ -600,8 +665,8 @@
         <script src="js/main.js"></script>
 
         <script src="js/cart.js"></script>
-    <script>
-document.addEventListener("DOMContentLoaded",       function() {
+        <script>
+        document.addEventListener("DOMContentLoaded", func tion() {
 
                     var colorSelector = document.getElementById("colorSelector");
             var storageSelector = document.getElementById("storageSelector");
@@ -617,9 +682,7 @@ document.addEventListener("DOMContentLoaded",       function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
-            });
-});
-        
+        }); });
         function updateProductInfo(color, storage) {
                     var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
@@ -640,8 +703,8 @@ document.addEventListener("DOMContentLoaded",       function() {
                 function formatPrice(price) {
 
                     return price.toLocaleString();
-            }
-        </script>
+        }
+            </script>
         <!--            <script>
                     function checkStock() {
                             var storageSelector = document.getElementById("storageSelector");

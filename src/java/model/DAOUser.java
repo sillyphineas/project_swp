@@ -259,7 +259,7 @@ public class DAOUser extends DBConnection {
     }
 
     public List<User> getPaginatedUsers(int page, int pageSize) throws SQLException {
-        String sql = "SELECT * FROM Users ORDER BY id ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Users WHERE roleId <> 1 ORDER BY id ASC LIMIT ? OFFSET ?";
         List<User> users = new ArrayList<>();
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
@@ -664,6 +664,21 @@ public class DAOUser extends DBConnection {
 
         return changeHistory;
     }
+    public boolean isEmailExists(String email) {
+    boolean exists = false;
+    String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
+    try {
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, email);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            exists = rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return exists;
+}
 
     public static void main(String[] args) {
 

@@ -10,14 +10,31 @@ package entity;
  */
 public class ProductVariant {
 
-   private int id;
-   private int product_id;
-   private int color_id;
-   private int storage_id;
-   private double price;
-   private int stock;
-   private String status;
+    private int id;
+    private int product_id;
+    private int color_id;
+    private int storage_id;
+    private double price;
+    private int stock;
+    private String status;
+    private Color color;
+    private Storage storage;
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
 
     public ProductVariant() {
     }
