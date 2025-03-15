@@ -82,7 +82,7 @@ public class UserDetailController extends HttpServlet {
             action = "display";
         }
         if (action.equals("addUser")) {
-           
+            
             DAORole daoRole = new DAORole();
             List<Role> roles = daoRole.getAllRoles(); 
             request.setAttribute("roles", roles);
@@ -136,6 +136,7 @@ public class UserDetailController extends HttpServlet {
         String action = request.getParameter("action");
         System.out.println("Post       " + action);
         DAOUser dao = new DAOUser();
+       
          if (action != null && action.equals("addUser")) {
             int userId = Integer.parseInt(request.getParameter("userId"));
             String name = request.getParameter("name");
@@ -148,6 +149,11 @@ public class UserDetailController extends HttpServlet {
             int roleId = Integer.parseInt(request.getParameter("roleId"));  
             
             String passHashed = BCrypt.hashpw(password, BCrypt.gensalt());
+           if (dao.isEmailExists(email)) {
+            request.setAttribute("error", "Email already exists, please re-enter!");
+            request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+            return;
+        }
 
             User user = new User();
             user.setId(userId);
@@ -156,10 +162,22 @@ public class UserDetailController extends HttpServlet {
             user.setPassHash(passHashed);
             user.setGender(gender);
             user.setPhoneNumber(phoneNumber);
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                java.util.Date parsedDate = sdf.parse(dateOfBirth);
-                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = null;
+        try {
+            parsedDate = sdf.parse(dateOfBirth);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            
+            // Lấy ngày hiện tại
+            java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+            
+            // Kiểm tra nếu ngày sinh lớn hơn ngày hiện tại
+            if (sqlDate.after(currentDate)) {
+                request.setAttribute("error", "Ngày sinh không thể lớn hơn ngày hiện tại.");
+                request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+                return;
+            }
+               
                 user.setDateOfBirth(sqlDate);
             } catch (Exception e) {
                 

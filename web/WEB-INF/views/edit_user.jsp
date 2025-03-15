@@ -46,6 +46,9 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
+            .form-control{
+                width: 85%;
+            }
 
         </style>
     </head><!--/head-->
@@ -146,15 +149,12 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="UserController">Users List</a></li>
                                     <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -170,7 +170,7 @@
                         <!-- Lấy thông tin người dùng và điền vào form -->
                         <form action="UserDetailController?action=updateUser" method="post">
                             <c:set var="user" value="${user}" />
-                            <input type="text" name="userId" value="${user.id}"/>
+                            <input type="hidden" name="userId" value="${user.id}"/>
 
                             <!-- User Name -->
                             <div class="form-group">
@@ -208,7 +208,8 @@
                             <!-- Date of Birth -->
                             <div class="form-group">
                                 <label for="dateOfBirth">Date of Birth</label>
-                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="${user.dateOfBirth}" />
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
+                                       max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
                             </div>
 
                             <!-- Role -->
@@ -216,12 +217,12 @@
                                 <label for="roleId">Role</label>
                                 <select class="form-control" id="roleId" name="roleId" required>
                                     <c:forEach var="role" items="${roles}">
-                                         <c:if test="${role.roleId != 1}">
-                <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
-            </c:if>
+                                        <c:if test="${role.roleId != 1}">
+                                            <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
+                                        </c:if>
                                     </c:forEach>
-                                        
-                                        
+
+
                                 </select>
                             </div>
 
@@ -235,7 +236,7 @@
                             </div>
 
 
-                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <button type="submit" class="btn btn-danger">Update User</button>
                             <a href="UserController" class="btn btn-danger">Cancel</a>
 
                         </form>
@@ -244,6 +245,8 @@
                 </div>
             </div>
         </section>
+        <br>
+        <br>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

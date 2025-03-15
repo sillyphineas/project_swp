@@ -87,7 +87,7 @@
                 text-align: center;
                 padding: 20px;
             }
-
+            
         </style>
 
         <header id="header"><!--header-->

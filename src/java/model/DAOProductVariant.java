@@ -231,11 +231,6 @@ public class DAOProductVariant extends DBConnection {
         return variants;
     }
 
-    public static void main(String[] args) {
-        DAOProductVariant variant = new DAOProductVariant();
-    System.out.println(variant.getProductVariantById(8));
-    }
-
     public void reduceStock(int variantId, int quantity) {
         String sql = "UPDATE ProductVariants "
                 + "SET stock = stock - ? "
@@ -352,4 +347,18 @@ public class DAOProductVariant extends DBConnection {
         return colors;
     }
 
+
+    public boolean updateProductVariantStock(ProductVariant productVariant) {
+        String sql = "UPDATE productVariants SET stock = ? WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, productVariant.getStock());
+            stmt.setInt(2, productVariant.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

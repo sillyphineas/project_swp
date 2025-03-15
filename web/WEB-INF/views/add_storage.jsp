@@ -1,6 +1,6 @@
 <%-- 
-    Document   : add_storage
-    Created on : Mar 14, 2025, 12:04:31 PM
+    Document   : add_color
+    Created on : Mar 14, 2025, 12:04:23 PM
     Author     : Admin
 --%>
 
@@ -33,102 +33,26 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-            <style>
-            /* General Styles */
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f9f9f9;
-                margin: 0;
-                padding: 0;
-            }
-
-            .container {
-                max-width: 800px;
-                margin-top: 40px;
-                padding: 20px;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            /* Form Styling */
-            h2.add-pr {
-                text-align: center;
-                color: #333;
-                margin-bottom: 30px;
-                font-size: 24px;
+        <style>
+            .inactive-status {
+                color: red;
                 font-weight: bold;
             }
 
-            .form-group {
+            .active-status {
+                color: green;
+                font-weight: bold;
+            }
+
+            .add-pr {
+                text-align: left;
+                color: black;
                 margin-bottom: 20px;
             }
-
-            label {
-                font-weight: bold;
-                color: #333;
+            .form-control{
+                    width: 30%;
             }
-
-            input[type="number"], select {
-                width: 100%;
-                padding: 10px;
-                margin-top: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                font-size: 14px;
-                color: #555;
-            }
-
-            button[type="submit"], a.btn {
-                display: inline-block;
-                width: 100%;
-                padding: 10px;
-                background-color: #5cb85c;
-                color: #fff;
-                border: none;
-                border-radius: 5px;
-                font-size: 16px;
-                text-align: center;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                margin-top: 20px;
-            }
-
-            button[type="submit"]:hover, a.btn:hover {
-                background-color: #4cae4c;
-            }
-
-            /* Status Options Styling */
-            select option {
-                padding: 10px;
-            }
-
-            /* Footer Styling */
-            footer {
-                background-color: #f8f8f8;
-                padding: 30px 0;
-                text-align: center;
-            }
-
-            footer p {
-                color: #777;
-                font-size: 14px;
-            }
-
-            /* Responsive */
-            @media (max-width: 767px) {
-                .container {
-                    padding: 15px;
-                }
-
-                h2.add-pr {
-                    font-size: 20px;
-                }
-
-                button[type="submit"], a.btn {
-                    width: 100%;
-                }
-            }
+            
         </style>
     </head><!--/head-->
 
@@ -194,13 +118,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -227,8 +151,11 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                <li><a href="SliderController">Slider List</a></li>
+                                <li><a href="CustomerController">Customer List</a></li>
+                                <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -241,27 +168,27 @@
                 </div>
             </div><!--/header-bottom-->
         </header>
-                               <div class="container">
+        <div class="container">
             <h2 class="add-pr">Add Storage</h2>
             <form action="AddProductController?action=addStorage" method="post">
                 <div class="form-group">
                     <label for="capacity">Storage Capacity (GB):</label>
-                    <input type="number" name="capacity" required />
+                    <input type="text" class="form-control" name="capacity" required />
                 </div>
-
                 <div class="form-group">
                     <label for="status">Status:</label>
-                    <select name="status" required>
+                    <select class="form-control" name="status" required>
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
                     </select>
                 </div>
-
-                <button type="submit">Add Storage</button>
+                <button type="submit" class="btn btn-success">Add Storage</button>
                 <a href="MarketingProductController" class="btn btn-success">Cancel</a>
             </form>
         </div>
-                                  <footer id="footer"><!--Footer-->
+        <br>
+        <br>
+        <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">
