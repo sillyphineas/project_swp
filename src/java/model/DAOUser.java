@@ -193,7 +193,7 @@ public class DAOUser extends DBConnection {
     }
 
     public List<User> getPaginatedUsers(int page, int pageSize) throws SQLException {
-        String sql = "SELECT * FROM Users ORDER BY id ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Users WHERE roleId <> 1 ORDER BY id ASC LIMIT ? OFFSET ?";
         List<User> users = new ArrayList<>();
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
