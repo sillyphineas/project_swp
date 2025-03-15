@@ -223,13 +223,6 @@ public class DAOProductVariant extends DBConnection {
 
 
 
-    public static void main(String[] args) {
-        DAOProductVariant variant = new DAOProductVariant();
-//        System.out.println(variant.getProductVariantById(58));
-        System.out.println(variant.getProductVariantByDetails(1, "Đen", 128));
-    }
-
-
     public void reduceStock(int variantId, int quantity) {
         String sql = "UPDATE ProductVariants "
                 + "SET stock = stock - ? "
@@ -360,10 +353,6 @@ public class DAOProductVariant extends DBConnection {
         return false;
     }
 
-    public static void main(String[] args) {
-        DAOProductVariant dao = new DAOProductVariant();
-        dao.reduceStock(196, 2);
-
-    }
+   
 
 }

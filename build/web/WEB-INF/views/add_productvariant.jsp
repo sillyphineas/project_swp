@@ -33,21 +33,117 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
+           
             .inactive-status {
-                color: red; /* Màu đỏ cho trạng thái Inactive */
+                color: red;
                 font-weight: bold;
             }
 
             .active-status {
-                color: green; /* Màu xanh cho trạng thái Active */
+                color: green;
                 font-weight: bold;
             }
+
             .add-pr {
                 text-align: center;
                 color: black;
-
                 margin-bottom: 20px;
             }
+
+            /* Chia cột với Flexbox */
+            .form-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px; /* Khoảng cách giữa các cột */
+            }
+
+            .form-row .col-md-6 {
+                width: 48%;
+            }
+
+            /* Điều chỉnh style cho các input, select và textarea */
+            .form-group input, 
+            .form-group select, 
+            .form-group textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 14px;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+
+            .form-group input:focus, 
+            .form-group select:focus, 
+            .form-group textarea:focus {
+                border-color: #4CAF50;
+                outline: none;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+                margin: 10px 5px;
+                width: 32%;
+                box-sizing: border-box;
+            }
+
+            .btn-success {
+                background-color: #28a745;
+                color: white;
+            }
+
+            .btn-danger {
+                background-color: #dc3545;
+                color: white;
+            }
+
+            .btn:hover {
+                opacity: 0.8;
+            }
+            .btn-custom-blue {
+                background-color: #4CAF50;  /* Màu xanh lá cây */
+                color: white;
+                font-weight: bold;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                text-transform: uppercase;
+                border: none;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-custom-blue:hover {
+                background-color: #45a049;  /* Màu xanh đậm hơn khi hover */
+                cursor: pointer;
+            }
+
+            /* Tùy chỉnh cho nút "Back to List" màu đỏ */
+            .btn-custom-red {
+                background-color: #f44336;  /* Màu đỏ */
+                color: white;
+                font-weight: bold;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-size: 16px;
+                text-transform: uppercase;
+                border: none;
+                transition: background-color 0.3s ease;
+            }
+
+            .btn-custom-red:hover {
+                background-color: #d32f2f;  /* Màu đỏ đậm khi hover */
+                cursor: pointer;
+            }
+            .form-control    {
+                width: 100%; 
+                height: 120%;/* Giảm chiều rộng xuống còn 80% so với kích thước mặc định */
+            }
+
 
         </style>
     </head><!--/head-->
@@ -147,8 +243,11 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                <li><a href="SliderController">Slider List</a></li>
+                                <li><a href="CustomerController">Customer List</a></li>
+                                <li><a href="MarketingProductController">Product List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -161,13 +260,14 @@
                 </div>
             </div><!--/header-bottom-->
         </header>
-
-
-
-        <div class="container">
-            <h2 class="add-pr" cols="10">Add Product Variants</h2>
+   <div class="container">
+            <h2 class="add-pr">Add Product Variants</h2>
             <form action="AddProductController" method="post">
                 <input type="hidden" name="action" value="addProductVariant">
+               
+        <div class="form-row">
+            <!-- Cột bên trái với 3 trường -->
+            <div class="col-md-6">
                 <div class="form-group">
                     <label for="productID">Product:</label>
                     <select class="form-control" name="productID" required>
@@ -181,7 +281,6 @@
                 <div class="form-group">
                     <label for="color">Color:</label>
                     <select class="form-control" name="color_id" required>
-                        
                         <c:forEach var="color" items="${colorlist}">
                             <option value="${color.id}">${color.colorName}</option>
                         </c:forEach>
@@ -189,24 +288,27 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="number" step="0.01" class="form-control" name="price" required />
+                </div>
+            </div>
+
+            <!-- Cột bên phải với 3 trường -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="stock">Stock:</label>
+                    <input type="number" class="form-control" name="stock" required />
+                </div>
+
+                <div class="form-group">
                     <label for="storage">Storage (GB):</label>
                     <select class="form-control" name="storage_id" required>
-                      
                         <c:forEach var="storage" items="${storagelist}">
-                            <option value="${storage.id}">${storage.capacity} GB</option>
+                            <option value="${storage.id}">${storage.capacity}</option>
                         </c:forEach>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="price">Price:</label>
-                    <input type="number" step="0.01" class="form-control" name="price" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="stock">Stock:</label>
-                    <input type="number" class="form-control" name="stock" required>
-                </div>
                 <div class="form-group">
                     <label for="status">Status:</label>
                     <select class="form-control" name="status" required>
@@ -214,12 +316,19 @@
                         <option value="Inactive">Inactive</option>
                     </select>
                 </div>
-                
-
-                <button type="submit" class="btn btn-success">Add Variant</button>
-                <a href="MarketingProductController" class="btn btn-success">Cancel</a>
-            </form>
+            </div>
         </div>
+
+        <!-- Nút submit và cancel -->
+        <div class="form-row">
+            <button type="submit" class="btn btn-custom-blue">Add Variant</button>
+            <a href="MarketingProductController" class="btn btn-custom-red">Cancel</a>
+        </div>
+    </form>
+</div>
+
+
+        </
         <br>
         <br>
 
