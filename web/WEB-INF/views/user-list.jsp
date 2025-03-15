@@ -594,7 +594,7 @@
                                                         var responseText = xhr.responseText.trim();
 
                                                         if (responseText === "Status updated") {
-                                                            var newStatusText = newStatus ? "Disabled" : "Active";
+                                                            var newStatusText = newStatus ? "Inactive" : "Active";
                                                             document.getElementById("status_" + userId).innerHTML =
                                                                     '<a href="UserController?service=userFilter&status=' + newStatus + '">' + newStatusText + '</a>';
 

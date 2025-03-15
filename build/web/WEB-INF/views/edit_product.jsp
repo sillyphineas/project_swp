@@ -162,6 +162,8 @@
 
 
         <div class="container">
+            <div class ="row">
+            <div class ="col-md-6">
             <h2>Edit Product</h2>
 
             <c:if test="${not empty product}">
@@ -251,8 +253,10 @@
                     <a href="MarketingProductDetails?id=${product.id}" class="btn btn-primary">Cancel</a>
                 </form>
             </c:if>
+            </div>
 
             <h2>Edit Product Variants</h2>
+            <div class ="col-md-6">
             <c:forEach var="variant" items="${variants}">
                 <form action="MarketingProductDetails" method="post">
                     <input type="hidden" name="action" value="editVariant">
@@ -300,6 +304,8 @@
                 </form>
             </c:forEach>
         </div>
+            </div>
+            </div>
 
 
 

@@ -283,10 +283,10 @@
                                     </c:forEach>
                                 </select>
                                  <label for="minPrice">Min Price:</label>
-                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="${minPrice}" placeholder="Min Price" />
+                                    <input type="number" name="minPrice" id="minPrice" class="form-control" value="" placeholder="" />
 
                                     <label for="maxPrice">Max Price:</label>
-                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="${maxPrice}" placeholder="Max Price" />
+                                    <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="" placeholder="" />
 
 
                                 <!-- Nút Lọc -->
@@ -334,7 +334,7 @@
                                             <img href="ProductDetailController?id=${product.id}" src="${product.imageURL}" alt="${product.name}" />
                                             <p>${product.name}</p>
                                             <c:set var="minPriceKey" value="minPrice_${product.id}"   />
-                                            <h2>$<c:out value="${requestScope[minPriceKey]}" /></h2>
+                                            <h2>₫<c:out value="${requestScope[minPriceKey]}" /></h2>
 
                                             <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>
 

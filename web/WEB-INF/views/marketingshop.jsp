@@ -128,7 +128,16 @@
             .table td {
                 white-space: nowrap; /* Ngăn chặn text bị xuống dòng */
             }
+            .form-group label {
+    margin-bottom: 5px;  /* Giảm khoảng cách giữa nhãn và trường chọn */
+}
 
+.form-group select {
+    margin-top: 0;  /* Đảm bảo không có khoảng cách thừa trên select */
+    padding: 5px;  /* Điều chỉnh padding để không bị lệch */
+    font-size: 16px;  /* Đảm bảo font đồng nhất */
+}
+            
         </style>
     </head><!--/head-->
 </head><!--/head-->
@@ -243,15 +252,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-sm-3">
-                        <div class="pull-right">
-                            <form action="${pageContext.request.contextPath}/MarketingProductController" method="get">
-                                <input type="text" name="search" value="${param.search}" />
-
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            </form>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
@@ -265,32 +266,8 @@
                     <hr>
                     <div class="container">
 
-                       <form action="MarketingProductController" method="GET">
-    <div class="form-row d-flex justify-content-between align-items-center mb-3">
-        <div class="form-group">
-            <label for="sortBy">Sort By:</label>
-            <select id="sortBy" name="sortby" class="form-control">
-                <option value="id" ${param.sortby == 'id' ? 'selected' : ''}>ID</option>
-                <option value="name" ${param.sortby == 'name' ? 'selected' : ''}>Name</option>
-                <option value="screenSize" ${param.sortby == 'screenSize' ? 'selected' : ''}>Screen Size</option>
-                <option value="connectivity" ${param.sortby == 'connectivity' ? 'selected' : ''}>Connectivity</option>
-                <option value="batteryCapacity" ${param.sortby == 'batteryCapacity' ? 'selected' : ''}>Battery Capacity</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="sortOrder">Sort Order:</label>
-            <select id="sortOrder" name="sortOrder" class="form-control">
-                <option value="asc" ${param.sortOrder == 'asc' ? 'selected' : ''}>Ascending</option>
-                <option value="desc" ${param.sortOrder == 'desc' ? 'selected' : ''}>Descending</option>
-            </select>
-        </div>
-
-        <button type="submit" class="btn btn-warning">Sort</button>
-    </div>
-</form>
             
-                            <hr>
+                           
                             <form action="MarketingProductController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
                                 <div class="form-group">
                                     <a href="AddProductController?action=addProduct" class="btn btn-success" onclick="confirmAdd(event, 'addProduct')">Add Product</a>
@@ -311,65 +288,79 @@
 
 
                         <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
-                            <div class="row">
-                                <div class="col-md-4 form-group">
-                                    <label for="brandID">Brand:</label>
-                                    <select id="brandID" name="brandID" class="form-control" >
-                                        <option value="0">All Brands</option>
-                                        <c:forEach var="brand" items="${brands}">
-                                            <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="os">Operating System: </label>
-                                    <select id="os" name="os" class="form-control">
-                                        <option value="">All</option>
-                                        <c:forEach var="osItem" items="${osList}">
-                                            <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="connectivity">Connectivity: </label>
-                                    <select id="connectivity" name="connectivity" class="form-control">
-                                        <option value="">All</option>
-                                        <c:forEach var="connect" items="${connectivityList}">
-                                            <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
+                             <div class="row">
+        <!-- Cột 1 -->
+       <div class="row">
+    <!-- Cột 1 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="brandID" class="d-block">Brand:</label>
+        <select id="brandID" name="brandID" class="form-control">
+            <option value="0">All Brands</option>
+            <c:forEach var="brand" items="${brands}">
+                <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
+            </c:forEach>
+        </select>
+    </div>
 
-                            <div class="row">
-                                <div class="col-md-4 form-group">
-                                    <label for="statusFilter">Status:</label>
-                                    <select id="statusFilter" name="statusFilter" class="form-control">
-                                        <option value="">All</option>
-                                        <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
-                                        <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="screenSize">Screen Size (inches): </label>
-                                    <select id="screenSize" name="screenSize" class="form-control">
-                                        <option value="0">All</option>
-                                        <c:forEach var="size" items="${screenSizeList}">
-                                            <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 form-group">
-                                    <label for="batteryCapacity">Battery Capacity:  </label>
-                                    <select id="batteryCapacity" name="batteryCapacity" class="form-control">
-                                        <option value="0">All</option>
-                                        <c:forEach var="capacity" items="${batteryCapacityList}">
-                                            <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Filter</button>
+    <!-- Cột 2 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="os" class="d-block">Operating System:</label>
+        <select id="os" name="os" class="form-control">
+            <option value="">All</option>
+            <c:forEach var="osItem" items="${osList}">
+                <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
+            </c:forEach>
+        </select>
+    </div>
+    
+    <!-- Cột 3 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="connectivity" class="d-block">Connectivity:</label>
+        <select id="connectivity" name="connectivity" class="form-control">
+            <option value="">All</option>
+            <c:forEach var="connect" items="${connectivityList}">
+                <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
+            </c:forEach>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Cột 1 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="statusFilter" class="d-block">Status:</label>
+        <select id="statusFilter" name="statusFilter" class="form-control">
+            <option value="">All</option>
+            <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
+            <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
+        </select>
+    </div>
+
+    <!-- Cột 2 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="screenSize" class="d-block">Screen Size (inches):</label>
+        <select id="screenSize" name="screenSize" class="form-control">
+            <option value="0">All</option>
+            <c:forEach var="size" items="${screenSizeList}">
+                <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
+            </c:forEach>
+        </select>
+    </div>
+
+    <!-- Cột 3 -->
+    <div class="col-md-4 form-group d-flex flex-column">
+        <label for="batteryCapacity" class="d-block">Battery Capacity:</label>
+        <select id="batteryCapacity" name="batteryCapacity" class="form-control">
+            <option value="0">All</option>
+            <c:forEach var="capacity" items="${batteryCapacityList}">
+                <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
+            </c:forEach>
+        </select>
+    </div>
+</div>
+
+
+    <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
                         <br>
 
@@ -385,10 +376,10 @@
 
                             <th>Product Name</th>
                             <th>Brand</th>
-                            <th>Connectivity</th>
+                            <th>Image</th>
                             <th>Os</th>
                             <th>Screen Type</th>
-                            <th>Screen Size</th>
+                            <th>Connectivity</th>
                             <th>Delete</th>
                             <th>Status</th>
                             <th style="margin-left: 30px">Details</th>
@@ -404,9 +395,9 @@
                                             <p>${brand.name}</p>
                                         </c:if>
                                     </c:forEach></td>
-                                <td>${product.connectivity}</td>
+                                <td> <img src="${product.imageURL}" alt="" style="width: 100px; height: 100px; object-fit: cover;"/></td>
                                 <td>${product.os}</td>
-                                <td>${product.screenType}</td>
+                                <td>${product.connectivity}</td>
                                 <td>${product.screenSize}</td>
                                 <td>
                                     <a href="MarketingProductController?action=delete&id=${product.id}" onclick="confirmDelete(event)" class="btn btn-danger">Delete</a>
@@ -656,6 +647,9 @@
                                                        event.preventDefault(); // Ngừng hành động nếu người dùng không xác nhận
                                                    }
                                                }
+                                               $('#addProductVariantModal').on('shown.bs.modal', function () {
+    $('#myInput').trigger('focus');
+});
 </script>
 
 </body>

@@ -6,6 +6,7 @@
 package controller;
 
 import entity.Brand;
+import entity.Feedback;
 
 import entity.Product;
 import entity.ProductVariant;
@@ -22,8 +23,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Vector;
 import model.DAOBrand;
+import model.DAOFeedback;
 import model.DAOProduct;
 
 import model.DAOProductVariant;
@@ -76,8 +79,11 @@ public class ProductDetailController extends HttpServlet {
         DAOProduct dao = new DAOProduct();
         DAOBrand daoBrand = new DAOBrand();
         DAOProductVariant daoProductVariants = new DAOProductVariant();
-
+        DAOFeedback daoFeedback = new DAOFeedback(); // Thêm DAOFeedback
+        
         int productID = Integer.parseInt(request.getParameter("id"));
+        List<Feedback> feedbacks = daoFeedback.getLatestFeedbacksByProductId(productID);
+        
         Product product = dao.getProductById(productID);
         if (product == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
@@ -114,6 +120,7 @@ public class ProductDetailController extends HttpServlet {
         request.setAttribute("minPrice", minPrice);
         request.setAttribute("brands", brandList);
         request.setAttribute("product", product);
+        request.setAttribute("feedbacks", feedbacks);
         request.getRequestDispatcher("WEB-INF/views/product-details.jsp").forward(request, response);
     }
 

@@ -81,7 +81,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at") // Lấy giá trị updatedDate
+                        rs.getDate("updated_at"), // Lấy giá trị updatedDate
+                        rs.getBytes("image")
                 );
                 vector.add(user);
             }
@@ -112,7 +113,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
-                        rs.getDate("updated_at") // Thay "updatedDate" bằng "updated_at"
+                        rs.getDate("updated_at"), // Thay "updatedDate" bằng "updated_at"
+                        rs.getBytes("image")
                 );
             }
         } catch (SQLException ex) {
@@ -142,7 +144,39 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at")
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")
+                );
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return user;
+    }
+
+    public User getUserByPhoneNumber(String phoneNumber) {
+        String sql = "SELECT * FROM Users WHERE phoneNumber = ?";
+        User user = null;
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, phoneNumber);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                user = new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("passHash"),
+                        rs.getBoolean("gender"),
+                        rs.getString("phoneNumber"),
+                        rs.getString("resetToken"),
+                        rs.getDate("resetTokenExpired"),
+                        rs.getDate("DateOfBirth"),
+                        rs.getInt("roleId"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")
                 );
             }
         } catch (SQLException ex) {
@@ -179,6 +213,38 @@ public class DAOUser extends DBConnection {
 
     }
 
+    public int updateUser2(User user) {
+        int n = 0;
+        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, "
+                + "phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, "
+                + "DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? WHERE id = ?";
+
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, user.getName());
+            pre.setString(2, user.getEmail());
+            pre.setString(3, user.getPassHash());
+            pre.setBoolean(4, user.isGender());
+            pre.setString(5, user.getPhoneNumber());
+            pre.setString(6, user.getResetToken());
+            pre.setDate(7, user.getResetTokenExpired());
+            pre.setDate(8, user.getDateOfBirth());
+            pre.setInt(9, user.getRoleId());
+            pre.setBoolean(10, user.isIsDisabled());
+            pre.setInt(11, user.getUpdatedBy());
+            pre.setDate(12, user.getUpdatedAt());
+
+            // Lưu trữ ảnh dạng BLOB
+            pre.setBytes(13, user.getImage());
+            pre.setInt(14, user.getId());
+
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
+    }
+
     public int deleteUser(int id) {
         int n = 0;
         String sql = "DELETE FROM Users WHERE id = ?";
@@ -193,7 +259,7 @@ public class DAOUser extends DBConnection {
     }
 
     public List<User> getPaginatedUsers(int page, int pageSize) throws SQLException {
-        String sql = "SELECT * FROM Users ORDER BY id ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Users WHERE roleId <> 1 ORDER BY id ASC LIMIT ? OFFSET ?";
         List<User> users = new ArrayList<>();
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
@@ -214,7 +280,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at")));
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")));
 
             }
         }
@@ -282,7 +349,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
-                        rs.getDate("updated_at")));
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")));
             }
         }
 
@@ -365,7 +433,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at")));
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -416,7 +485,8 @@ public class DAOUser extends DBConnection {
                             rs.getInt("roleId"),
                             rs.getBoolean("isDisabled"),
                             rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                            rs.getDate("updated_at")));
+                            rs.getDate("updated_at"),
+                            rs.getBytes("image")));
                 }
             }
         } catch (SQLException e) {
@@ -475,7 +545,8 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at")
+                        rs.getDate("updated_at"),
+                        rs.getBytes("image")
                 );
                 customers.add(user);
             }
@@ -593,6 +664,21 @@ public class DAOUser extends DBConnection {
 
         return changeHistory;
     }
+    public boolean isEmailExists(String email) {
+    boolean exists = false;
+    String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
+    try {
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, email);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            exists = rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return exists;
+}
 
     public static void main(String[] args) {
 
