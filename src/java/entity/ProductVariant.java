@@ -20,14 +20,6 @@ public class ProductVariant {
     private Color color;
     private Storage storage;
 
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     public Storage getStorage() {
         return storage;
     }
@@ -110,4 +102,12 @@ public class ProductVariant {
         return "ProductVariant{" + "id=" + id + ", product_id=" + product_id + ", color_id=" + color_id + ", storage_id=" + storage_id + ", price=" + price + ", stock=" + stock + ", status=" + status + '}';
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
 }

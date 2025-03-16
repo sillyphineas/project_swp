@@ -194,7 +194,11 @@
                                             <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
                                         </div>
                                     </div>
-                                    <p style="color: #666; font-size: 14px;">Phân loại hàng: <%= feedback.getProductVariant().getColor().getColorName() %></p>
+                                    <p style="color: #666; font-size: 14px;">
+                                        Phân loại hàng: <%= feedback.getProduct().getName() %>, 
+                                        <%= feedback.getProductVariant().getColor().getColorName() %>, 
+                                        <%= feedback.getProductVariant().getStorage().getCapacity() %>
+                                    </p>
 
                                     <div style="margin: 10px 0;">
                                         <% for (int i = 1; i <= 5; i++) { %>

@@ -21,7 +21,7 @@ public class DAOOrderInformation extends DBConnection {
                       o.recipientPhone, od.quantity, s.ShippingStatus, 
                       s.ShippingDate, s.EstimatedArrival, s.ActualArrival,
                       cl.colorName, str.capacity, pv.price, p.name,
-                      p.imageURL, ad.address, ad.district, ad.city
+                      p.imageURL, ad.address, ad.district, ad.city, p.id as ProductID
                      
                      FROM proj_swp391_update1.orders as o 
                      LEFT JOIN orderdetails as od on o.id = od.orderId 
@@ -60,6 +60,7 @@ public class DAOOrderInformation extends DBConnection {
                 String address = rs.getString("address");
                 String district = rs.getString("district");
                 String city = rs.getString("city");
+                int productId = rs.getInt("ProductID");
                 count++;
                 // Tạo đối tượng OrderInformation (dùng constructor đầy đủ 20 tham số)
                 OrderInformation oi = new OrderInformation(
@@ -82,7 +83,8 @@ public class DAOOrderInformation extends DBConnection {
                         imageURL,
                         address,
                         district,
-                        city
+                        city,
+                        productId
                 );
 
                 list.add(oi);
@@ -96,9 +98,10 @@ public class DAOOrderInformation extends DBConnection {
 
     public static void main(String[] args) {
         DAOOrderInformation dao = new DAOOrderInformation();
-        List<OrderInformation> list = dao.getAllOrderInformation();
-        for (OrderInformation o : list) {
-            System.out.println(o.getShippingStatus());
-        }
+//        List<OrderInformation> list = dao.getAllOrderInformation();
+//        for (OrderInformation o : list) {
+//            System.out.println(o.getShippingStatus());
+//        }
+        System.out.println(dao.getAllOrderInformation());
     }
 }

@@ -66,10 +66,12 @@ public class CustomerOrderController extends HttpServlet {
         DAOOrderInformation daoOdInf = new DAOOrderInformation();
         DAOOrder daoOrder = new DAOOrder();
         String service = request.getParameter("service");
+        Integer customerID = (Integer) session.getAttribute("userID");
+        request.setAttribute("sessionUserId", customerID);
         if (service == null) {
             service = "displayAllOrders";
         }
-
+        
         if (service.equals("displayAllOrders")) {
             List<OrderInformation> orderInformations = daoOdInf.getAllOrderInformation();
 

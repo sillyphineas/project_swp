@@ -32,7 +32,15 @@ public class Feedback {
     private User user;
     private Product product;
     private ProductVariant productVariant;
+    private String Status;
 
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String Status) {
+        this.Status = Status;
+    }
     public Feedback(int id, int orderDetailID, int reviewerID, String reviewTime, int rating, String content, String images, boolean isDisabled) {
         this.id = id;
         this.orderDetailID = orderDetailID;
@@ -44,6 +52,30 @@ public class Feedback {
         this.isDisabled = isDisabled;
     }
 
+    public Feedback(int id, int orderDetailID, int reviewerID, String reviewTime, int rating, String content, String images, String Status) {
+        this.id = id;
+        this.orderDetailID = orderDetailID;
+        this.reviewerID = reviewerID;
+        this.reviewTime = reviewTime;
+        this.rating = rating;
+        this.content = content;
+        this.images = images;
+        this.Status = Status;
+    }
+    
+
+    public Feedback(int id, int orderDetailID, int reviewerID, int product_id, String reviewTime, int rating, String content, String images, boolean isDisabled) {
+        this.id = id;
+        this.orderDetailID = orderDetailID;
+        this.reviewerID = reviewerID;
+        this.product_id = product_id;
+        this.reviewTime = reviewTime;
+        this.rating = rating;
+        this.content = content;
+        this.images = images;
+        this.isDisabled = isDisabled;
+    }
+    
     public List<String> getImages() {
         if (images == null || images.isEmpty()) {
             return null;
@@ -104,7 +136,15 @@ public class Feedback {
     public String getContent() {
         return content;
     }
-
+    
+    public String getSubContent() {
+        int maxLength = 100;
+        if (content.length() > maxLength) {
+            return content.substring(0, maxLength) + "...";
+        } else {
+            return content;
+        }
+    }
     public void setContent(String content) {
         this.content = content;
     }
@@ -148,5 +188,10 @@ public class Feedback {
     public void setProductVariant(ProductVariant productVariant) {
         this.productVariant = productVariant;
     }
-
+    public String getIsDisabled() {
+        if (this.isDisabled == true) {
+            return "Inactive";
+        }
+        return "Active";
+    }
 }

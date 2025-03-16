@@ -16,8 +16,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import model.DAOFeedback;
 
@@ -45,7 +48,7 @@ public class FeetBacksController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
             if (service == null) {
-                service = "listAllfeedBack";
+                service = "ListFeedbackWithId";
             }
             if (service.equals("listAllfeedBack")) {
                 try {
@@ -95,7 +98,7 @@ public class FeetBacksController extends HttpServlet {
                         page = Integer.parseInt(pageStr);
                     }
 
-                    // Lấy danh sách feedback phân trang theo productId
+                    
                     List<Feedback> feedbacks = dao.getPaginatedFeedbacksByProductId(productId, page, pageSize);
                     int totalFeedbacks = dao.getTotalFeedbacksByProductId(productId);
 
@@ -104,7 +107,7 @@ public class FeetBacksController extends HttpServlet {
                     request.setAttribute("feedbacks", feedbacks);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("productId", productId); // Giữ lại productId để load tiếp trang khác
+                    request.setAttribute("productId", productId);
 
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/list-all-feedback.jsp");
                     dispatcher.forward(request, response);
@@ -162,7 +165,7 @@ public class FeetBacksController extends HttpServlet {
                     String productIdStr = request.getParameter("productId");
                     String starStr = request.getParameter("star");
                     String pageStr = request.getParameter("page");
-                    System.out.println("star"+starStr+"ProductId"+productIdStr);
+                    System.out.println("star" + starStr + "ProductId" + productIdStr);
                     int productId = 0;
                     int star = 0;
                     int page = 1;
@@ -207,7 +210,40 @@ public class FeetBacksController extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing feedbacks");
                 }
             }
+            if ("SubmitFeedback".equals(service)) {
+                try {
+                    // Lấy dữ liệu từ form
+                    int reviewerID = Integer.parseInt(request.getParameter("reviewerID"));
+                    int productID = Integer.parseInt(request.getParameter("product_id"));
+                    int rating = Integer.parseInt(request.getParameter("rating"));
+                    String content = request.getParameter("content");
 
+                    // Xử lý file ảnh
+                    Part filePart = request.getPart("image");
+                    String fileName = filePart.getSubmittedFileName();
+                    String imagePath = "uploads/" + fileName; // Lưu file vào thư mục uploads
+                    filePart.write(getServletContext().getRealPath("/") + imagePath);
+
+                    // Lưu dữ liệu feedback vào database
+                    String reviewTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    boolean isDisabled = false;
+                    Feedback feedback = new Feedback(0, reviewerID, productID, reviewTime, rating, content, imagePath, isDisabled);
+
+                    boolean success = dao.insertFeedback(feedback);
+
+                    if (success) {
+                        response.sendRedirect("HomePageController"); // Chuyển hướng về trang chủ
+                    } else {
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error submitting feedback.");
+                    }
+                } catch (NumberFormatException e) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid input data.");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing feedback.");
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -258,6 +294,17 @@ public class FeetBacksController extends HttpServlet {
             }
         }
         return null;
+    }
+
+    class ResponseMessage {
+
+        private String status;
+        private String message;
+
+        public ResponseMessage(String status, String message) {
+            this.status = status;
+            this.message = message;
+        }
     }
 
 }

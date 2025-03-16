@@ -23,10 +23,35 @@ public class OrderInformation {
     private String address;
     private String district;
     private String city;
+    private int productId;
 
     public OrderInformation() {
     }
 
+    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, String paymentName, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId) {
+        this.id = id;
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
+        this.paymentName = paymentName;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.quantity = quantity;
+        this.shippingStatus = shippingStatus;
+        this.shippingDate = shippingDate;
+        this.estimatedArrival = estimatedArrival;
+        this.actualArrival = actualArrival;
+        this.colorName = colorName;
+        this.capacity = capacity;
+        this.price = price;
+        this.productName = productName;
+        this.imageURL = imageURL;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.productId = productId;
+    }
+    
     public OrderInformation(
             int id,
             Date orderTime,
@@ -210,4 +235,13 @@ public class OrderInformation {
     public void setCity(String city) {
         this.city = city;
     }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+    
 }

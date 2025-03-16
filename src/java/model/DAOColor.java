@@ -175,7 +175,6 @@ public class DAOColor extends DBConnection {
 
     public static void main(String[] args) {
         DAOColor dao = new DAOColor();
-//        System.out.println(dao.getColorIDByName("Đen"));
-        System.out.println(dao.getColorById1(1));
+        System.out.println("Color"+dao.getColorById1(1));
     }
 }
