@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -333,7 +335,27 @@ public class DAOFeedback extends DBConnection {
         }
         return 0;
     }
+    public List<Map<String, Object>> getFeedbackStatsByDate(String startDate, String endDate) throws SQLException {
+        String sql = "SELECT COUNT(*) AS feedbackCount, DATE(reviewTime) AS date " +
+                     "FROM Feedbacks " +
+                     "WHERE reviewTime BETWEEN ? AND ? " +
+                     "GROUP BY DATE(reviewTime)";
 
+        List<Map<String, Object>> stats = new ArrayList<>();
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, startDate);
+            pre.setString(2, endDate);
+
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> stat = new HashMap<>();
+                stat.put("date", rs.getString("date"));
+                stat.put("feedbackCount", rs.getInt("feedbackCount"));
+                stats.add(stat);
+            }
+        }
+        return stats;
+    }
     public static void main(String[] args) {
         DAOFeedback dao = new DAOFeedback();
         System.out.println(dao.getPaginatedFeedbacksByStar(1, 4, 1, 10));

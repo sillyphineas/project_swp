@@ -223,7 +223,7 @@
             <div class="button-group">
 
                 <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}">Update Profile</a>
-
+                <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}">Change Password</a>
                 <a class="btn btn-back" href="HomePageController">Back to Home</a>
             </div>
         </div>

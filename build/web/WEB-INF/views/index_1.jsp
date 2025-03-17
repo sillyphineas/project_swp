@@ -237,7 +237,7 @@
                                             <div class="productinfo text-center">
                                                 <img src="${product.imageURL}" alt="Product Image" />
                                                 <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                                <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
+                                                <h2>₫<c:out value="${requestScope[minPriceKey]}" /></h2>
                                                 <p>${product.name}</p>
                                                 <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>  
                                             </div>

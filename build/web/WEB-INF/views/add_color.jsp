@@ -34,7 +34,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
          <style>
-            .inactive-status {
+             .inactive-status {
                 color: red;
                 font-weight: bold;
             }
@@ -45,10 +45,14 @@
             }
 
             .add-pr {
-                text-align: center;
+                text-align: left;
                 color: black;
                 margin-bottom: 20px;
             }
+            .form-control{
+                    width: 30%;
+            }
+            
         </style>
     </head><!--/head-->
 
@@ -181,6 +185,8 @@
                 <a href="MarketingProductController" class="btn btn-success">Cancel</a>
             </form>
         </div>
+                                <br>
+                                <br>
                                   <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">

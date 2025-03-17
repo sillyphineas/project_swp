@@ -182,7 +182,7 @@ public class UserDetailController extends HttpServlet {
             } catch (Exception e) {
                 
             }
-            user.setDisabled(isDisabled);
+            user.setIsDisabled(isDisabled);
             user.setRoleId(roleId);  
             user.setUpdatedBy(userId);
 
@@ -242,7 +242,7 @@ public class UserDetailController extends HttpServlet {
         user.setResetToken(resetToken);
         user.setResetTokenExpired(resetTokenExpired);
         user.setDateOfBirth(dateOfBirth);  // Set ngày sinh
-        user.setDisabled(isDisabled);
+        user.setIsDisabled(isDisabled);
         user.setRoleId(roleId);
         user.setUpdatedBy(userId);  // Can be updated dynamically depending on the user
         user.setUpdatedAt(new java.sql.Date(System.currentTimeMillis())); 

@@ -170,10 +170,10 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
+                                                                        <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                                                        <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
                                     <li><a href="LoginController" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
@@ -209,8 +209,8 @@
                                             <li><a href="BlogURL">Blog List</a></li>
                                         </ul>
                                     </li> 
-<!--                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html">Contact</a></li>-->
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
@@ -226,9 +226,16 @@
 
         <section id="form"><!--form-->
             <div class="container">
+                <c:if test="${not empty successMessage}">
+                                <div style="color:green;">
+                                    ${successMessage}
+                                </div>
+                            </c:if>
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-1">
+                        
                         <div class="login-form"><!--login form-->
+                            
                             <h2>Login to your account</h2>
                             <form name="loginForm">
                                 <input type="email" name="email" placeholder="Email"  required/>
