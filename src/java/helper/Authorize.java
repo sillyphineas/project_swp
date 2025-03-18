@@ -15,7 +15,8 @@ public class Authorize {
     private static final String[] CUSTOMER_ENDPOINTS = {"/HomePageController", "/CartURL", "/LogoutController", "/ProductController", "/ProductDetailController", "/UserProfileServlet", "/BlogURL", "/BlogDetailServlet", "/OrderController" , "/VNPayPaymentServlet", "/VNPayReturnServlet"};
     private static final String[] ADMIN_ENDPOINTS = {"/LogoutController", "/UserProfileServlet", "/AdminDashboardController", "/AdminUserController", "/SettingController" , "/UserDetailController", "/UserController"};
     private static final String[] SALES_ENDPOINTS = {"/LogoutController", "/UserProfileServlet"};
-    private static final String[] MARKETING_ENDPOINTS = {"/LogoutController", "/UserProfileServlet", "/AddProductController", "/CustomerController", "/CustomerDetailController", "/EditCustomerController", "/MarketingDashboardController", "/MarketingPostController", "/MarketingProductController" , "/MarketingProductDetails", "/ProductController" , "/ProductDetailController", "/SliderController"};
+    private static final String[] MARKETING_ENDPOINTS = {"/LogoutController", "/UserProfileServlet", "/AddProductController", "/CustomerController", "/CustomerDetailController", "/EditCustomerController", "/MarketingDashboardController",
+        "/MarketingPostController", "/MarketingProductController" , "/MarketingProductDetails", "/ProductController" , "/ProductDetailController", "/SliderController","/FeedbackDetailController"};
     private static final String[] SHIPPER_ENDPOINTS = {"/LogoutController", "/UserProfileServlet", "/ShipperDashboardController", "/ShipperOrderController"};
 
     public static boolean isAccepted(User user, String link) {

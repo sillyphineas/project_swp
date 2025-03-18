@@ -133,6 +133,7 @@
                                     <li><a href="SliderController">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="FeedbackDetailController"> Feedback </a></li> 
                                 </ul>
                             </div>
                         </div>

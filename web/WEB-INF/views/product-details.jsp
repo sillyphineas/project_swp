@@ -666,9 +666,9 @@
 
         <script src="js/cart.js"></script>
         <script>
-        document.addEventListener("DOMContentLoaded", func tion() {
+document.addEventListener("DOMContentLoaded",    function() {
 
-                    var colorSelector = document.getElementById("colorSelector");
+            var colorSelector = document.getElementById("colorSelector");
             var storageSelector = document.getElementById("storageSelector");
             var defaultColor = colorSelector.options[0].value;
             var defaultStorage = storageSelector.options[0].value;
@@ -682,7 +682,9 @@
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
-        }); });
+            });
+});
+        
         function updateProductInfo(color, storage) {
                     var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
@@ -701,26 +703,10 @@
             xhr.send();
                 }
                 function formatPrice(price) {
-
+                    
                     return price.toLocaleString();
-        }
-            </script>
-        <!--            <script>
-                    function checkStock() {
-                            var storageSelector = document.getElementById("storageSelector");
-                    var availabilityLabel = document.getElementById("availabilityLabel");
-                    var addToCartBtn = document.getElementById("addToCartBtn");
-                    // Lấy option đang được chọn
-                    var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-                    var stock = parseInt(selectedOption.getAttribute("data-stock"));
-                    if (stock <= 0) {
-                    availabilityLabel.textContent = "Hết hàng";
-                    addToCartBtn.disabled = true;
-                    } else {             availabilityLabel.textContent = "Còn hàng";
-                        addToCartBtn.disabled = false; }     }
-                        document.addEventListener("DOMContentLoaded", checkStock);
-                        document.getElementById("storageSelector").addEventListener("change", checkStock);
-                        </script>-->
-    </body>
+                }
+</script>
+</body>
 </html>
 

@@ -127,8 +127,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href="SaleDashboard" class="active">Home</a></li>
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -309,5 +309,7 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
+
     </body>
 </html>

@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -232,6 +234,16 @@ public class UserDetailController extends HttpServlet {
             return;
         
         }
+         byte[] image = null;
+        Part imagePart = request.getPart("image");  // "image" là tên field của file input trong form
+        if (imagePart != null && imagePart.getSize() > 0) {
+        try (InputStream inputStream = imagePart.getInputStream()) {
+            image = new byte[inputStream.available()];
+            inputStream.read(image);  // Đọc dữ liệu ảnh vào mảng byte
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
         User user = new User();
         user.setId(userId);
         user.setName(name);
@@ -246,7 +258,9 @@ public class UserDetailController extends HttpServlet {
         user.setRoleId(roleId);
         user.setUpdatedBy(userId);  // Can be updated dynamically depending on the user
         user.setUpdatedAt(new java.sql.Date(System.currentTimeMillis())); 
-        
+         if (image != null) {
+        user.setImage(image);
+       }
         dao.updateUser(user);
         response.sendRedirect("UserController");
     

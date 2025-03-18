@@ -7,7 +7,6 @@ package controller;
 
 import entity.User;
 import helper.Authorize;
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,20 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.Calendar;
-import model.DAOShipping;
-import entity.Shipping;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import model.DAOOrder;
+
 /**
  *
- * @author HP
+ * @author Admin
  */
-@WebServlet(name="ShipperDashboardController", urlPatterns={"/ShipperDashboardController"})
-public class ShipperDashboardController extends HttpServlet {
+@WebServlet(name="SaleDashboard", urlPatterns={"/SaleDashboard"})
+public class SaleDashboard extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -46,10 +38,10 @@ public class ShipperDashboardController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ShipperDashboardController</title>");  
+            out.println("<title>Servlet SaleDashboard</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ShipperDashboardController at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet SaleDashboard at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,41 +58,16 @@ public class ShipperDashboardController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        //Authorize
-        HttpSession session = request.getSession(false);
+         HttpSession session = request.getSession(false);
         User user = null;
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
-        if (!Authorize.isAccepted(user, "/ShipperDashboardController")) {
+        if (!Authorize.isAccepted(user, "/MarketingDashboardController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        String startDate = request.getParameter("startDate");
-        String endDate = request.getParameter("endDate");
-        String shippingStatus = request.getParameter("shippingStatus");
-
-        if (startDate == null || endDate == null) {
-            startDate = getFormattedDate(-7);
-            endDate = getFormattedDate(0);
-        }
-
-        request.setAttribute("startDate", startDate);
-        request.setAttribute("endDate", endDate);
-        request.setAttribute("shippingStatus", shippingStatus != null ? shippingStatus : "");
-
-        try {
-            DAOShipping dao = new DAOShipping();
-            List<Map<String, Object>> shippingStats = dao.getShippingStatsByDate(startDate, endDate, shippingStatus);
-            request.setAttribute("shippingStats", shippingStats);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            request.setAttribute("shippingStats", new ArrayList<>());
-        }
-         
-        request.getRequestDispatcher("WEB-INF/views/shipperDashboard.jsp").forward(request, response);
-    }
-    
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -123,11 +90,5 @@ public class ShipperDashboardController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    private String getFormattedDate(int daysAgo) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, daysAgo);
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(calendar.getTime());
-    }
 
 }
