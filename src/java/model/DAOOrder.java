@@ -1,10 +1,19 @@
 package model;
 
+import entity.Address;
 import entity.Order;
+import entity.OrderDetail;
 import entity.OrderShippingView;
+import entity.ProductVariant;
+import entity.Shipping;
+import entity.User;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DAOOrder extends DBConnection {
 
@@ -159,19 +168,19 @@ public class DAOOrder extends DBConnection {
             preparedStatement.setString(4, order.getShippingAddress());
             preparedStatement.setDouble(5, order.getTotalPrice());
             preparedStatement.setDouble(6, order.getDiscountedPrice());
-            preparedStatement.setBoolean(8, order.isDisabled());
+            preparedStatement.setBoolean(7, order.isDisabled());
 
             if (order.getVoucherID() != null) {
-                preparedStatement.setInt(9, order.getVoucherID());
+                preparedStatement.setInt(8, order.getVoucherID());
             } else {
-                preparedStatement.setNull(9, Types.INTEGER);
+                preparedStatement.setNull(8, Types.INTEGER);
             }
 
-            preparedStatement.setString(10, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
-            preparedStatement.setString(11, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
-            preparedStatement.setInt(12, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
+            preparedStatement.setString(9, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
+            preparedStatement.setString(10, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
+            preparedStatement.setInt(11, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
 
-            preparedStatement.setInt(13, order.getId());
+            preparedStatement.setInt(12, order.getId());
 
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -424,9 +433,86 @@ public class DAOOrder extends DBConnection {
         return 0;
     }
 
+    public List<Order> getOrdersWithPagination(int limit, int offset) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.id AS orderID, o.buyerID,u.name As buyer_Name, o.orderTime, o.orderStatus, o.ShippingDate, o.totalPrice, o.discountedPrice, o.recipientName, o.recipientPhone, o.AssignedSaleId, s.ShippingID, s.ShippingStatus, s.EstimatedArrival, s.ActualArrival, a.address AS shippingAddress, a.city, a.district"
+                + " FROM Orders o "
+                + "LEFT JOIN users u on o.buyerID = u.id "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID  "
+                + "LEFT JOIN Addresses a ON o.ShippingAddress = a.id "
+                + "LEFT JOIN OrderDetails od ON o.id = od.orderId "
+                + "ORDER BY o.orderTime DESC LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User user = new User();
+                    String buyerName = rs.getString("Buyer_Name");
+                    System.out.println("DEBUG: Buyer_Name = " + buyerName);
+                    user.setName(buyerName);
+                    Order order = new Order();
+
+                    // Thông tin đơn hàng
+                    order.setId(rs.getInt("orderID"));
+                    order.setBuyerID(rs.getInt("buyerID"));
+                    Timestamp orderTime = rs.getTimestamp("orderTime");
+                    if (orderTime == null) {
+                        System.out.println("⚠️ orderTime is NULL for orderID: " + rs.getInt("orderID"));
+                    } else {
+                        order.setOrderTime(orderTime);
+                    }
+                    order.setOrderStatus(rs.getString("orderStatus"));
+                    order.setShippingDate(rs.getString("ShippingDate"));
+                    order.setTotalPrice(rs.getDouble("totalPrice"));
+                    order.setDiscountedPrice(rs.getDouble("discountedPrice"));
+                    order.setRecipientName(rs.getString("recipientName"));
+                    order.setRecipientPhone(rs.getString("recipientPhone"));
+                    order.setAssignedSaleId(rs.getInt("AssignedSaleId"));
+                    // Thông tin vận chuyển
+
+                    
+                    user.setName(rs.getString("buyer_Name"));
+
+                    order.setUser(user);
+
+                    Shipping shipping = new Shipping();
+                    shipping.setShippingID(rs.getInt("ShippingID"));
+                    shipping.setShippingStatus(rs.getString("ShippingStatus"));
+                    shipping.setEstimatedArrival(rs.getDate("EstimatedArrival"));
+                    shipping.setActualArrival(rs.getDate("ActualArrival"));
+                    order.setShipping(shipping);
+
+                    String fullAddress = rs.getString("shippingAddress") + ", "
+                            + rs.getString("district") + ", "
+                            + rs.getString("city");
+                    order.setShippingAddress(fullAddress);;
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public int getTotalOrders() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Orders";
+        try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
     // Test DAOOrder
     public static void main(String[] args) {
         DAOOrder daoOrder = new DAOOrder();
+
+        System.out.println(daoOrder.getOrdersWithPagination(1, 3));
 
 //        int shipperId = 2;
 //        String statusFilter = "";
@@ -451,8 +537,5 @@ public class DAOOrder extends DBConnection {
 //                System.out.println("isDisabled: " + order.isDisabled());
 //                System.out.println("-----------------------------");
 //            }
-//        }
-        
-        System.out.println(daoOrder.updateOrder(new Order()));
     }
 }

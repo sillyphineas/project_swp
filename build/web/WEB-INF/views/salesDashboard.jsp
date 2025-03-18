@@ -127,8 +127,8 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href="salesDashboardController" class="active">Home</a></li>
+                                    <li><a href="SaleOrderController">Order List</a></li>
                                 </ul>
                             </div>
                         </div>

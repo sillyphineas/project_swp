@@ -1,6 +1,9 @@
 package controller;
 
+import com.google.gson.Gson;
+import entity.Feedback;
 import entity.Order;
+import entity.OrderDetail;
 import entity.OrderInformation;
 import entity.User;
 import jakarta.servlet.RequestDispatcher;
@@ -9,15 +12,28 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import model.DAOFeedback;
 import model.DAOOrder;
 import model.DAOOrderInformation;
 import org.json.JSONObject;
+import jakarta.servlet.annotation.MultipartConfig;
+import java.io.File;
+import java.util.Collection;
 
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
+)
 @WebServlet(name = "CustomerOrderController", urlPatterns = {"/CustomerOrderController"})
 public class CustomerOrderController extends HttpServlet {
+
     private <T> List<T> paginateList(List<T> fullList, int page, int itemsPerPage) {
         if (fullList == null || fullList.isEmpty()) {
             return new ArrayList<>();
@@ -62,19 +78,24 @@ public class CustomerOrderController extends HttpServlet {
             user = (User) session.getAttribute("user");
         }
 
-
         DAOOrderInformation daoOdInf = new DAOOrderInformation();
         DAOOrder daoOrder = new DAOOrder();
+        DAOFeedback dao = new DAOFeedback();
         String service = request.getParameter("service");
         Integer customerID = (Integer) session.getAttribute("userID");
         request.setAttribute("sessionUserId", customerID);
+
         if (service == null) {
             service = "displayAllOrders";
         }
-        
+
         if (service.equals("displayAllOrders")) {
             List<OrderInformation> orderInformations = daoOdInf.getAllOrderInformation();
-
+            for (OrderInformation o : orderInformations) {
+                boolean feedbackExists = dao.isFeedbackExists(o.getOrderDetailID());
+                request.setAttribute("feedbackExists_" + o.getOrderDetailID(), feedbackExists);
+                System.out.println("feedbackExists "+feedbackExists);
+            }
             List<OrderInformation> awaitingPickupList = new ArrayList<>();
             List<OrderInformation> shippingList = new ArrayList<>();
             List<OrderInformation> deliveredList = new ArrayList<>();
@@ -149,7 +170,7 @@ public class CustomerOrderController extends HttpServlet {
             request.setAttribute("totalCanceledPages", totalCanceledPages);
             request.setAttribute("totalRefundPages", totalRefundPages);
 
-            RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/my-orders.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/my-orders.jsp");
             rd.forward(request, response);
         } else if (service.equals("cancelOrder")) {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
@@ -223,9 +244,82 @@ public class CustomerOrderController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String service = request.getParameter("service");
+        DAOFeedback dao = new DAOFeedback();
+
+        System.out.println("Service: " + service);
+
+        if (service == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Service parameter is missing.");
+            return;
+        }
+
+        if (service.equals("SubmitFeedback")) {
+            System.out.println("Processing Feedback Submission...");
+
+            try {
+                int reviewerID = Integer.parseInt(request.getParameter("reviewerID"));
+                System.out.println("reviewerID :" + reviewerID);
+                int productID = Integer.parseInt(request.getParameter("product_id"));
+                int orderdetailID = Integer.parseInt(request.getParameter("orderdetailID"));
+                int rating = Integer.parseInt(request.getParameter("rating"));
+                String content = request.getParameter("content");
+
+                System.out.println("reviewerID: " + reviewerID);
+                System.out.println("orderDetailID: " + orderdetailID);
+                System.out.println("product_id: " + productID);
+
+                if (dao.isFeedbackExists(orderdetailID)) {
+                    response.sendError(HttpServletResponse.SC_CONFLICT, "Feedback already exists for this order.");
+                    return;
+                }
+
+                Collection<Part> fileParts = request.getParts();
+                for (Part filePart : fileParts) {
+                    System.out.println("File Part Name: " + filePart.getName() + ", Size: " + filePart.getSize());
+                }
+                List<String> imagePaths = new ArrayList<>();
+                String uploadPath = getServletContext().getRealPath("/") + "uploads";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+
+                for (Part filePart : fileParts) {
+                    if (filePart.getName().equals("images") && filePart.getSize() > 0) {
+                        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                        String filePath = "uploads/" + fileName;
+                        filePart.write(uploadPath + File.separator + fileName);
+                        imagePaths.add(filePath);
+                    }
+                }
+
+                String imagesJson = new Gson().toJson(imagePaths);
+                System.out.println("JSON images: " + imagesJson);
+                String reviewTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                boolean isDisabled = false;
+                String Status = "visible";
+                Feedback feedback = new Feedback(orderdetailID, reviewerID, productID, reviewTime, rating, content, imagesJson, isDisabled, Status);
+
+                boolean success = dao.insertFeedback(feedback);
+
+                if (success) {
+                    response.sendRedirect("FeedBackController?service=ListFeedbackWithId&productId=" + productID);
+                } else {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error submitting feedback.");
+                }
+            } catch (NumberFormatException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid input data.");
+                e.printStackTrace();
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing feedback.");
+                e.printStackTrace();
+            }
+        } else {
+            processRequest(request, response);
+        }
+
     }
 
     @Override

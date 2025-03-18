@@ -187,7 +187,7 @@ public class MaketingFeedBackController extends HttpServlet {
                     int star = 0;
                     int page = 1;
                     int pageSize = 10; // Số feedback trên mỗi trang
-                    
+                    System.out.println("star"+star);
                     if (starStr != null && starStr.matches("\\d+")) {
                         star = Integer.parseInt(starStr);
                     } else {

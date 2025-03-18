@@ -87,7 +87,7 @@
                             } else if (roleId == 4) {
                                 window.location.href = "<%= request.getContextPath() %>/ShipperDashboardController";
                             } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/salesDashboardController";
                             } else if (roleId == 2) {
                                 window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
 

@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
+<%@page import="entity.User,model.DAOFeedback "%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -497,49 +497,156 @@
                                 <a href="javascript:void(0);" class="btn-link refund-order" data-orderid="${order.id}" style="color: orange; font-weight: bold; display: block; margin-bottom: 5px;">
                                     Request Refund
                                 </a>
-                                <!-- Nút Leave Feedback -->
-                                <a href="javascript:void(0);" class="btn-link leave-feedback" data-productid="${order.productId}" style="color: blue; font-weight: bold;">
-                                    Leave Feedback
-                                </a>
                             </div>
                         </div>
+                        <c:set var="feedbackKeyName">
+                            feedbackExists_${order.orderDetailID}
+                        </c:set>
+                        <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
+                        <c:set var="isFeedbackGiven" value="${feedbackKey == 'true'}"/>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                            <c:choose>
+                                <c:when test="${feedbackKey == true}">
+                                    <a href="FeedBackController?service=ListFeedbackWithId&productId=${order.productId}"
+                                       style="display: inline-block; text-align: center; padding: 12px 20px; background: #28a745;
+                                       color: white; border-radius: 5px; text-decoration: none; font-weight: bold;
+                                       max-width: 200px; margin-right: 10px;">
+                                        View Feedback
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                    <button onclick="toggleFeedbackForm('${order.productId}')"
+                                            style="display: inline-block; text-align: center; padding: 12px 20px; background: #ffc107;
+                                            color: black; border-radius: 5px; font-weight: bold; border: none; cursor: pointer;
+                                            max-width: 200px; margin-right: 10px;">
+                                        Leave Feedback
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
 
-                        <!-- Form Feedback (Ẩn ban đầu) -->
-                        <form action="FeedBackController" method="post" enctype="multipart/form-data" 
-                              id="feedback-form-${order.productId}" 
-                              style="max-width: 400px; padding: 15px; background: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <!-- Form Feedback -->
+                        <div id="feedback-form-container-${order.productId}" style="display: none; width: 100%; max-width: 600px; margin: 20px auto;">
+                            <form action="CustomerOrderController" method="post" enctype="multipart/form-data"
+                                  id="feedback-form-${order.productId}"
+                                  onsubmit="submitFeedback(event, '${order.productId}')"
+                                  style="width: 100%; padding: 20px; background: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                <h4 style="text-align: center; font-size: 20px; margin-bottom: 15px; color: #333;">Leave your feedback</h4>
 
-                            <h4 style="text-align: center; font-size: 18px; margin-bottom: 10px; color: #333;">Leave your feedback</h4>
+                                <input type="hidden" name="service" value="SubmitFeedback">
+                                <input type="hidden" name="product_id" value="${order.productId}">
+                                <input type="hidden" name="reviewerID" value="${sessionUserId}">
+                                <input type="hidden" name="orderdetailID" value="${order.orderDetailID}">
+                                <input type="hidden" id="rating-${order.productId}" name="rating" value="0">
 
-                            <input type="hidden" name="service" value="SubmitFeedback">
-                            <input type="hidden" name="product_id" value="${order.productId}">
-                            <input type="hidden" name="reviewerID" value="${sessionUserId}">
-                            <input type="hidden" id="rating-${order.productId}" name="rating" value="0">
+                                <!-- Rating -->
+                                <div class="rating" data-productid="${order.productId}" style="text-align: center; margin-bottom: 10px;">
+                                    <span class="star" data-value="1">&#9733;</span>
+                                    <span class="star" data-value="2">&#9733;</span>
+                                    <span class="star" data-value="3">&#9733;</span>
+                                    <span class="star" data-value="4">&#9733;</span>
+                                    <span class="star" data-value="5">&#9733;</span>
+                                </div>
 
-                            <!-- Rating -->
-                            <div class="rating" data-productid="${order.productId}" style="text-align: center; margin-bottom: 10px;">
-                                <span class="star" data-value="1" style="cursor: pointer; font-size: 20px; color: gold;">&#9733;</span>
-                                <span class="star" data-value="2" style="cursor: pointer; font-size: 20px; color: gold;">&#9733;</span>
-                                <span class="star" data-value="3" style="cursor: pointer; font-size: 20px; color: gold;">&#9733;</span>
-                                <span class="star" data-value="4" style="cursor: pointer; font-size: 20px; color: gold;">&#9733;</span>
-                                <span class="star" data-value="5" style="cursor: pointer; font-size: 20px; color: gold;">&#9733;</span>
-                            </div>
+                                <textarea id="feedback-text-${order.productId}" name="content" placeholder="Write your feedback..."
+                                          style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px;
+                                          resize: none; margin-bottom: 10px; font-size: 16px;"></textarea>
 
-                            <!-- Feedback -->
-                            <textarea id="feedback-text-${order.productId}" name="content" rows="3" 
-                                      placeholder="Write your feedback..." 
-                                      style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
+                                <!-- Ô chọn file -->
+                                <label for="feedback-image-${order.productId}" style="display: block; margin-top: 10px; font-weight: bold;">Upload Images:</label>
+                                <input type="file" id="feedback-image-${order.productId}" name="images" accept="image/*" multiple
+                                       style="width: 100%; margin-top: 5px;" onchange="previewImages(event, '${order.productId}')">
 
-                            <!-- Upload Image -->
-                            <input type="file" id="feedback-image-${order.productId}" name="image" accept="image/*" 
-                                   style="width: 100%; margin-top: 10px;">
+                                <!-- Khu vực hiển thị ảnh xem trước -->
+                                <div id="image-preview-${order.productId}" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
 
-                            <!-- Submit -->
-                            <button type="submit" 
-                                    style="width: 100%; background: #28a745; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
-                                Submit
-                            </button>
-                        </form>
+                                <button type="submit" style="width: 100%; background: #28a745; color: white; padding: 12px;
+                                        border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 16px;">
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
+
+                        <script>
+                            function toggleFeedbackForm(productId) {
+                                var formContainer = document.getElementById("feedback-form-container-" + productId);
+                                formContainer.style.display = formContainer.style.display === "none" ? "block" : "none";
+                            }
+
+                            function previewImages(event, productId) {
+                                var previewContainer = document.getElementById("image-preview-" + productId);
+                                previewContainer.innerHTML = ''; // Xóa ảnh cũ
+                                var files = event.target.files;
+
+                                if (!files.length)
+                                    return;
+
+                                for (let i = 0; i < files.length; i++) {
+                                    let file = files[i];
+                                    let reader = new FileReader();
+
+                                    reader.onload = function (e) {
+                                        let imgContainer = document.createElement("div");
+                                        imgContainer.style.position = "relative";
+                                        imgContainer.style.margin = "5px";
+
+                                        let img = document.createElement("img");
+                                        img.src = e.target.result;
+                                        img.style.width = "80px";
+                                        img.style.height = "80px";
+                                        img.style.objectFit = "cover";
+                                        img.style.borderRadius = "5px";
+                                        img.style.border = "1px solid #ddd";
+
+                                        // Nút xóa ảnh
+                                        let removeBtn = document.createElement("span");
+                                        removeBtn.innerHTML = "❌";
+                                        removeBtn.style.position = "absolute";
+                                        removeBtn.style.top = "2px";
+                                        removeBtn.style.right = "2px";
+                                        removeBtn.style.cursor = "pointer";
+                                        removeBtn.style.color = "red";
+                                        removeBtn.style.background = "white";
+                                        removeBtn.style.borderRadius = "50%";
+                                        removeBtn.style.padding = "2px 5px";
+                                        removeBtn.onclick = function () {
+                                            imgContainer.remove();
+                                        };
+
+                                        imgContainer.appendChild(img);
+                                        imgContainer.appendChild(removeBtn);
+                                        previewContainer.appendChild(imgContainer);
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                }
+                            }
+
+                            // Xử lý rating sao
+                            document.querySelectorAll(".rating").forEach((ratingContainer) => {
+                                let productId = ratingContainer.dataset.productid;
+                                let stars = ratingContainer.querySelectorAll(".star");
+                                let ratingInput = document.getElementById("rating-" + productId);
+
+                                stars.forEach((star) => {
+                                    star.style.fontSize = "24px";
+                                    star.style.cursor = "pointer";
+                                    star.style.color = "gray";
+
+                                    star.addEventListener("click", function () {
+                                        let value = this.getAttribute("data-value");
+                                        ratingInput.value = value;
+
+                                        stars.forEach((s, index) => {
+                                            s.style.color = index < value ? "gold" : "gray";
+                                        });
+                                    });
+                                });
+                            });
+                        </script>
+
+
+
                     </div>
                 </c:forEach>
                 <!-- Pagination for Delivered -->
@@ -819,168 +926,152 @@
         <script src="js/cart.js"></script>
 
         <script>
-            // Lấy param activeTab từ server (nếu có)
-            const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
+                            // Lấy param activeTab từ server (nếu có)
+                            const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
 
-            // Hàm hiển thị tab
-            function showTab(tab) {
-                // Ẩn tất cả order-section
-                document.querySelectorAll(".order-section").forEach((sec) => (sec.style.display = "none"));
-                // Hiển thị tab mong muốn
-                const tabDiv = document.getElementById("tab-" + tab);
-                if (tabDiv) {
-                    tabDiv.style.display = "block";
-                }
-                // Bỏ active trên tất cả button
-                document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
-                    btn.classList.remove("active");
-                });
-                // Tìm button có data-tab=xxx => active
-                const activeBtn = document.querySelector('.my-order-tabs button[data-tab="' + tab + '"]');
-                if (activeBtn) {
-                    activeBtn.classList.add("active");
-                }
-            }
-
-            // Khi trang load, hiển thị tab theo param activeTab
-            document.addEventListener("DOMContentLoaded", () => {
-                if (serverActiveTab) {
-                    showTab(serverActiveTab);
-                } else {
-                    showTab("all");
-                }
-            });
-
-            // Gắn sự kiện click cho các button tab
-            document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const tabName = btn.getAttribute("data-tab");
-                    showTab(tabName);
-                });
-            });
-
-            // Ajax for Cancel / Refund
-            $(document).ready(function () {
-                // Cancel order
-                $(".cancel-order").click(function () {
-                    let orderId = $(this).data("orderid");
-                    if (confirm("Are you sure you want to cancel this order?")) {
-                        $.ajax({
-                            url: "CustomerOrderController",
-                            type: "GET",
-                            data: {service: "cancelOrder", orderId: orderId, ajax: "true"},
-                            dataType: "json",
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    // Update status in tab All
-                                    let $cardAll = $("#order-all-" + orderId);
-                                    if ($cardAll.length) {
-                                        $cardAll
-                                                .find(".order-status")
-                                                .text("Canceled")
-                                                .removeClass("pending awaiting shipping delivered returning")
-                                                .addClass("canceled");
-                                    }
-                                    // Remove from Awaiting Pickup tab
-                                    let $cardPending = $("#order-pending-" + orderId);
-                                    if ($cardPending.length) {
-                                        $cardPending.remove();
-                                    }
-                                    // Optionally, add to Canceled tab
-                                    if ($cardAll.length) {
-                                        let $clone = $cardAll.clone();
-                                        $clone.attr("id", "order-canceled-" + orderId);
-                                        $clone
-                                                .find(".order-status")
-                                                .text("Canceled")
-                                                .removeClass("pending awaiting shipping delivered returning")
-                                                .addClass("canceled");
-                                        $clone
-                                                .find(".order-footer")
-                                                .prepend('<button class="buy-again-btn">Buy Again</button>');
-                                        $("#tab-canceled").append($clone);
-                                    }
-                                } else {
-                                    alert(response.message);
+                            // Hàm hiển thị tab
+                            function showTab(tab) {
+                                // Ẩn tất cả order-section
+                                document.querySelectorAll(".order-section").forEach((sec) => (sec.style.display = "none"));
+                                // Hiển thị tab mong muốn
+                                const tabDiv = document.getElementById("tab-" + tab);
+                                if (tabDiv) {
+                                    tabDiv.style.display = "block";
                                 }
-                            },
-                            error: function () {
-                                alert("An error occurred while processing your request.");
-                            },
-                        });
-                    }
-                });
-
-                // Refund order
-                $(".refund-order").click(function () {
-                    let orderId = $(this).data("orderid");
-                    if (confirm("Are you sure you want to request a refund? (Only for Delivered)")) {
-                        $.ajax({
-                            url: "CustomerOrderController",
-                            type: "GET",
-                            data: {service: "refundOrder", orderId: orderId, ajax: "true"},
-                            dataType: "json",
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    let $cardAll = $("#order-all-" + orderId);
-                                    if ($cardAll.length) {
-                                        $cardAll
-                                                .find(".order-status")
-                                                .text("Refund")
-                                                .removeClass("delivered completed")
-                                                .addClass("returning");
-                                    }
-                                    let $cardDelivered = $("#order-delivered-" + orderId);
-                                    if ($cardDelivered.length) {
-                                        $cardDelivered.remove();
-                                    }
-                                    if ($cardAll.length) {
-                                        let $clone = $cardAll.clone();
-                                        $clone.attr("id", "order-refund-" + orderId);
-                                        $clone
-                                                .find(".order-status")
-                                                .text("Refund")
-                                                .removeClass("delivered completed")
-                                                .addClass("returning");
-                                        $("#tab-return").append($clone);
-                                    }
-                                } else {
-                                    alert(response.message);
+                                // Bỏ active trên tất cả button
+                                document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
+                                    btn.classList.remove("active");
+                                });
+                                // Tìm button có data-tab=xxx => active
+                                const activeBtn = document.querySelector('.my-order-tabs button[data-tab="' + tab + '"]');
+                                if (activeBtn) {
+                                    activeBtn.classList.add("active");
                                 }
-                            },
-                            error: function () {
-                                alert("An error occurred while processing your request.");
-                            },
-                        });
-                    }
-                });
-            });
+                            }
+
+                            // Khi trang load, hiển thị tab theo param activeTab
+                            document.addEventListener("DOMContentLoaded", () => {
+                                if (serverActiveTab) {
+                                    showTab(serverActiveTab);
+                                } else {
+                                    showTab("all");
+                                }
+                            });
+
+                            // Gắn sự kiện click cho các button tab
+                            document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
+                                btn.addEventListener("click", () => {
+                                    const tabName = btn.getAttribute("data-tab");
+                                    showTab(tabName);
+                                });
+                            });
+
+                            // Ajax for Cancel / Refund
+                            $(document).ready(function () {
+                                // Cancel order
+                                $(".cancel-order").click(function () {
+                                    let orderId = $(this).data("orderid");
+                                    if (confirm("Are you sure you want to cancel this order?")) {
+                                        $.ajax({
+                                            url: "CustomerOrderController",
+                                            type: "GET",
+                                            data: {service: "cancelOrder", orderId: orderId, ajax: "true"},
+                                            dataType: "json",
+                                            success: function (response) {
+                                                if (response.success) {
+                                                    alert(response.message);
+                                                    // Update status in tab All
+                                                    let $cardAll = $("#order-all-" + orderId);
+                                                    if ($cardAll.length) {
+                                                        $cardAll
+                                                                .find(".order-status")
+                                                                .text("Canceled")
+                                                                .removeClass("pending awaiting shipping delivered returning")
+                                                                .addClass("canceled");
+                                                    }
+                                                    // Remove from Awaiting Pickup tab
+                                                    let $cardPending = $("#order-pending-" + orderId);
+                                                    if ($cardPending.length) {
+                                                        $cardPending.remove();
+                                                    }
+                                                    // Optionally, add to Canceled tab
+                                                    if ($cardAll.length) {
+                                                        let $clone = $cardAll.clone();
+                                                        $clone.attr("id", "order-canceled-" + orderId);
+                                                        $clone
+                                                                .find(".order-status")
+                                                                .text("Canceled")
+                                                                .removeClass("pending awaiting shipping delivered returning")
+                                                                .addClass("canceled");
+                                                        $clone
+                                                                .find(".order-footer")
+                                                                .prepend('<button class="buy-again-btn">Buy Again</button>');
+                                                        $("#tab-canceled").append($clone);
+                                                    }
+                                                } else {
+                                                    alert(response.message);
+                                                }
+                                            },
+                                            error: function () {
+                                                alert("An error occurred while processing your request.");
+                                            },
+                                        });
+                                    }
+                                });
+
+                                // Refund order
+                                $(".refund-order").click(function () {
+                                    let orderId = $(this).data("orderid");
+                                    if (confirm("Are you sure you want to request a refund? (Only for Delivered)")) {
+                                        $.ajax({
+                                            url: "CustomerOrderController",
+                                            type: "GET",
+                                            data: {service: "refundOrder", orderId: orderId, ajax: "true"},
+                                            dataType: "json",
+                                            success: function (response) {
+                                                if (response.success) {
+                                                    alert(response.message);
+                                                    let $cardAll = $("#order-all-" + orderId);
+                                                    if ($cardAll.length) {
+                                                        $cardAll
+                                                                .find(".order-status")
+                                                                .text("Refund")
+                                                                .removeClass("delivered completed")
+                                                                .addClass("returning");
+                                                    }
+                                                    let $cardDelivered = $("#order-delivered-" + orderId);
+                                                    if ($cardDelivered.length) {
+                                                        $cardDelivered.remove();
+                                                    }
+                                                    if ($cardAll.length) {
+                                                        let $clone = $cardAll.clone();
+                                                        $clone.attr("id", "order-refund-" + orderId);
+                                                        $clone
+                                                                .find(".order-status")
+                                                                .text("Refund")
+                                                                .removeClass("delivered completed")
+                                                                .addClass("returning");
+                                                        $("#tab-return").append($clone);
+                                                    }
+                                                } else {
+                                                    alert(response.message);
+                                                }
+                                            },
+                                            error: function () {
+                                                alert("An error occurred while processing your request.");
+                                            },
+                                        });
+                                    }
+                                });
+                            });
         </script>
-        <script>document.addEventListener("DOMContentLoaded", function () {
-                // Bắt sự kiện khi bấm vào nút "Leave Feedback"
-                document.querySelectorAll(".leave-feedback").forEach(button => {
-                    button.addEventListener("click", function () {
-                        let productId = this.getAttribute("data-productid");
-                        let feedbackForm = document.getElementById("feedback-form-" + productId);
-
-                        if (feedbackForm) {
-                            // Kiểm tra nếu form đang ẩn thì hiển thị, nếu đang hiện thì ẩn đi
-                            let isVisible = feedbackForm.style.display === "block";
-                            feedbackForm.style.display = isVisible ? "none" : "block";
-                        }
-                    });
-                });
-
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
                 // Xử lý chọn rating sao
                 document.querySelectorAll(".rating").forEach(ratingDiv => {
                     let stars = ratingDiv.querySelectorAll(".star");
                     let productId = ratingDiv.getAttribute("data-productid");
                     let ratingInput = document.getElementById("rating-" + productId);
-
-                    if (!ratingInput)
-                        return; // Nếu không có input ẩn, bỏ qua
 
                     stars.forEach((star, index) => {
                         star.addEventListener("mouseover", function () {
@@ -1006,47 +1097,57 @@
                 }
             });
 
-// Hàm gửi feedback thông qua form
-            function submitFeedback(productId) {
-                let formElement = document.getElementById("feedback-form-" + productId);
-                if (!formElement) {
-                    alert("Form not found. Please refresh the page.");
-                    return;
-                }
+// Gửi feedback AJAX
+//            function submitFeedback(event, productId) {
+//                event.preventDefault(); // Ngăn chặn reload trang
+//
+//                let formElement = document.getElementById("feedback-form-" + productId);
+//                if (!formElement) {
+//                    alert("Form not found. Please refresh the page.");
+//                    return;
+//                }
+//
+//                let formData = new FormData(formElement);
+//
+//                let rating = formData.get("rating");
+//                let feedbackText = formData.get("content").trim();
+//                let orderDetailID = formData.get("orderdetailID");
+//
+//                // Kiểm tra dữ liệu đầu vào
+//                if (!orderDetailID) {
+//                    alert("Invalid order. Please try again.");
+//                    return;
+//                }
+//                if (!rating || rating === "0") {
+//                    alert("Please select a rating before submitting.");
+//                    return;
+//                }
+//                if (feedbackText === "") {
+//                    alert("Please enter your feedback before submitting.");
+//                    return;
+//                }
+//
+//                // Gửi dữ liệu lên server
+//                fetch(formElement.action, {
+//                    method: "POST",
+//                    body: formData
+//                })
+//                        .then(response => response.json()) // Đọc phản hồi JSON
+//                        .then(data => {
+//                            if (data.success) {
+//                                alert("Thank you for your feedback!");
+//                                formElement.reset();
+//                                formElement.style.display = "none";  // Ẩn form sau khi gửi thành công
+//                            } else {
+//                                alert("Failed to submit feedback: " + data.message);
+//                            }
+//                        })
+//                        .catch(error => {
+//                            console.error("Error:", error);
+//                            alert("An error occurred while submitting feedback. Please try again.");
+//                        });
+//            }
 
-                let formData = new FormData(formElement); // Lấy dữ liệu từ form
-
-                let rating = formData.get("rating");
-                let feedbackText = formData.get("content").trim();
-
-                if (!rating || rating === "0") {
-                    alert("Please select a rating before submitting.");
-                    return;
-                }
-
-                if (feedbackText === "") {
-                    alert("Please enter your feedback before submitting.");
-                    return;
-                }
-
-                fetch(formElement.action, {
-                    method: "POST",
-                    body: formData
-                })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Thank you for your feedback!");
-                                formElement.style.display = "none";  // Ẩn form sau khi gửi thành công
-                            } else {
-                                alert("Failed to submit feedback: " + data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
-                            alert("An error occurred while submitting feedback. Please try again.");
-                        });
-            }
         </script>
     </body>
 </html>

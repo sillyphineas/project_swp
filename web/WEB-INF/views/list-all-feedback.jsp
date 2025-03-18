@@ -7,6 +7,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*,entity.Feedback" %>
+<%@ page import="com.google.gson.Gson" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -195,7 +196,7 @@
                                         </div>
                                     </div>
                                     <p style="color: #666; font-size: 14px;">
-                                        Phân loại hàng: <%= feedback.getProduct().getName() %>, 
+                                        Category: <%= feedback.getProduct().getName() %>, 
                                         <%= feedback.getProductVariant().getColor().getColorName() %>, 
                                         <%= feedback.getProductVariant().getStorage().getCapacity() %>
                                     </p>
@@ -210,41 +211,96 @@
                                         <%= feedback.getContent() %>
                                     </p>
 
-                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { %>
-                                    <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
-                                        <% for (String image : feedback.getImages()) { %>
-                                        <img src="<%= image %>" alt="Review Image" 
-                                             style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
+                                        int imageCount = feedback.getImages().size();
+                                        %>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
+                                            <img src="<%= feedback.getImages().get(i) %>" 
+                                                 alt="Review Image"
+                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                                                 onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                            <% } %>
+
+                                            <% if (imageCount > 2) { %>
+                                            <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
+                                                 border-radius: 8px; cursor: pointer;">
+                                                +<%= imageCount - 2 %>
+                                            </div>
+                                            <% } %>
+                                        </div>
+
+                                        <!-- Lightbox -->
+                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+                                             flex-direction: column; z-index: 1000;">
+                                            <span onclick="closeLightbox()" 
+                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
+                                            
+                                        </div>
+
+                                        <script>
+                                            function openLightbox(imageSrc, index) {
+                                            document.getElementById("lightbox-img").src = imageSrc;
+                                            document.getElementById("lightbox").style.display = "flex";
+                                            }
+                                            function nextImage() {
+                                            currentIndex = (currentIndex + 1) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function prevImage() {
+                                            currentIndex = (currentIndex - 1 + images.length) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function closeLightbox() {
+                                            document.getElementById("lightbox").style.display = "none";
+                                            }
+                                        </script>
                                         <% } %>
-                                    </div>
-                                    <% } %>
                                 </div>
                                 <% } %>
                             </div>
                             <% } %>
                         </div>
 
-                        <% int currentPage = (Integer) request.getAttribute("currentPage");
-                           int totalPages = (Integer) request.getAttribute("totalPages");
-                           
+                        <% 
+                            int currentPage = (Integer) request.getAttribute("currentPage");
+                            int totalPages = (Integer) request.getAttribute("totalPages");
+                            
+                             productId = (Integer) request.getAttribute("productId");
+                            Integer selectedStar = (Integer) request.getAttribute("selectedStar"); // Lọc theo số sao (nếu có)
+                            String service = (selectedStar == null) ? "ListFeedbackWithId" : "FilterByStar";
                         %>
-
                         <div style="text-align: center; margin-top: 20px;">
                             <% if (currentPage > 1) { %>
-                            <a href="listAllFeedback?productId=<%= productId %>&page=<%= currentPage - 1 %>" 
-                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">← Trang trước</a>
+                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage - 1 %>" 
+                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">← Previous Page</a>
                             <% } %>
-                            <span style="margin: 0 10px; font-size: 16px;">Trang <%= currentPage %> / <%= totalPages %></span>
+
+                            <% for (int i = 1; i <= totalPages; i++) { %>
+                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= i %>" 
+                               style="padding: 8px 12px; margin: 0 3px; border-radius: 5px; text-decoration: none;
+                               <%= (i == currentPage) ? "background-color: #ff8c00; color: white; font-weight: bold;" : "background-color: #f1f1f1; color: black;" %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+
                             <% if (currentPage < totalPages) { %>
-                            <a href="listAllFeedback?productId=<%= productId %>&page=<%= currentPage + 1 %>" 
-                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Trang sau →</a>
+                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage + 1 %>" 
+                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Next Page →</a>
                             <% } %>
                         </div>
+
                     </div>
                 </div>
             </div>
         </section>
-
+        <br>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

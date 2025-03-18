@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private int id;                 // INT(11) PK
@@ -9,13 +10,78 @@ public class Order {
     private String orderStatus;     // VARCHAR(50)
     private String shippingAddress; // VARCHAR(255)
     private double totalPrice;      // DECIMAL(15,2)
+    private String ShippingDate;
     private double discountedPrice; // DECIMAL(15,2)
     private boolean isDisabled;     // TINYINT(1) -> boolean
     private Integer voucherID;      // INT(11) FK -> Vouchers(id)
     private String recipientName;   // VARCHAR(255)
     private String recipientPhone;  // VARCHAR(15)
     private Integer assignedSaleId; // INT(11)
+    private OrderDetail orderDetails;
+     private Shipping shipping;
+      private Address address;
+    private List<OrderDetail> orderDetails1;
+    private User user;
+    // mới thêm 
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    public OrderDetail getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(OrderDetail orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public String getShippingDate() {
+        return ShippingDate;
+    }
+
+    public void setShippingDate(String ShippingDate) {
+        this.ShippingDate = ShippingDate;
+    }
+
+    public boolean isIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
+    public Shipping getShipping() {
+        return shipping;
+    }
+
+    public void setShipping(Shipping shipping) {
+        this.shipping = shipping;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public List<OrderDetail> getOrderDetails1() {
+        return orderDetails1;
+    }
+
+    public void setOrderDetails1(List<OrderDetail> orderDetails1) {
+        this.orderDetails1 = orderDetails1;
+    }
+    
+    
+    
     public Order() {
     }
 

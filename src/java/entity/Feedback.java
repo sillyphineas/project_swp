@@ -17,14 +17,6 @@ public class Feedback {
             reviewerID;
     private int product_id;
     private String reviewTime;
-
-    public int getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
-    }
     private int rating;
     private String content;
     private String images;
@@ -40,6 +32,13 @@ public class Feedback {
 
     public void setStatus(String Status) {
         this.Status = Status;
+    }
+        public int getProduct_id() {
+        return product_id;
+    }
+
+    public void setProduct_id(int product_id) {
+        this.product_id = product_id;
     }
     public Feedback(int id, int orderDetailID, int reviewerID, String reviewTime, int rating, String content, String images, boolean isDisabled) {
         this.id = id;
@@ -75,6 +74,20 @@ public class Feedback {
         this.images = images;
         this.isDisabled = isDisabled;
     }
+
+    public Feedback( int orderDetailID, int reviewerID, int product_id, String reviewTime, int rating, String content, String images, boolean isDisabled, String Status) {
+        this.orderDetailID = orderDetailID;
+        this.reviewerID = reviewerID;
+        this.product_id = product_id;
+        this.reviewTime = reviewTime;
+        this.rating = rating;
+        this.content = content;
+        this.images = images;
+        this.isDisabled = isDisabled;
+        this.Status = Status;
+    }
+    
+    
     
     public List<String> getImages() {
         if (images == null || images.isEmpty()) {
@@ -89,7 +102,15 @@ public class Feedback {
             return null;
         }
     }
-
+    public void setImages1(List<String> imageList) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            this.images = objectMapper.writeValueAsString(imageList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.images = "[]"; 
+        }
+    }
     public Feedback() {
     }
 

@@ -87,7 +87,7 @@
                 text-align: center;
                 padding: 20px;
             }
-            
+
         </style>
 
         <header id="header"><!--header-->
@@ -275,7 +275,7 @@
                                     Product Reviews
                                 </h2>
                                 <%
-                                if (feedbacks != null && feedbacks.size() < 3) {
+                                if (feedbacks != null && feedbacks.size() >= 3) {
                                 %>
                                 <div style="text-align: center; margin-top: 20px;">
                                     <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
@@ -317,14 +317,58 @@
                                         </p>
 
                                         <!-- Hiển thị ảnh từ JSON (nếu có) -->
-                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { %>
-                                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
-                                            <% for (String image : feedback.getImages()) { %>
-                                            <img src="<%= image %>" alt="Review Image" 
-                                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
+                                        int imageCount = feedback.getImages().size();
+                                        %>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
+                                            <img src="<%= feedback.getImages().get(i) %>" 
+                                                 alt="Review Image"
+                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                                                 onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                            <% } %>
+
+                                            <% if (imageCount > 2) { %>
+                                            <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
+                                                 border-radius: 8px; cursor: pointer;">
+                                                +<%= imageCount - 2 %>
+                                            </div>
                                             <% } %>
                                         </div>
+
+                                        <!-- Lightbox -->
+                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+                                             flex-direction: column; z-index: 1000;">
+                                            <span onclick="closeLightbox()" 
+                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
+                                            
+                                        </div>
+
+                                        <script>
+                                            function openLightbox(imageSrc, index) {
+                                            document.getElementById("lightbox-img").src = imageSrc;
+                                            document.getElementById("lightbox").style.display = "flex";
+                                            }
+                                            function nextImage() {
+                                            currentIndex = (currentIndex + 1) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function prevImage() {
+                                            currentIndex = (currentIndex - 1 + images.length) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function closeLightbox() {
+                                            document.getElementById("lightbox").style.display = "none";
+                                            }
+                                        </script>
                                         <% } %>
+
                                     </div>
                                     <% } %>
                                 </div>
@@ -683,7 +727,7 @@
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
         }); });
-        function updateProductInfo(color, storage) {
+                function updateProductInfo(color, storage) {
                     var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
@@ -700,11 +744,11 @@
             };
             xhr.send();
                 }
-                function formatPrice(price) {
+                                    function formatPrice(price) {
 
                     return price.toLocaleString();
-        }
-            </script>
+                                    }
+                                </script>
         <!--            <script>
                     function checkStock() {
                             var storageSelector = document.getElementById("storageSelector");
