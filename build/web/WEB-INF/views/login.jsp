@@ -226,9 +226,16 @@
 
         <section id="form"><!--form-->
             <div class="container">
+                <c:if test="${not empty successMessage}">
+                                <div style="color:green;">
+                                    ${successMessage}
+                                </div>
+                            </c:if>
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-1">
+                        
                         <div class="login-form"><!--login form-->
+                            
                             <h2>Login to your account</h2>
                             <form name="loginForm">
                                 <input type="email" name="email" placeholder="Email"  required/>

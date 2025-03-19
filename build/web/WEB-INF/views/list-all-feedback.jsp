@@ -1,10 +1,12 @@
+
 <%-- 
-    Document   : login
-    Created on : Jan 18, 2025, 1:13:47 PM
+    Document   : blog-single
+    Created on : Jan 18, 2025, 1:12:42 PM
     Author     : HP
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*,entity.Feedback" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -12,7 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Login | E-Shopper</title>
+        <title>Blog Single | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -29,83 +31,6 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script type="text/javascript">
-            function register() {
-                let form = document.registerForm;
-                let email = form.email.value;
-                let password = form.password.value;
-                let confirmPassword = form.confirmPassword.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("msg").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.trim() === "cancel") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=cancel";
-                        } else if (xhttp.responseText.trim() === "redirect") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
-                        } else {
-                            document.getElementById("msg").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/RegisterController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password +
-                        "&confirmPassword=" + confirmPassword);
-            }
-
-            function login() {
-                let form = document.loginForm;
-                let email = form.email.value;
-                let password = form.password.value;
-
-                if (!form.checkValidity()) {
-                    document.getElementById("error").innerHTML = "Please fill in all required fields.";
-                    return;
-                }
-                var xhttp = new XMLHttpRequest();
-
-                xhttp.onreadystatechange = function () {
-                    if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.startsWith("success")) {
-                            console.log(xhttp.responseText);
-                            let roleId = xhttp.responseText.split(":")[1];
-                            console.log(roleId);
-                            if (roleId == 1) {
-
-                                window.location.href = "<%= request.getContextPath() %>/AdminDashboardController";
-                            } else if (roleId == 5) {
-                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
-                            } else if (roleId == 4) {
-                                window.location.href = "<%= request.getContextPath() %>/ShipperDashboardController";
-                            } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/salesDashboardController";
-                            } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
-
-                            }
-                        } else {
-                            document.getElementById("error").innerHTML = xhttp.responseText;
-                        }
-                    }
-                };
-
-                xhttp.open("POST", "<%= request.getContextPath() %>/LoginController", true);
-                xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password);
-            }
-        </script>
-
-
     </head><!--/head-->
 
     <body>
@@ -170,11 +95,18 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-                                                                        <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                                                        <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <li><a href="LoginController" class="active"><i class="fa fa-lock"></i> Login</a></li>
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -197,76 +129,118 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
                                             <li><a href="checkout.html">Checkout</a></li> 
                                             <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
+                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
                                     </li> 
-                                    <!--                                    <li><a href="404.html">404</a></li>
-                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section id="form"><!--form-->
+        <section>
             <div class="container">
-                <c:if test="${not empty successMessage}">
-                                <div style="color:green;">
-                                    ${successMessage}
-                                </div>
-                            </c:if>
                 <div class="row">
-                    <div class="col-sm-4 col-sm-offset-1">
-                        
-                        <div class="login-form"><!--login form-->
-                            
-                            <h2>Login to your account</h2>
-                            <form name="loginForm">
-                                <input type="email" name="email" placeholder="Email"  required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <div id="error" style="color: red; font-style: italic;"></div>
-                                <a href="ResetController?service=findYourAccount">Forgotten password?</a>
-                                <button type="button" class="btn btn-default" onclick="login()">Login</button>
-                            </form>
+                    <div class="blog-post-area">
+                        <h2 class="title text-center">Product Reviews</h2>
+                        <div style="width: 60%; margin: auto; font-family: Arial, sans-serif;">
+                            <%
+                                int productId = (Integer) request.getAttribute("productId");
+                            %>
+                            <!-- Filter Options -->
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= productId %>" style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Tất Cả</a>
+                                <% for (int i = 5; i >= 1; i--) { %>
+                                <a href="FeedBackController?service=FilterByStar&productId=<%= productId %>&star=<%= i %>" style="padding: 8px 12px; background-color: #ddd; color: black; text-decoration: none; border-radius: 5px; margin: 0 5px;"><%= i %> Sao</a>
+                                <% } %>
+                            </div>
+
+                            <% List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks"); %>
+                            <% if (feedbacks == null || feedbacks.isEmpty()) { %>
+                            <p style="color: #888; font-size: 16px; text-align: center;">No reviews yet. Be the first to review this product!</p>
+                            <% } else { %>
+                            <div style="margin-top: 20px;">
+                                <% for (Feedback feedback : feedbacks) { %>
+                                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="avatar.png" alt="User Avatar" 
+                                             style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
+                                        <div>
+                                            <span style="font-weight: bold; font-size: 16px;">
+                                                <%= feedback.getUser() != null ? feedback.getUser().getName().replaceAll("(?<=.{2}).", "*") : "Anonymous" %>
+                                            </span>
+                                            <br>
+                                            <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
+                                        </div>
+                                    </div>
+                                    <p style="color: #666; font-size: 14px;">Phân loại hàng: <%= feedback.getProductVariant().getColor().getColorName() %></p>
+
+                                    <div style="margin: 10px 0;">
+                                        <% for (int i = 1; i <= 5; i++) { %>
+                                        <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc" %>;">★</span>
+                                        <% } %>
+                                    </div>
+
+                                    <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
+                                        <%= feedback.getContent() %>
+                                    </p>
+
+                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { %>
+                                    <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                                        <% for (String image : feedback.getImages()) { %>
+                                        <img src="<%= image %>" alt="Review Image" 
+                                             style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <% } %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                                <% } %>
+                            </div>
+                            <% } %>
                         </div>
 
-                    </div>
-                    <div class="col-sm-1">
-                        <h2 class="or">OR</h2>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="signup-form"><!--sign up form-->
-                            <h2>New User Signup!</h2>
-                            <form name="registerForm">
-                                <input type="email" name="email" placeholder="Email" required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <input type="password" name="confirmPassword" placeholder="Confirm Password" required/>
-                                <p id="msg" style="color: red; font-style: italic;"></p>
-                                <button type="button" class="btn btn-default" onclick="register()">Register</button>
+                        <% int currentPage = (Integer) request.getAttribute("currentPage");
+                           int totalPages = (Integer) request.getAttribute("totalPages");
+                           
+                        %>
 
-                            </form>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <% if (currentPage > 1) { %>
+                            <a href="listAllFeedback?productId=<%= productId %>&page=<%= currentPage - 1 %>" 
+                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">← Trang trước</a>
+                            <% } %>
+                            <span style="margin: 0 10px; font-size: 16px;">Trang <%= currentPage %> / <%= totalPages %></span>
+                            <% if (currentPage < totalPages) { %>
+                            <a href="listAllFeedback?productId=<%= productId %>&page=<%= currentPage + 1 %>" 
+                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Trang sau →</a>
+                            <% } %>
                         </div>
-
                     </div>
                 </div>
             </div>
-        </section><!--/form-->
+        </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -405,8 +379,7 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit"
-                                            class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
                                     <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
@@ -426,8 +399,6 @@
             </div>
 
         </footer><!--/Footer-->
-
-
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
