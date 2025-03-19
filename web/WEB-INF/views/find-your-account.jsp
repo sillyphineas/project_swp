@@ -1,14 +1,13 @@
 <%-- 
-    Document   : blog
-    Created on : Jan 18, 2025, 1:12:51 PM
+    Document   : index
+    Created on : Jan 18, 2025, 1:13:24 PM
     Author     : HP
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,7 +15,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Blog | T-Shopper</title>
+        <title>Home | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -33,6 +32,91 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+
+            /* Chỉ áp dụng cho vùng có class .find-account-container */
+            .find-account-container {
+                max-width: 400px;         /* Độ rộng tối đa */
+                margin: 60px auto;        /* Canh giữa trang, tạo khoảng trống phía trên/dưới */
+                padding: 20px;            /* Khoảng trống bên trong */
+                background: #fff;         /* Nền trắng */
+                border: 1px solid #ddd;   /* Viền nhạt */
+                border-radius: 6px;       /* Bo góc nhẹ */
+            }
+
+            /* Tiêu đề (Find Your Account) */
+            .find-account-container h2 {
+                margin: 0 0 10px;
+                font-size: 20px;
+                font-weight: normal;      /* Hoặc bold tuỳ ý */
+            }
+
+            /* Đoạn mô tả (Please enter your email...) */
+            .find-account-container p {
+                margin: 0 0 20px;
+                font-size: 14px;
+                color: #555;
+            }
+
+            /* Nhóm form-group (label + input) */
+            .find-account-container .form-group {
+                margin-bottom: 15px;
+            }
+
+            /* Label cho input */
+            .find-account-container label {
+                display: block;
+                margin-bottom: 5px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            /* Ô nhập Email/Phone */
+            .find-account-container input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+
+            /* Nhóm nút Cancel / Search */
+            .find-account-container .btn-group {
+                display: flex;
+                justify-content: flex-end; /* Căn nút về bên phải */
+                gap: 10px;                 /* Khoảng cách giữa hai nút */
+            }
+
+            /* Định dạng nút */
+            .find-account-container .btn-cancel,
+            .find-account-container .btn-search {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            /* Nút Cancel (xám nhạt) */
+            .find-account-container .btn-cancel {
+                background-color: #e4e6eb;
+                color: #050505;
+            }
+            .find-account-container .btn-cancel:hover {
+                background-color: #d8dadd;
+            }
+
+            /* Nút Search (xanh Facebook) */
+            .find-account-container .btn-search {
+                background-color: #1877f2;
+                color: #fff;
+            }
+            .find-account-container .btn-search:hover {
+                background-color: #165dd2;
+            }
+
+        </style>
     </head><!--/head-->
 
     <body>
@@ -97,19 +181,11 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
-                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
+                                                                        <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                                                        <li><a href="CartURL?service=checkOut"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <li><a href="LoginController" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -132,34 +208,28 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkout">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li>  
+                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
                                         </ul>
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs" class="active">Blog<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL" class="active">Blog List</a></li>
+                                            <li><a href="BlogURL">Blog List</a></li>
                                         </ul>
                                     </li> 
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <%
-                            String query = (String) request.getAttribute("query");
-                        %>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form action="BlogURL" method="get">
-                                    <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>">
-                                    <button type="submit">Search</button>
-                                </form>
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -167,120 +237,36 @@
 
         <section>
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">  
-                            <div class="categories_products">
-                                <h2>Categories</h2> 
-                                <div class="categories-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="BlogURL?service=listAllBlogs">All Categories</a> 
-                                        </li> 
-                                        <% 
-                                        List<Category> categories = (List<Category>) request.getAttribute("categories");
-                                        if (categories != null && !categories.isEmpty()) {
-                                            for (Category category : categories) {
-                                        %>
-
-                                        <li> 
-                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>">
-                                                <%= category.getCategoryName() %>
-                                            </a>
-                                        </li> 
-                                        <% 
-                                            }
-                                        }
-                                        %> 
-                                    </ul> 
-                                </div>
-                            </div>                                                       
+                <!-- Thêm lớp .find-account-container để scope CSS -->
+                <div class="find-account-container">
+                    <h2>Find Your Account</h2>
+                    <p>Please enter your email address to search for your account.</p>
+                    <form action="ResetController" method="POST">
+                        <input type="hidden" name="service" value="findYourAccount"/>
+                        <div class="form-group">
+                            <label for="email">Enter your email address</label>
+                            <input type="text" id="email" name="email" placeholder="Email address" required>
                         </div>
-                    </div>
-
-                    <div class="col-sm-9">
-                        <div class="blog-post-area">
-                            <h2 class="title text-center">Latest From our Blog</h2>
-                            <c:if test="${not empty message}">
-                                <div class="alert alert-warning">${message}</div>
-                            </c:if> 
-                            <% 
-                            List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
-
-                            if (blogs != null && !blogs.isEmpty()) {
-                                DAOBlog dao = new DAOBlog();
-                                for (Blog blog : blogs){
-                                    int authorID = blog.getAuthorID();
-                                    String authname = dao.getAuthorNameById(blog.getAuthorID());
-                            %>
-                            <div class="single-blog-post">
-                                <h3><%= blog.getTitle() %></h3>
-                                <div class="post-meta">
-                                    <ul>
-                                        <li><i class="fa fa-user"></i><%= authname %></li>
-                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime() %></li>
-                                    </ul>
-                                    <span>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                    </span>
-                                </div>
-                                <div style="display: flex;">
-                                    <a href="">
-                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
-                                    </a>
-                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
-                                </div>
-                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>">Read More</a>
+                        <c:if test="${not empty error}">
+                            <div style="color: red; margin-bottom: 10px;">
+                                <c:out value="${error}" />
                             </div>
-                            <% 
-                                }
-                            }
-                            %>
-
-                            <div class="pagination-area">
-                                <ul class="pagination">
-                                    <% 
-                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
-                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
-                                    String service = request.getParameter("service");
-                                    String baseURL = "BlogURL?service=" + service;
-
-                                    if (service.equals("search") && request.getParameter("query") != null) {
-                                        query = request.getParameter("query");
-                                        baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
-                                    }
-                                     if ("CatewithID".equals(service)) {
-                                        String categoryIdParam = request.getParameter("categoryID");
-                                        if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
-                                            baseURL += "&categoryID=" + categoryIdParam;  // Add category ID to the base URL
-                                        }
-                                    }
-
-                                    if (totalPages != null && totalPages > 0) {
-                                        for (int i = 1; i <= totalPages; i++) {
-                                    %>
-                                    <li>
-                                        <a href="<%= baseURL %>&page=<%= i %>" 
-                                           class="<%= (i == currentPage) ? "active" : "" %>">
-                                            <%= i %>
-                                        </a>
-                                    </li>
-                                    <% 
-                                        }
-                                    }
-                                    %>
-                                </ul>
+                        </c:if>
+                        <c:if test="${not empty success}">
+                            <div style="color: green; margin-bottom: 10px;">
+                                <c:out value="${success}" />
                             </div>
+                        </c:if>
+
+                        <div class="btn-group">
+                            <a href="HomePageController" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-search">Search</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
-
             </div>
         </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -370,11 +356,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Online Help</a></li>
-                                    <li><a href="">Contact Us</a></li>
-                                    <li><a href="">Order Status</a></li>
-                                    <li><a href="">Change Location</a></li>
-                                    <li><a href="">FAQ’s</a></li>
+                                    <li><a href="#">Online Help</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Order Status</a></li>
+                                    <li><a href="#">Change Location</a></li>
+                                    <li><a href="#">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -382,11 +368,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">T-Shirt</a></li>
-                                    <li><a href="">Mens</a></li>
-                                    <li><a href="">Womens</a></li>
-                                    <li><a href="">Gift Cards</a></li>
-                                    <li><a href="">Shoes</a></li>
+                                    <li><a href="#">T-Shirt</a></li>
+                                    <li><a href="#">Mens</a></li>
+                                    <li><a href="#">Womens</a></li>
+                                    <li><a href="#">Gift Cards</a></li>
+                                    <li><a href="#">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -394,11 +380,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Terms of Use</a></li>
-                                    <li><a href="">Privecy Policy</a></li>
-                                    <li><a href="">Refund Policy</a></li>
-                                    <li><a href="">Billing System</a></li>
-                                    <li><a href="">Ticket System</a></li>
+                                    <li><a href="#">Terms of Use</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
+                                    <li><a href="#">Refund Policy</a></li>
+                                    <li><a href="#">Billing System</a></li>
+                                    <li><a href="#">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -406,11 +392,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Company Information</a></li>
-                                    <li><a href="">Careers</a></li>
-                                    <li><a href="">Store Location</a></li>
-                                    <li><a href="">Affillate Program</a></li>
-                                    <li><a href="">Copyright</a></li>
+                                    <li><a href="#">Company Information</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Store Location</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
+                                    <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -443,9 +429,9 @@
 
 
         <script src="js/jquery.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
     </body>

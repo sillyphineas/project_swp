@@ -1,14 +1,9 @@
 <%-- 
-    Document   : blog
-    Created on : Jan 18, 2025, 1:12:51 PM
+    Document   : success-change-password
+    Created on : Mar 20, 2025
     Author     : HP
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -16,7 +11,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Blog | T-Shopper</title>
+        <title>Change Password Success | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -24,18 +19,33 @@
         <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
         <link href="css/responsive.css" rel="stylesheet">
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
-        <link rel="shortcut icon" href="images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
+        <meta http-equiv="refresh" content="5;url=LoginController">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <style>
+            .success-container {
+                text-align: center;
+                margin-top: 50px;
+            }
+            .success-icon {
+                font-size: 100px;
+                color: #28a745;
+            }
+            .success-text {
+                font-size: 28px;
+                font-weight: bold;
+                margin-top: 20px;
+                color: #333;
+            }
+            .login-btn {
+                margin-top: 20px;
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+        </style>
+    </head>
 
     <body>
+        <!-- Header (sử dụng header mẫu của bạn) -->
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
@@ -97,19 +107,7 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
-                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                    <li><a href="${pageContext.request.contextPath}/login.jsp" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -132,156 +130,46 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkout">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li>  
+                                            <li><a href="CartURL">Cart</a></li>
                                         </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs" class="active">Blog<i class="fa fa-angle-down"></i></a>
+                                    </li>
+                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL" class="active">Blog List</a></li>
+                                            <li><a href="BlogURL">Blog List</a></li>
                                         </ul>
-                                    </li> 
+                                    </li>
                                 </ul>
                             </div>
                         </div>
-                        <%
-                            String query = (String) request.getAttribute("query");
-                        %>
                         <div class="col-sm-3">
                             <div class="search_box pull-right">
-                                <form action="BlogURL" method="get">
-                                    <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>">
-                                    <button type="submit">Search</button>
-                                </form>
+                                <input type="text" placeholder="Search"/>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <section>
+        <section id="success">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-3">
-                        <div class="left-sidebar">  
-                            <div class="categories_products">
-                                <h2>Categories</h2> 
-                                <div class="categories-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="BlogURL?service=listAllBlogs">All Categories</a> 
-                                        </li> 
-                                        <% 
-                                        List<Category> categories = (List<Category>) request.getAttribute("categories");
-                                        if (categories != null && !categories.isEmpty()) {
-                                            for (Category category : categories) {
-                                        %>
-
-                                        <li> 
-                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>">
-                                                <%= category.getCategoryName() %>
-                                            </a>
-                                        </li> 
-                                        <% 
-                                            }
-                                        }
-                                        %> 
-                                    </ul> 
-                                </div>
-                            </div>                                                       
-                        </div>
-                    </div>
-
-                    <div class="col-sm-9">
-                        <div class="blog-post-area">
-                            <h2 class="title text-center">Latest From our Blog</h2>
-                            <c:if test="${not empty message}">
-                                <div class="alert alert-warning">${message}</div>
-                            </c:if> 
-                            <% 
-                            List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
-
-                            if (blogs != null && !blogs.isEmpty()) {
-                                DAOBlog dao = new DAOBlog();
-                                for (Blog blog : blogs){
-                                    int authorID = blog.getAuthorID();
-                                    String authname = dao.getAuthorNameById(blog.getAuthorID());
-                            %>
-                            <div class="single-blog-post">
-                                <h3><%= blog.getTitle() %></h3>
-                                <div class="post-meta">
-                                    <ul>
-                                        <li><i class="fa fa-user"></i><%= authname %></li>
-                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime() %></li>
-                                    </ul>
-                                    <span>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                    </span>
-                                </div>
-                                <div style="display: flex;">
-                                    <a href="">
-                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
-                                    </a>
-                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
-                                </div>
-                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>">Read More</a>
-                            </div>
-                            <% 
-                                }
-                            }
-                            %>
-
-                            <div class="pagination-area">
-                                <ul class="pagination">
-                                    <% 
-                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
-                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
-                                    String service = request.getParameter("service");
-                                    String baseURL = "BlogURL?service=" + service;
-
-                                    if (service.equals("search") && request.getParameter("query") != null) {
-                                        query = request.getParameter("query");
-                                        baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
-                                    }
-                                     if ("CatewithID".equals(service)) {
-                                        String categoryIdParam = request.getParameter("categoryID");
-                                        if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
-                                            baseURL += "&categoryID=" + categoryIdParam;  // Add category ID to the base URL
-                                        }
-                                    }
-
-                                    if (totalPages != null && totalPages > 0) {
-                                        for (int i = 1; i <= totalPages; i++) {
-                                    %>
-                                    <li>
-                                        <a href="<%= baseURL %>&page=<%= i %>" 
-                                           class="<%= (i == currentPage) ? "active" : "" %>">
-                                            <%= i %>
-                                        </a>
-                                    </li>
-                                    <% 
-                                        }
-                                    }
-                                    %>
-                                </ul>
-                            </div>
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <div class="success-container">
+                            <i class="fa fa-check-circle success-icon"></i>
+                            <p class="success-text">Change Password Successfully!</p>
+                            <a href="LoginController" class="btn btn-success login-btn">Go to Login</a>
+                            <br>
+                            <p>You will be redirected to the login page in 5 seconds...</p>
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
-
+        <br/><br/><br/><br/><br/><br/><br/><br/>
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -307,7 +195,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -322,7 +209,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -337,7 +223,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -370,11 +255,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Online Help</a></li>
-                                    <li><a href="">Contact Us</a></li>
-                                    <li><a href="">Order Status</a></li>
-                                    <li><a href="">Change Location</a></li>
-                                    <li><a href="">FAQ’s</a></li>
+                                    <li><a href="#">Online Help</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Order Status</a></li>
+                                    <li><a href="#">Change Location</a></li>
+                                    <li><a href="#">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -382,11 +267,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">T-Shirt</a></li>
-                                    <li><a href="">Mens</a></li>
-                                    <li><a href="">Womens</a></li>
-                                    <li><a href="">Gift Cards</a></li>
-                                    <li><a href="">Shoes</a></li>
+                                    <li><a href="#">T-Shirt</a></li>
+                                    <li><a href="#">Mens</a></li>
+                                    <li><a href="#">Womens</a></li>
+                                    <li><a href="#">Gift Cards</a></li>
+                                    <li><a href="#">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -394,11 +279,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Terms of Use</a></li>
-                                    <li><a href="">Privecy Policy</a></li>
-                                    <li><a href="">Refund Policy</a></li>
-                                    <li><a href="">Billing System</a></li>
-                                    <li><a href="">Ticket System</a></li>
+                                    <li><a href="#">Terms of Use</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
+                                    <li><a href="#">Refund Policy</a></li>
+                                    <li><a href="#">Billing System</a></li>
+                                    <li><a href="#">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -406,11 +291,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="">Company Information</a></li>
-                                    <li><a href="">Careers</a></li>
-                                    <li><a href="">Store Location</a></li>
-                                    <li><a href="">Affillate Program</a></li>
-                                    <li><a href="">Copyright</a></li>
+                                    <li><a href="#">Company Information</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Store Location</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
+                                    <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -419,12 +304,13 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fa fa-arrow-circle-o-right"></i>
+                                    </button>
                                     <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -437,10 +323,7 @@
                     </div>
                 </div>
             </div>
-
         </footer><!--/Footer-->
-
-
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>

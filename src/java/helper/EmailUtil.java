@@ -111,13 +111,48 @@ public class EmailUtil {
                 sb.append("<td>").append(detail.getQuantity()).append("</td>");
                 sb.append("</tr>");
             }
-            
+
             sb.append("</tbody></table>");
             sb.append("<p>We will process your order soon. Thank you!</p>");
             String content = sb.toString();
             msg.setContent(content, "text/html; charset=UTF-8");
             Transport.send(msg);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendResetPasswordMail(String email, String resetLink) {
+        final String from = "haiductran712@gmail.com";
+        final String password = "ojzoostchirajnjk";
+
+        final String to = email;
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        MimeMessage msg = new MimeMessage(session);
+        try {
+            msg.addHeader("Content-Type", "text/HTML");
+            msg.setFrom(from);
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject("Reset Password - T-Phone Store");
+            msg.setSentDate(new Date());
+            msg.setText("Please click the link below to reset your password:\n" + resetLink);
+
+            Transport.send(msg);
         } catch (Exception e) {
             e.printStackTrace();
         }

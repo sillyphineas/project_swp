@@ -1,6 +1,7 @@
 package entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class User {
 
@@ -11,7 +12,7 @@ public class User {
     private boolean gender;        // Giới tính (true = Nam, false = Nữ)
     private String phoneNumber;    // Số điện thoại
     private String resetToken;     // Mã reset mật khẩu
-    private Date resetTokenExpired;// Ngày hết hạn mã reset
+    private Timestamp resetTokenExpired;// Ngày hết hạn mã reset
     private Date dateOfBirth;      // Ngày sinh
     private int roleId;            // Vai trò (role ID)
     private boolean isDisabled;    // Trạng thái vô hiệu hóa
@@ -25,9 +26,9 @@ public class User {
 
     // Constructor đầy đủ tham số
     public User(int id, String name, String email, String passHash, boolean gender,
-                String phoneNumber, String resetToken, Date resetTokenExpired,
-                Date dateOfBirth, int roleId, boolean isDisabled,
-                int updatedBy, Date updatedAt, byte[] image) {
+            String phoneNumber, String resetToken, Timestamp resetTokenExpired,
+            Date dateOfBirth, int roleId, boolean isDisabled,
+            int updatedBy, Date updatedAt, byte[] image) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -35,8 +36,8 @@ public class User {
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.resetToken = resetToken;
-        this.resetTokenExpired = resetTokenExpired;
-        this.dateOfBirth = dateOfBirth;
+        this.resetTokenExpired = resetTokenExpired; // bây giờ là Timestamp
+        this.dateOfBirth = dateOfBirth; // Có thể giữ nguyên kiểu Date cho ngày sinh
         this.roleId = roleId;
         this.isDisabled = isDisabled;
         this.updatedBy = updatedBy;
@@ -101,11 +102,11 @@ public class User {
         this.resetToken = resetToken;
     }
 
-    public Date getResetTokenExpired() {
+    public Timestamp getResetTokenExpired() {
         return resetTokenExpired;
     }
 
-    public void setResetTokenExpired(Date resetTokenExpired) {
+    public void setResetTokenExpired(Timestamp resetTokenExpired) {
         this.resetTokenExpired = resetTokenExpired;
     }
 
@@ -149,7 +150,7 @@ public class User {
     public void setIsDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
-    
+
     public void setDisabled(boolean isDisabled) {
         this.isDisabled = isDisabled;
     }
@@ -195,18 +196,18 @@ public class User {
     public String toString() {
         return "User{"
                 + "id=" + id
-                + ", name='" + name + '\'' 
-                + ", email='" + email + '\'' 
-                + ", passHash='" + passHash + '\'' 
-                + ", gender=" + gender 
-                + ", phoneNumber='" + phoneNumber + '\'' 
-                + ", resetToken='" + resetToken + '\'' 
-                + ", resetTokenExpired=" + resetTokenExpired 
-                + ", dateOfBirth=" + dateOfBirth 
-                + ", roleId=" + roleId 
-                + ", isDisabled=" + isDisabled 
-                + ", updatedBy=" + updatedBy 
-                + ", updatedAt=" + updatedAt 
+                + ", name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", passHash='" + passHash + '\''
+                + ", gender=" + gender
+                + ", phoneNumber='" + phoneNumber + '\''
+                + ", resetToken='" + resetToken + '\''
+                + ", resetTokenExpired=" + resetTokenExpired
+                + ", dateOfBirth=" + dateOfBirth
+                + ", roleId=" + roleId
+                + ", isDisabled=" + isDisabled
+                + ", updatedBy=" + updatedBy
+                + ", updatedAt=" + updatedAt
                 + ", image=" + (image != null ? "[image data]" : "null") // không hiển thị toàn bộ ảnh trong toString
                 + '}';
     }
