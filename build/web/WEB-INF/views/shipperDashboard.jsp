@@ -6,6 +6,9 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User"%>
+<%@page import="com.google.gson.Gson"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.Map"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -31,6 +34,13 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
+    <style>
+        .report-form { margin: 20px 0; text-align: center; }
+        .report-form label { margin: 0 10px; font-weight: bold; }
+        .chart-container { margin-bottom: 30px; text-align: center; }
+        canvas { max-width: 100%; height: auto; }
+        .chart-title { font-size: 18px; margin-bottom: 10px; font-weight: bold; }
+    </style>
 
     <body>
         <header id="header"><!--header-->
@@ -141,7 +151,47 @@
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
+<%
+        List<Map<String, Object>> shippingStats = (List<Map<String, Object>>) request.getAttribute("shippingStats");
+        String shippingStatsJson = "[]";
+        if (shippingStats != null) {
+            shippingStatsJson = new Gson().toJson(shippingStats);
+        }
+    %>
 
+    <div class="container">
+        <div class="report-form">
+            <form action="ShipperDashboardController" method="get">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate"
+                       value="<%= request.getAttribute("startDate") %>">
+
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate"
+                       value="<%= request.getAttribute("endDate") %>">
+
+                <label for="shippingStatus">Shipping Status:</label>
+                <select id="shippingStatus" name="shippingStatus">
+                    <option value="" <%= "".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>All</option>
+                    <option value="shipping" <%= "shipping".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>Shipping</option>
+                    <option value="delivered" <%= "delivered".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>Delivered</option>
+                </select>
+
+                <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
+            </form>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 chart-container">
+                <div class="chart-title">Shipping Status Trend</div>
+                <canvas id="shippingTrendChart"></canvas>
+            </div>
+            <div class="col-md-6 chart-container">
+                <div class="chart-title">Total Shipments Trend</div>
+                <canvas id="totalShipmentsChart"></canvas>
+            </div>
+        </div>
+    </div>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -309,5 +359,56 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script type="text/javascript">
+        var shippingStats = <%= shippingStatsJson %>;
+        var labels = shippingStats.map(stat => stat.date);
+        var totalShipmentsData = shippingStats.map(stat => stat.totalShipments);
+        var shippingData = shippingStats.map(stat => stat.shippingShipments);
+        var deliveredData = shippingStats.map(stat => stat.deliveredShipments);
+
+        var ctxShipping = document.getElementById('shippingTrendChart').getContext('2d');
+        var shippingTrendChart = new Chart(ctxShipping, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Shipping',
+                        data: shippingData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Delivered',
+                        data: deliveredData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        var ctxTotal = document.getElementById('totalShipmentsChart').getContext('2d');
+        var totalShipmentsChart = new Chart(ctxTotal, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Shipments',
+                    data: totalShipmentsData,
+                    borderColor: 'rgb(255, 99, 132)',
+                    tension: 0.2
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
     </body>
 </html>
