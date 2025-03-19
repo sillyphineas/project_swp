@@ -25,7 +25,17 @@ public class Feedback {
     private Product product;
     private ProductVariant productVariant;
     private String Status;
+    private String reply;
 
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+    
+    
     public String getStatus() {
         return Status;
     }

@@ -213,55 +213,82 @@
 
                                     <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
                                         int imageCount = feedback.getImages().size();
-                                        %>
-                                        <div style="display: flex; gap: 8px; align-items: center;">
-                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
-                                            <img src="<%= feedback.getImages().get(i) %>" 
-                                                 alt="Review Image"
-                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
-                                                 onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
-                                            <% } %>
+                                    %>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
+                                        <img src="<%= feedback.getImages().get(i) %>" 
+                                             alt="Review Image"
+                                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                                             onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                        <% } %>
 
-                                            <% if (imageCount > 2) { %>
-                                            <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
-                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
-                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
-                                                 border-radius: 8px; cursor: pointer;">
-                                                +<%= imageCount - 2 %>
-                                            </div>
-                                            <% } %>
+                                        <% if (imageCount > 2) { %>
+                                        <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+                                             style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+                                             background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
+                                             border-radius: 8px; cursor: pointer;">
+                                            +<%= imageCount - 2 %>
                                         </div>
+                                        <% } %>
+                                    </div>
 
-                                        <!-- Lightbox -->
-                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
-                                             flex-direction: column; z-index: 1000;">
-                                            <span onclick="closeLightbox()" 
-                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
-                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
-                                            
-                                        </div>
+                                    <!-- Lightbox -->
+                                    <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                         background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+                                         flex-direction: column; z-index: 1000;">
+                                        <span onclick="closeLightbox()" 
+                                              style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                                        <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
 
-                                        <script>
-                                            function openLightbox(imageSrc, index) {
+                                    </div>
+
+                                    <script>
+                                        function openLightbox(imageSrc, index) {
                                             document.getElementById("lightbox-img").src = imageSrc;
                                             document.getElementById("lightbox").style.display = "flex";
-                                            }
-                                            function nextImage() {
+                                        }
+                                        function nextImage() {
                                             currentIndex = (currentIndex + 1) % images.length;
                                             updateLightbox();
-                                            }
+                                        }
 
-                                            function prevImage() {
+                                        function prevImage() {
                                             currentIndex = (currentIndex - 1 + images.length) % images.length;
                                             updateLightbox();
-                                            }
+                                        }
 
-                                            function closeLightbox() {
+                                        function closeLightbox() {
                                             document.getElementById("lightbox").style.display = "none";
-                                            }
-                                        </script>
-                                        <% } %>
+                                        }
+                                    </script>
+                                    <% } %>
+                                    <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) { %>
+                                    <div style="margin-top: 15px;">
+
+                                        <!-- Toggle Button -->
+                                        <div style="display: flex; justify-content: flex-end;">
+                                            <button onclick="toggleReply('reply-<%= feedback.getId() %>', this)" 
+                                                    style="background-color: #007bff; color: white; padding: 8px 14px;
+                                                    border: none; border-radius: 6px; cursor: pointer;
+                                                    font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;
+                                                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
+                                                <span>View feedback from Admin</span> 
+                                                <span class="arrow" style="transition: transform 0.3s;">&#x25BC;</span> <!-- Mũi tên -->
+                                            </button>
+                                        </div>
+
+                                        <!-- Reply Content -->
+                                        <div id="reply-<%= feedback.getId() %>" 
+                                             style="display: none; margin-top: 10px; padding: 12px 16px;
+                                             border-left: 4px solid #007bff; background-color: #f8f9fa;
+                                             border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                                            <p style="margin: 0; font-size: 14px; color: #333;">
+                                                <strong style="color: #007bff;">Admin:</strong> <%= feedback.getReply() %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
                                 </div>
                                 <% } %>
                             </div>
@@ -459,6 +486,20 @@
             </div>
 
         </footer><!--/Footer-->
+        <script>
+            function toggleReply(replyId, buttonElement) {
+                const replyDiv = document.getElementById(replyId);
+                const arrow = buttonElement.querySelector('.arrow');
+
+                if (replyDiv.style.display === 'none') {
+                    replyDiv.style.display = 'block';
+                    arrow.style.transform = 'rotate(180deg)'; // Xoay mũi tên lên
+                } else {
+                    replyDiv.style.display = 'none';
+                    arrow.style.transform = 'rotate(0deg)'; // Mũi tên xuống
+                }
+            }
+        </script>
 
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>

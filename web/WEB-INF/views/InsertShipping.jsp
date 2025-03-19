@@ -128,22 +128,12 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                    <li><a href="salesDashboardController" class="active">Home</a></li>
+                                    <li><a href="SaleOrderController">Order List</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <form action="MarketingPostController" method="get">
-                                <input type="hidden" value="search" name="service">
-                                <div class="search_box pull-right" style="position: relative; display: flex; align-items: center; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
-                                    <input type="text" name="query" placeholder="Search" value="${param.query}" style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
-                                    <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
-                                        <i class="fa fa-search"></i> 
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -166,38 +156,47 @@
                             <input type="hidden" name="service" value="ShipperAssignment" />
                             <input type="hidden" name="orderID" value="<%= request.getAttribute("orderID") %>" />
 
-                            <div class="form-group">
-                                <label for="shipperID">Select Shipper</label>
-                                <select name="shipperID" class="form-control" required
-                                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
-                                    <%
-                                        ResultSet rsShippers = (ResultSet) request.getAttribute("rsShippers");
-                                        while (rsShippers.next()) {
-                                            int shipperId = rsShippers.getInt("id");
-                                            String shipperName = rsShippers.getString("name");
-                                    %>
-                                    <option value="<%= shipperId %>"><%= shipperName %></option>
-                                    <% } %>
-                                </select>
+                            <!-- Container flex cho 2 input -->
+                            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                                <!-- Select Shipper -->
+                                <div style="flex: 1;">
+                                    <label for="shipperID" style="display: block; margin-bottom: 5px; font-weight: bold;">Select Shipper</label>
+                                    <select name="shipperID" class="form-control" required
+                                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                        <%
+                                            ResultSet rsShippers = (ResultSet) request.getAttribute("rsShippers");
+                                            while (rsShippers.next()) {
+                                                int shipperId = rsShippers.getInt("id");
+                                                String shipperName = rsShippers.getString("name");
+                                        %>
+                                        <option value="<%= shipperId %>"><%= shipperName %></option>
+                                        <% } %>
+                                    </select>
+                                </div>
+
+                                <!-- Estimated Arrival Date -->
+                                <div style="flex: 1;">
+                                    <label for="estimatedArrival" style="display: block; margin-bottom: 5px; font-weight: bold;">Estimated Arrival Date</label>
+                                    <input type="date" name="estimatedArrival" id="estimatedArrival" class="form-control" required
+                                           style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="estimatedArrival">Estimated Arrival Date</label>
-                                <input type="date" name="estimatedArrival" class="form-control" required
-                                       style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px">
+                            <!-- Buttons -->
+                            <div style="display: flex; gap: 15px; justify-content: flex-end; align-items: center; padding-bottom: 20px;">
                                 <button type="submit" name="submit" value="assign" class="btn" 
-                                        style="padding: 10px 20px; background-color: #28a745; color: white; border: 2px solid #28a745; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                        style="padding: 10px 25px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
                                     Assign Shipper
                                 </button>
                                 <a href="SaleOrderController?service=listAllOrder" class="btn"
-                                   style="padding: 10px 20px; background-color: #dc3545; color: white; border: 2px solid #dc3545; border-radius: 5px; font-weight: bold; text-align: center; transition: all 0.3s ease;">
+                                   style="padding: 10px 25px; background-color: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
                                     Cancel
                                 </a>
                             </div>
+
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -369,24 +368,17 @@
             });
         </script>
         <script>
-            // Lấy ngày giờ hiện tại và định dạng lại
-            function setMinDateTime() {
-                let now = new Date();
-                let year = now.getFullYear();
-                let month = String(now.getMonth() + 1).padStart(2, '0');
-                let day = String(now.getDate()).padStart(2, '0');
-                let hours = String(now.getHours()).padStart(2, '0');
-                let minutes = String(now.getMinutes()).padStart(2, '0');
+            window.addEventListener('DOMContentLoaded', function () {
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var day = today.getDate().toString().padStart(2, '0');
+                var minDate = year + '-' + month + '-' + day;
 
-                let minDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
-
-                        // Gán giá trị min cho input
-                        document.getElementById("postTime").setAttribute("min", minDateTime);
-                    }
-
-                    // Gọi hàm khi trang tải xong
-                    window.onload = setMinDateTime;
+                document.getElementById('estimatedArrival').setAttribute('min', minDate);
+            });
         </script>
+
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
