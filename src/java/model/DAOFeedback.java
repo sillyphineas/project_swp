@@ -917,6 +917,278 @@ public class DAOFeedback extends DBConnection {
 }
     
 
+    public int MaketinggetTotalFeedbacksByStar(int star) {
+        String sql = "SELECT COUNT(*) FROM Feedbacks WHERE rating = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, star);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Feedback> MaketingrsearchFeedbacks(String query, int page, int pageSize) {
+        List<Feedback> feedbackList = new ArrayList<>();
+        String sql = "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, "
+                + "f.content, f.images, u.name, u.email, u.phoneNumber, u.gender, "
+                + "p.id AS productID, p.name AS productName, "
+                + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
+                + "s.id AS storageID, s.capacity "
+                + "FROM Feedbacks f "
+                + "JOIN Users u ON f.reviewerID = u.id "
+                + "JOIN OrderDetails od ON f.orderDetailID = od.id "
+                + "JOIN ProductVariants pv ON od.productVariantID = pv.id "
+                + "JOIN Products p ON f.product_id = p.id "
+                + "JOIN Colors c ON pv.color_id = c.id "
+                + "JOIN Storages s ON pv.storage_id = s.id "
+                + "WHERE LOWER(u.name) LIKE ? OR LOWER(f.content) LIKE ? "
+                + "ORDER BY f.reviewTime DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + query.toLowerCase() + "%"); // Tìm theo tên
+            stmt.setString(2, "%" + query.toLowerCase() + "%"); // Tìm theo nội dung đánh giá
+
+            stmt.setInt(3, pageSize);
+            stmt.setInt(4, (page - 1) * pageSize);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Feedback feedback = new Feedback();
+                feedback.setId(rs.getInt("id"));
+                feedback.setOrderDetailID(rs.getInt("orderDetailID"));
+                feedback.setReviewerID(rs.getInt("reviewerID"));
+                feedback.setReviewTime(rs.getString("reviewTime"));
+                feedback.setRating(rs.getInt("rating"));
+                feedback.setContent(rs.getString("content"));
+                feedback.setImages(rs.getString("images"));
+
+                // Thông tin người dùng
+                User user = new User();
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhoneNumber(rs.getString("phoneNumber"));
+                user.setGender(rs.getBoolean("gender"));
+                feedback.setUser(user);
+
+                // Thông tin sản phẩm
+                Product product = new Product();
+                product.setId(rs.getInt("productID"));
+                product.setName(rs.getString("productName"));
+                feedback.setProduct(product);
+
+                // Thông tin biến thể sản phẩm
+                ProductVariant variant = new ProductVariant();
+                variant.setId(rs.getInt("productVariantID"));
+
+                // Gán Color vào ProductVariant
+                Color color = new Color();
+                color.setId(rs.getInt("colorID"));
+                color.setColorName(rs.getString("colorName"));
+                variant.setColor(color);
+
+                // Gán Storage vào ProductVariant
+                Storage storage = new Storage();
+                storage.setId(rs.getInt("storageID"));
+                storage.setCapacity(rs.getString("capacity"));
+                variant.setStorage(storage);
+
+                feedback.setProductVariant(variant);
+
+                feedbackList.add(feedback);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return feedbackList;
+    }
+
+    public int MaketingcountTotalFeedbacksForSearch(String query) {
+        String sql = "SELECT COUNT(*) FROM Feedbacks f "
+                + "JOIN Users u ON f.reviewerID = u.id "
+                + "WHERE LOWER(u.name) LIKE ? OR LOWER(f.content) LIKE ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + query.toLowerCase() + "%");
+            stmt.setString(2, "%" + query.toLowerCase() + "%");
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Trả về 0 nếu có lỗi xảy ra
+    }
+
+    public List<Feedback> sortFeedbacks(String sortBy, String sortOrder, int page, int pageSize) throws SQLException {
+        List<Feedback> feedbacks = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, "
+                + "f.content, f.images, f.isDisabled, f.status,"
+                + "u.name AS reviewerName, u.email, u.phoneNumber, u.gender, "
+                + "p.id AS productID, p.name AS productName, "
+                + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
+                + "s.id AS storageID, s.capacity "
+                + "FROM Feedbacks f "
+                + "JOIN Users u ON f.reviewerID = u.id "
+                + "JOIN OrderDetails od ON f.orderDetailID = od.id "
+                + "JOIN ProductVariants pv ON od.productVariantID = pv.id "
+                + "JOIN Products p ON f.product_id = p.id "
+                + "JOIN Colors c ON pv.color_id = c.id "
+                + "JOIN Storages s ON pv.storage_id = s.id "
+        );
+
+        // Kiểm tra và xử lý `sortBy`
+        if ("name".equals(sortBy)) {
+            sortBy = "u.name";  // Sắp xếp theo tên người đánh giá
+        } else if ("productName".equals(sortBy)) {
+            sortBy = "p.name";  // Sắp xếp theo tên sản phẩm
+        } else if ("rating".equals(sortBy)) {
+            sortBy = "f.rating"; // Sắp xếp theo đánh giá
+        } else if ("reviewTime".equals(sortBy)) {
+            sortBy = "f.reviewTime"; // Sắp xếp theo trạng thái (bị vô hiệu hóa hay không)
+        } else if ("status".equals(sortBy)) {
+            sortBy = "f.status"; // Sắp xếp theo trạng thái (bị vô hiệu hóa hay không)
+        } else {
+            sortBy = "f.id";  // Mặc định sắp xếp theo ID
+        }
+
+        // Kiểm tra `sortOrder` để tránh SQL Injection
+        sortOrder = "desc".equalsIgnoreCase(sortOrder) ? "DESC" : "ASC";
+
+        sql.append(" ORDER BY ").append(sortBy).append(" ").append(sortOrder);
+        sql.append(" LIMIT ? OFFSET ?");
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            stmt.setInt(1, pageSize);
+            stmt.setInt(2, (page - 1) * pageSize);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Feedback feedback = new Feedback(
+                        rs.getInt("id"),
+                        rs.getInt("orderDetailID"),
+                        rs.getInt("reviewerID"),
+                        rs.getString("reviewTime"),
+                        rs.getInt("rating"),
+                        rs.getString("content"),
+                        rs.getString("images"),
+                        rs.getString("status")
+                );
+
+                // Thông tin người dùng
+                User user = new User();
+                user.setName(rs.getString("reviewerName"));
+                user.setEmail(rs.getString("email"));
+                user.setPhoneNumber(rs.getString("phoneNumber"));
+                user.setGender(rs.getBoolean("gender"));
+                feedback.setUser(user);
+
+                // Thông tin sản phẩm
+                Product product = new Product();
+                product.setId(rs.getInt("productID"));
+                product.setName(rs.getString("productName"));
+                feedback.setProduct(product);
+
+                // Thông tin biến thể sản phẩm
+                ProductVariant variant = new ProductVariant();
+                variant.setId(rs.getInt("productVariantID"));
+
+                // Gán Color vào ProductVariant
+                Color color = new Color();
+                color.setId(rs.getInt("colorID"));
+                color.setColorName(rs.getString("colorName"));
+                variant.setColor(color);
+
+                // Gán Storage vào ProductVariant
+                Storage storage = new Storage();
+                storage.setId(rs.getInt("storageID"));
+                storage.setCapacity(rs.getString("capacity"));
+                variant.setStorage(storage);
+
+                feedback.setProductVariant(variant);
+
+                feedbacks.add(feedback);
+            }
+        }
+        return feedbacks;
+    }
+
+    public boolean insertFeedback(Feedback feedback) {
+        String sql = "INSERT INTO Feedbacks (orderDetailID, reviewerID, reviewTime, rating, content, images, isDisabled, product_id, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, feedback.getOrderDetailID());
+            stmt.setInt(2, feedback.getReviewerID());
+            stmt.setString(3, feedback.getReviewTime());
+            stmt.setInt(4, feedback.getRating());
+            stmt.setString(5, feedback.getContent());
+
+            String imagesJson = new Gson().toJson(feedback.getImages());
+            stmt.setString(6, imagesJson);
+
+            stmt.setBoolean(7, feedback.isIsDisabled());
+            stmt.setInt(8, feedback.getProduct_id());
+
+            stmt.setString(9, feedback.getStatus());
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateFeedbackStatus(int id, String status) {
+        String sql = "UPDATE Feedbacks SET status = ? WHERE id = ?";
+        try (
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, status);
+            stmt.setInt(2, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public Integer getUserIdByFeedbackId(int feedbackId) {
+        Integer userId = null;
+        String query = "SELECT reviewerID FROM feedbacks WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, feedbackId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("reviewerID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
+    public boolean isFeedbackExists(int orderdetailID) {
+        String sql = "SELECT COUNT(*) FROM feedbacks WHERE orderdetailID = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, orderdetailID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         DAOFeedback dao = new DAOFeedback();
         Feedback feedback = new Feedback(

@@ -25,6 +25,7 @@ public class Feedback {
     private Product product;
     private ProductVariant productVariant;
     private String Status;
+
     private String reply;
 
     public String getReply() {
@@ -36,6 +37,7 @@ public class Feedback {
     }
     
     
+
     public String getStatus() {
         return Status;
     }
@@ -97,6 +99,7 @@ public class Feedback {
         this.Status = Status;
     }
 
+
     public Feedback(int id, int orderDetailID, int reviewerID, int product_id, String reviewTime, int rating, String content, String images, boolean isDisabled, User user, Product product, ProductVariant productVariant, String Status, String reply) {
         this.id = id;
         this.orderDetailID = orderDetailID;
@@ -113,6 +116,7 @@ public class Feedback {
         this.Status = Status;
         this.reply = reply;
     }
+
     
     
     
@@ -251,4 +255,5 @@ public class Feedback {
         this.reply = reply;
     }
     
+
 }
