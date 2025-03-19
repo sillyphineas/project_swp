@@ -4,6 +4,8 @@ import entity.Address;
 import entity.Order;
 import entity.OrderDetail;
 import entity.OrderShippingView;
+import entity.Payment;
+import entity.PaymentMethod;
 import entity.ProductVariant;
 import entity.Shipping;
 import entity.User;
@@ -433,19 +435,24 @@ public class DAOOrder extends DBConnection {
         return 0;
     }
 
-    public List<Order> getOrdersWithPagination(int limit, int offset) {
+    public List<Order> getOrdersWithPagination(int pageSize, int page) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.id AS orderID, o.buyerID,u.name As buyer_Name, o.orderTime, o.orderStatus, o.ShippingDate, o.totalPrice, o.discountedPrice, o.recipientName, o.recipientPhone, o.AssignedSaleId, s.ShippingID, s.ShippingStatus, s.EstimatedArrival, s.ActualArrival, a.address AS shippingAddress, a.city, a.district"
-                + " FROM Orders o "
-                + "LEFT JOIN users u on o.buyerID = u.id "
-                + "LEFT JOIN Shipping s ON o.id = s.OrderID  "
-                + "LEFT JOIN Addresses a ON o.ShippingAddress = a.id "
-                + "LEFT JOIN OrderDetails od ON o.id = od.orderId "
-                + "ORDER BY o.orderTime DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT o.id AS orderID, o.buyerID,u.name As buyer_Name, o.orderTime, o.orderStatus, o.totalPrice,\n"
+                + "                 o.discountedPrice, o.recipientName, o.recipientPhone,\n"
+                + "               o.AssignedSaleId, s.ShippingID, s.ShippingStatus, \n"
+                + "                 s.EstimatedArrival, s.ActualArrival, a.address AS shippingAddress, a.city, a.district,\n"
+                + "                 p.paymentStatus, pm.paymentName\n"
+                + "                              FROM Orders o \n"
+                + "                           LEFT JOIN users u on o.buyerID = u.id \n"
+                + "                               LEFT JOIN Shipping s ON o.id = s.OrderID  \n"
+                + "                            LEFT JOIN Addresses a ON o.ShippingAddress = a.id \n"
+                + "                            LEFT JOIN payment p ON o.id = p.orderId  -- Thêm JOIN với bảng payment\n"
+                + "							LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id \n"
+                + "                       ORDER BY o.orderTime DESC LIMIT ? OFFSET ? ";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, limit);
-            ps.setInt(2, offset);
+            ps.setInt(1, pageSize);
+            ps.setInt(2, (page - 1) * pageSize);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -465,7 +472,6 @@ public class DAOOrder extends DBConnection {
                         order.setOrderTime(orderTime);
                     }
                     order.setOrderStatus(rs.getString("orderStatus"));
-                    order.setShippingDate(rs.getString("ShippingDate"));
                     order.setTotalPrice(rs.getDouble("totalPrice"));
                     order.setDiscountedPrice(rs.getDouble("discountedPrice"));
                     order.setRecipientName(rs.getString("recipientName"));
@@ -473,7 +479,6 @@ public class DAOOrder extends DBConnection {
                     order.setAssignedSaleId(rs.getInt("AssignedSaleId"));
                     // Thông tin vận chuyển
 
-                    
                     user.setName(rs.getString("buyer_Name"));
 
                     order.setUser(user);
@@ -489,6 +494,15 @@ public class DAOOrder extends DBConnection {
                             + rs.getString("district") + ", "
                             + rs.getString("city");
                     order.setShippingAddress(fullAddress);;
+
+                    Payment payment = new Payment();
+                    payment.setPaymentStatus(rs.getString("paymentStatus"));
+                    order.setPayment(payment);
+
+                    PaymentMethod pm = new PaymentMethod();
+                    pm.setName(rs.getString("paymentName"));
+                    order.setPaymentMethod(pm);
+
                     orders.add(order);
                 }
             }
@@ -508,11 +522,164 @@ public class DAOOrder extends DBConnection {
         return 0;
     }
 
+    public List<Order> SalesearchOrders(String query, int page, int pageSize) {
+        List<Order> orders = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT o.id AS orderID, o.buyerID, u.name AS buyer_Name, o.orderTime, o.orderStatus, o.totalPrice, "
+                + "o.discountedPrice, o.recipientName, o.recipientPhone, o.AssignedSaleId, "
+                + "s.ShippingID, s.ShippingStatus, s.EstimatedArrival, s.ActualArrival, "
+                + "a.address AS shippingAddress, a.city, a.district, "
+                + "p.paymentStatus, pm.paymentName "
+                + "FROM Orders o "
+                + "LEFT JOIN users u ON o.buyerID = u.id "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID "
+                + "LEFT JOIN Addresses a ON o.ShippingAddress = a.id "
+                + "LEFT JOIN payment p ON o.id = p.orderId "
+                + "LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id "
+                + "WHERE LOWER(u.name) LIKE ? OR LOWER(o.orderStatus) LIKE ? "
+                + "OR LOWER(o.recipientPhone) LIKE ? OR LOWER(s.ShippingStatus) LIKE ? "
+                + "OR LOWER(a.address) LIKE ? OR LOWER(pm.paymentName) LIKE ? "
+                + "ORDER BY o.orderTime DESC "
+                + "LIMIT ? OFFSET ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (int i = 1; i <= 6; i++) {
+                ps.setString(i, "%" + query.toLowerCase() + "%");
+            }
+            ps.setInt(7, pageSize);
+            ps.setInt(8, offset);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                String buyerName = rs.getString("Buyer_Name");
+                System.out.println("DEBUG: Buyer_Name = " + buyerName);
+                user.setName(buyerName);
+                Order order = new Order();
+
+                // Thông tin đơn hàng
+                order.setId(rs.getInt("orderID"));
+                order.setBuyerID(rs.getInt("buyerID"));
+                Timestamp orderTime = rs.getTimestamp("orderTime");
+                if (orderTime == null) {
+                    System.out.println("⚠️ orderTime is NULL for orderID: " + rs.getInt("orderID"));
+                } else {
+                    order.setOrderTime(orderTime);
+                }
+                order.setOrderStatus(rs.getString("orderStatus"));
+                order.setTotalPrice(rs.getDouble("totalPrice"));
+                order.setDiscountedPrice(rs.getDouble("discountedPrice"));
+                order.setRecipientName(rs.getString("recipientName"));
+                order.setRecipientPhone(rs.getString("recipientPhone"));
+                order.setAssignedSaleId(rs.getInt("AssignedSaleId"));
+                // Thông tin vận chuyển
+
+                user.setName(rs.getString("buyer_Name"));
+
+                order.setUser(user);
+
+                Shipping shipping = new Shipping();
+                shipping.setShippingID(rs.getInt("ShippingID"));
+                shipping.setShippingStatus(rs.getString("ShippingStatus"));
+                shipping.setEstimatedArrival(rs.getDate("EstimatedArrival"));
+                shipping.setActualArrival(rs.getDate("ActualArrival"));
+                order.setShipping(shipping);
+
+                String fullAddress = rs.getString("shippingAddress") + ", "
+                        + rs.getString("district") + ", "
+                        + rs.getString("city");
+                order.setShippingAddress(fullAddress);;
+
+                Payment payment = new Payment();
+                payment.setPaymentStatus(rs.getString("paymentStatus"));
+                order.setPayment(payment);
+
+                PaymentMethod pm = new PaymentMethod();
+                pm.setName(rs.getString("paymentName"));
+                order.setPaymentMethod(pm);
+
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
+    public int SalecountTotalOrdersForSearch(String query) {
+        int totalOrders = 0;
+        String sql = "SELECT COUNT(*) FROM Orders o "
+                + "LEFT JOIN users u ON o.buyerID = u.id "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID "
+                + "LEFT JOIN Addresses a ON o.ShippingAddress = a.id "
+                + "LEFT JOIN payment p ON o.id = p.orderId "
+                + "LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id "
+                + "WHERE LOWER(u.name) LIKE ? OR LOWER(o.orderStatus) LIKE ? "
+                + "OR LOWER(o.recipientPhone) LIKE ? OR LOWER(s.ShippingStatus) LIKE ? "
+                + "OR LOWER(a.address) LIKE ? OR LOWER(pm.paymentName) LIKE ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 1; i <= 6; i++) {
+                ps.setString(i, "%" + query.toLowerCase() + "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                totalOrders = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalOrders;
+    }
+
+    public boolean isOrderAlreadyAssigned(int orderID) {
+        String sql = "SELECT COUNT(*) FROM Shipping WHERE orderID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean insertShipping(int orderID, int shipperID, String shippingStatus, Date estimatedArrival, Date actualArrival, Date shippingDate) {
+        String sql = "INSERT INTO Shipping (orderID, shipperID, shippingStatus, estimatedArrival, actualArrival, shippingDate) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, orderID);
+            ps.setInt(2, shipperID);
+            ps.setString(3, shippingStatus);
+            ps.setDate(4, estimatedArrival);
+            if (actualArrival != null) {
+                ps.setDate(5, actualArrival);
+            } else {
+                ps.setNull(5, java.sql.Types.DATE);
+            }
+            ps.setDate(6, shippingDate);
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     // Test DAOOrder
     public static void main(String[] args) {
         DAOOrder daoOrder = new DAOOrder();
 
-        System.out.println(daoOrder.getOrdersWithPagination(1, 3));
+        System.out.println(daoOrder.isOrderAlreadyAssigned(4));
 
 //        int shipperId = 2;
 //        String statusFilter = "";
