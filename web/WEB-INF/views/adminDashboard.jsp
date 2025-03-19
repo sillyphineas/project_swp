@@ -6,6 +6,11 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User"%>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="com.google.gson.Gson" %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -31,7 +36,37 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
-
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .content {
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group input {
+            margin-right: 10px;
+        }
+        .stat-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .stat-list li {
+            margin-bottom: 10px;
+        }
+        .stat-list h3 {
+            margin-top: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            margin-top: 30px;
+        }
+        footer {
+            margin-top: 50px;
+        }
+    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -94,13 +129,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -143,7 +178,128 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
+        <div class="content" style="padding: 30px; background-color: #f9f9f9;">
+            <div class="row">
+                <!-- Left Column: Date Range Form (Centered) -->
+                <div class="col-md-12 text-center" style="margin-bottom: 30px;">
+                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Select Date Range:</h3>
+                    <form action="${pageContext.request.contextPath}/AdminDashboardController" method="get" class="form-inline justify-content-center">
+                        <div class="form-group">
+                            <label for="startDate" style="font-weight: bold; margin-right: 10px;">Start Date:</label>
+                            <input type="date" id="startDate" name="startDate" value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate" style="font-weight: bold; margin-right: 10px;">End Date:</label>
+                            <input type="date" id="endDate" name="endDate" value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
+                        </div>
+                        <button type="submit" class="btn btn-warning" style="padding: 10px 20px; background-color: #f39c12; color: white; border: none; border-radius: 5px;">Generate Report</button>
+                    </form>
+                </div>
 
+                <!-- Right Column: Order Status Count Table -->
+                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; background-color: #f8f9fa;">Order Status</th>
+                                <th style="text-align: center; background-color: #f8f9fa;">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% 
+                                Map<String, Integer> orderStatusCounts = (Map<String, Integer>) request.getAttribute("orderStatusCounts");
+                            %>
+                            <tr>
+                                <td style="text-align: center;">Delivered</td>
+                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">Cancelled</td>
+                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">Shipping</td>
+                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">Pickup</td>
+                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">Refund</td>
+                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Other Statistics Section -->
+                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Other Statistics</h3>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
+                            <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
+                            <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
+                            <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Trend Chart (Smaller Size) -->
+                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+                    <canvas id="orderTrendChart" style="margin-top: 30px; width: 90%; height: 300px;"></canvas>
+                    <script>
+                        var orderTrendsJson = '<%= request.getAttribute("orderTrendsJson") != null ? request.getAttribute("orderTrendsJson") : "[]" %>';
+                        console.log(orderTrendsJson);
+                        var trends = JSON.parse(orderTrendsJson);
+
+                        console.log(trends);
+
+                        if (trends.length > 0) {
+                            var labels = [];
+                            var data = [];
+                            trends.forEach(function (trend) {
+                                labels.push(trend.date);
+                                data.push(trend.count);
+                            });
+
+                            var ctx = document.getElementById('orderTrendChart').getContext('2d');
+                            var chart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                            label: 'Successful Orders Trend',
+                                            data: data,
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            fill: false
+                                        }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    scales: {
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: 'Date'
+                                            }
+                                        },
+                                        y: {
+                                            title: {
+                                                display: true,
+                                                text: 'Number of Orders'
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">

@@ -1239,6 +1239,8 @@ public class DAOProduct extends DBConnection {
         }
         return stats;
     }
+    
+    
 
     public static void main(String[] args) {
         // Make sure DBConnection is properly initialized

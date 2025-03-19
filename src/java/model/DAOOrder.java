@@ -4,7 +4,9 @@ import entity.Order;
 import entity.OrderShippingView;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DAOOrder extends DBConnection {
 
@@ -424,33 +426,163 @@ public class DAOOrder extends DBConnection {
         return 0;
     }
 
+    public List<Object[]> getOrderTrendsByDateRange(String startDate, String endDate) {
+        List<Object[]> trends = new ArrayList<>();
+        String sql = "SELECT DATE(orderTime) AS orderDate, COUNT(*) AS orderCount "
+                + "FROM Orders "
+                + "WHERE orderStatus = 'delivered' AND orderTime BETWEEN ? AND ? "
+                + "GROUP BY orderDate ORDER BY orderDate ASC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Thiết lập các giá trị tham số cho câu lệnh SQL
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Date orderDate = rs.getDate("orderDate");
+                    int orderCount = rs.getInt("orderCount");
+                    trends.add(new Object[]{orderDate, orderCount});
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return trends;
+    }
+
+    public double getTotalRevenueByDateRange(String startDate, String endDate) {
+        String sql = "SELECT SUM(totalPrice) FROM Orders WHERE orderStatus = 'delivered' AND orderTime BETWEEN ? AND ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
+    // Lấy số lượng đơn hàng theo trạng thái
+    public Map<String, Integer> getOrderStatusCountsByDateRange(String startDate, String endDate) {
+        Map<String, Integer> statusCounts = new HashMap<>();
+        String sql = "SELECT orderStatus, COUNT(*) AS orderCount FROM Orders "
+                + "WHERE orderTime BETWEEN ? AND ? "
+                + "GROUP BY orderStatus";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String orderStatus = rs.getString("orderStatus");
+                    int count = rs.getInt("orderCount");
+                    statusCounts.put(orderStatus, count);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return statusCounts;
+    }
+// Lấy số lượng khách hàng mới đăng ký
+
+    public int getNewCustomersCountByDateRange(String startDate, String endDate) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE registered_at BETWEEN ? AND ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Thiết lập các giá trị tham số cho câu lệnh SQL
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+// Lấy số lượng khách hàng mới mua hàng
+    public int getNewBuyersCountByDateRange(String startDate, String endDate) {
+        String sql = "SELECT COUNT(DISTINCT buyerID) FROM Orders WHERE orderStatus = 'delivered' AND orderTime BETWEEN ? AND ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Thiết lập các giá trị tham số cho câu lệnh SQL
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+// Lấy sao trung bình của tất cả các sản phẩm
+    public double getAverageRatingByDateRange(String startDate, String endDate) {
+        String sql = "SELECT AVG(rating) FROM Feedbacks WHERE reviewTime BETWEEN ? AND ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            // Thiết lập các giá trị tham số cho câu lệnh SQL
+            stmt.setString(1, startDate);
+            stmt.setString(2, endDate);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
     // Test DAOOrder
     public static void main(String[] args) {
         DAOOrder daoOrder = new DAOOrder();
 
-        int shipperId = 2;
-        String statusFilter = "";
-        String searchQuery = "";
-        int page = 1;
-        int pageSize = 10;
+        // Define the date range for testing (e.g., last 7 days)
+        String startDate = "2025-01-01"; // Example start date
+        String endDate = "2025-03-19"; // Example end date
 
-        List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
-        if (orders.isEmpty()) {
-            System.out.println("No orders found for the given criteria.");
-        } else {
-            for (Order order : orders) {
-                System.out.println("Order ID: " + order.getId());
-                System.out.println("Buyer ID: " + order.getBuyerID());
-                System.out.println("Order Status: " + order.getOrderStatus());
-                System.out.println("Shipping Address: " + order.getShippingAddress());
-                System.out.println("Total Price: " + order.getTotalPrice());
-                System.out.println("Discounted Price: " + order.getDiscountedPrice());
-                System.out.println("Recipient Name: " + order.getRecipientName());
-                System.out.println("Recipient Phone: " + order.getRecipientPhone());
-                System.out.println("Assigned Sale ID: " + order.getAssignedSaleId());
-                System.out.println("isDisabled: " + order.isDisabled());
-                System.out.println("-----------------------------");
-            }
+        // Test getOrderStatusCountsByDateRange
+        Map<String, Integer> orderStatusCounts = daoOrder.getOrderStatusCountsByDateRange(startDate, endDate);
+        System.out.println("Order Status Counts:");
+        orderStatusCounts.forEach((status, count) -> System.out.println(status + ": " + count));
+
+        // Test getTotalRevenueByDateRange
+        double totalRevenue = daoOrder.getTotalRevenueByDateRange(startDate, endDate);
+        System.out.println("\nTotal Revenue: " + totalRevenue);
+
+        // Test getNewCustomersCountByDateRange
+        int newCustomersCount = daoOrder.getNewCustomersCountByDateRange(startDate, endDate);
+        System.out.println("\nNew Customers: " + newCustomersCount);
+
+        // Test getNewBuyersCountByDateRange
+        int newBuyersCount = daoOrder.getNewBuyersCountByDateRange(startDate, endDate);
+        System.out.println("\nNew Buyers: " + newBuyersCount);
+
+        // Test getAverageRatingByDateRange
+        double averageRating = daoOrder.getAverageRatingByDateRange(startDate, endDate);
+        System.out.println("\nAverage Rating: " + averageRating);
+
+        // Test getOrderTrendsByDateRange
+        List<Object[]> orderTrends = daoOrder.getOrderTrendsByDateRange(startDate, endDate);
+        System.out.println("\nOrder Trends (Date, Order Count):");
+        for (Object[] trend : orderTrends) {
+            System.out.println(trend[0] + ": " + trend[1]);
         }
     }
+
 }
