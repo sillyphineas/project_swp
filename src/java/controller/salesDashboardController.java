@@ -15,6 +15,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import model.DAOOrder;
 
 
 /**
@@ -59,7 +66,7 @@ public class salesDashboardController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
+@Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -71,32 +78,50 @@ public class salesDashboardController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/salesDashboard.jsp");
-        rd.forward(request, response);
+
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        String assignedSaleId = request.getParameter("assignedSaleId");
+        String orderStatus = request.getParameter("orderStatus");
+
+        // Nếu không có startDate hoặc endDate, mặc định là 7 ngày trước đến hôm nay
+        if (startDate == null || endDate == null) {
+            startDate = getFormattedDate(-7); // 7 ngày trước
+            endDate = getFormattedDate(0);    // Hôm nay
+        }
+
+        // Đảm bảo endDate bao gồm cả ngày cuối bằng cách thêm 1 ngày vào endDate khi truy vấn
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+        request.setAttribute("assignedSaleId", assignedSaleId != null ? assignedSaleId : "");
+        request.setAttribute("orderStatus", orderStatus != null ? orderStatus : "");
+
+        try {
+            DAOOrder dao = new DAOOrder();
+            List<Map<String, Object>> orderStats = dao.getOrderStatsByDate(startDate, endDate, assignedSaleId, orderStatus);
+            request.setAttribute("orderStats", orderStats);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("orderStats", new java.util.ArrayList<>());
+        }
+
+        request.getRequestDispatcher("WEB-INF/views/salesDashboard.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        doGet(request, response); // Chuyển POST sang GET nếu cần
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    private String getFormattedDate(int daysAgo) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, daysAgo);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng phù hợp với SQL
+        return sdf.format(calendar.getTime());
+    }
 }
+
+   
+
+

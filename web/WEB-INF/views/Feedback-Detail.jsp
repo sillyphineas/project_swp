@@ -1,14 +1,15 @@
 <%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
-    Author     : HP
+    Document   : Feedback-Detail
+    Created on : Mar 17, 2025, 2:17:34 AM
+    Author     : Admin
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
-<%@page import="com.google.gson.Gson"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
+<%@page import="entity.User,java.util.List,jakarta.servlet.http.HttpSession,model.DAOUser"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category,entity.Feedback" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -33,117 +34,84 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+           
+            /* Chỉnh sửa kiểu cho các danh sách */
+            
+            /* Cải thiện các nút Cancel */
+            .btn-danger {
+                font-size: 16px;
+                padding: 10px 20px;
+                border-radius: 5px;
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                text-align: center;
+                cursor: pointer;
+            }
+
+            .btn-danger:hover {
+                background-color: #c0392b;
+            }
+
+            /* Chỉnh sửa phần thông tin chi tiết */
+            .detail-container {
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 30px;
+                background-color: #f9f9f9;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .detail-container h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .detail-row {
+                margin-bottom: 15px;
+            }
+
+            .detail-label {
+                font-weight: bold;
+                font-size: 18px;
+                margin-right: 10px;
+            }
+
+            .detail-row img {
+                border-radius: 5px;
+                max-width: 100px;
+                margin-top: 10px;
+            }
+
+            .detail-container .detail-row {
+                font-size: 18px; /* Chỉnh kích thước chữ cho tất cả các dòng */
+                line-height: 1.6;
+            }
+
+            .detail-container .detail-row span.detail-label {
+                font-weight: bold;
+            }
+
+            .detail-container .detail-row span {
+                font-size: 18px; /* Đảm bảo rằng phần nội dung sẽ có kích thước chữ giống nhau */
+                font-weight: normal;
+            }
+            .detail-container .detail-row img {
+                width: 100px;  /* Chiều rộng cố định */
+                height: 100px; /* Chiều cao cố định */
+                object-fit: cover; /* Đảm bảo ảnh không bị méo */
+                border-radius: 5px; /* Thêm bo góc cho ảnh nếu cần */
+                margin-right: 10px; /* Khoảng cách giữa các ảnh */
+            }
+
+
+        </style>
     </head><!--/head-->
-    <style>
-        .report-form {
-            margin: 20px 0;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 10px; /* Reduced gap between elements */
-            flex-wrap: wrap; /* Allow wrapping if needed */
-        }
-
-        .report-form label {
-            margin: 0 5px;
-            font-weight: bold;
-            font-size: 14px; /* Smaller font size for labels */
-        }
-
-        .report-form input,
-        .report-form select {
-            margin: 0 5px;
-            font-size: 14px; /* Smaller font size for inputs and selects */
-            width: 150px; /* Adjusted width for inputs and selects */
-        }
-
-        .report-form button {
-            margin-left: 10px;
-            padding: 5px 15px; /* Smaller padding for a compact button */
-            background-color: #ff9f00;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 14px; /* Smaller font size for button */
-        }
-
-        .report-form button:hover {
-            background-color: #ff7f00;
-        }
-
-        .chart-container {
-            width: 100%; /* Full width of the container */
-            max-width: 1200px; /* Max width limit */
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        #shippingTrendChart, #totalShipmentsChart {
-            max-width: 100%;
-            height: 300px; /* Increased chart height */
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 30px;
-        }
-
-        .row1 {
-            display: flex;
-            justify-content: center; /* Center the chart containers */
-            margin-bottom: 30px; /* Space between rows */
-        }
-
-        .chart-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        canvas {
-            width: 100% !important; /* Ensure canvas uses full container width */
-            height: auto !important; /* Maintain aspect ratio */
-        }
-        .total-stats {
-            margin: 20px 0;
-            font-size: 16px;
-            display: flex;
-            justify-content: space-between;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .total-stats p {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .total-stats p strong {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .total-stats p span {
-            color: #4e73df; /* Change color as per your requirement */
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .total-stats p span#totalShipping {
-            color: #36b9cc; /* Shipping color */
-        }
-
-        .total-stats p span#totalDelivered {
-            color: #f6c23e; /* Delivered color */
-        }
-    </style>
 
     <body>
         <header id="header"><!--header-->
@@ -183,7 +151,7 @@
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
+                                        USAd
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
@@ -240,67 +208,98 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="ShipperDashboardController" class="active">Home</a></li>
-                                    <li><a href="ShipperOrderController">Order List</a></li>
+                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                    <li><a href="SliderController">Slider List</a></li>
+                                    <li><a href="CustomerController">Customer List</a></li>
+                                    <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="FeetBacksController">Feedback List</a></li>
                                 </ul>
                             </div>
                         </div>
 
                     </div>
-                </div>
-            </div><!--/header-bottom-->
+                </div><!--/header-bottom-->
         </header><!--/header-->
-        <%
-                List<Map<String, Object>> shippingStats = (List<Map<String, Object>>) request.getAttribute("shippingStats");
-                String shippingStatsJson = "[]";
-                if (shippingStats != null) {
-                    shippingStatsJson = new Gson().toJson(shippingStats);
-                }
-        %>
-
-        <div class="container">
-            <div class="report-form">
-                <form action="ShipperDashboardController" method="get">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate"
-                           value="<%= request.getAttribute("startDate") %>">
-
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" name="endDate"
-                           value="<%= request.getAttribute("endDate") %>">
-
-                    <label for="shippingStatus">Shipping Status:</label>
-                    <select id="shippingStatus" name="shippingStatus">
-                        <option value="" <%= "".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>All</option>
-                        <option value="shipping" <%= "shipping".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>Shipping</option>
-                        <option value="delivered" <%= "delivered".equals(request.getAttribute("shippingStatus")) ? "selected" : "" %>>Delivered</option>
-                    </select>
-
-                    <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
-                    <div class="total-stats" style="margin: 20px 0; font-size: 16px;">
-                        <p><strong>Total Shipping:</strong> <span id="totalShipping">0</span></p>
-                        <p><strong>Total Delivered:</strong> <span id="totalDelivered">0</span></p>
-                    </div>
-                </form>
-            </div>
-
-            <div class="row1">
-                <div class="col-md-12">
-                    <div class="chart-title">Shipping Status Trend</div>
-                    <canvas id="shippingTrendChart" width="700" height="250"></canvas>
+        <div class="detail-container">
+        <h2>Feedback Details</h2>
+        <c:if test="${feedback != null}">
+            <b>
+                
+            <div class="detail-row">
+                <div class="col-md-5" >
+                <span class="detail-label">Full Name:</span> ${feedback.user.name}
+                </div>
+                <div class="col-md-7" >
+                <span class="detail-label">Email:</span> ${feedback.user.email}
                 </div>
             </div>
-
-            <div class="row1">
-                <div class="col-md-12">
-                    <div class="chart-title">Total Shipments Trend</div>
-                    <canvas id="totalShipmentsChart" width="700" height="250"></canvas>
-                </div>
+                <br>
+            <div class="detail-row">
+                <div class="col-md-5" >
+                <span class="detail-label">Mobile:</span> ${feedback.user.phoneNumber}
             </div>
+            <div class="col-md-7" >
+                <span class="detail-label">Status:</span> ${feedback.status}
+            </div>
+             </div>
+            <br>
+            <div class="detail-row">
+                <span class="detail-label">Rated Star:</span>
+                <span style="white-space: nowrap;">
+                    <c:forEach var="i" begin="1" end="5">
+                        <i class="${i <= feedback.rating ? 'fas' : 'far'} fa-star" style="color: gold;"></i>
+                    </c:forEach>
+                </span>
+            </div>
+              <div class="detail-row">
+                   <span class="detail-label">Product:</span> ${feedback.product.name}
+                
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Feedback:</span> ${feedback.content}
+            </div>
+             <div class="detail-row">
+            <span class="detail-label">Images:</span>
+            <c:if test="${not empty feedback.images}">
+                <c:forEach var="image" items="${feedback.getImages()}">
+                    <img src="${image}" alt="Feedback Image" style="max-width: 100px; margin-right: 10px;" />
+                </c:forEach>
+            </c:if>
+            <c:if test="${empty feedback.images}">
+                No images available
+            </c:if>
         </div>
-    </div>
 
-    <footer id="footer"><!--Footer-->
+            <!-- Hiển thị thông báo -->
+            <c:if test="${not empty message}">
+                <div class="message">${message}</div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="error">${error}</div>
+            </c:if>
+
+            <!-- Form trả lời -->
+          <div class="detail-row">
+    <span class="detail-label">Your Reply:</span>
+    <form action="MarketingFeedbackDetails" method="post">
+        <textarea name="reply" rows="4" placeholder="Write your reply here...">${feedback.reply != null ? feedback.reply : ''}</textarea>
+        <input type="hidden" name="service" value="replyfeedback" />
+        <input type="hidden" name="id" value="${feedback.id}" />
+        <button type="submit" class="btn btn-success">Send Reply</button>
+    </form>
+</div>
+        </c:if>
+        <c:if test="${feedback == null}">
+            <p>Feedback not found.</p>
+            <a href="MaketingFeedBackController" class="btn btn-danger">Cancel</a>
+        </c:if>
+            <a href="MaketingFeedBackController" class="btn btn-danger">Cancel</a>
+    </div>
+        <br>
+        <br>
+
+        <footer id="footer"><!--Footer-->
         <div class="footer-top">
             <div class="container">
                 <div class="row">
@@ -456,97 +455,17 @@
             </div>
         </div>
 
-    </footer><!--/Footer-->
+    </footer><!--/Footer--er-->
 
 
 
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="text/javascript">
-         var shippingStats = <%= shippingStatsJson %>;
-         var labels = shippingStats.map(stat => stat.date);
-         var totalShipmentsData = shippingStats.map(stat => stat.totalShipments);
-         var shippingData = shippingStats.map(stat => stat.shippingShipments);
-         var deliveredData = shippingStats.map(stat => stat.deliveredShipments);
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/price-range.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/main.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-         // Log the data to debug
-         console.log("Shipping Stats:", shippingStats);
-         console.log("Labels:", labels);
-         console.log("Total Shipments:", totalShipmentsData);
-         console.log("Shipping Data:", shippingData);
-         console.log("Delivered Data:", deliveredData);
-
-         // Tính tổng Shipping và Delivered
-         var totalShipping = shippingData.reduce((sum, value) => sum + value, 0);
-         var totalDelivered = deliveredData.reduce((sum, value) => sum + value, 0);
-
-         // Hiển thị tổng lên giao diện
-         document.getElementById('totalShipping').textContent = totalShipping;
-         document.getElementById('totalDelivered').textContent = totalDelivered;
-
-         // Phần còn lại của mã (vẽ biểu đồ) giữ nguyên
-         var ctxShipping = document.getElementById('shippingTrendChart').getContext('2d');
-         var shippingTrendChart = new Chart(ctxShipping, {
-             type: 'bar',
-             data: {
-                 labels: labels,
-                 datasets: [
-                     {
-                         label: 'Shipping',
-                         data: shippingData,
-                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                         borderColor: 'rgb(54, 162, 235)',
-                         borderWidth: 1
-                     },
-                     {
-                         label: 'Delivered',
-                         data: deliveredData,
-                         backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                         borderColor: 'rgb(75, 192, 192)',
-                         borderWidth: 1
-                     }
-                 ]
-             },
-             options: {
-                 scales: {
-                     y: {
-                         beginAtZero: true,
-                         ticks: {
-                             stepSize: 1
-                         }
-                     }
-                 }
-             }
-         });
-
-         var ctxTotal = document.getElementById('totalShipmentsChart').getContext('2d');
-         var totalShipmentsChart = new Chart(ctxTotal, {
-             type: 'line',
-             data: {
-                 labels: labels,
-                 datasets: [{
-                         label: 'Total Shipments',
-                         data: totalShipmentsData,
-                         borderColor: 'rgb(255, 99, 132)',
-                         tension: 0.2
-                     }]
-             },
-             options: {
-                 scales: {
-                     y: {
-                         beginAtZero: true,
-                         ticks: {
-                             stepSize: 1
-                         }
-                     }
-                 }
-             }
-         });
-    </script>
-</body>
+    </body>
 </html>

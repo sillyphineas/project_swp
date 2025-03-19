@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.util.Date;
 import entity.RevenueTrend;
 import entity.OrderTrend;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -221,46 +222,58 @@ public class DAOShipping extends DBConnection {
         }
         return trends;
     }
-     public List<Map<String, Object>> getShippingStatsByDate(String startDate, String endDate, String shippingStatus) throws SQLException {
-    String sql = "SELECT DATE(ShippingDate) AS date, "
-            + "COUNT(*) AS totalShipments, "
-            + "COUNT(CASE WHEN ShippingStatus = 'Delivered' AND ActualArrival IS NOT NULL THEN 1 END) AS deliveredShipments, "
-            + "COUNT(CASE WHEN ShippingStatus = 'Shipping' AND ActualArrival IS NULL THEN 1 END) AS shippingShipments "
-            + "FROM Shipping "
-            + "WHERE ShippingDate BETWEEN ? AND ? ";
+   public List<Map<String, Object>> getShippingStatsByDate(String startDate, String endDate, String shippingStatus) throws SQLException {
+        // Chuyển đổi endDate để bao gồm cả ngày cuối
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(endDate));
+            calendar.add(Calendar.DAY_OF_YEAR, 1); // Thêm 1 ngày để bao gồm endDate
+            String adjustedEndDate = sdf.format(calendar.getTime());
 
-    if (shippingStatus != null && !shippingStatus.isEmpty()) {
-        sql += "AND ShippingStatus = ? ";
-    }
+            String sql = "SELECT DATE(ShippingDate) AS date, "
+                    + "COUNT(*) AS totalShipments, "
+                    + "COUNT(CASE WHEN ShippingStatus = 'Delivered' AND ActualArrival IS NOT NULL THEN 1 END) AS deliveredShipments, "
+                    + "COUNT(CASE WHEN ShippingStatus = 'Shipping' AND ActualArrival IS NULL THEN 1 END) AS shippingShipments "
+                    + "FROM Shipping "
+                    + "WHERE ShippingDate >= ? AND ShippingDate < ? ";
 
-    sql += "GROUP BY DATE(ShippingDate)";
-
-    List<Map<String, Object>> shippingStats = new ArrayList<>();
-
-    try (PreparedStatement pre = conn.prepareStatement(sql)) {
-        pre.setString(1, startDate);
-        pre.setString(2, endDate);
-
-        if (shippingStatus != null && !shippingStatus.isEmpty()) {
-            pre.setString(3, shippingStatus);
-        }
-
-        try (ResultSet rs = pre.executeQuery()) {
-            while (rs.next()) {
-                Map<String, Object> stat = new HashMap<>();
-                stat.put("date", rs.getString("date"));
-                stat.put("totalShipments", rs.getInt("totalShipments"));
-                stat.put("deliveredShipments", rs.getInt("deliveredShipments"));
-                stat.put("shippingShipments", rs.getInt("shippingShipments"));
-                shippingStats.add(stat);
+            if (shippingStatus != null && !shippingStatus.isEmpty()) {
+                sql += "AND ShippingStatus = ? ";
             }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
 
-    return shippingStats;
+            sql += "GROUP BY DATE(ShippingDate)";
+
+            List<Map<String, Object>> shippingStats = new ArrayList<>();
+
+            try (PreparedStatement pre = conn.prepareStatement(sql)) {
+                pre.setString(1, startDate);
+                pre.setString(2, adjustedEndDate); // Sử dụng endDate đã điều chỉnh
+
+                if (shippingStatus != null && !shippingStatus.isEmpty()) {
+                    pre.setString(3, shippingStatus);
+                }
+
+                try (ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        Map<String, Object> stat = new HashMap<>();
+                        stat.put("date", rs.getString("date"));
+                        stat.put("totalShipments", rs.getInt("totalShipments"));
+                        stat.put("deliveredShipments", rs.getInt("deliveredShipments"));
+                        stat.put("shippingShipments", rs.getInt("shippingShipments"));
+                        shippingStats.add(stat);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return shippingStats;
+        } catch (java.text.ParseException e) {
+            throw new SQLException("Invalid date format", e);
+        }
+    }
 }
-}
+
 
 

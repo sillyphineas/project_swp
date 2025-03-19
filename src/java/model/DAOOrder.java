@@ -10,7 +10,10 @@ import entity.ProductVariant;
 import entity.Shipping;
 import entity.User;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -705,4 +708,65 @@ public class DAOOrder extends DBConnection {
 //                System.out.println("-----------------------------");
 //            }
     }
+
+  public List<Map<String, Object>> getOrderStatsByDate(String startDate, String endDate, String assignedSaleId, String orderStatus) throws SQLException {
+    // Chuyển đổi endDate để bao gồm cả ngày cuối
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Calendar calendar = Calendar.getInstance();
+    try {
+        calendar.setTime(sdf.parse(endDate));
+        calendar.add(Calendar.DAY_OF_YEAR, 1); // Thêm 1 ngày để bao gồm endDate
+        String adjustedEndDate = sdf.format(calendar.getTime());
+        
+        String sql = "SELECT DATE(orderTime) AS date, "
+                + "COUNT(*) AS totalOrders, "
+                + "COUNT(CASE WHEN orderStatus = 'delivered' THEN 1 END) AS successOrders, "
+                + "SUM(CASE WHEN orderStatus = 'delivered' THEN totalPrice ELSE 0 END) AS revenue "
+                + "FROM Orders "
+                + "WHERE orderTime >= ? AND orderTime < ? ";
+
+        if (assignedSaleId != null && !assignedSaleId.isEmpty()) {
+            sql += "AND assignedSaleId = ? ";
+        }
+        if (orderStatus != null && !orderStatus.isEmpty()) {
+            sql += "AND orderStatus = ? ";
+        }
+
+        sql += "GROUP BY DATE(orderTime)";
+
+        List<Map<String, Object>> orderStats = new ArrayList<>();
+
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, startDate);
+            pre.setString(2, adjustedEndDate); // Sử dụng endDate đã điều chỉnh
+
+            int paramIndex = 3;
+
+            if (assignedSaleId != null && !assignedSaleId.isEmpty()) {
+                pre.setInt(paramIndex++, Integer.parseInt(assignedSaleId));
+            }
+            if (orderStatus != null && !orderStatus.isEmpty()) {
+                pre.setString(paramIndex, orderStatus);
+            }
+
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> stat = new HashMap<>();
+                    stat.put("date", rs.getString("date"));
+                    stat.put("totalOrders", rs.getInt("totalOrders"));
+                    stat.put("successOrders", rs.getInt("successOrders"));
+                    stat.put("revenue", rs.getDouble("revenue"));
+                    orderStats.add(stat);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return orderStats;
+    } catch (java.text.ParseException e) {
+        throw new SQLException("Invalid date format", e);
+    }
+}
+    
 }
