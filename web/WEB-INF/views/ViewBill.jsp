@@ -272,14 +272,20 @@
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="bill-footer" style="margin-top: 20px; text-align: right;">
-                                <a href="SaleOrderController?service=listAllOrder" class="btn btn-primary">
-                                    <i class="fa fa-arrow-left"></i> Back to Orders
+                            <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 15px 0;">
+                                <a href="SaleOrderController?service=listAllOrder" 
+                                   style="padding: 8px 16px; background-color: #f0ad4e; color: white; border: none;
+                                   border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 14px; cursor: pointer;">
+                                    &#8592; Back to Orders
                                 </a>
-                                <button onclick="printBill()" class="btn btn-success">
-                                    <i class="fa fa-print"></i> Print Bill
+
+                                <button onclick="window.print()" 
+                                        style="padding: 8px 16px; background-color: #5cb85c; color: white; border: none;
+                                        border-radius: 4px; font-weight: bold; font-size: 14px; cursor: pointer;">
+                                    &#128424; Print Bill
                                 </button>
                             </div>
+
                         </div>
                     </div>
                 </div>
