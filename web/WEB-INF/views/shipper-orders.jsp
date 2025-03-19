@@ -1,129 +1,31 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="entity.OrderInformation" %>
+<%@ page import="java.util.List" %>
 <%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>User Profile</title>
+        <meta charset="UTF-8">
+        <title>Shipper Orders</title>
+        <!-- Bootstrap & FontAwesome & main.css -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
-        <link rel="shortcut icon" href="images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
         <style>
-            /* Đặt lại phần mặc định, cơ bản cho toàn trang */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+            /* Nếu muốn y chang trước, bỏ hết style bên dưới. 
+               Hoặc giữ minimal style (ví dụ, bỏ table-responsive). */
 
-            body {
-                font-family: Arial, sans-serif;
-                background: #ffffff;
-                color: #333;
-            }
+            /* Nếu bạn KHÔNG muốn table-responsive => bỏ .table-responsive wrapper */
+            /* Nếu bạn vẫn muốn responsive => bọc bảng trong <div class="table-responsive">... */
 
-            /* Container bao quanh nội dung chính */
-            /*        .container {
-                        max-width: 100%;
-                        margin: 50px auto;
-                        background: #fff;
-                        padding: 30px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    }*/
-
-            h3 {
-                margin-bottom: 20px;
-                font-size: 28px;
-                text-align: center;
-                color: #444;
-            }
-
-            /* Container for the two tables */
-            .table-container {
-                display: flex;
-                justify-content: space-between; /* Aligns tables with space in between */
-                /*                gap: 20px;  Space between the two tables */
-                margin-top: 20px; /* Optional, adjust spacing from previous content */
-            }
-
-            /* Style for the tables */
-            table {
-                width: 48%; /* Adjust width so that both tables fit side by side */
-                /*                border-collapse: collapse;*/
-                /*                background: #fff;*/
-                /*                border-radius: 8px;
-                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
-                padding: 10px;
-            }
-
-            /* Table headers */
-            th {
-                width: 30%;
-                text-align: left;
-                /*                background-color: #f0f0f0;*/
-            }
-
-            /* Table cells */
-            td {
-                padding: 12px;
-                /*                border-bottom: 1px solid #ddd;*/
-                vertical-align: middle;
-            }
-
-
-            /* Chỉnh sửa nút */
-            .button-group {
-                margin-top: 20px;
-                text-align: center;
-            }
-
-            .btn {
-                display: inline-block;
-                margin: 0 10px;
-                padding: 12px 20px;
-                font-size: 14px;
-                text-decoration: none;
-                border-radius: 5px;
-                color: #fff;
-                background: #007bff;
-                transition: background 0.3s ease;
-            }
-
-            .btn:hover {
-                background: #0056b3;
-            }
-
-            .btn-back {
-                background-color: #6c757d;
-            }
-
-            .btn-back:hover {
-                background-color: #495057;
-            }
+            /* Dưới đây là style minimal; có thể xóa nếu muốn "như trước" hoàn toàn */
+            /* .table th, .table td {
+                white-space: nowrap; // nếu muốn text không xuống dòng
+            } */
         </style>
-    </head><!--/head-->
-
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -157,28 +59,43 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
                             </div>
+                            <div class="btn-group pull-right">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        USA
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Canada</a></li>
+                                        <li><a href="#">UK</a></li>
+                                    </ul>
+                                </div>
 
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                        DOLLAR
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Canadian Dollar</a></li>
+                                        <li><a href="#">Pound</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
-
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
-                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
@@ -188,49 +105,146 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="UserController">Users List</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="container">
-            <h1>User Profile</h1>
-            <div class="profile-image" style="text-align: center">
-                <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
+        <section class="container" style="margin-top: 30px;">
+            <h2>Order List for Shipper</h2>
+            <!-- Filter Form -->
+            <form action="ShipperOrderController" method="get" class="form-inline" style="margin-bottom: 15px;">
+                <label for="status" class="mr-2">Shipping Status:</label>
+                <select name="status" id="status" class="form-control mr-3">
+                    <option value="" <c:if test="${statusFilter == ''}">selected</c:if>>All</option>
+                    <option value="Shipping" <c:if test="${statusFilter == 'Shipping'}">selected</c:if>>Shipping</option>
+                    <option value="Delivered" <c:if test="${statusFilter == 'Delivered'}">selected</c:if>>Delivered</option>
+                    </select>
+
+                    <label for="search" class="mr-2">Order ID:</label>
+                    <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order ID" class="form-control mr-3" />
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+
+            <!-- Bảng hiển thị OrderInformation -->
+            <!-- Nếu muốn responsive => bọc trong <div class="table-responsive"> -->
+            <!-- <div class="table-responsive"> -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Time</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                        <th>Shipping Date</th>
+                        <th>Estimated Arrival</th>
+                        <th>Actual Arrival</th>
+                        <th>Total Price</th>
+                        <th>Recipient</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="oi" items="${orderList}">
+                        <tr>
+                            <td>${oi.id}</td>
+                            <td>${oi.orderTime}</td>
+                            <td>${oi.orderStatus}</td>
+                            <td>${oi.paymentStatus}</td>
+                            <td>${oi.shippingStatus}</td>
+                            <td>${oi.shippingDate}</td>
+                            <td>${oi.estimatedArrival}</td>
+                            <td>${oi.actualArrival}</td>
+                            <td>${oi.totalPrice}</td>
+                            <td>${oi.recipientName} (${oi.recipientPhone})</td>
+                            <td>${oi.address}, ${oi.district}, ${oi.city}</td>
+                            <td>
+                                <!-- Update Shipping -->
+                                <form action="ShipperOrderController" method="post" style="margin-bottom: 5px;">
+                                    <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updateShipping" />
+                                    <select name="newShippingStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Shipping" <c:if test="${oi.shippingStatus == 'Shipping'}">selected</c:if>>Shipping</option>
+                                        <option value="Delivered" <c:if test="${oi.shippingStatus == 'Delivered'}">selected</c:if>>Delivered</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-info btn-sm">Update Ship</button>
+                                    </form>
+
+                                    <!-- Update Payment -->
+                                    <form action="ShipperOrderController" method="post">
+                                        <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updatePayment" />
+                                    <select name="newPaymentStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Pending" <c:if test="${oi.paymentStatus == 'Pending'}">selected</c:if>>Pending</option>
+                                        <option value="Paid" <c:if test="${oi.paymentStatus == 'Paid'}">selected</c:if>>Paid</option>
+                                        <option value="Refund" <c:if test="${oi.paymentStatus == 'Refund'}">selected</c:if>>Refund</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-warning btn-sm">Update Pay</button>
+                                    </form>
+                                </td>
+                            </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+            <!-- </div> -->
+
+            <!-- Pagination -->
+            <div style="text-align: center;">
+                <c:if test="${currentPage > 1}">
+                    <a href="ShipperOrderController?page=${currentPage - 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">&laquo; Prev</a>
+                </c:if>
+                <c:forEach begin="1" end="${totalPages}" var="p">
+                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn <c:if test='${p == currentPage}'>btn-primary</c:if> btn-default"
+                           style="margin: 0 3px;">
+                       ${p}
+                    </a>
+                </c:forEach>
+                <c:if test="${currentPage < totalPages}">
+                    <a href="ShipperOrderController?page=${currentPage + 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">Next &raquo;</a>
+                </c:if>
             </div>
-            <h3>${user.name}</h3>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <th>Email:</th>
-                        <td>${user.email}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone:</th>
-                        <td>${user.phoneNumber}</td>
-                    </tr>
-                </table>
-
-                <table>
-                    <tr>
-                        <th>Gender:</th>
-                        <td>${user.gender ? 'Male' : 'Female'}</td>
-                    </tr>
-                    <tr>
-                        <th>Date of Birth:</th>
-                        <td>${user.dateOfBirth}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="button-group">
-
-                <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}">Update Profile</a>
-
-                <a class="btn btn-back" href="HomePageController">Back to Home</a>
-            </div>
-        </div>
-
-
-
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -390,13 +404,7 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>

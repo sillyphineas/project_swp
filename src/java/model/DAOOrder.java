@@ -159,19 +159,19 @@ public class DAOOrder extends DBConnection {
             preparedStatement.setString(4, order.getShippingAddress());
             preparedStatement.setDouble(5, order.getTotalPrice());
             preparedStatement.setDouble(6, order.getDiscountedPrice());
-            preparedStatement.setBoolean(8, order.isDisabled());
+            preparedStatement.setBoolean(7, order.isDisabled());
 
             if (order.getVoucherID() != null) {
-                preparedStatement.setInt(9, order.getVoucherID());
+                preparedStatement.setInt(8, order.getVoucherID());
             } else {
-                preparedStatement.setNull(9, Types.INTEGER);
+                preparedStatement.setNull(8, Types.INTEGER);
             }
 
-            preparedStatement.setString(10, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
-            preparedStatement.setString(11, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
-            preparedStatement.setInt(12, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
+            preparedStatement.setString(9, order.getRecipientName() != null ? order.getRecipientName() : "Unknown");
+            preparedStatement.setString(10, order.getRecipientPhone() != null ? order.getRecipientPhone() : "0000000000");
+            preparedStatement.setInt(11, order.getAssignedSaleId() != null ? order.getAssignedSaleId() : 0);
 
-            preparedStatement.setInt(13, order.getId());
+            preparedStatement.setInt(12, order.getId());
 
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {

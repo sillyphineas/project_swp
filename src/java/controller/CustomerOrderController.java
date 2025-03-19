@@ -19,16 +19,15 @@ import model.DAOOrder;
 import model.DAOOrderInformation;
 import org.json.JSONObject;
 import jakarta.servlet.annotation.MultipartConfig;
-import java.io.File;
 import java.util.Collection;
+import java.util.Comparator;
+import model.DAOPayment;
 
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2, // 2MB
         maxFileSize = 1024 * 1024 * 10, // 10MB
         maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
-
-
 @WebServlet(name = "CustomerOrderController", urlPatterns = {"/CustomerOrderController"})
 public class CustomerOrderController extends HttpServlet {
 
@@ -39,21 +38,27 @@ public class CustomerOrderController extends HttpServlet {
         }
         return map;
     }
-    
+
     private List<Map.Entry<Integer, List<OrderInformation>>> mapToList(Map<Integer, List<OrderInformation>> map) {
         return new ArrayList<>(map.entrySet());
     }
-    
+
     private <T> List<T> paginateList(List<T> fullList, int page, int itemsPerPage) {
-        if (fullList == null || fullList.isEmpty()) return Collections.emptyList();
+        if (fullList == null || fullList.isEmpty()) {
+            return Collections.emptyList();
+        }
         int start = (page - 1) * itemsPerPage;
-        if (start >= fullList.size()) return Collections.emptyList();
+        if (start >= fullList.size()) {
+            return Collections.emptyList();
+        }
         int end = Math.min(start + itemsPerPage, fullList.size());
         return fullList.subList(start, end);
     }
-    
+
     private int parsePage(String pageParam) {
-        if (pageParam == null) return 1;
+        if (pageParam == null) {
+            return 1;
+        }
         try {
             int p = Integer.parseInt(pageParam);
             return (p < 1) ? 1 : p;
@@ -61,7 +66,7 @@ public class CustomerOrderController extends HttpServlet {
             return 1;
         }
     }
-    
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -71,27 +76,32 @@ public class CustomerOrderController extends HttpServlet {
             out.println("</body></html>");
         }
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         DAOOrderInformation daoOdInf = new DAOOrderInformation();
         DAOOrder daoOrder = new DAOOrder();
         DAOFeedback dao = new DAOFeedback();
+
         String service = request.getParameter("service");
-        if (service == null) service = "displayAllOrders";
-        
+        if (service == null) {
+            service = "displayAllOrders";
+        }
+
         if (service.equals("displayAllOrders")) {
             List<OrderInformation> allFlat = daoOdInf.getAllOrderInformation();
             for (OrderInformation o : allFlat) {
                 boolean feedbackExists = dao.isFeedbackExists(o.getOrderDetailID());
                 request.setAttribute("feedbackExists_" + o.getOrderDetailID(), feedbackExists);
-                System.out.println("feedbackExists "+feedbackExists);
+                System.out.println("feedbackExists " + feedbackExists);
             }
-
             for (OrderInformation o : allFlat) {
                 Order od = daoOrder.getOrderById(o.getId());
-                if (od == null) continue;
+                if (od == null) {
+                    continue;
+                }
                 if ("Shipping".equalsIgnoreCase(o.getShippingStatus())) {
                     od.setOrderStatus("Shipping");
                     daoOrder.updateOrder(od);
@@ -102,18 +112,23 @@ public class CustomerOrderController extends HttpServlet {
                     o.setOrderStatus("Delivered");
                 }
             }
-            
+
             Map<Integer, List<OrderInformation>> allMap = groupByOrderId(allFlat);
+            for (Map.Entry<Integer, List<OrderInformation>> entry : allMap.entrySet()) {
+                List<OrderInformation> lines = entry.getValue();
+                lines.sort(Comparator.comparingInt(OrderInformation::getOrderDetailID));
+            }
             List<Map.Entry<Integer, List<OrderInformation>>> allList = mapToList(allMap);
-            
-            List<Map.Entry<Integer, List<OrderInformation>>> awaitingList  = new ArrayList<>();
-            List<Map.Entry<Integer, List<OrderInformation>>> shippingList  = new ArrayList<>();
+            List<Map.Entry<Integer, List<OrderInformation>>> awaitingList = new ArrayList<>();
+            List<Map.Entry<Integer, List<OrderInformation>>> shippingList = new ArrayList<>();
             List<Map.Entry<Integer, List<OrderInformation>>> deliveredList = new ArrayList<>();
-            List<Map.Entry<Integer, List<OrderInformation>>> canceledList  = new ArrayList<>();
-            List<Map.Entry<Integer, List<OrderInformation>>> refundList    = new ArrayList<>();
-            
+            List<Map.Entry<Integer, List<OrderInformation>>> canceledList = new ArrayList<>();
+            List<Map.Entry<Integer, List<OrderInformation>>> refundList = new ArrayList<>();
+            allList.sort((o1, o2) -> Integer.compare(o2.getKey(), o1.getKey()));
             for (Map.Entry<Integer, List<OrderInformation>> e : allList) {
-                if (e.getValue().isEmpty()) continue;
+                if (e.getValue().isEmpty()) {
+                    continue;
+                }
                 String status = e.getValue().get(0).getOrderStatus();
                 if ("Cancel".equalsIgnoreCase(status)) {
                     canceledList.add(e);
@@ -127,8 +142,7 @@ public class CustomerOrderController extends HttpServlet {
                     awaitingList.add(e);
                 }
             }
-            
-            // Nếu có newlyCanceled, sắp xếp canceledList đưa order mới lên đầu
+
             String newlyCanceledParam = request.getParameter("newlyCanceled");
             if (newlyCanceledParam != null) {
                 try {
@@ -136,69 +150,86 @@ public class CustomerOrderController extends HttpServlet {
                     canceledList.sort((e1, e2) -> {
                         int id1 = e1.getKey();
                         int id2 = e2.getKey();
-                        if (id1 == newlyCanceledId && id2 != newlyCanceledId) return -1;
-                        if (id2 == newlyCanceledId && id1 != newlyCanceledId) return 1;
+                        if (id1 == newlyCanceledId && id2 != newlyCanceledId) {
+                            return -1;
+                        }
+                        if (id2 == newlyCanceledId && id1 != newlyCanceledId) {
+                            return 1;
+                        }
                         return 0;
                     });
                 } catch (NumberFormatException ex) {
-                    // ignore
                 }
             }
-            
+
+            String newlyRefundedParam = request.getParameter("newlyRefunded");
+            if (newlyRefundedParam != null) {
+                try {
+                    int newlyRefundedId = Integer.parseInt(newlyRefundedParam);
+                    refundList.sort((e1, e2) -> {
+                        int id1 = e1.getKey();
+                        int id2 = e2.getKey();
+                        if (id1 == newlyRefundedId && id2 != newlyRefundedId) {
+                            return -1;
+                        }
+                        if (id2 == newlyRefundedId && id1 != newlyRefundedId) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                } catch (NumberFormatException ex) {
+                }
+            }
+
             int itemsPerPage = 3;
-            int pageAll       = parsePage(request.getParameter("pageAll"));
-            int pageAwaiting  = parsePage(request.getParameter("pageAwaiting"));
-            int pageShipping  = parsePage(request.getParameter("pageShipping"));
+            int pageAll = parsePage(request.getParameter("pageAll"));
+            int pageAwaiting = parsePage(request.getParameter("pageAwaiting"));
+            int pageShipping = parsePage(request.getParameter("pageShipping"));
             int pageDelivered = parsePage(request.getParameter("pageDelivered"));
-            int pageCanceled  = parsePage(request.getParameter("pageCanceled"));
-            int pageRefund    = parsePage(request.getParameter("pageRefund"));
-            
+            int pageCanceled = parsePage(request.getParameter("pageCanceled"));
+            int pageRefund = parsePage(request.getParameter("pageRefund"));
+
             List<Map.Entry<Integer, List<OrderInformation>>> allPaged = paginateList(allList, pageAll, itemsPerPage);
             int totalAllPages = (int) Math.ceil(allList.size() / (double) itemsPerPage);
-            
             List<Map.Entry<Integer, List<OrderInformation>>> awaitingPaged = paginateList(awaitingList, pageAwaiting, itemsPerPage);
             int totalAwaitingPages = (int) Math.ceil(awaitingList.size() / (double) itemsPerPage);
-            
             List<Map.Entry<Integer, List<OrderInformation>>> shippingPaged = paginateList(shippingList, pageShipping, itemsPerPage);
             int totalShippingPages = (int) Math.ceil(shippingList.size() / (double) itemsPerPage);
-            
             List<Map.Entry<Integer, List<OrderInformation>>> deliveredPaged = paginateList(deliveredList, pageDelivered, itemsPerPage);
             int totalDeliveredPages = (int) Math.ceil(deliveredList.size() / (double) itemsPerPage);
-            
             List<Map.Entry<Integer, List<OrderInformation>>> canceledPaged = paginateList(canceledList, pageCanceled, itemsPerPage);
             int totalCanceledPages = (int) Math.ceil(canceledList.size() / (double) itemsPerPage);
-            
             List<Map.Entry<Integer, List<OrderInformation>>> refundPaged = paginateList(refundList, pageRefund, itemsPerPage);
             int totalRefundPages = (int) Math.ceil(refundList.size() / (double) itemsPerPage);
-            
+
             request.setAttribute("allPaged", allPaged);
             request.setAttribute("awaitingPickupPaged", awaitingList.isEmpty() ? new ArrayList<>() : awaitingPaged);
             request.setAttribute("shippingPaged", shippingPaged);
             request.setAttribute("deliveredPaged", deliveredPaged);
             request.setAttribute("canceledPaged", canceledPaged);
             request.setAttribute("refundPaged", refundPaged);
-            
+
             request.setAttribute("currentAllPage", pageAll);
             request.setAttribute("currentAwaitingPage", pageAwaiting);
             request.setAttribute("currentShippingPage", pageShipping);
             request.setAttribute("currentDeliveredPage", pageDelivered);
             request.setAttribute("currentCanceledPage", pageCanceled);
             request.setAttribute("currentRefundPage", pageRefund);
-            
+
             request.setAttribute("totalAllPages", totalAllPages);
             request.setAttribute("totalAwaitingPages", totalAwaitingPages);
             request.setAttribute("totalShippingPages", totalShippingPages);
             request.setAttribute("totalDeliveredPages", totalDeliveredPages);
             request.setAttribute("totalCanceledPages", totalCanceledPages);
             request.setAttribute("totalRefundPages", totalRefundPages);
-            
+
             RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/my-orders.jsp");
             rd.forward(request, response);
-            
+
         } else if (service.equals("cancelOrder")) {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             Order order = new DAOOrder().getOrderById(orderId);
-            
+
             JSONObject json = new JSONObject();
             if (order == null) {
                 json.put("success", false);
@@ -219,36 +250,43 @@ public class CustomerOrderController extends HttpServlet {
             }
             response.setContentType("application/json");
             response.getWriter().write(json.toString());
-            
+
         } else if (service.equals("refundOrder")) {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
-            Order order = new DAOOrder().getOrderById(orderId);
-            
+            Order order = daoOrder.getOrderById(orderId);
+
             JSONObject json = new JSONObject();
             if (order == null) {
                 json.put("success", false);
                 json.put("message", "Order not found.");
-            } else if (!"Delivered".equalsIgnoreCase(order.getOrderStatus())) {
-                json.put("success", false);
-                json.put("message", "Refund is only allowed for Delivered orders.");
             } else {
-                boolean updated = new DAOOrder().updateStatus(orderId, "Refund");
-                if (updated) {
-                    json.put("success", true);
-                    json.put("message", "Refund request processed successfully.");
-                } else {
+                String orderStatus = order.getOrderStatus();
+                DAOPayment daoPayment = new DAOPayment();
+                String paymentStatus = daoPayment.getPaymentByOrderId(orderId).getPaymentStatus();
+                if (!"Cancel".equalsIgnoreCase(orderStatus) || !"Paid".equalsIgnoreCase(paymentStatus)) {
                     json.put("success", false);
-                    json.put("message", "Unable to process refund due to an internal error.");
+                    json.put("message", "Refund is only allowed for orders that are Cancel and Paid.");
+                } else {
+                    boolean updatedOrder = daoOrder.updateStatus(orderId, "Refund");
+                    boolean updatedPayment = daoPayment.updatePaymentStatus(orderId, "Refund");
+
+                    if (updatedOrder && updatedPayment) {
+                        json.put("success", true);
+                        json.put("message", "Order refunded successfully.");
+                        json.put("newlyRefundedId", orderId);
+                    } else {
+                        json.put("success", false);
+                        json.put("message", "Unable to process refund due to an internal error.");
+                    }
                 }
             }
             response.setContentType("application/json");
             response.getWriter().write(json.toString());
-            
         } else {
             processRequest(request, response);
         }
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String service = request.getParameter("service");
@@ -281,6 +319,7 @@ public class CustomerOrderController extends HttpServlet {
                     return;
                 }
 
+                // Upload file (nếu có)
                 Collection<Part> fileParts = request.getParts();
                 for (Part filePart : fileParts) {
                     System.out.println("File Part Name: " + filePart.getName() + ", Size: " + filePart.getSize());
@@ -306,11 +345,23 @@ public class CustomerOrderController extends HttpServlet {
                 String reviewTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 boolean isDisabled = false;
                 String Status = "visible";
-                Feedback feedback = new Feedback(orderdetailID, reviewerID, productID, reviewTime, rating, content, imagesJson, isDisabled, Status);
+
+                Feedback feedback = new Feedback(
+                        orderdetailID,
+                        reviewerID,
+                        productID,
+                        reviewTime,
+                        rating,
+                        content,
+                        imagesJson,
+                        isDisabled,
+                        Status
+                );
 
                 boolean success = dao.insertFeedback(feedback);
 
                 if (success) {
+                    // Chuyển sang trang ListFeedbackWithId
                     response.sendRedirect("FeedBackController?service=ListFeedbackWithId&productId=" + productID);
                 } else {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error submitting feedback.");
@@ -325,12 +376,10 @@ public class CustomerOrderController extends HttpServlet {
         } else {
             processRequest(request, response);
         }
-
     }
 
-    
     @Override
     public String getServletInfo() {
-        return "Customer Order Management Controller with reload after Cancel/Refund and newly canceled item on top.";
+        return "Customer Order Management Controller with stable product ordering & feedback logic.";
     }
 }

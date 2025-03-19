@@ -9,6 +9,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Order Management | E-Shopper</title>
+
         <!-- CSS (Bootstrap, FontAwesome, etc.) -->
         <link href="css/bootstrap.min.css" rel="stylesheet" />
         <link href="css/font-awesome.min.css" rel="stylesheet" />
@@ -25,6 +26,7 @@
                 padding: 15px;
                 border-radius: 4px;
             }
+
             /* Tabs style */
             .my-order-tabs button {
                 padding: 8px 12px;
@@ -38,11 +40,13 @@
                 border-bottom: 2px solid #e74c3c;
                 font-weight: bold;
             }
+
             /* Hide sections by default */
             .order-section {
                 margin-bottom: 30px;
-                display: none;
+                display: none; /* Hidden by default; shown via JS */
             }
+
             /* Order card container */
             .my-order-card {
                 background: #fff;
@@ -51,11 +55,15 @@
                 margin-bottom: 20px;
                 padding: 15px;
             }
+
+            /* We'll use .order-row to align items horizontally */
             .order-row {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
             }
+
+            /* Left column: image + product info */
             .order-left {
                 display: flex;
                 align-items: center;
@@ -68,14 +76,18 @@
                 border: 1px solid #ccc;
                 border-radius: 4px;
             }
+
+            /* Right column: status, total price, buttons, etc. */
             .order-right {
                 text-align: right;
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
                 gap: 6px;
-                min-width: 160px;
+                min-width: 160px; /* optional, to keep consistent width */
             }
+
+            /* Dropdown for "Show More" (for multiple products in same order) */
             .dropdown-products {
                 display: none;
                 width: 100%;
@@ -89,9 +101,11 @@
                 object-fit: cover;
                 margin-right: 5px;
             }
+
+            /* Status color classes */
             .order-status {
                 font-weight: bold;
-                color: #f1c40f;
+                color: #f1c40f; /* default color */
             }
             .order-status.completed {
                 color: #27ae60;
@@ -108,10 +122,13 @@
             .order-status.returning {
                 color: #9b59b6;
             }
+
             .total-price {
                 font-weight: bold;
                 color: #e67e22;
             }
+
+            /* Buttons/links */
             .btn-link {
                 color: #3498db;
                 text-decoration: none;
@@ -130,6 +147,8 @@
             .buy-again-btn:hover {
                 background-color: #e68a00;
             }
+
+            /* Pagination styling */
             .pagination {
                 text-align: center;
                 margin-top: 10px;
@@ -153,7 +172,8 @@
                 color: #fff;
                 border-color: #ff9800;
             }
-            /* Feedback form styles */
+
+            /* Feedback form styles (chỉ dành cho tab Delivered) */
             .rating .star {
                 font-size: 24px;
                 cursor: pointer;
@@ -162,100 +182,86 @@
         </style>
     </head>
     <body>
-        
 
-        <header id="header"><!--header-->
-            <div class="header_top"><!--header_top-->
+        <!-- ================= HEADER START ================= -->
+        <header id="header">
+            <!-- Bạn copy đầy đủ code header_top, header_middle, header_bottom... của bạn vào đây -->
+            <div class="header_top">
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-6 ">
+                        <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!--/header_top-->
-
-            <div class="header-middle"><!--header-middle-->
+            </div>
+            <div class="header-middle">
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
                             </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        Integer sessionUserId = 0;
-                                        if (user != null) {
-                                            // Sửa getUserID() thành getId() hoặc tên phương thức đúng của bạn
-                                            sessionUserId = user.getId();
-                                        }
-                                        if (isLoggedIn != null && isLoggedIn) {
+                                    <%
+                                      Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                      User user = (User) session.getAttribute("user");
+                                      Integer sessionUserId = 0;
+                                      if (user != null) {
+                                        sessionUserId = user.getId();
+                                      }
+                                      if (isLoggedIn != null && isLoggedIn) {
                                     %>
                                     <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
+                                    <li>
+                                        <a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%= user.getEmail() %></a>
+                                    </li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+                                        <%
+                                          } else {
+                                        %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <%
+                                          }
+                                        %>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!--/header-middle-->
-
-            <div class="header-bottom"><!--header-bottom-->
+            </div>
+            <div class="header-bottom">
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <button
+                                    type="button"
+                                    class="navbar-toggle"
+                                    data-toggle="collapse"
+                                    data-target=".navbar-collapse"
+                                    >
                                     <span class="sr-only">Toggle navigation</span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
@@ -265,18 +271,20 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#" class="active">Shop<i class="fa fa-angle-down"></i></a>
+                                    <li class="dropdown">
+                                        <a href="#">Shop<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController" class="active">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
+                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li>
+                                            <li><a href="CartURL">Cart</a></li>
                                         </ul>
-                                    </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
+                                    </li>
+                                    <li class="dropdown">
+                                        <a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
                                         <ul role="menu" class="sub-menu">
                                             <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
                                         </ul>
-                                    </li> 
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -284,7 +292,6 @@
                             <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
-
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
@@ -293,7 +300,11 @@
                 </div>
             </div>
         </header>
-        <c:set var="sessionUserId" value="<%= sessionUserId %>" />                            
+        <!-- ================= HEADER END ================= -->
+
+        <!-- Biến sessionUserId để dùng cho feedback -->
+        <c:set var="sessionUserId" value="<%= sessionUserId %>" />
+
         <section id="my-orders-section" class="container" style="margin-top: 30px;">
             <!-- Tabs -->
             <div class="my-order-tabs row" style="margin-bottom: 20px;">
@@ -327,9 +338,11 @@
                                     Payment Status: <strong>${first.paymentStatus}</strong><br/>
                                 </div>
                             </div>
-                            <!-- Right: status, total, action buttons -->
+
+                            <!-- Right: status, total, buttons -->
                             <div class="order-right">
                                 <div class="order-status ${first.orderStatus}">${first.orderStatus}</div>
+                                <!-- Tính tổng tiền -->
                                 <c:set var="sum" value="0" scope="page" />
                                 <c:forEach var="line" items="${lines}">
                                     <c:set var="lineTotal" value="${line.price * line.quantity}" scope="page" />
@@ -338,7 +351,10 @@
                                 <div class="total-price">
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
-                                <a href="#" class="btn-link">View Order Details</a>
+
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
+                                <!-- Cancel nếu Awaiting Pickup -->
                                 <c:if test="${first.orderStatus == 'Awaiting Pickup'}">
                                     <a href="javascript:void(0);"
                                        class="btn-link cancel-order"
@@ -347,29 +363,53 @@
                                         Cancel
                                     </a>
                                 </c:if>
-                                <c:if test="${first.orderStatus == 'Cancel'}">
-                                    <button class="buy-again-btn">Buy Again</button>
-                                    <c:if test="${first.paymentStatus eq 'Paid'}">
-                                        <a href="javascript:void(0);"
-                                           class="btn-link refund-order"
-                                           data-orderid="${entry.key}"
-                                           style="color: orange; font-weight: bold;">
-                                            Request Refund
-                                        </a>
-                                    </c:if>
+
+                                <!-- Chỉ hiển thị nút Request Refund nếu orderStatus là "Cancel" và paymentStatus là "Paid" -->
+                                <c:if test="${first.orderStatus eq 'Cancel' and first.paymentStatus eq 'Paid'}">
+                                    <a href="javascript:void(0);"
+                                       class="btn-link refund-order"
+                                       data-orderid="${entry.key}"
+                                       style="color: orange; font-weight: bold;">
+                                        Request Refund
+                                    </a>
                                 </c:if>
+
+
+
+                                <!-- Show More nếu nhiều sản phẩm -->
                                 <c:if test="${count > 1}">
-                                    <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
-                                    <a href="javascript:void(0);" class="toggle-dropdown"
+                                    <span style="color:#999; margin-left:10px;">
+                                        (and ${count - 1} more products)
+                                    </span>
+                                    <a href="javascript:void(0);"
+                                       class="toggle-dropdown"
                                        style="color:blue; text-decoration:underline; margin-left:5px;">
                                         Show More
                                     </a>
                                 </c:if>
                             </div>
                         </div>
+
+                        <!-- Dropdown hiển thị các sản phẩm còn lại -->
+                        <c:if test="${count > 1}">
+                            <div class="dropdown-products">
+                                <c:forEach var="line" items="${lines}" varStatus="loop">
+                                    <c:if test="${loop.index != 0}">
+                                        <div style="margin-bottom: 10px;">
+                                            <img src="${line.imageURL}" alt="Product Image" style="width:60px; height:60px;" />
+                                            <strong>${line.productName}</strong><br/>
+                                            Color: ${line.colorName}, Capacity: ${line.capacity}<br/>
+                                            Quantity: ${line.quantity}<br/>
+                                            Price: <fmt:formatNumber value="${line.price}" type="number" groupingUsed="true"/> ₫
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                     </div>
                 </c:forEach>
-                <!-- Pagination for All -->
+
+                <!-- Pagination for All Orders -->
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalAllPages}" var="p">
                         <c:choose>
@@ -377,9 +417,7 @@
                                 <span class="active-page">${p}</span>
                             </c:when>
                             <c:otherwise>
-                                <a href="CustomerOrderController?service=displayAllOrders&pageAll=${p}&activeTab=all#tab-all">
-                                    ${p}
-                                </a>
+                                <a href="CustomerOrderController?service=displayAllOrders&pageAll=${p}&activeTab=all#tab-all">${p}</a>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>
@@ -394,6 +432,7 @@
                     <c:set var="lines" value="${entry.value}" />
                     <c:set var="count" value="${fn:length(lines)}" />
                     <c:set var="first" value="${lines[0]}" />
+
                     <div class="my-order-card" id="order-pending-${entry.key}">
                         <div class="order-row">
                             <div class="order-left">
@@ -416,24 +455,47 @@
                                 <div class="total-price">
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
-                                <a href="#" class="btn-link">View Order Details</a>
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
                                 <a href="javascript:void(0);"
                                    class="btn-link cancel-order"
                                    data-orderid="${entry.key}"
                                    style="color: red; font-weight: bold;">
                                     Cancel
                                 </a>
+
+
                                 <c:if test="${count > 1}">
-                                    <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
-                                    <a href="javascript:void(0);" class="toggle-dropdown"
+                                    <span style="color:#999; margin-left:10px;">
+                                        (and ${count - 1} more products)
+                                    </span>
+                                    <a href="javascript:void(0);"
+                                       class="toggle-dropdown"
                                        style="color:blue; text-decoration:underline; margin-left:5px;">
                                         Show More
                                     </a>
                                 </c:if>
                             </div>
                         </div>
+
+                        <c:if test="${count > 1}">
+                            <div class="dropdown-products">
+                                <c:forEach var="line" items="${lines}" varStatus="loop">
+                                    <c:if test="${loop.index != 0}">
+                                        <div style="margin-bottom: 10px;">
+                                            <img src="${line.imageURL}" alt="Product Image" style="width:60px; height:60px;" />
+                                            <strong>${line.productName}</strong><br/>
+                                            Color: ${line.colorName}, Capacity: ${line.capacity}<br/>
+                                            Quantity: ${line.quantity}<br/>
+                                            Price: <fmt:formatNumber value="${line.price}" type="number" groupingUsed="true"/> ₫
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                     </div>
                 </c:forEach>
+
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalAwaitingPages}" var="p">
                         <c:choose>
@@ -458,6 +520,7 @@
                     <c:set var="lines" value="${entry.value}" />
                     <c:set var="count" value="${fn:length(lines)}" />
                     <c:set var="first" value="${lines[0]}" />
+
                     <div class="my-order-card" id="order-shipping-${entry.key}">
                         <div class="order-row">
                             <div class="order-left">
@@ -480,9 +543,12 @@
                                 <div class="total-price">
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
-                                <a href="#" class="btn-link">View Order Details</a>
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
                                 <c:if test="${count > 1}">
-                                    <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
+                                    <span style="color:#999; margin-left:10px;">
+                                        (and ${count - 1} more products)
+                                    </span>
                                     <a href="javascript:void(0);" class="toggle-dropdown"
                                        style="color:blue; text-decoration:underline; margin-left:5px;">
                                         Show More
@@ -490,8 +556,25 @@
                                 </c:if>
                             </div>
                         </div>
+
+                        <c:if test="${count > 1}">
+                            <div class="dropdown-products">
+                                <c:forEach var="line" items="${lines}" varStatus="loop">
+                                    <c:if test="${loop.index != 0}">
+                                        <div style="margin-bottom: 10px;">
+                                            <img src="${line.imageURL}" alt="Product Image" style="width:60px; height:60px;" />
+                                            <strong>${line.productName}</strong><br/>
+                                            Color: ${line.colorName}, Capacity: ${line.capacity}<br/>
+                                            Quantity: ${line.quantity}<br/>
+                                            Price: <fmt:formatNumber value="${line.price}" type="number" groupingUsed="true"/> ₫
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </c:if>
                     </div>
                 </c:forEach>
+
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalShippingPages}" var="p">
                         <c:choose>
@@ -509,7 +592,7 @@
             </div>
             <!-- ================= END TAB SHIPPING ================= -->
 
-            <!-- ================= TAB DELIVERED (Chỉ hiển thị feedback cho đơn Delivered) ================= -->
+            <!-- ================= TAB DELIVERED (chứa Feedback) ================= -->
             <div id="tab-delivered" class="order-section">
                 <h3>Delivered</h3>
                 <c:forEach var="entry" items="${deliveredPaged}">
@@ -519,7 +602,7 @@
 
                     <div class="my-order-card" id="order-delivered-${entry.key}">
                         <div class="order-row">
-                            <!-- Left: image + product info của sản phẩm đầu tiên -->
+                            <!-- Left: image + product info (sp đầu tiên) -->
                             <div class="order-left">
                                 <div>
                                     <img src="${first.imageURL}" alt="Product Image" />
@@ -529,14 +612,15 @@
                                     Price: <fmt:formatNumber value="${first.price}" type="number" groupingUsed="true"/> ₫<br/>
                                     Payment Status: <strong>${first.paymentStatus}</strong><br/>
 
-                                    <!-- Feedback cho sản phẩm đầu tiên, sử dụng orderDetailID -->
+                                    <!-- Feedback logic cho sp đầu tiên -->
                                     <c:set var="feedbackKeyName" value="feedbackExists_${first.orderDetailID}" />
                                     <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
                                     <p>${feedbackKey} </p>
+
                                     <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                         <c:choose>
                                             <c:when test="${feedbackKey == true}">
-
+                                                <!-- Nếu feedbackKey == true => đã có feedback => nút Xem feedback -->
                                                 <a href="FeedBackController?service=ListFeedbackWithId&productId=${first.productId}"
                                                    style="display: inline-block; text-align: center; padding: 12px 20px; background: #28a745;
                                                    color: white; border-radius: 5px; text-decoration: none; font-weight: bold;
@@ -545,6 +629,7 @@
                                                 </a>
                                             </c:when>
                                             <c:otherwise>
+                                                <!-- Nếu feedbackKey == false => nút Leave feedback -->
                                                 <button onclick="toggleFeedbackForm('${first.orderDetailID}')"
                                                         style="display: inline-block; text-align: center; padding: 12px 20px; background: #ffc107;
                                                         color: black; border-radius: 5px; font-weight: bold; border: none; cursor: pointer;
@@ -554,33 +639,56 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
-                                    <!-- Form Feedback cho sản phẩm đầu tiên (ID = orderDetailID) -->
-                                    <div id="feedback-form-container-${first.orderDetailID}" style="display: none; width: 100%; max-width: 600px; margin: 20px auto;">
+
+                                    <!-- Form Feedback (ẩn mặc định) cho sản phẩm đầu tiên -->
+                                    <div id="feedback-form-container-${first.orderDetailID}"
+                                         style="display: none; width: 100%; max-width: 600px; margin: 20px auto;">
                                         <form action="CustomerOrderController" method="post" enctype="multipart/form-data"
                                               id="feedback-form-${first.orderDetailID}"
                                               onsubmit="submitFeedback(event, '${first.orderDetailID}')"
-                                              style="width: 100%; padding: 20px; background: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                            <h4 style="text-align: center; font-size: 20px; margin-bottom: 15px; color: #333;">Leave your feedback</h4>
+                                              style="width: 100%; padding: 20px; background: #f9f9f9; border-radius: 10px;
+                                              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <h4 style="text-align: center; font-size: 20px; margin-bottom: 15px; color: #333;">
+                                                Leave your feedback
+                                            </h4>
                                             <input type="hidden" name="service" value="SubmitFeedback">
                                             <input type="hidden" name="product_id" value="${first.productId}">
                                             <input type="hidden" name="reviewerID" value="${sessionUserId}">
                                             <input type="hidden" name="orderdetailID" value="${first.orderDetailID}">
                                             <input type="hidden" id="rating-${first.orderDetailID}" name="rating" value="0">
-                                            <div class="rating" data-orderdetailid="${first.orderDetailID}" style="text-align: center; margin-bottom: 10px;">
+
+                                            <!-- Rating stars -->
+                                            <div class="rating" data-orderdetailid="${first.orderDetailID}"
+                                                 style="text-align: center; margin-bottom: 10px;">
                                                 <span class="star" data-value="1">&#9733;</span>
                                                 <span class="star" data-value="2">&#9733;</span>
                                                 <span class="star" data-value="3">&#9733;</span>
                                                 <span class="star" data-value="4">&#9733;</span>
                                                 <span class="star" data-value="5">&#9733;</span>
                                             </div>
+
                                             <textarea id="feedback-text-${first.orderDetailID}" name="content" placeholder="Write your feedback..."
                                                       style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px;
                                                       resize: none; margin-bottom: 10px; font-size: 16px;"></textarea>
-                                            <label for="feedback-image-${first.orderDetailID}" style="display: block; margin-top: 10px; font-weight: bold;">Upload Images:</label>
-                                            <input type="file" id="feedback-image-${first.orderDetailID}" name="images" accept="image/*" multiple
-                                                   style="width: 100%; margin-top: 5px;" onchange="previewImages(event, '${first.orderDetailID}')">
-                                            <div id="image-preview-${first.orderDetailID}" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
-                                            <button type="submit" style="width: 100%; background: #28a745; color: white; padding: 12px;
+
+                                            <label for="feedback-image-${first.orderDetailID}"
+                                                   style="display: block; margin-top: 10px; font-weight: bold;">
+                                                Upload Images:
+                                            </label>
+                                            <input type="file"
+                                                   id="feedback-image-${first.orderDetailID}"
+                                                   name="images"
+                                                   accept="image/*"
+                                                   multiple
+                                                   style="width: 100%; margin-top: 5px;"
+                                                   onchange="previewImages(event, '${first.orderDetailID}')">
+
+                                            <div id="image-preview-${first.orderDetailID}"
+                                                 style="display: flex; flex-wrap: wrap; margin-top: 10px;">
+                                            </div>
+
+                                            <button type="submit"
+                                                    style="width: 100%; background: #28a745; color: white; padding: 12px;
                                                     border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 16px;">
                                                 Submit
                                             </button>
@@ -588,6 +696,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Right: Status, Total, Action Buttons -->
                             <div class="order-right">
                                 <div class="order-status completed">${first.orderStatus}</div>
@@ -599,23 +708,22 @@
                                 <div class="total-price">
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
-                                <a href="#" class="btn-link">View Order Details</a>
-                                <a href="javascript:void(0);"
-                                   class="btn-link refund-order"
-                                   data-orderid="${entry.key}"
-                                   style="color: orange; font-weight: bold;">
-                                    Request Refund
-                                </a>
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
                                 <c:if test="${count > 1}">
-                                    <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
-                                    <a href="javascript:void(0);" class="toggle-dropdown"
+                                    <span style="color:#999; margin-left:10px;">
+                                        (and ${count - 1} more products)
+                                    </span>
+                                    <a href="javascript:void(0);"
+                                       class="toggle-dropdown"
                                        style="color:blue; text-decoration:underline; margin-left:5px;">
                                         Show More
                                     </a>
                                 </c:if>
                             </div>
                         </div>
-                        <!-- Dropdown: Feedback cho các sản phẩm còn lại -->
+
+                        <!-- Dropdown: feedback cho các sp còn lại -->
                         <c:if test="${count > 1}">
                             <div class="dropdown-products">
                                 <c:forEach var="line" items="${lines}" varStatus="loop">
@@ -628,9 +736,10 @@
                                             Price: <fmt:formatNumber value="${line.price}" type="number" groupingUsed="true"/> ₫<br/>
                                             Payment Status: <strong>${line.paymentStatus}</strong><br/>
 
-                                            <!-- Feedback cho sản phẩm bổ sung (sử dụng orderDetailID) -->
+                                            <!-- Feedback logic cho sản phẩm bổ sung -->
                                             <c:set var="feedbackKeyName" value="feedbackExists_${line.orderDetailID}" />
                                             <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
+
                                             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                                 <c:choose>
                                                     <c:when test="${feedbackKey == true}">
@@ -651,33 +760,55 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </div>
-                                            <!-- Form Feedback cho sản phẩm bổ sung, ID = orderDetailID -->
-                                            <div id="feedback-form-container-${line.orderDetailID}" style="display: none; width: 100%; max-width: 600px; margin: 20px auto;">
+
+                                            <!-- Form Feedback cho sản phẩm bổ sung -->
+                                            <div id="feedback-form-container-${line.orderDetailID}"
+                                                 style="display: none; width: 100%; max-width: 600px; margin: 20px auto;">
                                                 <form action="CustomerOrderController" method="post" enctype="multipart/form-data"
                                                       id="feedback-form-${line.orderDetailID}"
                                                       onsubmit="submitFeedback(event, '${line.orderDetailID}')"
                                                       style="width: 100%; padding: 20px; background: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                                    <h4 style="text-align: center; font-size: 20px; margin-bottom: 15px; color: #333;">Leave your feedback</h4>
+                                                    <h4 style="text-align: center; font-size: 20px; margin-bottom: 15px; color: #333;">
+                                                        Leave your feedback
+                                                    </h4>
                                                     <input type="hidden" name="service" value="SubmitFeedback">
                                                     <input type="hidden" name="product_id" value="${line.productId}">
                                                     <input type="hidden" name="reviewerID" value="${sessionUserId}">
                                                     <input type="hidden" name="orderdetailID" value="${line.orderDetailID}">
                                                     <input type="hidden" id="rating-${line.orderDetailID}" name="rating" value="0">
-                                                    <div class="rating" data-orderdetailid="${line.orderDetailID}" style="text-align: center; margin-bottom: 10px;">
+
+                                                    <!-- Rating stars -->
+                                                    <div class="rating" data-orderdetailid="${line.orderDetailID}"
+                                                         style="text-align: center; margin-bottom: 10px;">
                                                         <span class="star" data-value="1">&#9733;</span>
                                                         <span class="star" data-value="2">&#9733;</span>
                                                         <span class="star" data-value="3">&#9733;</span>
                                                         <span class="star" data-value="4">&#9733;</span>
                                                         <span class="star" data-value="5">&#9733;</span>
                                                     </div>
+
                                                     <textarea id="feedback-text-${line.orderDetailID}" name="content" placeholder="Write your feedback..."
                                                               style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px;
                                                               resize: none; margin-bottom: 10px; font-size: 16px;"></textarea>
-                                                    <label for="feedback-image-${line.orderDetailID}" style="display: block; margin-top: 10px; font-weight: bold;">Upload Images:</label>
-                                                    <input type="file" id="feedback-image-${line.orderDetailID}" name="images" accept="image/*" multiple
-                                                           style="width: 100%; margin-top: 5px;" onchange="previewImages(event, '${line.orderDetailID}')">
-                                                    <div id="image-preview-${line.orderDetailID}" style="display: flex; flex-wrap: wrap; margin-top: 10px;"></div>
-                                                    <button type="submit" style="width: 100%; background: #28a745; color: white; padding: 12px;
+
+                                                    <label for="feedback-image-${line.orderDetailID}"
+                                                           style="display: block; margin-top: 10px; font-weight: bold;">
+                                                        Upload Images:
+                                                    </label>
+                                                    <input type="file"
+                                                           id="feedback-image-${line.orderDetailID}"
+                                                           name="images"
+                                                           accept="image/*"
+                                                           multiple
+                                                           style="width: 100%; margin-top: 5px;"
+                                                           onchange="previewImages(event, '${line.orderDetailID}')">
+
+                                                    <div id="image-preview-${line.orderDetailID}"
+                                                         style="display: flex; flex-wrap: wrap; margin-top: 10px;">
+                                                    </div>
+
+                                                    <button type="submit"
+                                                            style="width: 100%; background: #28a745; color: white; padding: 12px;
                                                             border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-size: 16px;">
                                                         Submit
                                                     </button>
@@ -690,6 +821,8 @@
                         </c:if>
                     </div>
                 </c:forEach>
+
+                <!-- Pagination for Delivered -->
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalDeliveredPages}" var="p">
                         <c:choose>
@@ -715,6 +848,7 @@
                         <c:set var="lines" value="${entry.value}" />
                         <c:set var="count" value="${fn:length(lines)}" />
                         <c:set var="first" value="${lines[0]}" />
+
                         <div class="my-order-card" id="order-canceled-${entry.key}">
                             <div class="order-row">
                                 <div class="order-left">
@@ -737,9 +871,11 @@
                                     <div class="total-price">
                                         <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                     </div>
-                                    <button class="buy-again-btn">Buy Again</button>
-                                    <a href="#" class="btn-link">View Order Details</a>
-                                    <c:if test="${first.paymentStatus eq 'Paid'}">
+                                    <a href="ProductController" class="buy-again-btn">Buy Again</a>
+                                    <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
+                                    <!-- Chỉ hiển thị nút Request Refund nếu orderStatus là "Cancel" và paymentStatus là "Paid" -->
+                                    <c:if test="${first.orderStatus eq 'Cancel' and first.paymentStatus eq 'Paid'}">
                                         <a href="javascript:void(0);"
                                            class="btn-link refund-order"
                                            data-orderid="${entry.key}"
@@ -747,15 +883,19 @@
                                             Request Refund
                                         </a>
                                     </c:if>
+
+
                                     <c:if test="${count > 1}">
                                         <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
-                                        <a href="javascript:void(0);" class="toggle-dropdown"
+                                        <a href="javascript:void(0);"
+                                           class="toggle-dropdown"
                                            style="color:blue; text-decoration:underline; margin-left:5px;">
                                             Show More
                                         </a>
                                     </c:if>
                                 </div>
                             </div>
+
                             <c:if test="${count > 1}">
                                 <div class="dropdown-products">
                                     <c:forEach var="line" items="${lines}" varStatus="loop">
@@ -775,6 +915,7 @@
                         </div>
                     </c:forEach>
                 </div>
+
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalCanceledPages}" var="p">
                         <c:choose>
@@ -799,6 +940,7 @@
                     <c:set var="lines" value="${entry.value}" />
                     <c:set var="count" value="${fn:length(lines)}" />
                     <c:set var="first" value="${lines[0]}" />
+
                     <div class="my-order-card" id="order-refund-${entry.key}">
                         <div class="order-row">
                             <div class="order-left">
@@ -821,9 +963,11 @@
                                 <div class="total-price">
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
-                                <a href="#" class="btn-link">View Order Details</a>
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
                             </div>
                         </div>
+
                         <c:if test="${count > 1}">
                             <div class="dropdown-products">
                                 <c:forEach var="line" items="${lines}" varStatus="loop">
@@ -842,6 +986,7 @@
                         </c:if>
                     </div>
                 </c:forEach>
+
                 <div class="pagination">
                     <c:forEach begin="1" end="${totalRefundPages}" var="p">
                         <c:choose>
@@ -860,6 +1005,7 @@
             <!-- ================= END TAB REFUND ================= -->
         </section>
 
+        <!-- ================= FOOTER START ================= -->
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -1017,6 +1163,7 @@
             </div>
 
         </footer><!--/Footer-->
+        <!-- ================= FOOTER END ================= -->
 
         <!-- JS libs -->
         <script src="js/jquery.js"></script>
@@ -1026,20 +1173,31 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
+
         <script>
                                                                // Lấy param activeTab từ server (nếu có)
                                                                const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
+
                                                                // Hàm hiển thị tab
                                                                function showTab(tab) {
-                                                                   document.querySelectorAll(".order-section").forEach(sec => sec.style.display = "none");
+                                                                   // Ẩn tất cả order-section
+                                                                   document.querySelectorAll(".order-section").forEach((sec) => (sec.style.display = "none"));
+                                                                   // Hiển thị tab mong muốn
                                                                    const tabDiv = document.getElementById("tab-" + tab);
-                                                                   if (tabDiv)
+                                                                   if (tabDiv) {
                                                                        tabDiv.style.display = "block";
-                                                                   document.querySelectorAll(".my-order-tabs button").forEach(btn => btn.classList.remove("active"));
+                                                                   }
+                                                                   // Bỏ active trên tất cả button
+                                                                   document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
+                                                                       btn.classList.remove("active");
+                                                                   });
+                                                                   // Tìm button có data-tab=xxx => active
                                                                    const activeBtn = document.querySelector('.my-order-tabs button[data-tab="' + tab + '"]');
-                                                                   if (activeBtn)
+                                                                   if (activeBtn) {
                                                                        activeBtn.classList.add("active");
+                                                                   }
                                                                }
+
                                                                // Khi trang load, hiển thị tab theo param activeTab
                                                                document.addEventListener("DOMContentLoaded", () => {
                                                                    if (serverActiveTab) {
@@ -1048,14 +1206,16 @@
                                                                        showTab("all");
                                                                    }
                                                                });
+
                                                                // Gắn sự kiện click cho các button tab
-                                                               document.querySelectorAll(".my-order-tabs button").forEach(btn => {
+                                                               document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
                                                                    btn.addEventListener("click", () => {
                                                                        const tabName = btn.getAttribute("data-tab");
                                                                        showTab(tabName);
                                                                    });
                                                                });
-                                                               // Toggle "Show More"
+
+                                                               // Toggle "Show More" cho tất cả tabs
                                                                $(document).on("click", ".toggle-dropdown", function () {
                                                                    let $dropdown = $(this).closest(".my-order-card").find(".dropdown-products");
                                                                    if ($dropdown.is(":visible")) {
@@ -1066,6 +1226,7 @@
                                                                        $(this).text("Hide");
                                                                    }
                                                                });
+
                                                                // ========== Ajax for Cancel / Refund ==========
                                                                $(document).ready(function () {
                                                                    // Cancel order
@@ -1080,6 +1241,7 @@
                                                                                success: function (response) {
                                                                                    if (response.success) {
                                                                                        alert(response.message);
+                                                                                       // Reload => sang tab canceled => pageCanceled=1 => newlyCanceled
                                                                                        window.location.href =
                                                                                                "CustomerOrderController?service=displayAllOrders&activeTab=canceled&pageCanceled=1&newlyCanceled=" + orderId;
                                                                                    } else {
@@ -1088,24 +1250,33 @@
                                                                                },
                                                                                error: function () {
                                                                                    alert("An error occurred while processing your request.");
-                                                                               }
+                                                                               },
                                                                            });
                                                                        }
                                                                    });
+
                                                                    // Refund order
                                                                    $(".refund-order").click(function () {
                                                                        let orderId = $(this).data("orderid");
-                                                                       if (confirm("Are you sure you want to request a refund? (Only for Delivered or Cancel + Paid)")) {
+                                                                       if (confirm("Are you sure you want to request a refund?")) {
                                                                            $.ajax({
                                                                                url: "CustomerOrderController",
                                                                                type: "GET",
-                                                                               data: {service: "refundOrder", orderId: orderId, ajax: "true"},
+                                                                               data: {
+                                                                                   service: "refundOrder",
+                                                                                   orderId: orderId,
+                                                                                   ajax: "true"
+                                                                               },
                                                                                dataType: "json",
                                                                                success: function (response) {
                                                                                    if (response.success) {
                                                                                        alert(response.message);
+                                                                                       // Reload => tab return => pageRefund=1 & newlyRefunded=orderId
                                                                                        window.location.href =
-                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=return&pageRefund=1";
+                                                                                               "CustomerOrderController?service=displayAllOrders"
+                                                                                               + "&activeTab=return"
+                                                                                               + "&pageRefund=1"
+                                                                                               + "&newlyRefunded=" + orderId;
                                                                                    } else {
                                                                                        alert(response.message);
                                                                                    }
@@ -1116,16 +1287,23 @@
                                                                            });
                                                                        }
                                                                    });
+
                                                                });
-                                                               // ========== FEEDBACK FUNCTIONS (Chỉ ở tab Delivered) ==========
-                                                               // Toggle Feedback Form sử dụng orderDetailID
+
+                                                               // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========
+                                                               // Toggle Feedback Form theo orderDetailID
                                                                function toggleFeedbackForm(orderDetailID) {
                                                                    var formContainer = document.getElementById("feedback-form-container-" + orderDetailID);
+                                                                   if (!formContainer)
+                                                                       return;
                                                                    formContainer.style.display = (formContainer.style.display === "none") ? "block" : "none";
                                                                }
-                                                               // Preview Images sử dụng orderDetailID
+
+                                                               // Preview Images
                                                                function previewImages(event, orderDetailID) {
                                                                    var previewContainer = document.getElementById("image-preview-" + orderDetailID);
+                                                                   if (!previewContainer)
+                                                                       return;
                                                                    previewContainer.innerHTML = '';
                                                                    var files = event.target.files;
                                                                    if (!files.length)
@@ -1144,6 +1322,7 @@
                                                                            img.style.objectFit = "cover";
                                                                            img.style.borderRadius = "5px";
                                                                            img.style.border = "1px solid #ddd";
+
                                                                            let removeBtn = document.createElement("span");
                                                                            removeBtn.innerHTML = "❌";
                                                                            removeBtn.style.position = "absolute";
@@ -1164,11 +1343,14 @@
                                                                        reader.readAsDataURL(file);
                                                                    }
                                                                }
-                                                               // Submit Feedback (nếu muốn dùng AJAX, thêm logic tại đây)
+
+                                                               // Submit Feedback
                                                                function submitFeedback(e, orderDetailID) {
-                                                                   // Mặc định để form submit theo cách thông thường
+                                                                   // Nếu muốn xử lý AJAX, bạn viết thêm logic ở đây
+                                                                   // Mặc định form sẽ submit sang CustomerOrderController
                                                                }
-                                                               // Xử lý Rating, sử dụng orderDetailID
+
+                                                               // Xử lý rating
                                                                document.addEventListener("DOMContentLoaded", () => {
                                                                    document.querySelectorAll(".rating").forEach((ratingContainer) => {
                                                                        let odID = ratingContainer.dataset.orderdetailid;
@@ -1185,6 +1367,7 @@
                                                                        });
                                                                    });
                                                                });
+
         </script>
     </body>
 </html>

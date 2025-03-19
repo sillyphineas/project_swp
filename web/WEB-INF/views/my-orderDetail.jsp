@@ -1,129 +1,46 @@
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="entity.OrderInformation" %>
+<%@ page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="entity.User"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>User Profile</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
-        <link rel="shortcut icon" href="images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-
+        <meta charset="UTF-8" />
+        <title>Order Details | E-Shopper</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/main.css" rel="stylesheet" />
+        <link href="css/responsive.css" rel="stylesheet" />
         <style>
-            /* Đặt lại phần mặc định, cơ bản cho toàn trang */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+            .bill-container {
+                background: #fff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                margin: 30px auto;
+                max-width: 900px;
             }
-
-            body {
-                font-family: Arial, sans-serif;
-                background: #ffffff;
-                color: #333;
-            }
-
-            /* Container bao quanh nội dung chính */
-            /*        .container {
-                        max-width: 100%;
-                        margin: 50px auto;
-                        background: #fff;
-                        padding: 30px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    }*/
-
-            h3 {
+            .bill-header h2 {
+                text-align: center;
                 margin-bottom: 20px;
-                font-size: 28px;
-                text-align: center;
-                color: #444;
+                color: #FE980F;
             }
-
-            /* Container for the two tables */
-            .table-container {
-                display: flex;
-                justify-content: space-between; /* Aligns tables with space in between */
-                /*                gap: 20px;  Space between the two tables */
-                margin-top: 20px; /* Optional, adjust spacing from previous content */
+            .bill-header table, .bill-body table {
+                width: 100%;
             }
-
-            /* Style for the tables */
-            table {
-                width: 48%; /* Adjust width so that both tables fit side by side */
-                /*                border-collapse: collapse;*/
-                /*                background: #fff;*/
-                /*                border-radius: 8px;
-                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
-                padding: 10px;
-            }
-
-            /* Table headers */
-            th {
+            .bill-header th {
                 width: 30%;
-                text-align: left;
-                /*                background-color: #f0f0f0;*/
             }
-
-            /* Table cells */
-            td {
-                padding: 12px;
-                /*                border-bottom: 1px solid #ddd;*/
-                vertical-align: middle;
-            }
-
-
-            /* Chỉnh sửa nút */
-            .button-group {
+            .bill-footer {
+                text-align: right;
                 margin-top: 20px;
-                text-align: center;
             }
-
-            .btn {
-                display: inline-block;
-                margin: 0 10px;
-                padding: 12px 20px;
-                font-size: 14px;
-                text-decoration: none;
-                border-radius: 5px;
-                color: #fff;
-                background: #007bff;
-                transition: background 0.3s ease;
-            }
-
-            .btn:hover {
-                background: #0056b3;
-            }
-
-            .btn-back {
-                background-color: #6c757d;
-            }
-
-            .btn-back:hover {
-                background-color: #495057;
+            .table-bordered th,
+            .table-bordered td {
+                border: 1px solid #ddd !important;
             }
         </style>
-    </head><!--/head-->
-
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -176,7 +93,7 @@
                                     
                                                                         <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
 
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
                                     <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
@@ -188,49 +105,164 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                            <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                        </ul>
+                                    </li> 
+                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
+                                        </ul>
+                                    </li> 
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
+                    </div>
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
+        <section class="container">
+            <div class="bill-container" id="billDetails">
+                <div class="bill-header">
+                    <h2>Order #<c:out value="${selectedOrderID}" /></h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Customer Information</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Recipient Name:</th>
+                                    <td><c:out value="${orderDetails[0].recipientName}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone Number:</th>
+                                    <td><c:out value="${orderDetails[0].recipientPhone}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Shipping Address:</th>
+                                    <td>
+                                        <c:out value="${orderDetails[0].address}" /> - 
+                                        <c:out value="${orderDetails[0].district}" /> - 
+                                        <c:out value="${orderDetails[0].city}" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Order Information</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Payment Method:</th>
+                                    <td><c:out value="${orderDetails[0].paymentName}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Status:</th>
+                                    <td style="color: ${orderDetails[0].paymentStatus eq 'Paid' ? 'green' : 'red'};">
+                                        <c:out value="${orderDetails[0].paymentStatus}" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Order Date:</th>
+                                    <td>
+                                        <fmt:formatDate value="${orderDetails[0].orderTime}" pattern="dd/MM/yyyy HH:mm" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="container">
-            <h1>User Profile</h1>
-            <div class="profile-image" style="text-align: center">
-                <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
+                <div class="bill-body">
+                    <h4>Products</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr style="background-color: #F0F0E9;">
+                                    <th>Product</th>
+                                    <th>Image</th>
+                                    <th>Color</th>
+                                    <th>Storage</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:set var="orderTotal" value="0" />
+                                <c:forEach var="detail" items="${orderDetails}">
+                                    <c:set var="itemTotal" value="${detail.price * detail.quantity}" />
+                                    <c:set var="orderTotal" value="${orderTotal + itemTotal}" />
+                                    <tr>
+                                        <td><c:out value="${detail.productName}" /></td>
+                                        <td style="text-align: center;">
+                                            <img src="<c:out value='${detail.imageURL}' />" alt="Product Image" width="50" height="50">
+                                        </td>
+                                        <td style="text-align: center;"><c:out value="${detail.colorName}" /></td>
+                                        <td style="text-align: center;"><c:out value="${detail.capacity}" /></td>
+                                        <td style="text-align: center;"><c:out value="${detail.quantity}" /></td>
+                                        <td style="text-align: right;">
+                                            <fmt:formatNumber value="${detail.price}" type="number" groupingUsed="true"/>
+                                            VND
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <fmt:formatNumber value="${itemTotal}" type="number" groupingUsed="true"/>
+                                            VND
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight: bold; background-color: #F0F0E9;">
+                                    <td colspan="6" style="text-align: right;">Order Total:</td>
+                                    <td style="text-align: right;">
+                                        <fmt:formatNumber value="${orderTotal}" type="number" groupingUsed="true"/> VND
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="bill-footer">
+                    <a href="CustomerOrderController?service=displayAllOrders" class="btn btn-primary">
+                        <i class="fa fa-arrow-left"></i> Back to Orders
+                    </a>
+                    <button onclick="printBill()" class="btn btn-success">
+                        <i class="fa fa-print"></i> Print Bill
+                    </button>
+                </div>
             </div>
-            <h3>${user.name}</h3>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <th>Email:</th>
-                        <td>${user.email}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone:</th>
-                        <td>${user.phoneNumber}</td>
-                    </tr>
-                </table>
-
-                <table>
-                    <tr>
-                        <th>Gender:</th>
-                        <td>${user.gender ? 'Male' : 'Female'}</td>
-                    </tr>
-                    <tr>
-                        <th>Date of Birth:</th>
-                        <td>${user.dateOfBirth}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="button-group">
-
-                <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}">Update Profile</a>
-
-                <a class="btn btn-back" href="HomePageController">Back to Home</a>
-            </div>
-        </div>
-
-
-
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -388,15 +420,20 @@
                 </div>
             </div>
 
-        </footer><!--/Footer-->
+        </footer><!--/Footer-->>
 
-
-
+        <!-- JS libs -->
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
+        <script>
+                        function printBill() {
+                            window.print();
+                        }
+        </script>
     </body>
 </html>
