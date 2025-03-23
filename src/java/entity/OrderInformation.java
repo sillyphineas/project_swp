@@ -8,6 +8,7 @@ public class OrderInformation {
     private String orderStatus;
     private double totalPrice;
     private String paymentName;
+    private String paymentStatus;
     private String recipientName;
     private String recipientPhone;
     private int quantity;
@@ -23,10 +24,109 @@ public class OrderInformation {
     private String address;
     private String district;
     private String city;
+    private int productId;
+    private int orderDetailID;
 
     public OrderInformation() {
     }
 
+    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, String paymentName, String paymentStatus, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
+        this.id = id;
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
+        this.paymentName = paymentName;
+        this.paymentStatus = paymentStatus;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.quantity = quantity;
+        this.shippingStatus = shippingStatus;
+        this.shippingDate = shippingDate;
+        this.estimatedArrival = estimatedArrival;
+        this.actualArrival = actualArrival;
+        this.colorName = colorName;
+        this.capacity = capacity;
+        this.price = price;
+        this.productName = productName;
+        this.imageURL = imageURL;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.productId = productId;
+        this.orderDetailID =orderDetailID;
+    }
+    
+    public OrderInformation(
+            int id,
+            Date orderTime,
+            String orderStatus,
+            double totalPrice,
+            String paymentName,
+            String paymentStatus,
+            String recipientName,
+            String recipientPhone,
+            int quantity,
+            String shippingStatus,
+            Date shippingDate,
+            Date estimatedArrival,
+            Date actualArrival,
+            String colorName,
+            String capacity,
+            double price,
+            String productName,
+            String imageURL,
+            String address,
+            String district,
+            String city
+    ) {
+        this.id = id;
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
+        this.paymentName = paymentName;
+        this.paymentStatus = paymentStatus;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.quantity = quantity;
+        this.shippingStatus = shippingStatus;
+        this.shippingDate = shippingDate;
+        this.estimatedArrival = estimatedArrival;
+        this.actualArrival = actualArrival;
+        this.colorName = colorName;
+        this.capacity = capacity;
+        this.price = price;
+        this.productName = productName;
+        this.imageURL = imageURL;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+    }
+
+    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, String paymentName, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
+        this.id = id;
+        this.orderTime = orderTime;
+        this.orderStatus = orderStatus;
+        this.totalPrice = totalPrice;
+        this.paymentName = paymentName;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.quantity = quantity;
+        this.shippingStatus = shippingStatus;
+        this.shippingDate = shippingDate;
+        this.estimatedArrival = estimatedArrival;
+        this.actualArrival = actualArrival;
+        this.colorName = colorName;
+        this.capacity = capacity;
+        this.price = price;
+        this.productName = productName;
+        this.imageURL = imageURL;
+        this.address = address;
+        this.district = district;
+        this.city = city;
+        this.productId = productId;
+        this.orderDetailID =orderDetailID;
+    }
+    
     public OrderInformation(
             int id,
             Date orderTime,
@@ -111,6 +211,13 @@ public class OrderInformation {
     }
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     public String getRecipientPhone() {
@@ -210,4 +317,22 @@ public class OrderInformation {
     public void setCity(String city) {
         this.city = city;
     }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getOrderDetailID() {
+        return orderDetailID;
+    }
+
+    public void setOrderDetailID(int orderDetailID) {
+        this.orderDetailID = orderDetailID;
+    }
+    
+    
 }

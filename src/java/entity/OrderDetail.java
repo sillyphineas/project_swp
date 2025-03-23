@@ -5,6 +5,77 @@ public class OrderDetail {
     private int orderId;
     private int productVariantID; 
     private int quantity;
+    
+    private ProductVariant productVariant;
+    private  Payment payment;
+    private  PaymentMethod paymentMethod;
+    private String RecipientPhone, RecipientName, ShippingAddress;
+    private String orderTime;
+
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
+    }
+    
+    
+    
+    
+    public String getRecipientPhone() {
+        return RecipientPhone;
+    }
+
+    public void setRecipientPhone(String RecipientPhone) {
+        this.RecipientPhone = RecipientPhone;
+    }
+
+    public String getRecipientName() {
+        return RecipientName;
+    }
+
+    public void setRecipientName(String RecipientName) {
+        this.RecipientName = RecipientName;
+    }
+
+    public String getShippingAddress() {
+        return ShippingAddress;
+    }
+
+    public void setShippingAddress(String ShippingAddress) {
+        this.ShippingAddress = ShippingAddress;
+    }
+    
+    
+    
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    
+    
+    
+
+    public ProductVariant getProductVariant() {
+        return productVariant;
+    }
+
+    public void setProductVariant(ProductVariant productVariant) {
+        this.productVariant = productVariant;
+    }
+    
 
     public OrderDetail() {
     }
@@ -63,4 +134,5 @@ public class OrderDetail {
                 ", quantity=" + quantity +
                 '}';
     }
+
 }

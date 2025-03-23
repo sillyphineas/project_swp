@@ -16,8 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import model.DAOFeedback;
 
@@ -26,7 +30,7 @@ import model.DAOFeedback;
  * @author ASUS
  */
 @WebServlet(name = "FeedBackController", urlPatterns = {"/FeedBackController"})
-public class FeetBacksController extends HttpServlet {
+public class FeedBackController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,7 +49,7 @@ public class FeetBacksController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
             if (service == null) {
-                service = "listAllfeedBack";
+                service = "ListFeedbackWithId";
             }
             if (service.equals("listAllfeedBack")) {
                 try {
@@ -82,7 +86,7 @@ public class FeetBacksController extends HttpServlet {
 
                     int productId = 0;
                     int page = 1;
-                    int pageSize = 10; // Số feedback trên mỗi trang
+                    int pageSize = 5; // Số feedback trên mỗi trang
 
                     if (productIdStr != null && productIdStr.matches("\\d+")) {
                         productId = Integer.parseInt(productIdStr);
@@ -95,7 +99,6 @@ public class FeetBacksController extends HttpServlet {
                         page = Integer.parseInt(pageStr);
                     }
 
-                    // Lấy danh sách feedback phân trang theo productId
                     List<Feedback> feedbacks = dao.getPaginatedFeedbacksByProductId(productId, page, pageSize);
                     int totalFeedbacks = dao.getTotalFeedbacksByProductId(productId);
 
@@ -104,7 +107,7 @@ public class FeetBacksController extends HttpServlet {
                     request.setAttribute("feedbacks", feedbacks);
                     request.setAttribute("currentPage", page);
                     request.setAttribute("totalPages", totalPages);
-                    request.setAttribute("productId", productId); // Giữ lại productId để load tiếp trang khác
+                    request.setAttribute("productId", productId);
 
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/list-all-feedback.jsp");
                     dispatcher.forward(request, response);
@@ -116,57 +119,16 @@ public class FeetBacksController extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing feedbacks");
                 }
             }
-
-            if (service.equals("uploadImages")) {
-                try {
-                    String feedbackIdStr = request.getParameter("feedbackId");
-                    if (feedbackIdStr == null || !feedbackIdStr.matches("\\d+")) {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu hoặc sai feedbackId");
-                        return;
-                    }
-                    int feedbackId = Integer.parseInt(feedbackIdStr);
-
-                    Collection<Part> parts = request.getParts();
-                    List<String> imagePaths = new ArrayList<>();
-                    String uploadDir = getServletContext().getRealPath("") + File.separator + "uploads";
-                    File uploadFolder = new File(uploadDir);
-                    if (!uploadFolder.exists()) {
-                        uploadFolder.mkdir();
-                    }
-
-                    for (Part part : parts) {
-                        if (part.getName().equals("images") && part.getSize() > 0) {
-                            String fileName = extractFileName(part);
-                            String filePath = "uploads" + File.separator + fileName;
-                            part.write(uploadDir + File.separator + fileName);
-                            imagePaths.add(filePath);
-                        }
-                    }
-
-                    if (!imagePaths.isEmpty()) {
-                        String jsonImages = new Gson().toJson(imagePaths);
-                        dao.saveImages(feedbackId, jsonImages);  // Lưu ảnh cho đúng feedbackId
-                    }
-
-                    request.setAttribute("message", "Upload thành công!");
-                    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/product-details.jsp");
-                    dispatcher.forward(request, response);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi upload ảnh");
-                }
-            }
             if (service.equals("FilterByStar")) {
                 try {
                     String productIdStr = request.getParameter("productId");
                     String starStr = request.getParameter("star");
                     String pageStr = request.getParameter("page");
-                    System.out.println("star"+starStr+"ProductId"+productIdStr);
+                    System.out.println("star" + starStr + "ProductId" + productIdStr);
                     int productId = 0;
                     int star = 0;
                     int page = 1;
-                    int pageSize = 10; // Số feedback trên mỗi trang
+                    int pageSize = 5; // Số feedback trên mỗi trang
 
                     if (productIdStr != null && productIdStr.matches("\\d+")) {
                         productId = Integer.parseInt(productIdStr);
@@ -207,6 +169,7 @@ public class FeetBacksController extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing feedbacks");
                 }
             }
+            
 
         }
     }
@@ -237,6 +200,7 @@ public class FeetBacksController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+         System.out.println("Received POST request for FeedBackController"); // Debug log
         processRequest(request, response);
     }
 
@@ -258,6 +222,17 @@ public class FeetBacksController extends HttpServlet {
             }
         }
         return null;
+    }
+
+    class ResponseMessage {
+
+        private String status;
+        private String message;
+
+        public ResponseMessage(String status, String message) {
+            this.status = status;
+            this.message = message;
+        }
     }
 
 }

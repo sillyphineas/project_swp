@@ -87,7 +87,7 @@
                             } else if (roleId == 4) {
                                 window.location.href = "<%= request.getContextPath() %>/ShipperDashboardController";
                             } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/salesDashboardController";
                             } else if (roleId == 2) {
                                 window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
 
@@ -241,10 +241,7 @@
                                 <input type="email" name="email" placeholder="Email"  required/>
                                 <input type="password" name="password" placeholder="Password" required/>
                                 <div id="error" style="color: red; font-style: italic;"></div>
-                                <span>
-                                    <input type="checkbox" class="checkbox"> 
-                                    Keep me signed in
-                                </span>
+                                <a href="ResetController?service=findYourAccount">Forgotten password?</a>
                                 <button type="button" class="btn btn-default" onclick="login()">Login</button>
                             </form>
                         </div>
