@@ -195,15 +195,10 @@ public class SaleOrderController extends HttpServlet {
             if (service.equals("ShipperAssignment")) {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    // Lấy danh sách shipper từ Users role=4 và isDisabled=0
                     ResultSet rsShippers = dao.getData("SELECT id, name FROM Users WHERE roleId = 4 AND isDisabled = 0");
-
-                    // Lấy orderID từ request
                     String orderIDStr = request.getParameter("orderID");
                     request.setAttribute("orderID", orderIDStr);
                     request.setAttribute("rsShippers", rsShippers);
-
-                    // Forward sang form assign shipper
                     request.getRequestDispatcher("/WEB-INF/views/InsertShipping.jsp").forward(request, response);
 
                 } else {

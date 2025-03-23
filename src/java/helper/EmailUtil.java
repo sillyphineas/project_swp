@@ -61,7 +61,7 @@ public class EmailUtil {
         }
     }
 
-    public static void sendFeedbackHiddenMail(String email, int feedbackId) {
+    public static void sendFeedbackHiddenMail(String email, int feedbackId, String feedbackContent) {
         final String from = "haiductran712@gmail.com";
         final String password = "ojzoostchirajnjk";
 
@@ -90,6 +90,7 @@ public class EmailUtil {
 
             String content = "<h3>Your Feedback Has Been Hidden</h3>"
                     + "<p>Your feedback (ID: <strong>" + feedbackId + "</strong>) has been hidden due to a violation of our guidelines.</p>"
+                    + "<p><strong>Your Feedback Content:</strong><br> \" " + feedbackContent + " \"</p>" 
                     + "<p>If you have any questions, please contact us.</p>"
                     + "<p>Best regards,</p><p>Support Team</p>";
 
@@ -100,7 +101,7 @@ public class EmailUtil {
             e.printStackTrace();
         }
     }
-    
+
     public static void sendOrderMail(String email, Order od, List<OrderDetail> details, Map<Integer, String> variantNames) {
         final String from = "haiductran712@gmail.com";
         final String password = "ojzoostchirajnjk";

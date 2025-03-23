@@ -252,6 +252,7 @@
                             <span class="detail-label">Mobile:</span> ${feedback.user.phoneNumber}
                         </div>
                         <div class="col-md-7">
+
                             <span class="detail-label">Status:</span>
                             <span style="${feedback.status != null && feedback.status.equalsIgnoreCase('visible') ? 'color: green; font-weight: bold;' : 'color: red; font-weight: bold;'}">
                                 ${feedback.status != null && feedback.status.equalsIgnoreCase('visible') ? 'Visible' : 'Hidden'}

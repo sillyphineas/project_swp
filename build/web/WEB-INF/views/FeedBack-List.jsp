@@ -325,17 +325,17 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</a></th>
-                                    <th>Category</th>
-                                    <th>Image</th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=name&sortOrder=asc">User Name</a></th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=reviewTime&sortOrder=asc">Review Time</a></th>
-                                    <th>Content</th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=rating&sortOrder=asc">Rate</a></th>    
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
-                                    <th>Change Status</th>
-                                    <th>View</th>
-                                    
+                                    <th style="text-align: center; white-space: nowrap;">ID</th>
+                                    <th style="text-align: center; white-space: nowrap;">Product</th>
+                                    <th style="text-align: center; white-space: nowrap;">Image</th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=name&sortOrder=asc">User Name</a></th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=reviewTime&sortOrder=asc">Review Time</a></th>
+                                    <th style="text-align: center; white-space: nowrap;">Content</th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=rating&sortOrder=asc">Rate</a></th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
+                                    <th style="text-align: center; white-space: nowrap;">Reply to Customer</th>
+                                    <th style="text-align: center; white-space: nowrap;">Change Status</th>
+                                    <th style="text-align: center; white-space: nowrap;">View</th>
                                 </tr>
                             </thead>
                             <tbody id="blog-list">
@@ -396,6 +396,15 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <span>
+                                            <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) { %>
+                                            <%= feedback.getReply() %>
+                                            <% } else { %>
+                                            No feedback yet
+                                            <% } %>
+                                        </span>
+                                    </td>
+                                    <td>
                                         <button id="changeButton_<%= feedback.getId() %>" class="btn btn-info"
                                                 onclick="changeFeedbackStatus(<%= feedback.getId() %>, '<%= feedback.getStatus() %>')">
                                             <%= feedback.getStatus().equals("visible") ? "Hide (Violation)" : "Make Visible" %>
@@ -408,7 +417,7 @@
                                             View
                                         </a>
                                     </td>
-                                   
+
                                 </tr>
                                 <% 
                                     }

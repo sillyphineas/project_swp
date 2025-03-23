@@ -156,16 +156,23 @@ public class MaketingFeedBackController extends HttpServlet {
                 String idStr = request.getParameter("id");
                 Integer id = (idStr != null && !idStr.isEmpty()) ? Integer.parseInt(idStr) : null;
                 String status = request.getParameter("status");
-                System.out.println("id"+idStr+"status"+status);
+                System.out.println("id" + idStr + "status" + status);
                 if (id != null && (status.equals("visible") || status.equals("hidden_due_to_violation"))) {
                     boolean success = dao.updateFeedbackStatus(id, status);
 
                     if (success) {
-                        if (status.equals("hidden_due_to_violation")) { // Retrieve userId from feedbackId
-                            String email = dAOUser.getUserEmailByUserID(dao.getUserIdByFeedbackId(id)); // Get user email by userId
-                            System.out.println("email"+email);
+                        if (status.equals("hidden_due_to_violation")) {
+                            String email = dAOUser.getUserEmailByUserID(dao.getUserIdByFeedbackId(id));
+                            System.out.println("email" + email);
                             if (email != null) {
-                                EmailUtil.sendFeedbackHiddenMail(email, id);
+                                String feedbackContent = dao.getFeedbackContentById(id); // Assuming you have this method in your DAO
+                                if (feedbackContent != null) {
+                                    EmailUtil.sendFeedbackHiddenMail(email, id, feedbackContent);
+                                } else {
+                                    response.setContentType("text/plain");
+                                    response.getWriter().write("Feedback status updated, but content retrieval failed");
+                                    return;
+                                }
                             }
                         }
                         response.setContentType("text/plain");
@@ -178,7 +185,6 @@ public class MaketingFeedBackController extends HttpServlet {
                     response.setContentType("text/plain");
                     response.getWriter().write("Invalid status or feedback ID");
                 }
-                
             }
             if (service.equals("FilterByStar")) {
                 try {
@@ -187,7 +193,7 @@ public class MaketingFeedBackController extends HttpServlet {
                     int star = 0;
                     int page = 1;
                     int pageSize = 10; // Số feedback trên mỗi trang
-                    System.out.println("star"+star);
+                    System.out.println("star" + star);
                     if (starStr != null && starStr.matches("\\d+")) {
                         star = Integer.parseInt(starStr);
                     } else {
@@ -270,4 +276,4 @@ public class MaketingFeedBackController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-}   
+}

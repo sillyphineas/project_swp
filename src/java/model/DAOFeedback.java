@@ -33,7 +33,7 @@ public class DAOFeedback extends DBConnection {
                 + "f.content, f.images, u.name, u.email, u.phoneNumber, u.gender, "
                 + "p.id AS productID, p.name AS productName, "
                 + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
-                + "s.id AS storageID, s.capacity "
+                + "s.id AS storageID, s.capacity, f.reply "
                 + "FROM Feedbacks f "
                 + "JOIN Users u ON f.reviewerID = u.id "
                 + "JOIN OrderDetails od ON f.orderDetailID = od.id "
@@ -59,6 +59,7 @@ public class DAOFeedback extends DBConnection {
                 feedback.setContent(rs.getString("content"));
                 feedback.setImages(rs.getString("images"));
                 feedback.setStatus(rs.getString("status"));
+                feedback.setReply(rs.getString("reply"));
 
                 // Thông tin người dùng
                 User user = new User();
@@ -131,6 +132,7 @@ public class DAOFeedback extends DBConnection {
         }
         return feedbacks;
     }
+
     public List<Feedback> getLatestFeedbacksByProductId(int productId) {
         List<Feedback> feedbackList = new ArrayList<>();
         String sql = "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, "
@@ -201,6 +203,7 @@ public class DAOFeedback extends DBConnection {
         }
         return feedbackList;
     }
+
     public int getTotalFeedbacks() {
         String sql = "SELECT COUNT(*) AS total FROM Feedbacks";
         int totalFeedbacks = 0;
@@ -485,7 +488,7 @@ public class DAOFeedback extends DBConnection {
         return 0;
     }
 
-      public Feedback getFeedbackById(int feedbackId) {
+    public Feedback getFeedbackById(int feedbackId) {
         Feedback feedback = null;
         String sql = "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, "
                 + "f.content, f.images, f.isDisabled, u.name, u.email, u.phoneNumber, u.gender, "
@@ -500,7 +503,7 @@ public class DAOFeedback extends DBConnection {
                 + "JOIN Colors c ON pv.color_id = c.id "
                 + "JOIN Storages s ON pv.storage_id = s.id "
                 + "WHERE f.id = ?";
-        
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, feedbackId);
             ResultSet rs = stmt.executeQuery();
@@ -515,7 +518,6 @@ public class DAOFeedback extends DBConnection {
                 feedback.setImages(rs.getString("images"));
                 feedback.setIsDisabled(rs.getBoolean("isDisabled"));
 
-               
                 User user = new User();
                 user.setName(rs.getString("name"));
                 user.setEmail(rs.getString("email"));
@@ -523,23 +525,19 @@ public class DAOFeedback extends DBConnection {
                 user.setGender(rs.getBoolean("gender"));
                 feedback.setUser(user);
 
-               
                 Product product = new Product();
                 product.setId(rs.getInt("productID"));
                 product.setName(rs.getString("productName"));
                 feedback.setProduct(product);
 
-               
                 ProductVariant variant = new ProductVariant();
                 variant.setId(rs.getInt("productVariantID"));
 
-               
                 Color color = new Color();
                 color.setId(rs.getInt("colorID"));
                 color.setColorName(rs.getString("colorName"));
                 variant.setColor(color);
 
-               
                 Storage storage = new Storage();
                 storage.setId(rs.getInt("storageID"));
                 storage.setCapacity(rs.getString("capacity"));
@@ -553,7 +551,6 @@ public class DAOFeedback extends DBConnection {
         return feedback;
     }
 
-    
     public void updateFeedbackStatus(int feedbackId, boolean isDisabled) {
         String sql = "UPDATE Feedbacks SET isDisabled = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -564,7 +561,6 @@ public class DAOFeedback extends DBConnection {
             e.printStackTrace();
         }
     }
-
 
     public int MaketinggetTotalFeedbacksByStar(int star) {
         String sql = "SELECT COUNT(*) FROM Feedbacks WHERE rating = ?";
@@ -837,90 +833,103 @@ public class DAOFeedback extends DBConnection {
         }
         return false;
     }
-     public Feedback getFeedbackDetailById(int feedbackId) {
-    Feedback feedback = null;
-    String sql = "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, f.status, "
-            + "f.content, f.images, f.reply, u.name, u.email, u.phoneNumber, u.gender, "
-            + "p.id AS productID, p.name AS productName, "
-            + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
-            + "s.id AS storageID, s.capacity "
-            + "FROM Feedbacks f "
-            + "JOIN Users u ON f.reviewerID = u.id "
-            + "JOIN OrderDetails od ON f.orderDetailID = od.id "
-            + "JOIN ProductVariants pv ON od.productVariantID = pv.id "
-            + "JOIN Products p ON f.product_id = p.id "
-            + "LEFT JOIN Colors c ON pv.color_id = c.id "
-            + "LEFT JOIN Storages s ON pv.storage_id = s.id "
-            + "WHERE f.id = ?";
 
-    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-        stmt.setInt(1, feedbackId);
-        ResultSet rs = stmt.executeQuery();
+    public Feedback getFeedbackDetailById(int feedbackId) {
+        Feedback feedback = null;
+        String sql = "SELECT f.id, f.orderDetailID, f.reviewerID, f.reviewTime, f.rating, f.status, "
+                + "f.content, f.images, f.reply, u.name, u.email, u.phoneNumber, u.gender, "
+                + "p.id AS productID, p.name AS productName, "
+                + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
+                + "s.id AS storageID, s.capacity "
+                + "FROM Feedbacks f "
+                + "JOIN Users u ON f.reviewerID = u.id "
+                + "JOIN OrderDetails od ON f.orderDetailID = od.id "
+                + "JOIN ProductVariants pv ON od.productVariantID = pv.id "
+                + "JOIN Products p ON f.product_id = p.id "
+                + "LEFT JOIN Colors c ON pv.color_id = c.id "
+                + "LEFT JOIN Storages s ON pv.storage_id = s.id "
+                + "WHERE f.id = ?";
 
-        if (rs.next()) {
-            feedback = new Feedback();
-            feedback.setId(rs.getInt("id"));
-            feedback.setOrderDetailID(rs.getInt("orderDetailID"));
-            feedback.setReviewerID(rs.getInt("reviewerID"));
-            feedback.setReviewTime(rs.getString("reviewTime"));
-            feedback.setRating(rs.getInt("rating"));
-            feedback.setContent(rs.getString("content"));
-            feedback.setImages(rs.getString("images"));
-            feedback.setStatus(rs.getString("status"));
-            feedback.setReply(rs.getString("reply"));
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, feedbackId);
+            ResultSet rs = stmt.executeQuery();
 
-            // Thông tin người dùng
-            User user = new User();
-            user.setName(rs.getString("name"));
-            user.setEmail(rs.getString("email"));
-            user.setPhoneNumber(rs.getString("phoneNumber"));
-            user.setGender(rs.getBoolean("gender"));
-            feedback.setUser(user);
+            if (rs.next()) {
+                feedback = new Feedback();
+                feedback.setId(rs.getInt("id"));
+                feedback.setOrderDetailID(rs.getInt("orderDetailID"));
+                feedback.setReviewerID(rs.getInt("reviewerID"));
+                feedback.setReviewTime(rs.getString("reviewTime"));
+                feedback.setRating(rs.getInt("rating"));
+                feedback.setContent(rs.getString("content"));
+                feedback.setImages(rs.getString("images"));
+                feedback.setStatus(rs.getString("status"));
+                feedback.setReply(rs.getString("reply"));
 
-            // Thông tin sản phẩm
-            Product product = new Product();
-            product.setId(rs.getInt("productID"));
-            product.setName(rs.getString("productName"));
-            feedback.setProduct(product);
+                // Thông tin người dùng
+                User user = new User();
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setPhoneNumber(rs.getString("phoneNumber"));
+                user.setGender(rs.getBoolean("gender"));
+                feedback.setUser(user);
 
-            // Thông tin biến thể sản phẩm
-            ProductVariant variant = new ProductVariant();
-            variant.setId(rs.getInt("productVariantID"));
+                // Thông tin sản phẩm
+                Product product = new Product();
+                product.setId(rs.getInt("productID"));
+                product.setName(rs.getString("productName"));
+                feedback.setProduct(product);
 
-            // Gán Color vào ProductVariant
-            Color color = new Color();
-            color.setId(rs.getInt("colorID"));
-            color.setColorName(rs.getString("colorName"));
-            variant.setColor(color);
+                // Thông tin biến thể sản phẩm
+                ProductVariant variant = new ProductVariant();
+                variant.setId(rs.getInt("productVariantID"));
 
-            // Gán Storage vào ProductVariant
-            Storage storage = new Storage();
-            storage.setId(rs.getInt("storageID"));
-            storage.setCapacity(rs.getString("capacity"));
-            variant.setStorage(storage);
+                // Gán Color vào ProductVariant
+                Color color = new Color();
+                color.setId(rs.getInt("colorID"));
+                color.setColorName(rs.getString("colorName"));
+                variant.setColor(color);
 
-            feedback.setProductVariant(variant);
+                // Gán Storage vào ProductVariant
+                Storage storage = new Storage();
+                storage.setId(rs.getInt("storageID"));
+                storage.setCapacity(rs.getString("capacity"));
+                variant.setStorage(storage);
+
+                feedback.setProductVariant(variant);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return feedback;
     }
-    return feedback;
-     }
-     
-    public int updateFeedbackReply(int feedbackId, String reply) {
-    int n = 0;
-    String sql = "UPDATE Feedbacks SET reply = ? WHERE id = ? ";
-    try (PreparedStatement pre = conn.prepareStatement(sql)) {
-        pre.setString(1, reply);
-        pre.setInt(2, feedbackId);
-        n = pre.executeUpdate();
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-    }
-    return n;
-}
-    
 
+    public int updateFeedbackReply(int feedbackId, String reply) {
+        int n = 0;
+        String sql = "UPDATE Feedbacks SET reply = ? WHERE id = ? ";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, reply);
+            pre.setInt(2, feedbackId);
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
+    }
+
+    public String getFeedbackContentById(int feedbackId) {
+        String sql = "SELECT content FROM feedbacks WHERE id = ?";
+        try ( PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, feedbackId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("content");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Hoặc một giá trị mặc định nào đó để chỉ ra lỗi
+    }
 //    public int MaketinggetTotalFeedbacksByStar(int star) {
 //        String sql = "SELECT COUNT(*) FROM Feedbacks WHERE rating = ?";
 //        try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -1194,10 +1203,10 @@ public class DAOFeedback extends DBConnection {
 //    }
 
     public List<Map<String, Object>> getFeedbackStatsByDate(String startDate, String endDate) throws SQLException {
-        String sql = "SELECT COUNT(*) AS feedbackCount, DATE(reviewTime) AS date " +
-                     "FROM Feedbacks " +
-                     "WHERE reviewTime BETWEEN ? AND ? " +
-                     "GROUP BY DATE(reviewTime)";
+        String sql = "SELECT COUNT(*) AS feedbackCount, DATE(reviewTime) AS date "
+                + "FROM Feedbacks "
+                + "WHERE reviewTime BETWEEN ? AND ? "
+                + "GROUP BY DATE(reviewTime)";
 
         List<Map<String, Object>> stats = new ArrayList<>();
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
@@ -1214,19 +1223,20 @@ public class DAOFeedback extends DBConnection {
         }
         return stats;
     }
+
     public static void main(String[] args) {
         DAOFeedback dao = new DAOFeedback();
-        Feedback feedback = new Feedback(
-                5,
-                3,
-                6, // product_id
-                "2025-03-15 18:15:54",
-                4,
-                "Great product! Highly recommended.",
-                "[\"image1.jpg\", \"image2.jpg\"]", // JSON dạng chuỗi
-                false,
-                "visible"
-        );
-        System.out.println(dao.getLatestFeedbacksByProductId(1));
+//        Feedback feedback = new Feedback(
+//                5,
+//                3,
+//                6, // product_id
+//                "2025-03-15 18:15:54",
+//                4,
+//                "Great product! Highly recommended.",
+//                "[\"image1.jpg\", \"image2.jpg\"]", // JSON dạng chuỗi
+//                false,
+//                "visible"
+//        );
+        System.out.println(dao.getFeedbackContentById(8));
     }
 }
