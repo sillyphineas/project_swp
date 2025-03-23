@@ -1,3 +1,5 @@
+
+
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -285,8 +287,8 @@
                                         <select id="sortBy" name="sortBy" style="width: 150px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
                                             <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Reviewer Name</option>
                                             <option value="productName" <%= "productName".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Product Name</option>
-                                            <option value="reviewTime" <%= "reviewTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Review Time</option>
-                                            <option value="rating" <%= "rating".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Rating</option>
+                                            <option value="reviewTime" <%= "reviewTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
+                                            <option value="rating" <%= "rating".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ReviewTime</option>
                                             <option value="status" <%= "status".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
                                         </select>
                                     </div>
