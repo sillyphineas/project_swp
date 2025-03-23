@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.DAOUser;
 import org.mindrot.jbcrypt.BCrypt;
+
 /**
  *
  * @author DUC MINH
@@ -51,19 +52,20 @@ public class ChangePasswordController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Lấy các tham số từ form
-        String userIdParam = request.getParameter("userId");
+
         String currentPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        if (userIdParam == null || userIdParam.isEmpty()) {
-            request.setAttribute("errorMessage", "User ID is missing.");
+        Integer userId = (Integer) request.getSession().getAttribute("userID");
+
+        if (userId == null) {
+            request.setAttribute("errorMessage", "User ID is missing or session has expired.");
             request.getRequestDispatcher("WEB-INF/views/change_password.jsp").forward(request, response);
             return;
         }
-
         try {
-            int userId = Integer.parseInt(userIdParam);  // Kiểm tra userId hợp lệ
+
             User user = daoUser.getUserById(userId);
 
             if (user == null) {
@@ -119,4 +121,3 @@ public class ChangePasswordController extends HttpServlet {
         return "Change Password Controller";
     }
 }
-
