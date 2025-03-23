@@ -1,10 +1,15 @@
-
 function addToCart() {
     let productId = document.getElementById("productID").value;
     let color = document.getElementById("colorSelector").value;
     let storage = document.getElementById("storageSelector").value;
     let quantity = document.getElementById("quantity").value;
-
+    
+    if (!isLoggedIn) {
+        console.log("User is not logged in, redirecting to login...");
+        window.location.href = "/LoginController";
+        return;
+    }
+    
     if (!productId || productId === "undefined") {
         console.error("ERROR: productID is null or undefined in JavaScript!");
         showCartNotification("An error occurred, please check the product information.");
