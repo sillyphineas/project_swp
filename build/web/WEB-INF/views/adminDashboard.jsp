@@ -63,8 +63,66 @@
             max-width: 100%;
             margin-top: 30px;
         }
-        footer {
-            margin-top: 50px;
+        /* Container cho nội dung */
+        .content {
+            padding: 30px;
+            background-color: #f9f9f9;
+            margin: 0 auto;
+        }
+
+        /* Thống kê khác sẽ chiếm toàn bộ chiều rộng */
+        .statistics-container {
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        /* Cập nhật cấu trúc Flexbox để các phần tử con nằm ngang */
+        .statistics-item {
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        /* Đảm bảo rằng các phần tử có chiều rộng hợp lý */
+        .table-container, .chart-container {
+            width: 48%; /* Cả bảng và biểu đồ sẽ chiếm 48% chiều rộng của container */
+            display: inline-block; /* Đảm bảo các phần tử sẽ nằm cạnh nhau */
+            margin-top: 30px;
+        }
+
+        /* Đảm bảo "Other Statistics" nằm trên một hàng riêng */
+        /* Cấu hình Flexbox để các phần tử trong 'Other Statistics' nằm trên một hàng ngang */
+        .other-statistics {
+            display: flex;
+            flex-wrap: wrap; /* Cho phép các phần tử xuống dòng nếu không đủ chỗ */
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .other-statistics div {
+            flex: 1 1 45%; /* Chiếm 45% chiều rộng của container và co giãn khi cần */
+            margin-right: 15px; /* Khoảng cách giữa các phần tử */
+        }
+
+        .other-statistics div:last-child {
+            margin-right: 0; /* Loại bỏ margin phải của phần tử cuối cùng */
+        }
+
+        /* Đảm bảo các tiêu đề và nội dung có khoảng cách phù hợp */
+        h3, h4 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+
+        /* Cập nhật các kiểu cho bảng */
+        table {
+            width: 100%;
+            margin-bottom: 15px;
         }
     </style>
     <body>
@@ -179,8 +237,8 @@
         </header><!--/header-->
 
         <div class="content" style="padding: 30px; background-color: #f9f9f9;">
+            <!-- Phần chọn ngày -->
             <div class="row">
-                <!-- Left Column: Date Range Form (Centered) -->
                 <div class="col-md-12 text-center" style="margin-bottom: 30px;">
                     <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Select Date Range:</h3>
                     <form action="${pageContext.request.contextPath}/AdminDashboardController" method="get" class="form-inline justify-content-center">
@@ -195,15 +253,33 @@
                         <button type="submit" class="btn btn-warning" style="padding: 10px 20px; background-color: #f39c12; color: white; border: none; border-radius: 5px;">Generate Report</button>
                     </form>
                 </div>
+            </div>
 
-                <!-- Right Column: Order Status Count Table -->
-                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
+            <div class="other-statistics">
+                <div>
+                    <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
+                </div>
+                <div>
+                    <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
+                </div>
+                <div>
+                    <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
+                </div>
+                <div>
+                    <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
+                </div>
+            </div>
+
+
+            <div class="statistics-container" style="display: flex; justify-content: space-between; margin-top: 30px;">
+                <!-- Bảng Order Status Counts -->
+                <div class="table-container" style="width: 48%; box-sizing: border-box; padding-right: 10px;">
                     <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
                         <thead>
                             <tr>
-                                <th style="text-align: center; background-color: #f8f9fa;">Order Status</th>
-                                <th style="text-align: center; background-color: #f8f9fa;">Quantity</th>
+                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Order Status</th>
+                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Quantity</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -211,51 +287,36 @@
                                 Map<String, Integer> orderStatusCounts = (Map<String, Integer>) request.getAttribute("orderStatusCounts");
                             %>
                             <tr>
-                                <td style="text-align: center;">Delivered</td>
-                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Delivered</td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
                             </tr>
                             <tr>
-                                <td style="text-align: center;">Cancelled</td>
-                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cancelled</td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
                             </tr>
                             <tr>
-                                <td style="text-align: center;">Shipping</td>
-                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Shipping</td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
                             </tr>
                             <tr>
-                                <td style="text-align: center;">Pickup</td>
-                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Pickup</td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
                             </tr>
                             <tr>
-                                <td style="text-align: center;">Refund</td>
-                                <td style="text-align: center;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Refund</td>
+                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Other Statistics Section -->
-                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 30px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Other Statistics</h3>
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>
-                            <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
-                            <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
-                            <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
-                            <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Order Trend Chart (Smaller Size) -->
-                <div class="col-md-12" style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
-                    <canvas id="orderTrendChart" style="margin-top: 30px; width: 90%; height: 300px;"></canvas>
+                <!-- Biểu đồ Order Trend -->
+                <div class="chart-container" style="width: 48%; box-sizing: border-box; padding-left: 10px;">
+                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Trend</h3>
+                    <canvas id="orderTrendChart" style="width: 100%; height: 300px;"></canvas>
                     <script>
                         var orderTrendsJson = '<%= request.getAttribute("orderTrendsJson") != null ? request.getAttribute("orderTrendsJson") : "[]" %>';
-                        console.log(orderTrendsJson);
                         var trends = JSON.parse(orderTrendsJson);
-
-                        console.log(trends);
 
                         if (trends.length > 0) {
                             var labels = [];
@@ -300,6 +361,8 @@
                 </div>
             </div>
         </div>
+
+
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">

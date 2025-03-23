@@ -1,16 +1,11 @@
 <%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
+    Document   : set-newPassword
+    Created on : Mar 19, 2025
     Author     : HP
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User"%>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="com.google.gson.Gson" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -18,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | T-Shopper</title>
+        <title>Set New Password | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -35,97 +30,76 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
+        <style>
+            /* Chỉ áp dụng cho vùng đặt mật khẩu mới */
+            .set-password-container {
+                max-width: 400px;
+                margin: 60px auto;
+                padding: 20px;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+            }
+            .set-password-container h2 {
+                margin: 0 0 10px;
+                font-size: 20px;
+                font-weight: normal;
+            }
+            .set-password-container p {
+                margin: 0 0 20px;
+                font-size: 14px;
+                color: #555;
+            }
+            .set-password-container .form-group {
+                margin-bottom: 15px;
+            }
+            .set-password-container label {
+                display: block;
+                margin-bottom: 5px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            .set-password-container input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            .set-password-container .btn-group {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            .set-password-container .btn-cancel,
+            .set-password-container .btn-save {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .set-password-container .btn-cancel {
+                background-color: #e4e6eb;
+                color: #050505;
+            }
+            .set-password-container .btn-cancel:hover {
+                background-color: #d8dadd;
+            }
+            .set-password-container .btn-save {
+                background-color: #1877f2;
+                color: #fff;
+            }
+            .set-password-container .btn-save:hover {
+                background-color: #165dd2;
+            }
+        </style>
     </head><!--/head-->
-    <style>
-        body {
-            padding-top: 20px;
-        }
-        .content {
-            margin: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group input {
-            margin-right: 10px;
-        }
-        .stat-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .stat-list li {
-            margin-bottom: 10px;
-        }
-        .stat-list h3 {
-            margin-top: 20px;
-        }
-        canvas {
-            max-width: 100%;
-            margin-top: 30px;
-        }
-        /* Container cho nội dung */
-        .content {
-            padding: 30px;
-            background-color: #f9f9f9;
-            margin: 0 auto;
-        }
 
-        /* Thống kê khác sẽ chiếm toàn bộ chiều rộng */
-        .statistics-container {
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        /* Cập nhật cấu trúc Flexbox để các phần tử con nằm ngang */
-        .statistics-item {
-            flex: 1;
-            margin-right: 15px;
-        }
-
-        /* Đảm bảo rằng các phần tử có chiều rộng hợp lý */
-        .table-container, .chart-container {
-            width: 48%; /* Cả bảng và biểu đồ sẽ chiếm 48% chiều rộng của container */
-            display: inline-block; /* Đảm bảo các phần tử sẽ nằm cạnh nhau */
-            margin-top: 30px;
-        }
-
-        /* Đảm bảo "Other Statistics" nằm trên một hàng riêng */
-        /* Cấu hình Flexbox để các phần tử trong 'Other Statistics' nằm trên một hàng ngang */
-        .other-statistics {
-            display: flex;
-            flex-wrap: wrap; /* Cho phép các phần tử xuống dòng nếu không đủ chỗ */
-            justify-content: space-between;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .other-statistics div {
-            flex: 1 1 45%; /* Chiếm 45% chiều rộng của container và co giãn khi cần */
-            margin-right: 15px; /* Khoảng cách giữa các phần tử */
-        }
-
-        .other-statistics div:last-child {
-            margin-right: 0; /* Loại bỏ margin phải của phần tử cuối cùng */
-        }
-
-        /* Đảm bảo các tiêu đề và nội dung có khoảng cách phù hợp */
-        h3, h4 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-
-        /* Cập nhật các kiểu cho bảng */
-        table {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    </style>
     <body>
+        <!-- Header -->
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
@@ -133,19 +107,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -158,7 +132,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -167,8 +141,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -178,8 +152,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -187,18 +161,7 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
-                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                    <li><a href="LoginController" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -220,9 +183,19 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>   
-                                    <li><a href="UserController">Users List</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>                                   
+                                    <li><a href="HomePageController">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
+                                        </ul>
+                                    </li> 
+                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="BlogURL">Blog List</a></li>
+                                        </ul>
+                                    </li> 
                                 </ul>
                             </div>
                         </div>
@@ -236,133 +209,47 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="content" style="padding: 30px; background-color: #f9f9f9;">
-            <!-- Phần chọn ngày -->
-            <div class="row">
-                <div class="col-md-12 text-center" style="margin-bottom: 30px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Select Date Range:</h3>
-                    <form action="${pageContext.request.contextPath}/AdminDashboardController" method="get" class="form-inline justify-content-center">
+        <!-- Nội dung đặt mật khẩu mới -->
+        <section>
+            <div class="container">
+                <div class="set-password-container">
+                    <h2>Set New Password</h2>
+                    <p>Please enter your new password and confirm it below.</p>
+                    <form action="ResetController" method="POST">
+                        <input type="hidden" name="service" value="setNewPassword"/>
+                        <input type="hidden" name="token" value="${token}"/>
+
                         <div class="form-group">
-                            <label for="startDate" style="font-weight: bold; margin-right: 10px;">Start Date:</label>
-                            <input type="date" id="startDate" name="startDate" value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
                         </div>
+
                         <div class="form-group">
-                            <label for="endDate" style="font-weight: bold; margin-right: 10px;">End Date:</label>
-                            <input type="date" id="endDate" name="endDate" value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
                         </div>
-                        <button type="submit" class="btn btn-warning" style="padding: 10px 20px; background-color: #f39c12; color: white; border: none; border-radius: 5px;">Generate Report</button>
+
+                        <c:if test="${not empty error}">
+                            <div style="color: red; margin-bottom: 10px;">
+                                <c:out value="${error}" />
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty success}">
+                            <div style="color: green; margin-bottom: 10px;">
+                                <c:out value="${success}" />
+                            </div>
+                        </c:if>
+
+                        <div class="btn-group">
+                            <a href="HomePageController" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-save">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>
+        </section>
 
-            <div class="other-statistics">
-                <div>
-                    <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
-                </div>
-            </div>
-
-
-            <div class="statistics-container" style="display: flex; justify-content: space-between; margin-top: 30px;">
-                <!-- Bảng Order Status Counts -->
-                <div class="table-container" style="width: 48%; box-sizing: border-box; padding-right: 10px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
-                    <table class="table table-bordered" style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Order Status</th>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% 
-                                Map<String, Integer> orderStatusCounts = (Map<String, Integer>) request.getAttribute("orderStatusCounts");
-                            %>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Delivered</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cancelled</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Shipping</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Pickup</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Refund</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Biểu đồ Order Trend -->
-                <div class="chart-container" style="width: 48%; box-sizing: border-box; padding-left: 10px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Trend</h3>
-                    <canvas id="orderTrendChart" style="width: 100%; height: 300px;"></canvas>
-                    <script>
-                        var orderTrendsJson = '<%= request.getAttribute("orderTrendsJson") != null ? request.getAttribute("orderTrendsJson") : "[]" %>';
-                        var trends = JSON.parse(orderTrendsJson);
-
-                        if (trends.length > 0) {
-                            var labels = [];
-                            var data = [];
-                            trends.forEach(function (trend) {
-                                labels.push(trend.date);
-                                data.push(trend.count);
-                            });
-
-                            var ctx = document.getElementById('orderTrendChart').getContext('2d');
-                            var chart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                            label: 'Successful Orders Trend',
-                                            data: data,
-                                            borderColor: 'rgba(75, 192, 192, 1)',
-                                            fill: false
-                                        }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        x: {
-                                            title: {
-                                                display: true,
-                                                text: 'Date'
-                                            }
-                                        },
-                                        y: {
-                                            title: {
-                                                display: true,
-                                                text: 'Number of Orders'
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    </script>
-                </div>
-            </div>
-        </div>
-
-
+        <!-- Footer -->
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -388,7 +275,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -403,7 +289,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -418,7 +303,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -518,10 +402,7 @@
                     </div>
                 </div>
             </div>
-
         </footer><!--/Footer-->
-
-
 
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
