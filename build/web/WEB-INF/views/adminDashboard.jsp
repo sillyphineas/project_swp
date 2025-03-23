@@ -9,6 +9,8 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.HashMap" %>
 <%@ page import="com.google.gson.Gson" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!DOCTYPE html>
@@ -37,9 +39,7 @@
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
     <style>
-        body {
-            padding-top: 20px;
-        }
+
         .content {
             margin: 20px;
         }
@@ -93,13 +93,13 @@
         /* Cấu hình Flexbox để các phần tử trong 'Other Statistics' nằm trên một hàng ngang */
         .other-statistics {
             display: flex;
-            flex-wrap: wrap; /* Cho phép các phần tử xuống dòng nếu không đủ chỗ */
+
             justify-content: space-between;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+
         }
 
         .other-statistics div {
@@ -239,8 +239,8 @@
         <div class="content" style="padding: 30px; background-color: #f9f9f9;">
             <!-- Phần chọn ngày -->
             <div class="row">
-                <div class="col-md-12 text-center" style="margin-bottom: 30px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Select Date Range:</h3>
+                <div class="col-md-12 text-center">
+
                     <form action="${pageContext.request.contextPath}/AdminDashboardController" method="get" class="form-inline justify-content-center">
                         <div class="form-group">
                             <label for="startDate" style="font-weight: bold; margin-right: 10px;">Start Date:</label>
@@ -257,7 +257,21 @@
 
             <div class="other-statistics">
                 <div>
-                    <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
+                    <% 
+    Double totalRevenue = (Double) request.getAttribute("totalRevenue");
+    if (totalRevenue != null) {
+        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+        String formattedRevenue = currencyFormat.format(totalRevenue);
+                    %>
+                    <h4>Total Revenue: <%= formattedRevenue %></h4>
+                    <% 
+                        } else { 
+                    %>
+                    <h4>Total Revenue: 0</h4>
+                    <% 
+                        } 
+                    %>
+
                 </div>
                 <div>
                     <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
@@ -271,7 +285,7 @@
             </div>
 
 
-            <div class="statistics-container" style="display: flex; justify-content: space-between; margin-top: 30px;">
+            <div class="statistics-container" style="display: flex; justify-content: space-between;">
                 <!-- Bảng Order Status Counts -->
                 <div class="table-container" style="width: 48%; box-sizing: border-box; padding-right: 10px;">
                     <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
@@ -335,7 +349,8 @@
                                             label: 'Successful Orders Trend',
                                             data: data,
                                             borderColor: 'rgba(75, 192, 192, 1)',
-                                            fill: false
+                                            fill: false,
+                                            tension: 0.2
                                         }]
                                 },
                                 options: {
