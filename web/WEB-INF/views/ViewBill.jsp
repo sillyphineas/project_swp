@@ -279,11 +279,12 @@
                                     &#8592; Back to Orders
                                 </a>
 
-                                <button onclick="window.print()" 
+                                <button onclick="printBill()" 
                                         style="padding: 8px 16px; background-color: #5cb85c; color: white; border: none;
                                         border-radius: 4px; font-weight: bold; font-size: 14px; cursor: pointer;">
                                     &#128424; Print Bill
                                 </button>
+
                             </div>
 
                         </div>

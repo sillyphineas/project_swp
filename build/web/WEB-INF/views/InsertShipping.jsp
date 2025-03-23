@@ -1,15 +1,12 @@
+
 <%-- 
-    Document   : Feedback-Detail
-    Created on : Mar 17, 2025, 2:17:34 AM
-    Author     : Admin
+    Document   : blog-single
+    Created on : Jan 18, 2025, 1:12:42 PM
+    Author     : HP
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="entity.User,java.util.List,jakarta.servlet.http.HttpSession,model.DAOUser"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,entity.Category,entity.Feedback" %>
-
+<%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog,java.sql.*" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -17,7 +14,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Home | E-Shopper</title>
+        <title>Blog Single | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -34,88 +31,6 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <style>
-
-            /* Chỉnh sửa kiểu cho các danh sách */
-
-            /* Cải thiện các nút Cancel */
-            .btn-danger {
-                font-size: 16px;
-                padding: 10px 20px;
-                border-radius: 5px;
-                background-color: #e74c3c;
-                color: white;
-                border: none;
-                text-align: center;
-                cursor: pointer;
-            }
-
-            .btn-danger:hover {
-                background-color: #c0392b;
-            }
-
-            /* Chỉnh sửa phần thông tin chi tiết */
-            .detail-container {
-                max-width: 800px;
-                margin: 20px auto;
-                padding: 30px;
-                background-color: #f9f9f9;
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .detail-container h2 {
-                font-size: 24px;
-                margin-bottom: 20px;
-                text-align: center;
-                font-weight: bold;
-            }
-
-            .detail-row {
-                margin-bottom: 15px;
-            }
-
-            .detail-label {
-                font-weight: bold;
-                font-size: 18px;
-                margin-right: 10px;
-            }
-
-            .detail-row img {
-                border-radius: 5px;
-                max-width: 100px;
-                margin-top: 10px;
-            }
-
-            .detail-container .detail-row {
-                font-size: 18px; /* Chỉnh kích thước chữ cho tất cả các dòng */
-                line-height: 1.6;
-            }
-
-            .detail-container .detail-row span.detail-label {
-                font-weight: bold;
-            }
-
-            .detail-container .detail-row span {
-                font-size: 18px; /* Đảm bảo rằng phần nội dung sẽ có kích thước chữ giống nhau */
-                font-weight: normal;
-            }
-            .detail-container .detail-row img {
-                width: 100px;  /* Chiều rộng cố định */
-                height: 100px; /* Chiều cao cố định */
-                object-fit: cover; /* Đảm bảo ảnh không bị méo */
-                border-radius: 5px; /* Thêm bo góc cho ảnh nếu cần */
-                margin-right: 10px; /* Khoảng cách giữa các ảnh */
-            }
-            .error {
-                color: red;
-            }
-            .message{
-                color: red;
-            }
-
-        </style>
     </head><!--/head-->
 
     <body>
@@ -126,19 +41,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -151,17 +66,17 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USAd
+                                        USA
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -171,8 +86,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -180,8 +95,8 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <!--                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>-->
+
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
@@ -213,112 +128,79 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController">Feedback List</a></li>
+                                    <li><a href="salesDashboardController" class="active">Home</a></li>
+                                    <li><a href="SaleOrderController">Order List</a></li>
                                 </ul>
                             </div>
                         </div>
 
                     </div>
-                </div><!--/header-bottom-->
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
-        <div class="detail-container">
-            <h2>Feedback Details</h2>
-            <br>
-            <c:if test="${feedback != null}">
-                <b>
-                    <c:if test="${not empty message}">
-                        <div class="message">${message}</div>
-                    </c:if>
-                    <c:if test="${not empty error}">
-                        <div class="error">${error}</div>
-                    </c:if>
-                    <br>
-                    <div class="detail-row">
-                        <div class="col-md-5">
-                            <span class="detail-label">Full Name:</span> ${feedback.user.name}
-                        </div>
-                        <div class="col-md-7">
-                            <span class="detail-label">Email:</span> ${feedback.user.email}
-                        </div>
-                    </div>
-                    <br>
-                    <div class="detail-row">
-                        <div class="col-md-5">
-                            <span class="detail-label">Mobile:</span> ${feedback.user.phoneNumber}
-                        </div>
-                        <div class="col-md-7">
-                            <span class="detail-label">Status:</span> ${feedback.status}
-                        </div>
-                    </div>
-                    <br>
-                    <div class="detail-row">
-                        <span class="detail-label">Rated Star:</span>
-                        <span style="white-space: nowrap;">
-                            <c:forEach var="i" begin="1" end="5">
-                                <i class="${i <= feedback.rating ? 'fas' : 'far'} fa-star" style="color: gold;"></i>
-                            </c:forEach>
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Product:</span> ${feedback.product.name}
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Feedback:</span> ${feedback.content}
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Images:</span>
-                        <c:if test="${not empty feedback.images}">
-                            <c:forEach var="image" items="${feedback.getImages()}">
-                                <img src="${image}" alt="Feedback Image" style="max-width: 100px; margin-right: 10px;" />
-                            </c:forEach>
-                        </c:if>
-                        <c:if test="${empty feedback.images}">
-                            No images available
-                        </c:if>
-                    </div>
 
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="blog-post-area">
+                        <h2 class="title text-center">Assign Shipper</h2>
 
-                    <div class="detail-row">
-                        <span class="detail-label">Your Reply:</span>
-                        <c:choose>
-                            <c:when test="${feedback.reply != null && !empty feedback.reply}">
+                        <% 
+                        String message = (String) request.getAttribute("message");
+                        if (message != null && !message.isEmpty()) {
+                        %>
+                        <div style="color: red; font-weight: bold;"><%= message %></div>
+                        <% } %>
 
-                                <div style="margin-bottom: 15px;">
-                                    ${feedback.reply}
+                        <form action="SaleOrderController" method="post">
+                            <input type="hidden" name="service" value="ShipperAssignment" />
+                            <input type="hidden" name="orderID" value="<%= request.getAttribute("orderID") %>" />
+
+                            <!-- Container flex cho 2 input -->
+                            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                                <!-- Select Shipper -->
+                                <div style="flex: 1;">
+                                    <label for="shipperID" style="display: block; margin-bottom: 5px; font-weight: bold;">Select Shipper</label>
+                                    <select name="shipperID" class="form-control" required
+                                            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+                                        <%
+                                            ResultSet rsShippers = (ResultSet) request.getAttribute("rsShippers");
+                                            while (rsShippers.next()) {
+                                                int shipperId = rsShippers.getInt("id");
+                                                String shipperName = rsShippers.getString("name");
+                                        %>
+                                        <option value="<%= shipperId %>"><%= shipperName %></option>
+                                        <% } %>
+                                    </select>
                                 </div>
-                                <form action="MarketingFeedbackDetails" method="post">
-                                    <textarea name="reply" rows="4" placeholder="Update your reply here...">${feedback.reply}</textarea>
-                                    <input type="hidden" name="service" value="replyfeedback" />
-                                    <input type="hidden" name="id" value="${feedback.id}" />
-                                    <button type="submit" class="btn btn-success">Update Reply</button>
-                                </form>
-                            </c:when>
-                            <c:otherwise>
 
-                                <form action="MarketingFeedbackDetails" method="post">
-                                    <textarea name="reply" rows="4" placeholder="Write your reply here..."></textarea>
-                                    <input type="hidden" name="service" value="replyfeedback" />
-                                    <input type="hidden" name="id" value="${feedback.id}" />
-                                    <button type="submit" class="btn btn-success">Send Reply</button>
-                                </form>
-                            </c:otherwise>
-                        </c:choose>
+                                <!-- Estimated Arrival Date -->
+                                <div style="flex: 1;">
+                                    <label for="estimatedArrival" style="display: block; margin-bottom: 5px; font-weight: bold;">Estimated Arrival Date</label>
+                                    <input type="date" name="estimatedArrival" id="estimatedArrival" class="form-control" required
+                                           style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;">
+
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div style="display: flex; gap: 15px; justify-content: flex-end; align-items: center; padding-bottom: 20px;">
+                                <button type="submit" name="submit" value="assign" class="btn" 
+                                        style="padding: 10px 25px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;">
+                                    Assign Shipper
+                                </button>
+                                <a href="SaleOrderController?service=listAllOrder" class="btn"
+                                   style="padding: 10px 25px; background-color: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; text-decoration: none; cursor: pointer; transition: background-color 0.3s ease;">
+                                    Cancel
+                                </a>
+                            </div>
+
+                        </form>
+
                     </div>
-                </b>
-            </c:if>
-            <c:if test="${feedback == null}">
-                <p>Feedback not found.</p>
-                <a href="MaketingFeedBackController" class="btn btn-danger">Cancel</a>
-            </c:if>
-            <a href="MaketingFeedBackController" class="btn btn-danger">Cancel</a>
-        </div>
-        <br>
-        <br>
+                </div>
+            </div>
+        </section>
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -407,11 +289,11 @@
                             <div class="single-widget">
                                 <h2>Service</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Online Help</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                    <li><a href="#">Order Status</a></li>
-                                    <li><a href="#">Change Location</a></li>
-                                    <li><a href="#">FAQ’s</a></li>
+                                    <li><a href="">Online Help</a></li>
+                                    <li><a href="">Contact Us</a></li>
+                                    <li><a href="">Order Status</a></li>
+                                    <li><a href="">Change Location</a></li>
+                                    <li><a href="">FAQ’s</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -419,11 +301,11 @@
                             <div class="single-widget">
                                 <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">T-Shirt</a></li>
-                                    <li><a href="#">Mens</a></li>
-                                    <li><a href="#">Womens</a></li>
-                                    <li><a href="#">Gift Cards</a></li>
-                                    <li><a href="#">Shoes</a></li>
+                                    <li><a href="">T-Shirt</a></li>
+                                    <li><a href="">Mens</a></li>
+                                    <li><a href="">Womens</a></li>
+                                    <li><a href="">Gift Cards</a></li>
+                                    <li><a href="">Shoes</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -431,11 +313,11 @@
                             <div class="single-widget">
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privecy Policy</a></li>
-                                    <li><a href="#">Refund Policy</a></li>
-                                    <li><a href="#">Billing System</a></li>
-                                    <li><a href="#">Ticket System</a></li>
+                                    <li><a href="">Terms of Use</a></li>
+                                    <li><a href="">Privecy Policy</a></li>
+                                    <li><a href="">Refund Policy</a></li>
+                                    <li><a href="">Billing System</a></li>
+                                    <li><a href="">Ticket System</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -443,11 +325,11 @@
                             <div class="single-widget">
                                 <h2>About Shopper</h2>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li><a href="#">Company Information</a></li>
-                                    <li><a href="#">Careers</a></li>
-                                    <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affillate Program</a></li>
-                                    <li><a href="#">Copyright</a></li>
+                                    <li><a href="">Company Information</a></li>
+                                    <li><a href="">Careers</a></li>
+                                    <li><a href="">Store Location</a></li>
+                                    <li><a href="">Affillate Program</a></li>
+                                    <li><a href="">Copyright</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -475,19 +357,33 @@
                 </div>
             </div>
 
-        </footer><!--/Footer--er-->
+        </footer><!--/Footer-->
 
+        <script src="https://cdn.ckeditor.com/4.18.0/standard/ckeditor.js"></script>
+        <script>
+            CKEDITOR.replace('content', {
+                height: 200, // Chiều cao của textarea
+                filebrowserUploadUrl: '/upload', // URL để upload ảnh
+                filebrowserUploadMethod: 'form' // Phương thức upload
+            });
+        </script>
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var day = today.getDate().toString().padStart(2, '0');
+                var minDate = year + '-' + month + '-' + day;
 
+                document.getElementById('estimatedArrival').setAttribute('min', minDate);
+            });
+        </script>
 
         <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/price-range.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     </body>
 </html>
-
-
