@@ -109,14 +109,17 @@
             height: auto !important; /* Maintain aspect ratio */
         }
         .total-stats {
-            margin: 20px 0;
+            margin: 20px auto; /* Center the element */
             font-size: 16px;
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Keep the spacing between Total Shipping and Total Delivered */
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%; /* Ensure it takes the full width of its parent */
+            max-width: 1200px; /* Match the max-width of the chart-container */
+            box-sizing: border-box; /* Ensure padding doesn't affect the width */
         }
 
         .total-stats p {
@@ -468,85 +471,86 @@
     <script src="js/main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript">
-         var shippingStats = <%= shippingStatsJson %>;
-         var labels = shippingStats.map(stat => stat.date);
-         var totalShipmentsData = shippingStats.map(stat => stat.totalShipments);
-         var shippingData = shippingStats.map(stat => stat.shippingShipments);
-         var deliveredData = shippingStats.map(stat => stat.deliveredShipments);
+        var shippingStats = <%= shippingStatsJson %>;
+        var labels = shippingStats.map(stat => stat.date);
+        var totalShipmentsData = shippingStats.map(stat => stat.totalShipments);
+        var shippingData = shippingStats.map(stat => stat.shippingShipments);
+        var deliveredData = shippingStats.map(stat => stat.deliveredShipments);
 
-         // Log the data to debug
-         console.log("Shipping Stats:", shippingStats);
-         console.log("Labels:", labels);
-         console.log("Total Shipments:", totalShipmentsData);
-         console.log("Shipping Data:", shippingData);
-         console.log("Delivered Data:", deliveredData);
+        // Log the data to debug
+        console.log("Shipping Stats:", shippingStats);
+        console.log("Labels:", labels);
+        console.log("Total Shipments:", totalShipmentsData);
+        console.log("Shipping Data:", shippingData);
+        console.log("Delivered Data:", deliveredData);
 
-         // Tính tổng Shipping và Delivered
-         var totalShipping = shippingData.reduce((sum, value) => sum + value, 0);
-         var totalDelivered = deliveredData.reduce((sum, value) => sum + value, 0);
 
-         // Hiển thị tổng lên giao diện
-         document.getElementById('totalShipping').textContent = totalShipping;
-         document.getElementById('totalDelivered').textContent = totalDelivered;
+        var totalShipping = shippingData.reduce((sum, value) => sum + value, 0);
+        var totalDelivered = deliveredData.reduce((sum, value) => sum + value, 0);
 
-         // Phần còn lại của mã (vẽ biểu đồ) giữ nguyên
-         var ctxShipping = document.getElementById('shippingTrendChart').getContext('2d');
-         var shippingTrendChart = new Chart(ctxShipping, {
-             type: 'bar',
-             data: {
-                 labels: labels,
-                 datasets: [
-                     {
-                         label: 'Shipping',
-                         data: shippingData,
-                         backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                         borderColor: 'rgb(54, 162, 235)',
-                         borderWidth: 1
-                     },
-                     {
-                         label: 'Delivered',
-                         data: deliveredData,
-                         backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                         borderColor: 'rgb(75, 192, 192)',
-                         borderWidth: 1
-                     }
-                 ]
-             },
-             options: {
-                 scales: {
-                     y: {
-                         beginAtZero: true,
-                         ticks: {
-                             stepSize: 1
-                         }
-                     }
-                 }
-             }
-         });
 
-         var ctxTotal = document.getElementById('totalShipmentsChart').getContext('2d');
-         var totalShipmentsChart = new Chart(ctxTotal, {
-             type: 'line',
-             data: {
-                 labels: labels,
-                 datasets: [{
-                         label: 'Total Shipments',
-                         data: totalShipmentsData,
-                         borderColor: 'rgb(255, 99, 132)',
-                         tension: 0.2
-                     }]
-             },
-             options: {
-                 scales: {
-                     y: {
-                         beginAtZero: true,
-                         ticks: {
-                             stepSize: 1
-                         }
-                     }
-                 }
-             }
-         });
+        document.getElementById('totalShipping').textContent = totalShipping;
+        document.getElementById('totalDelivered').textContent = totalDelivered;
+
+
+        var ctxShipping = document.getElementById('shippingTrendChart').getContext('2d');
+        var shippingTrendChart = new Chart(ctxShipping, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Shipping',
+                        data: shippingData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Delivered',
+                        data: deliveredData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        var ctxTotal = document.getElementById('totalShipmentsChart').getContext('2d');
+        var totalShipmentsChart = new Chart(ctxTotal, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                        label: 'Total Shipments',
+                        data: totalShipmentsData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.2
+                    }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html>
+
