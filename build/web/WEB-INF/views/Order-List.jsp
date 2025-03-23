@@ -410,6 +410,11 @@
                                                 cursor: pointer; border-radius: 5px;">
                                             Assign
                                         </button>
+                                        <% }else if(status.equalsIgnoreCase("Cancel") || status.equalsIgnoreCase("Refund")){%>
+                                            <button style="background-color: grey; color: white; border: none; padding: 8px 16px;
+                                                cursor: not-allowed; opacity: 0.6; border-radius: 5px;" disabled>
+                                            Cancelled
+                                        </button>
                                         <% } else { %>
                                         <button style="background-color: grey; color: white; border: none; padding: 8px 16px;
                                                 cursor: not-allowed; opacity: 0.6; border-radius: 5px;" disabled>
