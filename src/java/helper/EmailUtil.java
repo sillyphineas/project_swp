@@ -61,6 +61,46 @@ public class EmailUtil {
         }
     }
 
+    public static void sendFeedbackHiddenMail(String email, int feedbackId) {
+        final String from = "haiductran712@gmail.com";
+        final String password = "ojzoostchirajnjk";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        Authenticator auth = new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(from, password);
+            }
+        };
+
+        Session session = Session.getInstance(props, auth);
+
+        try {
+            MimeMessage msg = new MimeMessage(session);
+            msg.addHeader("Content-Type", "text/HTML; charset=UTF-8");
+            msg.setFrom(from);
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+            msg.setSubject("Notification Regarding Your Feedback");
+            msg.setSentDate(new Date());
+
+            String content = "<h3>Your Feedback Has Been Hidden</h3>"
+                    + "<p>Your feedback (ID: <strong>" + feedbackId + "</strong>) has been hidden due to a violation of our guidelines.</p>"
+                    + "<p>If you have any questions, please contact us.</p>"
+                    + "<p>Best regards,</p><p>Support Team</p>";
+
+            msg.setContent(content, "text/html; charset=UTF-8");
+            Transport.send(msg);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public static void sendOrderMail(String email, Order od, List<OrderDetail> details, Map<Integer, String> variantNames) {
         final String from = "haiductran712@gmail.com";
         final String password = "ojzoostchirajnjk";

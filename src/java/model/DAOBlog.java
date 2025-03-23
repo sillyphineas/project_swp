@@ -11,7 +11,9 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -627,6 +629,27 @@ public class DAOBlog extends DBConnection {
         }
 
         return blogs;
+    }
+    public List<Map<String, Object>> getBlogStatsByDate(String startDate, String endDate) throws SQLException {
+        String sql = "SELECT COUNT(*) AS blogCount, DATE(postTime) AS date " +
+                     "FROM Blogs " +
+                     "WHERE postTime BETWEEN ? AND ? " +
+                     "GROUP BY DATE(postTime)";
+
+        List<Map<String, Object>> stats = new ArrayList<>();
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, startDate);
+            pre.setString(2, endDate);
+
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> stat = new HashMap<>();
+                stat.put("date", rs.getString("date"));
+                stat.put("blogCount", rs.getInt("blogCount"));
+                stats.add(stat);
+            }
+        }
+        return stats;
     }
     public static void main(String[] args) {
         DAOBlog dao = new DAOBlog();

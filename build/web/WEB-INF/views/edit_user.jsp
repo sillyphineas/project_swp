@@ -178,12 +178,6 @@
                                 <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
                             </div>
 
-                            <!-- Email -->
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="${user.email}" required />
-                            </div>
-
                             <!-- Password -->
                             <div class="form-group">
                                 <label for="password">Password</label>
@@ -211,6 +205,11 @@
                                 <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
                                        max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
                             </div>
+                            <div class="form-group">
+                            <label for="image">Avatar/Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+                            <small class="form-text text-muted">Choose a new image if you want to update the avatar. (Optional)</small>
+                           </div>
 
                             <!-- Role -->
                             <div class="form-group">
@@ -238,14 +237,17 @@
 
                             <button type="submit" class="btn btn-danger">Update User</button>
                             <a href="UserController" class="btn btn-danger">Cancel</a>
-
+                             <div class="form-group">
+                                
+                                 <input type="hidden" class="form-control" id="email" name="email" value="${user.email}" required />
+                            </div>
                         </form>
 
                     </div>
                 </div>
             </div>
         </section>
-        <br>
+        
         <br>
 
         <footer id="footer"><!--Footer-->

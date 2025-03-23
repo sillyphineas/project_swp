@@ -87,7 +87,7 @@
                             } else if (roleId == 4) {
                                 window.location.href = "<%= request.getContextPath() %>/ShipperDashboardController";
                             } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/views/salesDashboard.jsp";
+                                window.location.href = "<%= request.getContextPath() %>/salesDashboardController";
                             } else if (roleId == 2) {
                                 window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
 
@@ -226,9 +226,16 @@
 
         <section id="form"><!--form-->
             <div class="container">
+                <c:if test="${not empty successMessage}">
+                                <div style="color:green;">
+                                    ${successMessage}
+                                </div>
+                            </c:if>
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-1">
+                        
                         <div class="login-form"><!--login form-->
+                            
                             <h2>Login to your account</h2>
                             <form name="loginForm">
                                 <input type="email" name="email" placeholder="Email"  required/>

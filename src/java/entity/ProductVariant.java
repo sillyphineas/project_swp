@@ -19,14 +19,17 @@ public class ProductVariant {
     private String status;
     private Color color;
     private Storage storage;
+    private Product product;
 
-    public Color getColor() {
-        return color;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public void setProduct(Product product) {
+        this.product = product;
     }
+    
+    
 
     public Storage getStorage() {
         return storage;
@@ -110,4 +113,12 @@ public class ProductVariant {
         return "ProductVariant{" + "id=" + id + ", product_id=" + product_id + ", color_id=" + color_id + ", storage_id=" + storage_id + ", price=" + price + ", stock=" + stock + ", status=" + status + '}';
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
 }

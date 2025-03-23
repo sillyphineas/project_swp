@@ -100,6 +100,7 @@ public class DAOOrderInformation extends DBConnection {
         return list;
     }
 
+
     public List<OrderInformation> getAllForShipper(int shipperId,
             String shippingStatusFilter,
             String searchOrderId,

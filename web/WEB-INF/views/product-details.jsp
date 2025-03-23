@@ -87,7 +87,7 @@
                 text-align: center;
                 padding: 20px;
             }
-            
+
         </style>
 
         <header id="header"><!--header-->
@@ -276,7 +276,7 @@
                                     Product Reviews
                                 </h2>
                                 <%
-                                if (feedbacks != null && feedbacks.size() < 3) {
+                                if (feedbacks != null && feedbacks.size() >= 3) {
                                 %>
                                 <div style="text-align: center; margin-top: 20px;">
                                     <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
@@ -318,14 +318,58 @@
                                         </p>
 
                                         <!-- Hiển thị ảnh từ JSON (nếu có) -->
-                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { %>
-                                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
-                                            <% for (String image : feedback.getImages()) { %>
-                                            <img src="<%= image %>" alt="Review Image" 
-                                                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
+                                        int imageCount = feedback.getImages().size();
+                                        %>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
+                                            <img src="<%= feedback.getImages().get(i) %>" 
+                                                 alt="Review Image"
+                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                                                 onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                            <% } %>
+
+                                            <% if (imageCount > 2) { %>
+                                            <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
+                                                 border-radius: 8px; cursor: pointer;">
+                                                +<%= imageCount - 2 %>
+                                            </div>
                                             <% } %>
                                         </div>
+
+                                        <!-- Lightbox -->
+                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+                                             flex-direction: column; z-index: 1000;">
+                                            <span onclick="closeLightbox()" 
+                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
+
+                                        </div>
+
+                                        <script>
+                                            function openLightbox(imageSrc, index) {
+                                            document.getElementById("lightbox-img").src = imageSrc;
+                                            document.getElementById("lightbox").style.display = "flex";
+                                            }
+                                            function nextImage() {
+                                            currentIndex = (currentIndex + 1) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function prevImage() {
+                                            currentIndex = (currentIndex - 1 + images.length) % images.length;
+                                            updateLightbox();
+                                            }
+
+                                            function closeLightbox() {
+                                            document.getElementById("lightbox").style.display = "none";
+                                            }
+                                        </script>
                                         <% } %>
+
                                     </div>
                                     <% } %>
                                 </div>
@@ -384,7 +428,6 @@
                                     <div class="product-information">
                                         <h2>${product.name}</h2>
 
-
                                         <p><b>Color:</b>
                                             <select id="colorSelector" name="color" class="form-control">
                                                 <c:forEach var="color" items="${colors}">
@@ -403,7 +446,6 @@
                                         <p><b>Description:</b> ${product.description}</p>
 
 
-                                        <p><b>Stock:</b> <span id="productStock">${stock}</span></p>
 
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
@@ -414,7 +456,7 @@
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
-                                        <p><b>Price: </b> <span id="productPrice">₫${String.format("%,.0f",price)}</span></p>
+                                        <p><b>Price: </b> <span id="productPrice">${price != null ? String.format("%,.0f", price) : 'Loading...'} ₫</span></p>
 
                                         <button type="submit" id="addToCartBtn" class="btn btn-default cart">
                                             <i class="fa fa-shopping-cart"></i>
@@ -666,62 +708,84 @@
         <script src="js/main.js"></script>
 
         <script src="js/cart.js"></script>
-        <script>
-        document.addEventListener("DOMContentLoaded", func tion() {
+        <script src="js/jquery.js"></script>
+        <script src="js/price-range.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
 
-                    var colorSelector = document.getElementById("colorSelector");
-            var storageSelector = document.getElementById("storageSelector");
-            var defaultColor = colorSelector.options[0].value;
-            var defaultStorage = storageSelector.options[0].value;
-            updateProductInfo(defaultColor, defaultStorage);
-            colorSelector.addEventListener("change", function() {
-            var selectedColor = colorSelector.value;
-            var selectedStorage = storageSelector.value;
-            updateProductInfo(selectedColor, selectedStorage);
-            });
-            storageSelector.addEventListener("change", function() {
-            var selectedColor = colorSelector.value;
-            var selectedStorage = storageSelector.value;
-            updateProductInfo(selectedColor, selectedStorage);
-        }); });
-        function updateProductInfo(color, storage) {
-                    var productId = '${product.id}';
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-            if (xhr.status == 200) {
-            var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
-            document.getElementById("productPrice").innerText = '₫' + data.price; ;
-            document.getElementById("productStock").innerText = data.stock;
-            } else {
-            alert("Không tìm thấy sản phẩm với lựa chọn này.");
-            }
-            };
-            xhr.send();
-                }
-                function formatPrice(price) {
-
-                    return price.toLocaleString();
-        }
-            </script>
-        <!--            <script>
-                    function checkStock() {
-                            var storageSelector = document.getElementById("storageSelector");
-                    var availabilityLabel = document.getElementById("availabilityLabel");
-                    var addToCartBtn = document.getElementById("addToCartBtn");
-                    // Lấy option đang được chọn
-                    var selectedOption = storageSelector.options[storageSelector.selectedIndex];
-                    var stock = parseInt(selectedOption.getAttribute("data-stock"));
-                    if (stock <= 0) {
-                    availabilityLabel.textContent = "Hết hàng";
-                    addToCartBtn.disabled = true;
-                    } else {             availabilityLabel.textContent = "Còn hàng";
-                        addToCartBtn.disabled = false; }     }
-                        document.addEventListener("DOMContentLoaded", checkStock);
-                        document.getElementById("storageSelector").addEventListener("change", checkStock);
-                        </script>-->
-    </body>
+            <script>
+                        document.addEventListener( "DOMContentLoaded", function() {
+                            var colorSelector = document.getElementById("colorSelector");
+                    var storageSelector = document.getElementById("storageSelector");
+                    var defaultColor = colorSelector.options[0].value;
+                    var defaultStorage = storageSelector.options[0].value;
+                    // Cập nhật thông tin ngay khi tải trang
+                    updateProductInfo(defaultColor, defaultStorage);
+                    // Cập nhật khi thay đổi color hoặc storage
+                    colorSelector.addEventListener("change", function() {
+                    var selectedColor = colorSelector.value;
+                    var selectedStorage = storageSelector.value;
+                    updateProductInfo(selectedColor, selectedStorage);
+                    });
+                    storageSelector.addEventListener("change", function() {
+        var selectedColor = colorSelector.value;
+                    var selectedStorage = storageSelector.value;
+                    updateProductInfo(selectedColor, selectedStorage);
+                    });
+                        });
+                
+                    function updateProductInfo(color, storage) {
+                            var productId = '${product.id}';
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                    xhr.onload = function() {
+                    if (xhr.status === 200) {
+                    var data = JSON.parse(xhr.responseText);
+                    // Cập nhật giá và số lượng sản phẩm
+                    document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
+                    document.getElementById("productStock").innerText = data.stock;
+                    // Cập nhật max của quantity dựa trên stock
+                    document.getElementById("quantity").max = data.stock;
+                    // Vô hiệu hóa nút "Add to cart" nếu hết hàng
+                    document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
+                    } else {
+                    console.error("Error fetching product info: " + xhr.status);
+                    document.getElementById("productPrice").innerText = "Error";
+                    document.getElementById("productStock").innerText = "Error";
+                        }
+                    };
+                    xhr.onerror = function() {
+                    console.error("Request failed");
+                    document.getElementById("productPrice").innerText = "Error";
+                    document.getElementById("productStock").innerText = "Error";
+                    };
+                    xhr.send();
+                    }
+                
+                        function formatPrice(price) {
+                            return price.toLocaleString('vi-VN');
+                                    }
+        </script>
+    </script>
+    <!--            <script>
+                function checkStock() {
+                        var storageSelector = document.getElementById("storageSelector");
+                var availabilityLabel = document.getElementById("availabilityLabel");
+                var addToCartBtn = document.getElementById("addToCartBtn");
+                // Lấy option đang được chọn
+                var selectedOption = storageSelector.options[storageSelector.selectedIndex];
+                var stock = parseInt(selectedOption.getAttribute("data-stock"));
+                if (stock <= 0) {
+                availabilityLabel.textContent = "Hết hàng";
+                addToCartBtn.disabled = true;
+                } else {             availabilityLabel.textContent = "Còn hàng";
+                    addToCartBtn.disabled = false; }     }
+                    document.addEventListener("DOMContentLoaded", checkStock);
+                    document.getElementById("storageSelector").addEventListener("change", checkStock);
+                    </script>-->
+</body>
 </html>
-

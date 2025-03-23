@@ -26,6 +26,18 @@ public class Feedback {
     private ProductVariant productVariant;
     private String Status;
 
+    private String reply;
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+    
+    
+
     public String getStatus() {
         return Status;
     }
@@ -86,6 +98,25 @@ public class Feedback {
         this.isDisabled = isDisabled;
         this.Status = Status;
     }
+
+
+    public Feedback(int id, int orderDetailID, int reviewerID, int product_id, String reviewTime, int rating, String content, String images, boolean isDisabled, User user, Product product, ProductVariant productVariant, String Status, String reply) {
+        this.id = id;
+        this.orderDetailID = orderDetailID;
+        this.reviewerID = reviewerID;
+        this.product_id = product_id;
+        this.reviewTime = reviewTime;
+        this.rating = rating;
+        this.content = content;
+        this.images = images;
+        this.isDisabled = isDisabled;
+        this.user = user;
+        this.product = product;
+        this.productVariant = productVariant;
+        this.Status = Status;
+        this.reply = reply;
+    }
+
     
     
     
@@ -215,4 +246,14 @@ public class Feedback {
         }
         return "Active";
     }
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+    
+
 }

@@ -15,14 +15,14 @@ public class Shipping {
     private int OrderID;
     private int ShipperID;
     private String ShippingStatus;
-    private Date EstimatedArrival;     
-    private Date ActualArrival;      
-    private Date ShippingDate;       
+    private String EstimatedArrival;     
+    private String ActualArrival;      
+    private String ShippingDate;       
 
     public Shipping() {
     }
 
-    public Shipping(int ShippingID, int OrderID, int ShipperID, String ShippingStatus, Date EstimatedArrival, Date ActualArrival, Date ShippingDate) {
+    public Shipping(int ShippingID, int OrderID, int ShipperID, String ShippingStatus, String EstimatedArrival, String ActualArrival, String ShippingDate) {
         this.ShippingID = ShippingID;
         this.OrderID = OrderID;
         this.ShipperID = ShipperID;
@@ -65,27 +65,27 @@ public class Shipping {
         this.ShippingStatus = ShippingStatus;
     }
 
-    public Date getEstimatedArrival() {
+    public String getEstimatedArrival() {
         return EstimatedArrival;
     }
 
-    public void setEstimatedArrival(Date EstimatedArrival) {
+    public void setEstimatedArrival(String EstimatedArrival) {
         this.EstimatedArrival = EstimatedArrival;
     }
 
-    public Date getActualArrival() {
+    public String getActualArrival() {
         return ActualArrival;
     }
 
-    public void setActualArrival(Date ActualArrival) {
+    public void setActualArrival(String ActualArrival) {
         this.ActualArrival = ActualArrival;
     }
 
-    public Date getShippingDate() {
+    public String getShippingDate() {
         return ShippingDate;
     }
 
-    public void setShippingDate(Date ShippingDate) {
+    public void setShippingDate(String ShippingDate) {
         this.ShippingDate = ShippingDate;
     }
 

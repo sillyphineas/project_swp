@@ -239,7 +239,8 @@ public class CartController extends HttpServlet {
                                     System.out.println("in ra "+Integer.toString(item.getCartItemID()).equals(selectedItemID));
                                     
                                     ProductVariant productVariant = daoProVariant.getProductVariantById(item.getProductVariantID());
-                                    System.out.println(item.getProductVariantID());
+                                    System.out.println("Product variants"+item.getProductVariantID());
+                                    System.out.println("Product variants"+productVariant);
                                     if (productVariant == null) {
                                         System.out.println("Vào đến bc productVariant");
                                         request.setAttribute("error", "Sản phẩm không còn tồn tại.");
@@ -261,6 +262,7 @@ public class CartController extends HttpServlet {
 
                                     // Lấy Product
                                     Product product = daoPro.getProductById(productVariant.getProduct_id());
+                                    System.out.println("Product"+product);
                                     if (product == null) {
                                         System.out.println("Vào đến bc product");
                                         request.setAttribute("error", "Thông tin sản phẩm không hợp lệ.");
@@ -270,7 +272,7 @@ public class CartController extends HttpServlet {
 
                                     // Lấy Color
                                     Color color = daoColor.getColorById1(productVariant.getColor_id());
-                                    System.out.println("color"+productVariant.getColor_id());
+                                    System.out.println("color"+color);
                                     if (color == null) {
                                         System.out.println("Vào đến bc color");
                                         request.setAttribute("error", "Không lấy được thông tin màu sắc.");

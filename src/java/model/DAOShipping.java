@@ -12,6 +12,15 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.ResultSet;
+import java.util.Date;
+import entity.RevenueTrend;
+import entity.OrderTrend;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -30,9 +39,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
                 vector.add(shipping);
             }
@@ -69,9 +78,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
             }
         } catch (SQLException ex) {
@@ -92,9 +101,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
             }
         } catch (SQLException ex) {
@@ -102,5 +111,169 @@ public class DAOShipping extends DBConnection {
         }
         return shipping;
     }
+    public Vector<OrderTrend> getOrderTrends(Date startDate, Date endDate, Integer shipperId, String orderStatus) {
+        Vector<OrderTrend> trends = new Vector<>();
+        Calendar cal = Calendar.getInstance();
 
+        // Set default start date to 7 days ago if not provided
+        if (startDate == null) {
+            cal.add(Calendar.DAY_OF_YEAR, -7);
+            startDate = cal.getTime();
+        }
+        // Set default end date to today if not provided
+        if (endDate == null) {
+            endDate = new Date();
+        }
+
+        // SQL query to count total and successful orders per day
+        String sql = "SELECT DATE(o.orderTime) as trendDate, "
+                + "COUNT(*) as totalOrders, "
+                + "SUM(CASE WHEN o.orderStatus = 'Delivered' THEN 1 ELSE 0 END) as successfulOrders "
+                + "FROM [Order] o "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID "
+                + "WHERE o.orderTime BETWEEN ? AND ? "
+                + (shipperId != null ? "AND s.ShipperID = ? " : "")
+                + (orderStatus != null && !orderStatus.isEmpty() ? "AND o.orderStatus = ? " : "")
+                + "GROUP BY DATE(o.orderTime) "
+                + "ORDER BY trendDate";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+            // Set date parameters
+            ps.setDate(paramIndex++, new java.sql.Date(startDate.getTime()));
+            ps.setDate(paramIndex++, new java.sql.Date(endDate.getTime()));
+            // Set shipperId if provided
+            if (shipperId != null) {
+                ps.setInt(paramIndex++, shipperId);
+            }
+            // Set orderStatus if provided
+            if (orderStatus != null && !orderStatus.isEmpty()) {
+                ps.setString(paramIndex++, orderStatus);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Date trendDate = rs.getDate("trendDate");
+                int totalOrders = rs.getInt("totalOrders");
+                int successfulOrders = rs.getInt("successfulOrders");
+                trends.add(new OrderTrend(trendDate, totalOrders, successfulOrders));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOShipping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return trends;
+    }
+
+    /**
+     * Get revenue trends by day for a specified date range.
+     * @param startDate Start date for the trend (null for last 7 days)
+     * @param endDate End date for the trend (null for today)
+     * @param shipperId Specific shipper ID (null for all shippers)
+     * @param orderStatus Specific order status (null for all statuses)
+     * @return Vector of RevenueTrend objects
+     */
+    public Vector<RevenueTrend> getRevenueTrends(Date startDate, Date endDate, Integer shipperId, String orderStatus) {
+        Vector<RevenueTrend> trends = new Vector<>();
+        Calendar cal = Calendar.getInstance();
+
+        // Set default start date to 7 days ago if not provided
+        if (startDate == null) {
+            cal.add(Calendar.DAY_OF_YEAR, -7);
+            
+        }
+        // Set default end date to today if not provided
+        if (endDate == null) {
+            endDate = new Date();
+        }
+
+        // SQL query to sum discountedPrice per day
+        String sql = "SELECT DATE(o.orderTime) as trendDate, "
+                + "COALESCE(SUM(o.discountedPrice), 0) as dailyRevenue "
+                + "FROM [Order] o "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID "
+                + "WHERE o.orderTime BETWEEN ? AND ? "
+                + (shipperId != null ? "AND s.ShipperID = ? " : "")
+                + (orderStatus != null && !orderStatus.isEmpty() ? "AND o.orderStatus = ? " : "")
+                + "GROUP BY DATE(o.orderTime) "
+                + "ORDER BY trendDate";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            int paramIndex = 1;
+            // Set date parameters
+            ps.setDate(paramIndex++, new java.sql.Date(startDate.getTime()));
+            ps.setDate(paramIndex++, new java.sql.Date(endDate.getTime()));
+            // Set shipperId if provided
+            if (shipperId != null) {
+                ps.setInt(paramIndex++, shipperId);
+            }
+            // Set orderStatus if provided
+            if (orderStatus != null && !orderStatus.isEmpty()) {
+                ps.setString(paramIndex++, orderStatus);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Date trendDate = rs.getDate("trendDate");
+                double dailyRevenue = rs.getDouble("dailyRevenue");
+                trends.add(new RevenueTrend(trendDate, dailyRevenue));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOShipping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return trends;
+    }
+   public List<Map<String, Object>> getShippingStatsByDate(String startDate, String endDate, String shippingStatus) throws SQLException {
+        // Chuyển đổi endDate để bao gồm cả ngày cuối
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(endDate));
+            calendar.add(Calendar.DAY_OF_YEAR, 1); // Thêm 1 ngày để bao gồm endDate
+            String adjustedEndDate = sdf.format(calendar.getTime());
+
+            String sql = "SELECT DATE(ShippingDate) AS date, "
+                    + "COUNT(*) AS totalShipments, "
+                    + "COUNT(CASE WHEN ShippingStatus = 'Delivered' AND ActualArrival IS NOT NULL THEN 1 END) AS deliveredShipments, "
+                    + "COUNT(CASE WHEN ShippingStatus = 'Shipping' AND ActualArrival IS NULL THEN 1 END) AS shippingShipments "
+                    + "FROM Shipping "
+                    + "WHERE ShippingDate >= ? AND ShippingDate < ? ";
+
+            if (shippingStatus != null && !shippingStatus.isEmpty()) {
+                sql += "AND ShippingStatus = ? ";
+            }
+
+            sql += "GROUP BY DATE(ShippingDate)";
+
+            List<Map<String, Object>> shippingStats = new ArrayList<>();
+
+            try (PreparedStatement pre = conn.prepareStatement(sql)) {
+                pre.setString(1, startDate);
+                pre.setString(2, adjustedEndDate); // Sử dụng endDate đã điều chỉnh
+
+                if (shippingStatus != null && !shippingStatus.isEmpty()) {
+                    pre.setString(3, shippingStatus);
+                }
+
+                try (ResultSet rs = pre.executeQuery()) {
+                    while (rs.next()) {
+                        Map<String, Object> stat = new HashMap<>();
+                        stat.put("date", rs.getString("date"));
+                        stat.put("totalShipments", rs.getInt("totalShipments"));
+                        stat.put("deliveredShipments", rs.getInt("deliveredShipments"));
+                        stat.put("shippingShipments", rs.getInt("shippingShipments"));
+                        shippingStats.add(stat);
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return shippingStats;
+        } catch (java.text.ParseException e) {
+            throw new SQLException("Invalid date format", e);
+        }
+    }
 }
+
+
+
