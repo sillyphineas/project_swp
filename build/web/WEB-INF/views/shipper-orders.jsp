@@ -1,130 +1,31 @@
-<%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
-    Author     : HP
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="entity.OrderInformation" %>
+<%@ page import="java.util.List" %>
 <%@page import="entity.User"%>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.HashMap" %>
-<%@ page import="com.google.gson.Gson" %>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <title>Home | T-Shopper</title>
+        <meta charset="UTF-8">
+        <title>Shipper Orders</title>
+        <!-- Bootstrap & FontAwesome & main.css -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
-        <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
-        <link rel="shortcut icon" href="images/ico/favicon.ico">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
-    <style>
-        body {
-            padding-top: 20px;
-        }
-        .content {
-            margin: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group input {
-            margin-right: 10px;
-        }
-        .stat-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .stat-list li {
-            margin-bottom: 10px;
-        }
-        .stat-list h3 {
-            margin-top: 20px;
-        }
-        canvas {
-            max-width: 100%;
-            margin-top: 30px;
-        }
-        /* Container cho nội dung */
-        .content {
-            padding: 30px;
-            background-color: #f9f9f9;
-            margin: 0 auto;
-        }
 
-        /* Thống kê khác sẽ chiếm toàn bộ chiều rộng */
-        .statistics-container {
-            margin-bottom: 30px;
-            width: 100%;
-        }
+        <style>
+            /* Nếu muốn y chang trước, bỏ hết style bên dưới. 
+               Hoặc giữ minimal style (ví dụ, bỏ table-responsive). */
 
-        /* Cập nhật cấu trúc Flexbox để các phần tử con nằm ngang */
-        .statistics-item {
-            flex: 1;
-            margin-right: 15px;
-        }
+            /* Nếu bạn KHÔNG muốn table-responsive => bỏ .table-responsive wrapper */
+            /* Nếu bạn vẫn muốn responsive => bọc bảng trong <div class="table-responsive">... */
 
-        /* Đảm bảo rằng các phần tử có chiều rộng hợp lý */
-        .table-container, .chart-container {
-            width: 48%; /* Cả bảng và biểu đồ sẽ chiếm 48% chiều rộng của container */
-            display: inline-block; /* Đảm bảo các phần tử sẽ nằm cạnh nhau */
-            margin-top: 30px;
-        }
-
-        /* Đảm bảo "Other Statistics" nằm trên một hàng riêng */
-        /* Cấu hình Flexbox để các phần tử trong 'Other Statistics' nằm trên một hàng ngang */
-        .other-statistics {
-            display: flex;
-            flex-wrap: wrap; /* Cho phép các phần tử xuống dòng nếu không đủ chỗ */
-            justify-content: space-between;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .other-statistics div {
-            flex: 1 1 45%; /* Chiếm 45% chiều rộng của container và co giãn khi cần */
-            margin-right: 15px; /* Khoảng cách giữa các phần tử */
-        }
-
-        .other-statistics div:last-child {
-            margin-right: 0; /* Loại bỏ margin phải của phần tử cuối cùng */
-        }
-
-        /* Đảm bảo các tiêu đề và nội dung có khoảng cách phù hợp */
-        h3, h4 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-
-        /* Cập nhật các kiểu cho bảng */
-        table {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    </style>
+            /* Dưới đây là style minimal; có thể xóa nếu muốn "như trước" hoàn toàn */
+            /* .table th, .table td {
+                white-space: nowrap; // nếu muốn text không xuống dòng
+            } */
+        </style>
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -220,9 +121,9 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>   
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
                                     <li><a href="UserController">Users List</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>                                   
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -236,132 +137,114 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="content" style="padding: 30px; background-color: #f9f9f9;">
-            <!-- Phần chọn ngày -->
-            <div class="row">
-                <div class="col-md-12 text-center" style="margin-bottom: 30px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Select Date Range:</h3>
-                    <form action="${pageContext.request.contextPath}/AdminDashboardController" method="get" class="form-inline justify-content-center">
-                        <div class="form-group">
-                            <label for="startDate" style="font-weight: bold; margin-right: 10px;">Start Date:</label>
-                            <input type="date" id="startDate" name="startDate" value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
-                        </div>
-                        <div class="form-group">
-                            <label for="endDate" style="font-weight: bold; margin-right: 10px;">End Date:</label>
-                            <input type="date" id="endDate" name="endDate" value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-right: 20px;">
-                        </div>
-                        <button type="submit" class="btn btn-warning" style="padding: 10px 20px; background-color: #f39c12; color: white; border: none; border-radius: 5px;">Generate Report</button>
-                    </form>
-                </div>
+        <section class="container" style="margin-top: 30px;">
+            <h2>Order List for Shipper</h2>
+            <!-- Filter Form -->
+            <form action="ShipperOrderController" method="get" class="form-inline" style="margin-bottom: 15px;">
+                <label for="status" class="mr-2">Shipping Status:</label>
+                <select name="status" id="status" class="form-control mr-3">
+                    <option value="" <c:if test="${statusFilter == ''}">selected</c:if>>All</option>
+                    <option value="Shipping" <c:if test="${statusFilter == 'Shipping'}">selected</c:if>>Shipping</option>
+                    <option value="Delivered" <c:if test="${statusFilter == 'Delivered'}">selected</c:if>>Delivered</option>
+                    </select>
+
+                    <label for="search" class="mr-2">Order ID:</label>
+                    <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order ID" class="form-control mr-3" />
+
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+
+            <!-- Bảng hiển thị OrderInformation -->
+            <!-- Nếu muốn responsive => bọc trong <div class="table-responsive"> -->
+            <!-- <div class="table-responsive"> -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Time</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                        <th>Shipping Date</th>
+                        <th>Estimated Arrival</th>
+                        <th>Actual Arrival</th>
+                        <th>Total Price</th>
+                        <th>Recipient</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="oi" items="${orderList}">
+                        <tr>
+                            <td>${oi.id}</td>
+                            <td>${oi.orderTime}</td>
+                            <td>${oi.orderStatus}</td>
+                            <td>${oi.paymentStatus}</td>
+                            <td>${oi.shippingStatus}</td>
+                            <td>${oi.shippingDate}</td>
+                            <td>${oi.estimatedArrival}</td>
+                            <td>${oi.actualArrival}</td>
+                            <td>${oi.totalPrice}</td>
+                            <td>${oi.recipientName} (${oi.recipientPhone})</td>
+                            <td>${oi.address}, ${oi.district}, ${oi.city}</td>
+                            <td>
+                                <!-- Update Shipping -->
+                                <form action="ShipperOrderController" method="post" style="margin-bottom: 5px;">
+                                    <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updateShipping" />
+                                    <select name="newShippingStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Shipping" <c:if test="${oi.shippingStatus == 'Shipping'}">selected</c:if>>Shipping</option>
+                                        <option value="Delivered" <c:if test="${oi.shippingStatus == 'Delivered'}">selected</c:if>>Delivered</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-info btn-sm">Update Ship</button>
+                                    </form>
+
+                                    <!-- Update Payment -->
+                                    <form action="ShipperOrderController" method="post">
+                                        <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updatePayment" />
+                                    <select name="newPaymentStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Pending" <c:if test="${oi.paymentStatus == 'Pending'}">selected</c:if>>Pending</option>
+                                        <option value="Paid" <c:if test="${oi.paymentStatus == 'Paid'}">selected</c:if>>Paid</option>
+                                        <option value="Refund" <c:if test="${oi.paymentStatus == 'Refund'}">selected</c:if>>Refund</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-warning btn-sm">Update Pay</button>
+                                    </form>
+                                </td>
+                            </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+            <!-- </div> -->
+
+            <!-- Pagination -->
+            <div style="text-align: center;">
+                <c:if test="${currentPage > 1}">
+                    <a href="ShipperOrderController?page=${currentPage - 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">&laquo; Prev</a>
+                </c:if>
+                <c:forEach begin="1" end="${totalPages}" var="p">
+                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn <c:if test='${p == currentPage}'>btn-primary</c:if> btn-default"
+                           style="margin: 0 3px;">
+                       ${p}
+                    </a>
+                </c:forEach>
+                <c:if test="${currentPage < totalPages}">
+                    <a href="ShipperOrderController?page=${currentPage + 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">Next &raquo;</a>
+                </c:if>
             </div>
-
-            <div class="other-statistics">
-                <div>
-                    <h4>Total Revenue: <%= request.getAttribute("totalRevenue") != null ? request.getAttribute("totalRevenue") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
-                </div>
-                <div>
-                    <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
-                </div>
-            </div>
-
-
-            <div class="statistics-container" style="display: flex; justify-content: space-between; margin-top: 30px;">
-                <!-- Bảng Order Status Counts -->
-                <div class="table-container" style="width: 48%; box-sizing: border-box; padding-right: 10px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
-                    <table class="table table-bordered" style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Order Status</th>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% 
-                                Map<String, Integer> orderStatusCounts = (Map<String, Integer>) request.getAttribute("orderStatusCounts");
-                            %>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Delivered</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cancelled</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Shipping</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Pickup</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Refund</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Biểu đồ Order Trend -->
-                <div class="chart-container" style="width: 48%; box-sizing: border-box; padding-left: 10px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Trend</h3>
-                    <canvas id="orderTrendChart" style="width: 100%; height: 300px;"></canvas>
-                    <script>
-                        var orderTrendsJson = '<%= request.getAttribute("orderTrendsJson") != null ? request.getAttribute("orderTrendsJson") : "[]" %>';
-                        var trends = JSON.parse(orderTrendsJson);
-
-                        if (trends.length > 0) {
-                            var labels = [];
-                            var data = [];
-                            trends.forEach(function (trend) {
-                                labels.push(trend.date);
-                                data.push(trend.count);
-                            });
-
-                            var ctx = document.getElementById('orderTrendChart').getContext('2d');
-                            var chart = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                            label: 'Successful Orders Trend',
-                                            data: data,
-                                            borderColor: 'rgba(75, 192, 192, 1)',
-                                            fill: false
-                                        }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        x: {
-                                            title: {
-                                                display: true,
-                                                text: 'Date'
-                                            }
-                                        },
-                                        y: {
-                                            title: {
-                                                display: true,
-                                                text: 'Number of Orders'
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    </script>
-                </div>
-            </div>
-        </div>
-
+        </section>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -521,13 +404,7 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>
