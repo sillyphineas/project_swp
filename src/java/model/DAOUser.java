@@ -53,7 +53,7 @@ public class DAOUser extends DBConnection {
             pre.setTimestamp(7, user.getResetTokenExpired());
             pre.setDate(8, user.getDateOfBirth());
             pre.setInt(9, user.getRoleId());
-            pre.setBoolean(10, user.isIsDisabled());
+            pre.setBoolean(10, user.isDisabled());
             pre.setInt(11, user.getUpdatedBy());
             pre.setDate(12, user.getUpdatedAt());
 
@@ -100,8 +100,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"), // Lấy giá trị updatedDate
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getBytes("image")
                 );
                 vector.add(user);
             }
@@ -133,8 +132,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
                         rs.getDate("updated_at"), // Thay "updatedDate" bằng "updated_at"
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getBytes("image")
                 );
             }
         } catch (SQLException ex) {
@@ -165,8 +163,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getBytes("image")
                 );
             }
         } catch (SQLException ex) {
@@ -175,6 +172,19 @@ public class DAOUser extends DBConnection {
         return user;
     }
 
+    public int updatePassword(int userId, String newPassHash) {
+        int n = 0;
+        String sql = "UPDATE Users SET passHash = ? WHERE id = ?";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, newPassHash);
+            pre.setInt(2, userId);
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
+    }
+    
     public User getUserByResetToken(String token) {
         User user = null;
         String sql = "SELECT * FROM users WHERE resetToken = ?";
@@ -252,8 +262,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getBytes("image")
                 );
             }
         } catch (SQLException ex) {
@@ -294,7 +303,7 @@ public class DAOUser extends DBConnection {
         int n = 0;
         String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, "
                 + "phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, "
-                + "DateOfBirth = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? WHERE id = ?";
+                + "DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? WHERE id = ?";
 
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
@@ -306,13 +315,14 @@ public class DAOUser extends DBConnection {
             pre.setString(6, user.getResetToken());
             pre.setTimestamp(7, user.getResetTokenExpired());
             pre.setDate(8, user.getDateOfBirth());
-            pre.setBoolean(9, user.isIsDisabled());
-            pre.setInt(10, user.getUpdatedBy());
-            pre.setDate(11, user.getUpdatedAt());
+            pre.setInt(9, user.getRoleId());
+            pre.setBoolean(10, user.isIsDisabled());
+            pre.setInt(11, user.getUpdatedBy());
+            pre.setDate(12, user.getUpdatedAt());
 
             // Lưu trữ ảnh dạng BLOB
-            pre.setBytes(12, user.getImage());
-            pre.setInt(13, user.getId());
+            pre.setBytes(13, user.getImage());
+            pre.setInt(14, user.getId());
 
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -357,8 +367,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")));
+                        rs.getBytes("image")));
 
             }
         }
@@ -427,8 +436,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")));
+                        rs.getBytes("image")));
             }
         }
 
@@ -512,8 +520,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")));
+                        rs.getBytes("image")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -521,6 +528,21 @@ public class DAOUser extends DBConnection {
         return users;
     }
 
+    public String getUserEmailByUserID(int userId) {
+        String sql = "SELECT email FROM Users WHERE id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+    
     public int countTotalUsers(String query) {
         int totalUsers = 0;
         String sql = "SELECT COUNT(*) FROM Users WHERE name LIKE ? OR email LIKE ? OR phoneNumber LIKE ?";
@@ -565,8 +587,7 @@ public class DAOUser extends DBConnection {
                             rs.getBoolean("isDisabled"),
                             rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                             rs.getDate("updated_at"),
-                            rs.getBytes("image"),
-                            rs.getDate("registered_at")));
+                            rs.getBytes("image")));
                 }
             }
         } catch (SQLException e) {
@@ -626,8 +647,7 @@ public class DAOUser extends DBConnection {
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"), // Lấy giá trị updatedBy
                         rs.getDate("updated_at"),
-                        rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getBytes("image")
                 );
                 customers.add(user);
             }
@@ -760,78 +780,9 @@ public class DAOUser extends DBConnection {
             e.printStackTrace();
         }
         return exists;
-
-    }
-
-    public String getUserEmailByUserID(int userId) {
-        String sql = "SELECT email FROM Users WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("email");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
-
-    public List<Map<String, Object>> getUserStatsByDate(String startDate, String endDate) throws SQLException {
-        String sql = "SELECT COUNT(*) AS userCount, DATE(registered_at) AS date "
-                + "FROM Users "
-                + "WHERE roleId = 5 "
-                + "AND registered_at BETWEEN ? AND ? "
-                + "GROUP BY DATE(registered_at)";
-
-        List<Map<String, Object>> stats = new ArrayList<>();
-        try (PreparedStatement pre = conn.prepareStatement(sql)) {
-            pre.setString(1, startDate);
-            pre.setString(2, endDate);
-
-            ResultSet rs = pre.executeQuery();
-            while (rs.next()) {
-                Map<String, Object> stat = new HashMap<>();
-                stat.put("date", rs.getString("date"));
-                stat.put("userCount", rs.getInt("userCount"));
-                stats.add(stat);
-            }
-        }
-        return stats;
-    }
-
-    public int updatePassword(int userId, String newPassHash) {
-        int n = 0;
-        String sql = "UPDATE Users SET passHash = ? WHERE id = ?";
-        try (PreparedStatement pre = conn.prepareStatement(sql)) {
-            pre.setString(1, newPassHash);
-            pre.setInt(2, userId);
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
     }
 
     public static void main(String[] args) {
-        // Make sure your DBConnection is properly initialized before this
-        DAOUser daoUser = new DAOUser();
-        // Example date range; adjust to match your test data
-        String startDate = "2025-01-01";
-        String endDate = "2025-12-31";
 
-        try {
-            List<Map<String, Object>> stats = daoUser.getUserStatsByDate(startDate, endDate);
-            System.out.println("User Registration Statistics from " + startDate + " to " + endDate + ":");
-            for (Map<String, Object> stat : stats) {
-                String date = (String) stat.get("date");
-                int userCount = (int) stat.get("userCount");
-                System.out.println("Date: " + date + " | User Count: " + userCount);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
-
 }
