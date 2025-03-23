@@ -19,7 +19,7 @@ public class User {
     private int updatedBy;         // Người cập nhật (tham chiếu đến id)
     private Date updatedAt;        // Thời gian cập nhật
     private byte[] image;          // Avatar người dùng (dữ liệu hình ảnh dưới dạng byte)
-
+    private Date registeredAt; // Ngày đăng ký
     // Constructor không tham số
     public User() {
     }
@@ -28,7 +28,7 @@ public class User {
     public User(int id, String name, String email, String passHash, boolean gender,
             String phoneNumber, String resetToken, Timestamp resetTokenExpired,
             Date dateOfBirth, int roleId, boolean isDisabled,
-            int updatedBy, Date updatedAt, byte[] image) {
+            int updatedBy, Date updatedAt, byte[] image, Date registeredAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -43,6 +43,7 @@ public class User {
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
         this.image = image;
+        this.registeredAt = registeredAt;
     }
 
     // Getters và Setters cho từng thuộc tính
@@ -190,7 +191,13 @@ public class User {
         }
         return "Active";
     }
+    public Date getRegisteredAt() {
+        return registeredAt;
+    }
 
+    public void setRegisteredAt(Date registeredAt) {
+        this.registeredAt = registeredAt;
+    }
     // Override toString() để dễ dàng hiển thị thông tin user
     @Override
     public String toString() {
@@ -208,7 +215,8 @@ public class User {
                 + ", isDisabled=" + isDisabled
                 + ", updatedBy=" + updatedBy
                 + ", updatedAt=" + updatedAt
-                + ", image=" + (image != null ? "[image data]" : "null") // không hiển thị toàn bộ ảnh trong toString
+                + ", registeredAt=" + registeredAt
+                + ", image=" + (image != null ? "[image data]" : "null")
                 + '}';
     }
 }

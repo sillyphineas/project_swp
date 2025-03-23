@@ -4,7 +4,7 @@
  */
 
 package controller;
-
+import java.sql.SQLException;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
@@ -16,6 +16,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import model.DAOBlog;
+import model.DAOFeedback;
+import model.DAOProduct;
+import model.DAOUser;
 
 /**
  *
@@ -69,8 +78,26 @@ public class MarketingDashboardController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
+        
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+
+        // Nếu không có startDate hoặc endDate, mặc định là 7 ngày trước đến hôm nay
+        if (startDate == null || endDate == null) {
+            startDate = getFormattedDate(-7); // 7 ngày trước
+            endDate = getFormattedDate(0);    // Hôm nay
+        }     
+        request.setAttribute("startDate", startDate);
+        request.setAttribute("endDate", endDate);
+
+        // Lấy thống kê từ cơ sở dữ liệu
+        Map<String, Object> statistics = getStatistics(startDate, endDate);
+
+        // Đưa số liệu vào request để hiển thị
+        request.setAttribute("statistics", statistics);
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/marketingDashboard.jsp");
         rd.forward(request, response);
+        
     }
 
     /** 
@@ -94,5 +121,41 @@ public class MarketingDashboardController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    private String getFormattedDate(int daysAgo) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, daysAgo);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng phù hợp với SQL
+        return sdf.format(calendar.getTime());
+    }
+    private Map<String, Object> getStatistics(String startDate, String endDate) {
+        Map<String, Object> statistics = new HashMap<>();
 
+        try {
+            // Tạo các DAO tương ứng
+            DAOUser daoUser = new DAOUser();
+            DAOProduct daoProduct = new DAOProduct();
+            DAOBlog daoBlog = new DAOBlog();
+            DAOFeedback daoFeedback = new DAOFeedback();
+
+            // Lấy thống kê từ các bảng trong cơ sở dữ liệu
+            List<Map<String, Object>> userStats = daoUser.getUserStatsByDate(startDate, endDate);
+            List<Map<String, Object>> productStats = daoProduct.getProductStatsByDate(startDate, endDate);
+            List<Map<String, Object>> blogStats = daoBlog.getBlogStatsByDate(startDate, endDate);
+            List<Map<String, Object>> feedbackStats = daoFeedback.getFeedbackStatsByDate(startDate, endDate);
+
+            statistics.put("userStats", userStats);
+            statistics.put("productStats", productStats);
+            statistics.put("blogStats", blogStats);
+            statistics.put("feedbackStats", feedbackStats);
+            System.out.println("User Stats: " + statistics.get("userStats"));
+            System.out.println("Product Stats: " + statistics.get("productStats"));
+            System.out.println("Blog Stats: " + statistics.get("blogStats"));
+            System.out.println("Feedback Stats: " + statistics.get("feedbackStats"));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return statistics;
+    }
 }
