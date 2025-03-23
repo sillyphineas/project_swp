@@ -172,10 +172,29 @@
                             %>
                             <!-- Filter Options -->
                             <div style="text-align: center; margin-bottom: 20px;">
-                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= productId %>" style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Tất Cả</a>
-                                <% for (int i = 5; i >= 1; i--) { %>
-                                <a href="FeedBackController?service=FilterByStar&productId=<%= productId %>&star=<%= i %>" style="padding: 8px 12px; background-color: #ddd; color: black; text-decoration: none; border-radius: 5px; margin: 0 5px;"><%= i %> Sao</a>
-                                <% } %>
+                                <%
+                                    String starParam = request.getParameter("star");
+                                    if (starParam == null) { 
+                                %>
+                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= productId %>" style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">ALL</a>
+                                <%
+                                    } else { 
+                                %>
+                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= productId %>" style="padding: 8px 12px; background-color: #ddd; color: black; text-decoration: none; border-radius: 5px;">ALL</a>
+                                <%
+                                    }
+                                    for (int i = 5; i >= 1; i--) {
+                                        if (starParam != null && starParam.equals(String.valueOf(i))) {
+                                %>
+                                <a href="FeedBackController?service=FilterByStar&productId=<%= productId %>&star=<%= i %>" style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px; margin: 0 5px;"><%= i %> Star</a>
+                                <%
+                                        } else { 
+                                %>
+                                <a href="FeedBackController?service=FilterByStar&productId=<%= productId %>&star=<%= i %>" style="padding: 8px 12px; background-color: #ddd; color: black; text-decoration: none; border-radius: 5px; margin: 0 5px;"><%= i %> Star</a>
+                                <%
+                                        }
+                                    }
+                                %>
                             </div>
 
                             <% List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks"); %>
@@ -197,7 +216,7 @@
                                         </div>
                                     </div>
                                     <p style="color: #666; font-size: 14px;">
-                                        Category: <%= feedback.getProduct().getName() %>, 
+                                        Product: <%= feedback.getProduct().getName() %>, 
                                         <%= feedback.getProductVariant().getColor().getColorName() %>, 
                                         <%= feedback.getProductVariant().getStorage().getCapacity() %>
                                     </p>
@@ -304,25 +323,33 @@
                             Integer selectedStar = (Integer) request.getAttribute("selectedStar"); // Lọc theo số sao (nếu có)
                             String service = (selectedStar == null) ? "ListFeedbackWithId" : "FilterByStar";
                         %>
-                        <div style="text-align: center; margin-top: 20px;">
-                            <% if (currentPage > 1) { %>
-                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage - 1 %>" 
-                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">← Previous Page</a>
-                            <% } %>
+                        <div style="text-align: center; margin-top: 20px; display: flex; align-items: center;">
+                            <div style="flex-grow: 1; text-align: center;">
+                                <% if (currentPage > 1) { %>
+                                <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage - 1 %>" 
+                                   style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">← Previous Page</a>
+                                <% } %>
 
-                            <% for (int i = 1; i <= totalPages; i++) { %>
-                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= i %>" 
-                               style="padding: 8px 12px; margin: 0 3px; border-radius: 5px; text-decoration: none;
-                               <%= (i == currentPage) ? "background-color: #ff8c00; color: white; font-weight: bold;" : "background-color: #f1f1f1; color: black;" %>">
-                                <%= i %>
+                                <% for (int i = 1; i <= totalPages; i++) { %>
+                                <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= i %>" 
+                                   style="padding: 8px 12px; margin: 0 3px; border-radius: 5px; text-decoration: none;
+                                   <%= (i == currentPage) ? "background-color: #ff8c00; color: white; font-weight: bold;" : "background-color: #f1f1f1; color: black;" %>">
+                                    <%= i %>
+                                </a>
+                                <% } %>
+
+                                <% if (currentPage < totalPages) { %>
+                                <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage + 1 %>" 
+                                   style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Next Page →</a>
+                                <% } %>
+                            </div>
+
+                            <a href="/ProductDetailController?id=<%= productId %>" 
+                               style="padding: 8px 12px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-left: -200px;">
+                                Back to Product Detail
                             </a>
-                            <% } %>
-
-                            <% if (currentPage < totalPages) { %>
-                            <a href="FeedBackController?service=<%= service %>&productId=<%= productId %><%= (selectedStar != null) ? "&star=" + selectedStar : "" %>&page=<%= currentPage + 1 %>" 
-                               style="padding: 8px 12px; background-color: #ff8c00; color: white; text-decoration: none; border-radius: 5px;">Next Page →</a>
-                            <% } %>
                         </div>
+
 
                     </div>
                 </div>

@@ -1,5 +1,3 @@
-
-
 <%-- 
     Document   : index
     Created on : Jan 18, 2025, 1:13:24 PM
@@ -287,8 +285,8 @@
                                         <select id="sortBy" name="sortBy" style="width: 150px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc;">
                                             <option value="name" <%= "name".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Reviewer Name</option>
                                             <option value="productName" <%= "productName".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Product Name</option>
-                                            <option value="reviewTime" <%= "reviewTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
-                                            <option value="rating" <%= "rating".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>ReviewTime</option>
+                                            <option value="reviewTime" <%= "reviewTime".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Review Time</option>
+                                            <option value="rating" <%= "rating".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Rating</option>
                                             <option value="status" <%= "status".equals(request.getAttribute("sortBy")) ? "selected" : "" %>>Status</option>
                                         </select>
                                     </div>
@@ -327,17 +325,17 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>ID</a></th>
-                                    <th>Category</th>
-                                    <th>Image</th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=name&sortOrder=asc">User Name</a></th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=reviewTime&sortOrder=asc">Review Time</a></th>
-                                    <th>Content</th>
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=rating&sortOrder=asc">Rate</a></th>    
-                                    <th><a href="MaketingFeedBackController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
-                                    <th>Change Status</th>
-                                    <th>View</th>
-                                    
+                                    <th style="text-align: center; white-space: nowrap;">ID</th>
+                                    <th style="text-align: center; white-space: nowrap;">Product</th>
+                                    <th style="text-align: center; white-space: nowrap;">Image</th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=name&sortOrder=asc">User Name</a></th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=reviewTime&sortOrder=asc">Review Time</a></th>
+                                    <th style="text-align: center; white-space: nowrap;">Content</th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=rating&sortOrder=asc">Rate</a></th>
+                                    <th style="text-align: center; white-space: nowrap;"><a href="MaketingFeedBackController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
+                                    <th style="text-align: center; white-space: nowrap;">Reply to Customer</th>
+                                    <th style="text-align: center; white-space: nowrap;">Change Status</th>
+                                    <th style="text-align: center; white-space: nowrap;">View</th>
                                 </tr>
                             </thead>
                             <tbody id="blog-list">
@@ -398,6 +396,15 @@
                                         </span>
                                     </td>
                                     <td>
+                                        <span>
+                                            <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) { %>
+                                            <%= feedback.getReply() %>
+                                            <% } else { %>
+                                            No feedback yet
+                                            <% } %>
+                                        </span>
+                                    </td>
+                                    <td>
                                         <button id="changeButton_<%= feedback.getId() %>" class="btn btn-info"
                                                 onclick="changeFeedbackStatus(<%= feedback.getId() %>, '<%= feedback.getStatus() %>')">
                                             <%= feedback.getStatus().equals("visible") ? "Hide (Violation)" : "Make Visible" %>
@@ -410,7 +417,7 @@
                                             View
                                         </a>
                                     </td>
-                                   
+
                                 </tr>
                                 <% 
                                     }

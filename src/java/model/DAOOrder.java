@@ -381,18 +381,18 @@ public class DAOOrder extends DBConnection {
 
     public List<Order> getOrdersWithPagination(int pageSize, int page) {
         List<Order> orders = new ArrayList<>();
-        String sql = "SELECT o.id AS orderID, o.buyerID,u.name As buyer_Name, o.orderTime, o.orderStatus, o.totalPrice,\n"
-                + "                 o.discountedPrice, o.recipientName, o.recipientPhone,\n"
-                + "               o.AssignedSaleId, s.ShippingID, s.ShippingStatus, \n"
-                + "                 s.EstimatedArrival, s.ActualArrival, a.address AS shippingAddress, a.city, a.district,\n"
-                + "                 p.paymentStatus, pm.paymentName\n"
-                + "                              FROM Orders o \n"
-                + "                           LEFT JOIN users u on o.buyerID = u.id \n"
-                + "                               LEFT JOIN Shipping s ON o.id = s.OrderID  \n"
-                + "                            LEFT JOIN Addresses a ON o.ShippingAddress = a.id \n"
-                + "                            LEFT JOIN payment p ON o.id = p.orderId  \n"
-                + "							LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id \n"
-                + "                       ORDER BY o.orderTime DESC LIMIT ? OFFSET ? ";
+        String sql = "SELECT o.id AS orderID, o.buyerID, u.name AS buyer_Name, o.orderTime, o.orderStatus, o.totalPrice, "
+                + "o.discountedPrice, o.recipientName, o.recipientPhone, o.AssignedSaleId, "
+                + "s.ShippingID, s.ShippingStatus, s.EstimatedArrival, s.ActualArrival, "
+                + "a.address AS shippingAddress, a.city, a.district, "
+                + "p.paymentStatus, pm.paymentName "
+                + "FROM Orders o "
+                + "LEFT JOIN users u ON o.buyerID = u.id "
+                + "LEFT JOIN Shipping s ON o.id = s.OrderID "
+                + "LEFT JOIN Addresses a ON o.ShippingAddress = a.id "
+                + "LEFT JOIN payment p ON o.id = p.orderId "
+                + "LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id "
+                + "ORDER BY o.orderTime DESC LIMIT ? OFFSET ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, pageSize);
@@ -401,12 +401,9 @@ public class DAOOrder extends DBConnection {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User user = new User();
-                    String buyerName = rs.getString("Buyer_Name");
-                    System.out.println("DEBUG: Buyer_Name = " + buyerName);
-                    user.setName(buyerName);
-                    Order order = new Order();
+                    user.setName(rs.getString("buyer_Name"));
 
-                    // Thông tin đơn hàng
+                    Order order = new Order();
                     order.setId(rs.getInt("orderID"));
                     order.setBuyerID(rs.getInt("buyerID"));
                     Timestamp orderTime = rs.getTimestamp("orderTime");
@@ -421,23 +418,25 @@ public class DAOOrder extends DBConnection {
                     order.setRecipientName(rs.getString("recipientName"));
                     order.setRecipientPhone(rs.getString("recipientPhone"));
                     order.setAssignedSaleId(rs.getInt("AssignedSaleId"));
-                    // Thông tin vận chuyển
-
-                    user.setName(rs.getString("buyer_Name"));
 
                     order.setUser(user);
 
                     Shipping shipping = new Shipping();
-                    shipping.setShippingID(rs.getInt("ShippingID"));
-                    shipping.setShippingStatus(rs.getString("ShippingStatus"));
-                    shipping.setEstimatedArrival(rs.getString("EstimatedArrival"));
-                    shipping.setActualArrival(rs.getString("ActualArrival"));
-                    order.setShipping(shipping);
+                    if (rs.wasNull()) {
+                        order.setShipping(null); // Hoặc new Shipping() nếu muốn một đối tượng rỗng
+                    } else {
+                        shipping.setShippingID(rs.getInt("ShippingID"));
+                        shipping.setShippingStatus(rs.getString("ShippingStatus")); // Sửa lỗi chính tả
+                        shipping.setEstimatedArrival(rs.getString("EstimatedArrival"));
+                        shipping.setActualArrival(rs.getString("ActualArrival"));
+                        order.setShipping(shipping);
+                    }
 
-                    String fullAddress = rs.getString("shippingAddress") + ", "
-                            + rs.getString("district") + ", "
-                            + rs.getString("city");
-                    order.setShippingAddress(fullAddress);;
+                    String fullAddress = rs.getString("shippingAddress");
+                    if (fullAddress != null) {
+                        fullAddress += ", " + rs.getString("district") + ", " + rs.getString("city");
+                    }
+                    order.setShippingAddress(fullAddress);
 
                     Payment payment = new Payment();
                     payment.setPaymentStatus(rs.getString("paymentStatus"));
@@ -958,7 +957,7 @@ public class DAOOrder extends DBConnection {
         }
         return 0.0;
     }
-    
+
     public List<Object[]> getOrderTrendsByDateRange(String startDate, String endDate) {
         List<Object[]> trends = new ArrayList<>();
         String sql = "SELECT DATE(orderTime) AS orderDate, COUNT(*) AS orderCount "
@@ -999,7 +998,7 @@ public class DAOOrder extends DBConnection {
         }
         return 0.0;
     }
-    
+
     public List<OrderShippingView> getOrderShippingView(
             int shipperId, String statusFilter, String searchQuery,
             int page, int pageSize) {
