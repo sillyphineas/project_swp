@@ -17,7 +17,7 @@ public class DAOOrderInformation extends DBConnection {
         // Câu lệnh SELECT như bạn đã đưa ra
         String sql = """
                      SELECT o.id, o.orderTime, o.orderStatus, 
-                     o.totalPrice, pt.paymentName ,o.recipientName,
+                     o.totalPrice, pt.paymentName, pm.paymentStatus ,o.recipientName,
                       o.recipientPhone, od.quantity, s.ShippingStatus, 
                       s.ShippingDate, s.EstimatedArrival, s.ActualArrival,
                       cl.colorName, str.capacity, pv.price, p.name,
@@ -45,6 +45,7 @@ public class DAOOrderInformation extends DBConnection {
                 String orderStatus = rs.getString("orderStatus");
                 double totalPrice = rs.getDouble("totalPrice");
                 String paymentName = rs.getString("paymentName");
+                String paymentStatus = rs.getString("paymentStatus");
                 String recipientName = rs.getString("recipientName");
                 String recipientPhone = rs.getString("recipientPhone");
                 int quantity = rs.getInt("quantity");
@@ -70,6 +71,7 @@ public class DAOOrderInformation extends DBConnection {
                         orderStatus,
                         totalPrice,
                         paymentName,
+                        paymentStatus,
                         recipientName,
                         recipientPhone,
                         quantity,
@@ -98,12 +100,155 @@ public class DAOOrderInformation extends DBConnection {
         return list;
     }
 
-    public static void main(String[] args) {
-        DAOOrderInformation dao = new DAOOrderInformation();
-//        List<OrderInformation> list = dao.getAllOrderInformation();
-//        for (OrderInformation o : list) {
-//            System.out.println(o.getShippingStatus());
-//        }
-        System.out.println(dao.getAllOrderInformation());
+
+    public List<OrderInformation> getAllForShipper(int shipperId,
+            String shippingStatusFilter,
+            String searchOrderId,
+            int page,
+            int pageSize) {
+        List<OrderInformation> list = new ArrayList<>();
+
+        // Bắt đầu từ shipping s, JOIN orders o, LEFT JOIN payment, LEFT JOIN addresses...
+        // Tên bảng "orders", "shipping", "payment"... bạn điều chỉnh đúng schema nếu cần
+        StringBuilder sb = new StringBuilder();
+        sb.append(" SELECT ")
+                .append("   s.ShippingID, ")
+                .append("   s.OrderID, ")
+                .append("   s.ShipperID, ")
+                .append("   s.ShippingStatus, ")
+                .append("   s.ShippingDate, ")
+                .append("   s.EstimatedArrival, ")
+                .append("   s.ActualArrival, ")
+                .append("   o.orderTime, ")
+                .append("   o.orderStatus, ")
+                .append("   o.totalPrice, ")
+                .append("   o.recipientName, ")
+                .append("   o.recipientPhone, ")
+                .append("   pm.paymentStatus, ")
+                .append("   ad.address, ")
+                .append("   ad.district, ")
+                .append("   ad.city ")
+                .append(" FROM shipping s ")
+                .append(" JOIN orders o ON s.OrderID = o.id ")
+                .append(" LEFT JOIN payment pm ON pm.orderId = o.id ")
+                .append(" LEFT JOIN addresses ad ON o.ShippingAddress = ad.id ")
+                .append(" WHERE s.ShipperID = ? ");
+
+        // Nếu filter shippingStatus
+        if (shippingStatusFilter != null && !shippingStatusFilter.isEmpty()) {
+            sb.append(" AND s.ShippingStatus = ? ");
+        }
+
+        // Nếu searchOrderId
+        if (searchOrderId != null && !searchOrderId.isEmpty()) {
+            sb.append(" AND s.OrderID = ? ");
+        }
+
+        sb.append(" ORDER BY s.ShippingID DESC ");
+        sb.append(" LIMIT ? OFFSET ? ");
+
+        try (PreparedStatement ps = conn.prepareStatement(sb.toString())) {
+            int idx = 1;
+            ps.setInt(idx++, shipperId);
+
+            if (shippingStatusFilter != null && !shippingStatusFilter.isEmpty()) {
+                ps.setString(idx++, shippingStatusFilter);
+            }
+
+            if (searchOrderId != null && !searchOrderId.isEmpty()) {
+                try {
+                    int orderId = Integer.parseInt(searchOrderId);
+                    ps.setInt(idx++, orderId);
+                } catch (NumberFormatException e) {
+                    ps.setInt(idx++, 0); // nếu không phải số
+                }
+            }
+
+            ps.setInt(idx++, pageSize);
+            ps.setInt(idx++, (page - 1) * pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                OrderInformation oi = new OrderInformation();
+
+                // Gán các trường
+                // Lấy từ shipping
+                int shippingID = rs.getInt("ShippingID"); // nếu bạn cần hiển thị shippingID
+                oi.setId(rs.getInt("OrderID")); // ta dùng field "id" làm OrderID
+                oi.setShippingStatus(rs.getString("ShippingStatus"));
+                oi.setShippingDate(rs.getTimestamp("ShippingDate"));
+                oi.setEstimatedArrival(rs.getTimestamp("EstimatedArrival"));
+                oi.setActualArrival(rs.getTimestamp("ActualArrival"));
+
+                // Từ orders
+                oi.setOrderTime(rs.getTimestamp("orderTime"));
+                oi.setOrderStatus(rs.getString("orderStatus"));
+                oi.setTotalPrice(rs.getDouble("totalPrice"));
+                oi.setRecipientName(rs.getString("recipientName"));
+                oi.setRecipientPhone(rs.getString("recipientPhone"));
+
+                // Từ payment
+                oi.setPaymentStatus(rs.getString("paymentStatus"));
+
+                // Từ addresses
+                oi.setAddress(rs.getString("address"));
+                oi.setDistrict(rs.getString("district"));
+                oi.setCity(rs.getString("city"));
+
+                list.add(oi);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
+
+    /**
+     * Đếm tổng số dòng shipping (cho shipper) để phân trang.
+     */
+    public int countAllForShipper(int shipperId,
+            String shippingStatusFilter,
+            String searchOrderId) {
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+        sb.append(" SELECT COUNT(*) AS cnt ")
+                .append(" FROM shipping s ")
+                .append(" JOIN orders o ON s.OrderID = o.id ")
+                .append(" LEFT JOIN payment pm ON pm.orderId = o.id ")
+                .append(" WHERE s.ShipperID = ? ");
+
+        if (shippingStatusFilter != null && !shippingStatusFilter.isEmpty()) {
+            sb.append(" AND s.ShippingStatus = ? ");
+        }
+        if (searchOrderId != null && !searchOrderId.isEmpty()) {
+            sb.append(" AND s.OrderID = ? ");
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sb.toString())) {
+            int idx = 1;
+            ps.setInt(idx++, shipperId);
+
+            if (shippingStatusFilter != null && !shippingStatusFilter.isEmpty()) {
+                ps.setString(idx++, shippingStatusFilter);
+            }
+            if (searchOrderId != null && !searchOrderId.isEmpty()) {
+                try {
+                    int orderId = Integer.parseInt(searchOrderId);
+                    ps.setInt(idx++, orderId);
+                } catch (NumberFormatException e) {
+                    ps.setInt(idx++, 0);
+                }
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt("cnt");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
 }

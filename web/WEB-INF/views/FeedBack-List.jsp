@@ -248,7 +248,7 @@
                                     <li><a href="SliderController">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MaketingFeedBackController">Feedback List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -337,7 +337,7 @@
                                     <th><a href="MaketingFeedBackController?service=sort&sortBy=status&sortOrder=asc">Status</a></th>
                                     <th>Change Status</th>
                                     <th>View</th>
-                                    <th>Reply feedback</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody id="blog-list">
@@ -404,19 +404,13 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <a href="MarketingPostController?service=view&id=<%= feedback.getId() %>" 
+                                        <a href="MarketingFeedbackDetails?service=showDetail&id=<%= feedback.getId() %>" 
                                            class="btn" 
                                            style="display: inline-block; padding: 7px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold; cursor: pointer; border: none;">
                                             View
                                         </a>
                                     </td>
-                                    <td>
-                                        <a href="MarketingPostController?service=view&id=<%= feedback.getId() %>" 
-                                           class="btn" 
-                                           style="display: inline-block; padding: 7px 20px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-size: 13px; font-weight: bold; cursor: pointer; border: none;">
-                                            Reply User's Feedback
-                                        </a>
-                                    </td>
+                                   
                                 </tr>
                                 <% 
                                     }

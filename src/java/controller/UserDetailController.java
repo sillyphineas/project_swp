@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import entity.User;
 import helper.Authorize;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +184,7 @@ public class UserDetailController extends HttpServlet {
             } catch (Exception e) {
                 
             }
-            user.setDisabled(isDisabled);
+            user.setIsDisabled(isDisabled);
             user.setRoleId(roleId);  
             user.setUpdatedBy(userId);
 
@@ -200,12 +202,12 @@ public class UserDetailController extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String resetToken = request.getParameter("resetToken");
         String resetTokenExpiredStr = request.getParameter("resetTokenExpired");
-        java.sql.Date resetTokenExpired = null;
+        java.sql.Timestamp resetTokenExpired = null;
         try {
             if (resetTokenExpiredStr != null && !resetTokenExpiredStr.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date parsedDate = sdf.parse(resetTokenExpiredStr);
-                resetTokenExpired = new java.sql.Date(parsedDate.getTime());
+                resetTokenExpired = new java.sql.Timestamp(parsedDate.getTime());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -232,6 +234,16 @@ public class UserDetailController extends HttpServlet {
             return;
         
         }
+         byte[] image = null;
+        Part imagePart = request.getPart("image");  // "image" là tên field của file input trong form
+        if (imagePart != null && imagePart.getSize() > 0) {
+        try (InputStream inputStream = imagePart.getInputStream()) {
+            image = new byte[inputStream.available()];
+            inputStream.read(image);  // Đọc dữ liệu ảnh vào mảng byte
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
         User user = new User();
         user.setId(userId);
         user.setName(name);
@@ -242,11 +254,13 @@ public class UserDetailController extends HttpServlet {
         user.setResetToken(resetToken);
         user.setResetTokenExpired(resetTokenExpired);
         user.setDateOfBirth(dateOfBirth);  // Set ngày sinh
-        user.setDisabled(isDisabled);
+        user.setIsDisabled(isDisabled);
         user.setRoleId(roleId);
         user.setUpdatedBy(userId);  // Can be updated dynamically depending on the user
         user.setUpdatedAt(new java.sql.Date(System.currentTimeMillis())); 
-        
+         if (image != null) {
+        user.setImage(image);
+       }
         dao.updateUser(user);
         response.sendRedirect("UserController");
     

@@ -198,7 +198,7 @@
             ${errorMessage}
         </div>
     </c:if>
-
+<!--enctype="multipart/form-data"data-->
     <div class="form-container">
         <form action="UpdateProfileController" method="post" enctype="multipart/form-data">
             <input type="hidden" name="userId" value="${user.id}" />
