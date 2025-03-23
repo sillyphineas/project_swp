@@ -84,13 +84,13 @@ public class salesDashboardController extends HttpServlet {
         String assignedSaleId = request.getParameter("assignedSaleId");
         String orderStatus = request.getParameter("orderStatus");
 
-        // Nếu không có startDate hoặc endDate, mặc định là 7 ngày trước đến hôm nay
+        
         if (startDate == null || endDate == null) {
-            startDate = getFormattedDate(-7); // 7 ngày trước
-            endDate = getFormattedDate(0);    // Hôm nay
+            startDate = getFormattedDate(-7); 
+            endDate = getFormattedDate(0);    
         }
 
-        // Đảm bảo endDate bao gồm cả ngày cuối bằng cách thêm 1 ngày vào endDate khi truy vấn
+      
         request.setAttribute("startDate", startDate);
         request.setAttribute("endDate", endDate);
         request.setAttribute("assignedSaleId", assignedSaleId != null ? assignedSaleId : "");
@@ -111,17 +111,18 @@ public class salesDashboardController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response); // Chuyển POST sang GET nếu cần
+        doGet(request, response); 
     }
 
     private String getFormattedDate(int daysAgo) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, daysAgo);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng phù hợp với SQL
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
         return sdf.format(calendar.getTime());
     }
 }
 
    
+
 
 
