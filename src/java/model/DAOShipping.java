@@ -39,9 +39,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
                 vector.add(shipping);
             }
@@ -78,9 +78,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
             }
         } catch (SQLException ex) {
@@ -101,9 +101,9 @@ public class DAOShipping extends DBConnection {
                         rs.getInt("OrderID"),
                         rs.getInt("ShipperID"),
                         rs.getString("ShippingStatus"),
-                        rs.getDate("EstimatedArrival"),
-                        rs.getDate("ActualArrival"),
-                        rs.getDate("ShippingDate")
+                        rs.getString("EstimatedArrival"),
+                        rs.getString("ActualArrival"),
+                        rs.getString("ShippingDate")
                 );
             }
         } catch (SQLException ex) {

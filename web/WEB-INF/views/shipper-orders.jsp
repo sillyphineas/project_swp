@@ -1,61 +1,31 @@
-<%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
-    Author     : HP
---%>
-
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="entity.User"%>
-<%@ page import="com.google.gson.Gson"%>
-<%@ page import="java.util.Map" %>
-
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="entity.OrderInformation" %>
+<%@ page import="java.util.List" %>
+<%@page import="entity.User"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home | E-Shopper</title>
-
-        <!-- Bootstrap CSS -->
+        <meta charset="UTF-8">
+        <title>Shipper Orders</title>
+        <!-- Bootstrap & FontAwesome & main.css -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
 
-        <!-- Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <!-- CSS tùy chỉnh -->
         <style>
-            .report-form {
-                margin: 20px 0;
-                text-align: center;
-            }
-            .report-form label {
-                margin: 0 10px;
-                font-weight: bold;
-            }
-            /* Mỗi biểu đồ nằm trong cột bootstrap, có thể cho chiều cao/căn giữa tùy ý */
-            .chart-container {
-                margin-bottom: 30px;
-                text-align: center;
-            }
-            /* Giới hạn kích cỡ canvas, bỏ !important để cho phép co giãn */
-            canvas {
-                max-width: 100%;
-                height: auto;
-            }
-            .chart-title {
-                font-size: 18px;
-                margin-bottom: 10px;
-                font-weight: bold;
-            }
+            /* Nếu muốn y chang trước, bỏ hết style bên dưới. 
+               Hoặc giữ minimal style (ví dụ, bỏ table-responsive). */
+
+            /* Nếu bạn KHÔNG muốn table-responsive => bỏ .table-responsive wrapper */
+            /* Nếu bạn vẫn muốn responsive => bọc bảng trong <div class="table-responsive">... */
+
+            /* Dưới đây là style minimal; có thể xóa nếu muốn "như trước" hoàn toàn */
+            /* .table th, .table td {
+                white-space: nowrap; // nếu muốn text không xuống dòng
+            } */
         </style>
     </head>
-
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -118,28 +88,18 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -161,152 +121,131 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
-
+                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
+                                    <li><a href="UserController">Users List</a></li>
+                                    <li><a href="SettingController">Settings List</a></li>
                                 </ul>
                             </div>
-                        </div>                        
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <%
-            // Lấy "statistics" do Servlet setAttribute
-            Map<String, Object> statisticsMap = (Map<String, Object>) request.getAttribute("statistics");
-        %>
+        <section class="container" style="margin-top: 30px;">
+            <h2>Order List for Shipper</h2>
+            <!-- Filter Form -->
+            <form action="ShipperOrderController" method="get" class="form-inline" style="margin-bottom: 15px;">
+                <label for="status" class="mr-2">Shipping Status:</label>
+                <select name="status" id="status" class="form-control mr-3">
+                    <option value="" <c:if test="${statusFilter == ''}">selected</c:if>>All</option>
+                    <option value="Shipping" <c:if test="${statusFilter == 'Shipping'}">selected</c:if>>Shipping</option>
+                    <option value="Delivered" <c:if test="${statusFilter == 'Delivered'}">selected</c:if>>Delivered</option>
+                    </select>
 
-        <!-- Form xuất báo cáo -->
-        <div class="container">
-            <div class="report-form">
-                <form action="MarketingDashboardController" method="get">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate"
-                           value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>">
+                    <label for="search" class="mr-2">Order ID:</label>
+                    <input type="text" name="search" id="search" value="${searchQuery}" placeholder="Enter order ID" class="form-control mr-3" />
 
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" name="endDate"
-                           value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
 
-                    <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
-                </form>
+            <!-- Bảng hiển thị OrderInformation -->
+            <!-- Nếu muốn responsive => bọc trong <div class="table-responsive"> -->
+            <!-- <div class="table-responsive"> -->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Time</th>
+                        <th>Order Status</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                        <th>Shipping Date</th>
+                        <th>Estimated Arrival</th>
+                        <th>Actual Arrival</th>
+                        <th>Total Price</th>
+                        <th>Recipient</th>
+                        <th>Address</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="oi" items="${orderList}">
+                        <tr>
+                            <td>${oi.id}</td>
+                            <td>${oi.orderTime}</td>
+                            <td>${oi.orderStatus}</td>
+                            <td>${oi.paymentStatus}</td>
+                            <td>${oi.shippingStatus}</td>
+                            <td>${oi.shippingDate}</td>
+                            <td>${oi.estimatedArrival}</td>
+                            <td>${oi.actualArrival}</td>
+                            <td>${oi.totalPrice}</td>
+                            <td>${oi.recipientName} (${oi.recipientPhone})</td>
+                            <td>${oi.address}, ${oi.district}, ${oi.city}</td>
+                            <td>
+                                <!-- Update Shipping -->
+                                <form action="ShipperOrderController" method="post" style="margin-bottom: 5px;">
+                                    <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updateShipping" />
+                                    <select name="newShippingStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Shipping" <c:if test="${oi.shippingStatus == 'Shipping'}">selected</c:if>>Shipping</option>
+                                        <option value="Delivered" <c:if test="${oi.shippingStatus == 'Delivered'}">selected</c:if>>Delivered</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-info btn-sm">Update Ship</button>
+                                    </form>
+
+                                    <!-- Update Payment -->
+                                    <form action="ShipperOrderController" method="post">
+                                        <input type="hidden" name="orderId" value="${oi.id}" />
+                                    <input type="hidden" name="statusFilter" value="${statusFilter}" />
+                                    <input type="hidden" name="searchQuery" value="${searchQuery}" />
+                                    <input type="hidden" name="page" value="${currentPage}" />
+                                    <input type="hidden" name="pageSize" value="10" />
+                                    <input type="hidden" name="action" value="updatePayment" />
+                                    <select name="newPaymentStatus" class="form-control" style="display:inline-block; width:auto;">
+                                        <option value="Pending" <c:if test="${oi.paymentStatus == 'Pending'}">selected</c:if>>Pending</option>
+                                        <option value="Paid" <c:if test="${oi.paymentStatus == 'Paid'}">selected</c:if>>Paid</option>
+                                        <option value="Refund" <c:if test="${oi.paymentStatus == 'Refund'}">selected</c:if>>Refund</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-warning btn-sm">Update Pay</button>
+                                    </form>
+                                </td>
+                            </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+            <!-- </div> -->
+
+            <!-- Pagination -->
+            <div style="text-align: center;">
+                <c:if test="${currentPage > 1}">
+                    <a href="ShipperOrderController?page=${currentPage - 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">&laquo; Prev</a>
+                </c:if>
+                <c:forEach begin="1" end="${totalPages}" var="p">
+                    <a href="ShipperOrderController?page=${p}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn <c:if test='${p == currentPage}'>btn-primary</c:if> btn-default"
+                           style="margin: 0 3px;">
+                       ${p}
+                    </a>
+                </c:forEach>
+                <c:if test="${currentPage < totalPages}">
+                    <a href="ShipperOrderController?page=${currentPage + 1}&status=${statusFilter}&search=${searchQuery}" 
+                       class="btn btn-default">Next &raquo;</a>
+                </c:if>
             </div>
-        </div>
+        </section>
 
-        <!-- Khu vực hiển thị biểu đồ -->
-        <div class="container">
-            <div class="row">
-                <!-- Biểu đồ số 1: User Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Customer Statistics</div>
-                    <canvas id="userChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 2: Product Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Product Statistics</div>
-                    <canvas id="productChart"></canvas>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Biểu đồ số 3: Blog Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Blog Statistics</div>
-                    <canvas id="blogChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 4: Feedback Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Feedback Statistics</div>
-                    <canvas id="feedbackChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Code ChartJS -->
-        <script type="text/javascript">
-            // Lấy dữ liệu userStats
-            var userStats = <%= new Gson().toJson(statisticsMap.get("userStats")) %>;
-            var userLabels = userStats.map(stat => stat.date);
-            var userData = userStats.map(stat => stat.userCount);
-
-            var ctxUser = document.getElementById('userChart').getContext('2d');
-            var userChart = new Chart(ctxUser, {
-                type: 'line',
-                data: {
-                    labels: userLabels,
-                    datasets: [{
-                            label: 'Customers Registered',
-                            data: userData,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu productStats
-            var productStats = <%= new Gson().toJson(statisticsMap.get("productStats")) %>;
-            var productLabels = productStats.map(stat => stat.date);
-            var productData = productStats.map(stat => stat.productCount);
-
-            var ctxProduct = document.getElementById('productChart').getContext('2d');
-            var productChart = new Chart(ctxProduct, {
-                type: 'line',
-                data: {
-                    labels: productLabels,
-                    datasets: [{
-                            label: 'Products Sold',
-                            data: productData,
-                            borderColor: 'rgb(54, 162, 235)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu blogStats
-            var blogStats = <%= new Gson().toJson(statisticsMap.get("blogStats")) %>;
-            var blogLabels = blogStats.map(stat => stat.date);
-            var blogData = blogStats.map(stat => stat.blogCount);
-
-            var ctxBlog = document.getElementById('blogChart').getContext('2d');
-            var blogChart = new Chart(ctxBlog, {
-                type: 'line',
-                data: {
-                    labels: blogLabels,
-                    datasets: [{
-                            label: 'Blogs Created',
-                            data: blogData,
-                            borderColor: 'green',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu feedbackStats
-            var feedbackStats = <%= new Gson().toJson(statisticsMap.get("feedbackStats")) %>;
-            var feedbackLabels = feedbackStats.map(stat => stat.date);
-            var feedbackData = feedbackStats.map(stat => stat.feedbackCount);
-
-            var ctxFeedback = document.getElementById('feedbackChart').getContext('2d');
-            var feedbackChart = new Chart(ctxFeedback, {
-                type: 'line',
-                data: {
-                    labels: feedbackLabels,
-                    datasets: [{
-                            label: 'Feedbacks Received',
-                            data: feedbackData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.2
-                        }]
-                }
-            });
-        </script>
-
-        <!-- Footer -->
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -405,7 +344,7 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="single-widget">
-                                <h2>Quick Shop</h2>
+                                <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">T-Shirt</a></li>
                                     <li><a href="#">Mens</a></li>
@@ -420,7 +359,7 @@
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
                                     <li><a href="#">Refund Policy</a></li>
                                     <li><a href="#">Billing System</a></li>
                                     <li><a href="#">Ticket System</a></li>
@@ -434,7 +373,7 @@
                                     <li><a href="#">Company Information</a></li>
                                     <li><a href="#">Careers</a></li>
                                     <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affiliate Program</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
                                     <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
@@ -444,13 +383,12 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fa fa-arrow-circle-o-right"></i>
-                                    </button>
-                                    <p>Get the most recent updates from <br />our site and be updated yourself...</p>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -463,12 +401,10 @@
                     </div>
                 </div>
             </div>
+
         </footer><!--/Footer-->
+
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/price-range.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>

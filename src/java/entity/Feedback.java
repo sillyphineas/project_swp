@@ -25,7 +25,17 @@ public class Feedback {
     private Product product;
     private ProductVariant productVariant;
     private String Status;
+
     private String reply;
+
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+    
     
 
     public String getStatus() {
@@ -89,6 +99,7 @@ public class Feedback {
         this.Status = Status;
     }
 
+
     public Feedback(int id, int orderDetailID, int reviewerID, int product_id, String reviewTime, int rating, String content, String images, boolean isDisabled, User user, Product product, ProductVariant productVariant, String Status, String reply) {
         this.id = id;
         this.orderDetailID = orderDetailID;
@@ -105,6 +116,7 @@ public class Feedback {
         this.Status = Status;
         this.reply = reply;
     }
+
     
     
     
@@ -235,12 +247,5 @@ public class Feedback {
         return "Active";
     }
 
-    public String getReply() {
-        return reply;
-    }
 
-    public void setReply(String reply) {
-        this.reply = reply;
-    }
-    
 }

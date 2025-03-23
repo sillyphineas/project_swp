@@ -1,61 +1,46 @@
-<%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
-    Author     : HP
---%>
-
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="entity.OrderInformation" %>
 <%@ page import="entity.User"%>
-<%@ page import="com.google.gson.Gson"%>
-<%@ page import="java.util.Map" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home | E-Shopper</title>
-
-        <!-- Bootstrap CSS -->
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/prettyPhoto.css" rel="stylesheet">
-        <link href="css/price-range.css" rel="stylesheet">
-        <link href="css/animate.css" rel="stylesheet">
-        <link href="css/main.css" rel="stylesheet">
-        <link href="css/responsive.css" rel="stylesheet">
-
-        <!-- Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <!-- CSS tùy chỉnh -->
+        <meta charset="UTF-8" />
+        <title>Order Details | E-Shopper</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" />
+        <link href="css/main.css" rel="stylesheet" />
+        <link href="css/responsive.css" rel="stylesheet" />
         <style>
-            .report-form {
-                margin: 20px 0;
+            .bill-container {
+                background: #fff;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                margin: 30px auto;
+                max-width: 900px;
+            }
+            .bill-header h2 {
                 text-align: center;
+                margin-bottom: 20px;
+                color: #FE980F;
             }
-            .report-form label {
-                margin: 0 10px;
-                font-weight: bold;
+            .bill-header table, .bill-body table {
+                width: 100%;
             }
-            /* Mỗi biểu đồ nằm trong cột bootstrap, có thể cho chiều cao/căn giữa tùy ý */
-            .chart-container {
-                margin-bottom: 30px;
-                text-align: center;
+            .bill-header th {
+                width: 30%;
             }
-            /* Giới hạn kích cỡ canvas, bỏ !important để cho phép co giãn */
-            canvas {
-                max-width: 100%;
-                height: auto;
+            .bill-footer {
+                text-align: right;
+                margin-top: 20px;
             }
-            .chart-title {
-                font-size: 18px;
-                margin-bottom: 10px;
-                font-weight: bold;
+            .table-bordered th,
+            .table-bordered td {
+                border: 1px solid #ddd !important;
             }
         </style>
     </head>
-
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -89,57 +74,32 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
-                                    </ul>
-                                </div>
 
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
-                                    </ul>
-                                </div>
-                            </div>
                         </div>
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
+
+
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
+                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+                                    
+                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
+                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -161,152 +121,149 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
-
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                            <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                        </ul>
+                                    </li> 
+                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
+                                        </ul>
+                                    </li> 
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
-                        </div>                        
+                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
+        <section class="container">
+            <div class="bill-container" id="billDetails">
+                <div class="bill-header">
+                    <h2>Order #<c:out value="${selectedOrderID}" /></h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Customer Information</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Recipient Name:</th>
+                                    <td><c:out value="${orderDetails[0].recipientName}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Phone Number:</th>
+                                    <td><c:out value="${orderDetails[0].recipientPhone}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Shipping Address:</th>
+                                    <td>
+                                        <c:out value="${orderDetails[0].address}" /> - 
+                                        <c:out value="${orderDetails[0].district}" /> - 
+                                        <c:out value="${orderDetails[0].city}" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Order Information</h4>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Payment Method:</th>
+                                    <td><c:out value="${orderDetails[0].paymentName}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Status:</th>
+                                    <td style="color: ${orderDetails[0].paymentStatus eq 'Paid' ? 'green' : 'red'};">
+                                        <c:out value="${orderDetails[0].paymentStatus}" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Order Date:</th>
+                                    <td>
+                                        <fmt:formatDate value="${orderDetails[0].orderTime}" pattern="dd/MM/yyyy HH:mm" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <%
-            // Lấy "statistics" do Servlet setAttribute
-            Map<String, Object> statisticsMap = (Map<String, Object>) request.getAttribute("statistics");
-        %>
+                <div class="bill-body">
+                    <h4>Products</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr style="background-color: #F0F0E9;">
+                                    <th>Product</th>
+                                    <th>Image</th>
+                                    <th>Color</th>
+                                    <th>Storage</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:set var="orderTotal" value="0" />
+                                <c:forEach var="detail" items="${orderDetails}">
+                                    <c:set var="itemTotal" value="${detail.price * detail.quantity}" />
+                                    <c:set var="orderTotal" value="${orderTotal + itemTotal}" />
+                                    <tr>
+                                        <td><c:out value="${detail.productName}" /></td>
+                                        <td style="text-align: center;">
+                                            <img src="<c:out value='${detail.imageURL}' />" alt="Product Image" width="50" height="50">
+                                        </td>
+                                        <td style="text-align: center;"><c:out value="${detail.colorName}" /></td>
+                                        <td style="text-align: center;"><c:out value="${detail.capacity}" /></td>
+                                        <td style="text-align: center;"><c:out value="${detail.quantity}" /></td>
+                                        <td style="text-align: right;">
+                                            <fmt:formatNumber value="${detail.price}" type="number" groupingUsed="true"/>
+                                            VND
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <fmt:formatNumber value="${itemTotal}" type="number" groupingUsed="true"/>
+                                            VND
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight: bold; background-color: #F0F0E9;">
+                                    <td colspan="6" style="text-align: right;">Order Total:</td>
+                                    <td style="text-align: right;">
+                                        <fmt:formatNumber value="${orderTotal}" type="number" groupingUsed="true"/> VND
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
 
-        <!-- Form xuất báo cáo -->
-        <div class="container">
-            <div class="report-form">
-                <form action="MarketingDashboardController" method="get">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate"
-                           value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>">
-
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" name="endDate"
-                           value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>">
-
-                    <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
-                </form>
+                <div class="bill-footer">
+                    <a href="CustomerOrderController?service=displayAllOrders" class="btn btn-primary">
+                        <i class="fa fa-arrow-left"></i> Back to Orders
+                    </a>
+                    <button onclick="printBill()" class="btn btn-success">
+                        <i class="fa fa-print"></i> Print Bill
+                    </button>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Khu vực hiển thị biểu đồ -->
-        <div class="container">
-            <div class="row">
-                <!-- Biểu đồ số 1: User Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Customer Statistics</div>
-                    <canvas id="userChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 2: Product Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Product Statistics</div>
-                    <canvas id="productChart"></canvas>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Biểu đồ số 3: Blog Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Blog Statistics</div>
-                    <canvas id="blogChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 4: Feedback Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Feedback Statistics</div>
-                    <canvas id="feedbackChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Code ChartJS -->
-        <script type="text/javascript">
-            // Lấy dữ liệu userStats
-            var userStats = <%= new Gson().toJson(statisticsMap.get("userStats")) %>;
-            var userLabels = userStats.map(stat => stat.date);
-            var userData = userStats.map(stat => stat.userCount);
-
-            var ctxUser = document.getElementById('userChart').getContext('2d');
-            var userChart = new Chart(ctxUser, {
-                type: 'line',
-                data: {
-                    labels: userLabels,
-                    datasets: [{
-                            label: 'Customers Registered',
-                            data: userData,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu productStats
-            var productStats = <%= new Gson().toJson(statisticsMap.get("productStats")) %>;
-            var productLabels = productStats.map(stat => stat.date);
-            var productData = productStats.map(stat => stat.productCount);
-
-            var ctxProduct = document.getElementById('productChart').getContext('2d');
-            var productChart = new Chart(ctxProduct, {
-                type: 'line',
-                data: {
-                    labels: productLabels,
-                    datasets: [{
-                            label: 'Products Sold',
-                            data: productData,
-                            borderColor: 'rgb(54, 162, 235)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu blogStats
-            var blogStats = <%= new Gson().toJson(statisticsMap.get("blogStats")) %>;
-            var blogLabels = blogStats.map(stat => stat.date);
-            var blogData = blogStats.map(stat => stat.blogCount);
-
-            var ctxBlog = document.getElementById('blogChart').getContext('2d');
-            var blogChart = new Chart(ctxBlog, {
-                type: 'line',
-                data: {
-                    labels: blogLabels,
-                    datasets: [{
-                            label: 'Blogs Created',
-                            data: blogData,
-                            borderColor: 'green',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu feedbackStats
-            var feedbackStats = <%= new Gson().toJson(statisticsMap.get("feedbackStats")) %>;
-            var feedbackLabels = feedbackStats.map(stat => stat.date);
-            var feedbackData = feedbackStats.map(stat => stat.feedbackCount);
-
-            var ctxFeedback = document.getElementById('feedbackChart').getContext('2d');
-            var feedbackChart = new Chart(ctxFeedback, {
-                type: 'line',
-                data: {
-                    labels: feedbackLabels,
-                    datasets: [{
-                            label: 'Feedbacks Received',
-                            data: feedbackData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.2
-                        }]
-                }
-            });
-        </script>
-
-        <!-- Footer -->
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -405,7 +362,7 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="single-widget">
-                                <h2>Quick Shop</h2>
+                                <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">T-Shirt</a></li>
                                     <li><a href="#">Mens</a></li>
@@ -420,7 +377,7 @@
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
                                     <li><a href="#">Refund Policy</a></li>
                                     <li><a href="#">Billing System</a></li>
                                     <li><a href="#">Ticket System</a></li>
@@ -434,7 +391,7 @@
                                     <li><a href="#">Company Information</a></li>
                                     <li><a href="#">Careers</a></li>
                                     <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affiliate Program</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
                                     <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
@@ -444,13 +401,12 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fa fa-arrow-circle-o-right"></i>
-                                    </button>
-                                    <p>Get the most recent updates from <br />our site and be updated yourself...</p>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -463,12 +419,21 @@
                     </div>
                 </div>
             </div>
-        </footer><!--/Footer-->
+
+        </footer><!--/Footer-->>
+
+        <!-- JS libs -->
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
+        <script>
+                        function printBill() {
+                            window.print();
+                        }
+        </script>
     </body>
 </html>

@@ -16,7 +16,7 @@ public class Validate {
     public static boolean checkLoginValidUser(String email, String password) {
         DAOUser daouser = new DAOUser();
         User user = daouser.getUserByEmail(email);
-        if (user != null && !user.isDisabled()) {
+        if (user != null && !user.isIsDisabled()) {
             if (BCrypt.checkpw(password, user.getPassHash())) {
                 return true;
             } else {
@@ -49,5 +49,8 @@ public class Validate {
         return false;
     }
     
-    
+    public static boolean isValidEmail(String email) {
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        return email.matches(regex);
+    }
 }

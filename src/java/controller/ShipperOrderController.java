@@ -1,44 +1,40 @@
 package controller;
 
-import entity.OrderShippingView;
+import entity.OrderInformation;
 import entity.User;
-import helper.Authorize;
 import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.DAOOrder;
+import jakarta.servlet.http.*;
+import model.DAOOrderInformation;
+import model.DAOPayment;
 import model.DAOShipping;
 
 @WebServlet(name = "ShipperOrderController", urlPatterns = {"/ShipperOrderController"})
 public class ShipperOrderController extends HttpServlet {
 
-    // Xử lý GET: Lấy danh sách đơn hàng gộp (Orders + Shipping) với filter và search
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
+
+        // Kiểm tra đăng nhập
         HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-        if (!Authorize.isAccepted(user, "/ShipperOrderController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+        if (user == null) {
+            request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
 
+        // Lấy ID shipper
         int shipperId = user.getId();
 
-        // Lấy tham số filter (trạng thái) và search (tìm theo buyerName hoặc OrderID)
+        // Lấy filter
         String statusFilter = request.getParameter("status") != null ? request.getParameter("status") : "";
         String searchQuery = request.getParameter("search") != null ? request.getParameter("search") : "";
-        int page = 1;
-        int pageSize = 10;
+
+        // Lấy tham số phân trang
+        int page = 1, pageSize = 10;
         try {
             if (request.getParameter("page") != null) {
                 page = Integer.parseInt(request.getParameter("page"));
@@ -47,54 +43,46 @@ public class ShipperOrderController extends HttpServlet {
                 pageSize = Integer.parseInt(request.getParameter("pageSize"));
             }
         } catch (NumberFormatException e) {
-            // Nếu parse lỗi, giữ mặc định page=1, pageSize=10
+            // Giữ nguyên mặc định
         }
 
-        // Gọi DAOOrder để lấy danh sách đơn hàng gộp (với các trường cần hiển thị)
-        DAOOrder daoOrder = new DAOOrder();
-        List<OrderShippingView> orderShippingList = daoOrder.getOrderShippingView(
-                shipperId, statusFilter, searchQuery, page, pageSize);
+        // Gọi DAO
+        DAOOrderInformation daoOI = new DAOOrderInformation();
+        int totalRecords = daoOI.countAllForShipper(shipperId, statusFilter, searchQuery);
+        List<OrderInformation> orderList = daoOI.getAllForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
+        int totalPages = (int) Math.ceil(totalRecords * 1.0 / pageSize);
 
-        // Lấy tổng số bản ghi để tính số trang
-        int totalRecords = daoOrder.getTotalOrderShippingCount(shipperId, statusFilter, searchQuery);
-        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
-
-        // Đặt dữ liệu lên request
-        request.setAttribute("orderShippingList", orderShippingList);
+        // Đẩy sang JSP
+        request.setAttribute("orderList", orderList);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+
+        // Giữ lại filter, search để hiển thị
         request.setAttribute("statusFilter", statusFilter);
         request.setAttribute("searchQuery", searchQuery);
 
-        // Chuyển tiếp sang JSP hiển thị (JSP cần duyệt orderShippingList)
-        request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
+        // Chuyển tiếp
+        request.getRequestDispatcher("/WEB-INF/views/shipper-orders.jsp").forward(request, response);
     }
 
-    // Xử lý POST: Ví dụ cập nhật ShippingStatus cho đơn hàng (dựa trên OrderID và shipperId)
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Kiểm tra user đã đăng nhập
-        User user = (User) request.getSession(false).getAttribute("user");
+
+        // Kiểm tra đăng nhập
+        HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
         if (user == null) {
             request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
             return;
         }
         int shipperId = user.getId();
 
-        // Lấy orderId (ẩn trong form) và trạng thái mới (ShippingStatus)
+        // Lấy các tham số chung
         int orderId = Integer.parseInt(request.getParameter("orderId"));
-        String newStatus = request.getParameter("status");
-
-        // Gọi DAOShipping để cập nhật ShippingStatus cho đơn hàng có OrderID và shipperId
-        DAOShipping daoShipping = new DAOShipping();
-        boolean updated = daoShipping.updateShippingStatus(orderId, shipperId, newStatus);
-
-        // Sau khi cập nhật, load lại danh sách theo các tham số hiện tại
         String statusFilter = request.getParameter("statusFilter") != null ? request.getParameter("statusFilter") : "";
         String searchQuery = request.getParameter("searchQuery") != null ? request.getParameter("searchQuery") : "";
-        int page = 1;
-        int pageSize = 10;
+        int page = 1, pageSize = 10;
         try {
             if (request.getParameter("page") != null) {
                 page = Integer.parseInt(request.getParameter("page"));
@@ -103,24 +91,30 @@ public class ShipperOrderController extends HttpServlet {
                 pageSize = Integer.parseInt(request.getParameter("pageSize"));
             }
         } catch (NumberFormatException e) {
-            // giữ mặc định nếu parse lỗi
+            // Giữ nguyên
         }
 
-        DAOOrder daoOrder = new DAOOrder();
-        List<OrderShippingView> orderShippingList = daoOrder.getOrderShippingView(
-                shipperId, statusFilter, searchQuery, page, pageSize);
-        int totalRecords = daoOrder.getTotalOrderShippingCount(shipperId, statusFilter, searchQuery);
-        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+        // Xác định action
+        String action = request.getParameter("action");
+        if ("updateShipping".equals(action)) {
+            // Cập nhật shippingStatus
+            String newShippingStatus = request.getParameter("newShippingStatus");
+            DAOShipping daoShipping = new DAOShipping();
+            daoShipping.updateShippingStatus(orderId, shipperId, newShippingStatus);
 
-        request.setAttribute("orderShippingList", orderShippingList);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("statusFilter", statusFilter);
-        request.setAttribute("searchQuery", searchQuery);
-
-        if (!updated) {
-            request.setAttribute("error", "Failed to update shipping status.");
+        } else if ("updatePayment".equals(action)) {
+            // Cập nhật paymentStatus
+            String newPaymentStatus = request.getParameter("newPaymentStatus");
+            DAOPayment daoPayment = new DAOPayment();
+            daoPayment.updatePaymentStatus(orderId, newPaymentStatus);
         }
-        request.getRequestDispatcher("/WEB-INF/views/orderlistforshipper.jsp").forward(request, response);
+
+        // Sau khi cập nhật, quay lại trang GET
+        String redirectUrl = "ShipperOrderController"
+                + "?status=" + statusFilter
+                + "&search=" + searchQuery
+                + "&page=" + page
+                + "&pageSize=" + pageSize;
+        response.sendRedirect(redirectUrl);
     }
 }

@@ -80,6 +80,77 @@ public class SaleOrderController extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing orders");
                 }
             }
+            if (service.equals("sort")) {
+                String sortBy = request.getParameter("sortBy");
+                String sortOrder = request.getParameter("sortOrder");
+                String pageStr = request.getParameter("page");
+                int page = 1;
+                int pageSize = 5;
+
+                if (pageStr != null && !pageStr.trim().isEmpty()) {
+                    pageStr = pageStr.trim();
+                    try {
+                        page = Integer.parseInt(pageStr);
+                    } catch (NumberFormatException e) {
+                        page = 1;
+                    }
+                }
+                // Mặc định sắp xếp theo orderTime
+                if (sortBy == null || sortBy.trim().isEmpty()) {
+                    sortBy = "orderTime";
+                }
+                if (sortOrder == null || sortOrder.trim().isEmpty()) {
+                    sortOrder = "desc";
+                }
+
+                List<Order> orders = dao.sortOrders(sortBy, sortOrder, page, pageSize);
+                int totalOrders = dao.getTotalOrders();
+                int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
+                if (orders.isEmpty()) {
+                    request.setAttribute("message", "No orders found.");
+                }
+                request.setAttribute("orders", orders);
+                request.setAttribute("sortBy", sortBy);
+                request.setAttribute("sortOrder", sortOrder);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.getRequestDispatcher("/WEB-INF/views/Order-List.jsp").forward(request, response);
+            }
+
+            if (service.equals("orderFilter")) {
+                String buyerName = request.getParameter("buyerName");
+                buyerName = (buyerName != null && !buyerName.trim().isEmpty()) ? buyerName.trim() : null;
+
+                String paymentStatus = request.getParameter("paymentStatus");
+                paymentStatus = (paymentStatus != null && !paymentStatus.trim().isEmpty()) ? paymentStatus.trim() : null;
+
+                String paymentMethod = request.getParameter("paymentMethod");
+                paymentMethod = (paymentMethod != null && !paymentMethod.trim().isEmpty()) ? paymentMethod.trim() : null;
+
+                String orderStatus = request.getParameter("orderStatus");
+                orderStatus = (orderStatus != null && !orderStatus.trim().isEmpty()) ? orderStatus.trim() : null;
+
+                String pageStr = request.getParameter("page");
+                int page = (pageStr != null && !pageStr.trim().isEmpty()) ? Integer.parseInt(pageStr.trim()) : 1;
+                int pageSize = 5;
+
+                // Lấy danh sách đơn hàng lọc
+                List<Order> orders = dao.getFilteredOrders(page, pageSize, buyerName, paymentStatus, paymentMethod, orderStatus);
+                int totalOrders = dao.getTotalFilteredOrders(buyerName, paymentStatus, paymentMethod, orderStatus);
+                int totalPages = (int) Math.ceil((double) totalOrders / pageSize);
+
+                request.setAttribute("orders", orders);
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("buyerName", buyerName);
+                request.setAttribute("paymentStatus", paymentStatus);
+                request.setAttribute("paymentMethod", paymentMethod);
+                request.setAttribute("orderStatus", orderStatus);
+
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/Order-List.jsp");
+                dispatcher.forward(request, response);
+            }
 
             if (service.equals("search")) {
                 String query = request.getParameter("query");
@@ -125,7 +196,7 @@ public class SaleOrderController extends HttpServlet {
                 String submit = request.getParameter("submit");
                 if (submit == null) {
                     // Lấy danh sách shipper từ Users role=4 và isDisabled=0
-                    ResultSet rsShippers = dao.getData("SELECT id, name FROM Users WHERE role = 4 AND isDisabled = 0");
+                    ResultSet rsShippers = dao.getData("SELECT id, name FROM Users WHERE roleId = 4 AND isDisabled = 0");
 
                     // Lấy orderID từ request
                     String orderIDStr = request.getParameter("orderID");
@@ -133,35 +204,31 @@ public class SaleOrderController extends HttpServlet {
                     request.setAttribute("rsShippers", rsShippers);
 
                     // Forward sang form assign shipper
-                    request.getRequestDispatcher("/WEB-INF/views/AssignShipper.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/InsertShipping.jsp").forward(request, response);
 
                 } else {
-                    // Xử lý insert shipping
                     String orderIDStr = request.getParameter("orderID");
                     String shipperIDStr = request.getParameter("shipperID");
                     String estimatedArrivalStr = request.getParameter("estimatedArrival");
-                    String shippingStatus = "Shipping"; // Trạng thái mặc định khi giao hàng
+                    String shippingStatus = "Shipping";
 
                     try {
                         int orderID = Integer.parseInt(orderIDStr);
                         int shipperID = Integer.parseInt(shipperIDStr);
-                        java.sql.Date shippingDate = new java.sql.Date(System.currentTimeMillis()); // Ngày hiện tại
-                        java.sql.Date estimatedArrival = java.sql.Date.valueOf(estimatedArrivalStr);
+
+                        java.time.LocalDate now = java.time.LocalDate.now();
+                        String shippingDateStr = now.toString();  // "2025-03-19"
+
                         List<Order> orders = dao.getAllOrders();
                         request.setAttribute("orders", orders);
-                        for (Order order : orders) {
-                            boolean isAssigned = dao.isOrderAlreadyAssigned(order.getId());
-                            if (isAssigned) {
+                        boolean isAssigned = dao.isOrderAlreadyAssigned(orderID);
+                        if (isAssigned) {
                             response.sendRedirect("SaleOrderController?service=listAllOrder&message=This+order+has+already+been+assigned+to+a+shipper.");
                             return;
                         }
-                            request.setAttribute("isAssigned_" + order.getId(), isAssigned);
-                        }
 
-                        
-
-                        // Insert shipping
-                        boolean isInserted = dao.insertShipping(orderID, shipperID, shippingStatus, estimatedArrival, null, shippingDate);
+                        boolean isInserted = dao.insertShipping(orderID, shipperID, shippingStatus, estimatedArrivalStr, null, shippingDateStr);
+                        System.out.println("isInserted : " + isInserted);
                         if (isInserted) {
                             response.sendRedirect("SaleOrderController?service=listAllOrder&message=Order+assigned+to+shipper+successfully.");
                         } else {
@@ -170,8 +237,8 @@ public class SaleOrderController extends HttpServlet {
 
                     } catch (NumberFormatException e) {
                         response.sendRedirect("SaleOrderController?service=listAllOrder&message=Invalid+OrderID+or+ShipperID.");
-                    } catch (IllegalArgumentException e) {
-                        response.sendRedirect("SaleOrderController?service=listAllOrder&message=Invalid+date+format.");
+                    } catch (Exception e) {
+                        response.sendRedirect("SaleOrderController?service=listAllOrder&message=Error+processing+request.");
                     }
                 }
             }

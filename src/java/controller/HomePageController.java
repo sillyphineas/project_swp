@@ -79,7 +79,7 @@ public class HomePageController extends HttpServlet {
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
-        System.out.println(user);
+
         if (!Authorize.isAccepted(user, "/HomePageController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
@@ -125,6 +125,7 @@ public class HomePageController extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         // Gửi thông tin vào JSP
         for (Product product : productList) {
             double minPrice = dao.getMinPriceForProduct(product.getId());
@@ -136,7 +137,6 @@ public class HomePageController extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("latestBlogs", latestBlogs);
-
         request.setAttribute("recentBlogs", recentBlogs);
 
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/index_1.jsp");

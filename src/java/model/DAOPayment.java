@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import java.util.Date;
 import java.sql.Types;
 
-
 public class DAOPayment extends DBConnection {
 
     /**
@@ -233,5 +232,18 @@ public class DAOPayment extends DBConnection {
             Logger.getLogger(DAOPayment.class.getName()).log(Level.SEVERE, null, ex);
         }
         return payment;
+    }
+
+    public boolean updatePaymentStatus(int orderId, String newStatus) {
+        String sql = "UPDATE payment SET paymentStatus = ? WHERE orderId = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, orderId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0; // > 0 nghĩa là có ít nhất 1 dòng bị ảnh hưởng
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

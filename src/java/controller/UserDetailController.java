@@ -184,7 +184,7 @@ public class UserDetailController extends HttpServlet {
             } catch (Exception e) {
                 
             }
-            user.setDisabled(isDisabled);
+            user.setIsDisabled(isDisabled);
             user.setRoleId(roleId);  
             user.setUpdatedBy(userId);
 
@@ -202,12 +202,12 @@ public class UserDetailController extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         String resetToken = request.getParameter("resetToken");
         String resetTokenExpiredStr = request.getParameter("resetTokenExpired");
-        java.sql.Date resetTokenExpired = null;
+        java.sql.Timestamp resetTokenExpired = null;
         try {
             if (resetTokenExpiredStr != null && !resetTokenExpiredStr.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 java.util.Date parsedDate = sdf.parse(resetTokenExpiredStr);
-                resetTokenExpired = new java.sql.Date(parsedDate.getTime());
+                resetTokenExpired = new java.sql.Timestamp(parsedDate.getTime());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,7 +254,7 @@ public class UserDetailController extends HttpServlet {
         user.setResetToken(resetToken);
         user.setResetTokenExpired(resetTokenExpired);
         user.setDateOfBirth(dateOfBirth);  // Set ngày sinh
-        user.setDisabled(isDisabled);
+        user.setIsDisabled(isDisabled);
         user.setRoleId(roleId);
         user.setUpdatedBy(userId);  // Can be updated dynamically depending on the user
         user.setUpdatedAt(new java.sql.Date(System.currentTimeMillis())); 

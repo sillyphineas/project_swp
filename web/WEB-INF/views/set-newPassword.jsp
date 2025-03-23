@@ -1,22 +1,19 @@
 <%-- 
-    Document   : index
-    Created on : Jan 18, 2025, 1:13:24 PM
+    Document   : set-newPassword
+    Created on : Mar 19, 2025
     Author     : HP
 --%>
-
-<%@ page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="entity.User"%>
-<%@ page import="com.google.gson.Gson"%>
-<%@ page import="java.util.Map" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Home | E-Shopper</title>
-
-        <!-- Bootstrap CSS -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Set New Password | E-Shopper</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
         <link href="css/font-awesome.min.css" rel="stylesheet">
         <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -24,39 +21,85 @@
         <link href="css/animate.css" rel="stylesheet">
         <link href="css/main.css" rel="stylesheet">
         <link href="css/responsive.css" rel="stylesheet">
+        <!--[if lt IE 9]>
+        <script src="js/html5shiv.js"></script>
+        <script src="js/respond.min.js"></script>
+        <![endif]-->       
+        <link rel="shortcut icon" href="images/ico/favicon.ico">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
-        <!-- Chart.js -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <!-- CSS tùy chỉnh -->
         <style>
-            .report-form {
-                margin: 20px 0;
-                text-align: center;
+            /* Chỉ áp dụng cho vùng đặt mật khẩu mới */
+            .set-password-container {
+                max-width: 400px;
+                margin: 60px auto;
+                padding: 20px;
+                background: #fff;
+                border: 1px solid #ddd;
+                border-radius: 6px;
             }
-            .report-form label {
-                margin: 0 10px;
-                font-weight: bold;
+            .set-password-container h2 {
+                margin: 0 0 10px;
+                font-size: 20px;
+                font-weight: normal;
             }
-            /* Mỗi biểu đồ nằm trong cột bootstrap, có thể cho chiều cao/căn giữa tùy ý */
-            .chart-container {
-                margin-bottom: 30px;
-                text-align: center;
+            .set-password-container p {
+                margin: 0 0 20px;
+                font-size: 14px;
+                color: #555;
             }
-            /* Giới hạn kích cỡ canvas, bỏ !important để cho phép co giãn */
-            canvas {
-                max-width: 100%;
-                height: auto;
+            .set-password-container .form-group {
+                margin-bottom: 15px;
             }
-            .chart-title {
-                font-size: 18px;
-                margin-bottom: 10px;
-                font-weight: bold;
+            .set-password-container label {
+                display: block;
+                margin-bottom: 5px;
+                font-size: 14px;
+                font-weight: 600;
+            }
+            .set-password-container input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+            .set-password-container .btn-group {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+            .set-password-container .btn-cancel,
+            .set-password-container .btn-save {
+                padding: 8px 14px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .set-password-container .btn-cancel {
+                background-color: #e4e6eb;
+                color: #050505;
+            }
+            .set-password-container .btn-cancel:hover {
+                background-color: #d8dadd;
+            }
+            .set-password-container .btn-save {
+                background-color: #1877f2;
+                color: #fff;
+            }
+            .set-password-container .btn-save:hover {
+                background-color: #165dd2;
             }
         </style>
-    </head>
+    </head><!--/head-->
 
     <body>
+        <!-- Header -->
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
                 <div class="container">
@@ -64,19 +107,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -89,7 +132,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -98,8 +141,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -109,8 +152,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -118,28 +161,7 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
+                                    <li><a href="LoginController" class="active"><i class="fa fa-lock"></i> Login</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -161,150 +183,71 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
-
+                                    <li><a href="HomePageController">Home</a></li>
+                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="ProductController">Products</a></li>
+                                            <li><a href="checkout.html">Checkout</a></li> 
+                                            <li><a href="CartURL">Cart</a></li> 
+                                        </ul>
+                                    </li> 
+                                    <li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
+                                        <ul role="menu" class="sub-menu">
+                                            <li><a href="BlogURL">Blog List</a></li>
+                                        </ul>
+                                    </li> 
                                 </ul>
                             </div>
-                        </div>                        
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="search_box pull-right">
+                                <input type="text" placeholder="Search"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <%
-            // Lấy "statistics" do Servlet setAttribute
-            Map<String, Object> statisticsMap = (Map<String, Object>) request.getAttribute("statistics");
-        %>
+        <!-- Nội dung đặt mật khẩu mới -->
+        <section>
+            <div class="container">
+                <div class="set-password-container">
+                    <h2>Set New Password</h2>
+                    <p>Please enter your new password and confirm it below.</p>
+                    <form action="ResetController" method="POST">
+                        <input type="hidden" name="service" value="setNewPassword"/>
+                        <input type="hidden" name="token" value="${token}"/>
 
-        <!-- Form xuất báo cáo -->
-        <div class="container">
-            <div class="report-form">
-                <form action="MarketingDashboardController" method="get">
-                    <label for="startDate">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate"
-                           value="<%= request.getAttribute("startDate") != null ? request.getAttribute("startDate") : "" %>">
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+                        </div>
 
-                    <label for="endDate">End Date:</label>
-                    <input type="date" id="endDate" name="endDate"
-                           value="<%= request.getAttribute("endDate") != null ? request.getAttribute("endDate") : "" %>">
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password" required>
+                        </div>
 
-                    <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
-                </form>
-            </div>
-        </div>
+                        <c:if test="${not empty error}">
+                            <div style="color: red; margin-bottom: 10px;">
+                                <c:out value="${error}" />
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty success}">
+                            <div style="color: green; margin-bottom: 10px;">
+                                <c:out value="${success}" />
+                            </div>
+                        </c:if>
 
-        <!-- Khu vực hiển thị biểu đồ -->
-        <div class="container">
-            <div class="row">
-                <!-- Biểu đồ số 1: User Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Customer Statistics</div>
-                    <canvas id="userChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 2: Product Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Product Statistics</div>
-                    <canvas id="productChart"></canvas>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Biểu đồ số 3: Blog Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Blog Statistics</div>
-                    <canvas id="blogChart"></canvas>
-                </div>
-                <!-- Biểu đồ số 4: Feedback Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
-                    <div class="chart-title">Feedback Statistics</div>
-                    <canvas id="feedbackChart"></canvas>
+                        <div class="btn-group">
+                            <a href="HomePageController" class="btn-cancel">Cancel</a>
+                            <button type="submit" class="btn-save">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-
-        <!-- Code ChartJS -->
-        <script type="text/javascript">
-            // Lấy dữ liệu userStats
-            var userStats = <%= new Gson().toJson(statisticsMap.get("userStats")) %>;
-            var userLabels = userStats.map(stat => stat.date);
-            var userData = userStats.map(stat => stat.userCount);
-
-            var ctxUser = document.getElementById('userChart').getContext('2d');
-            var userChart = new Chart(ctxUser, {
-                type: 'line',
-                data: {
-                    labels: userLabels,
-                    datasets: [{
-                            label: 'Customers Registered',
-                            data: userData,
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu productStats
-            var productStats = <%= new Gson().toJson(statisticsMap.get("productStats")) %>;
-            var productLabels = productStats.map(stat => stat.date);
-            var productData = productStats.map(stat => stat.productCount);
-
-            var ctxProduct = document.getElementById('productChart').getContext('2d');
-            var productChart = new Chart(ctxProduct, {
-                type: 'line',
-                data: {
-                    labels: productLabels,
-                    datasets: [{
-                            label: 'Products Sold',
-                            data: productData,
-                            borderColor: 'rgb(54, 162, 235)',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu blogStats
-            var blogStats = <%= new Gson().toJson(statisticsMap.get("blogStats")) %>;
-            var blogLabels = blogStats.map(stat => stat.date);
-            var blogData = blogStats.map(stat => stat.blogCount);
-
-            var ctxBlog = document.getElementById('blogChart').getContext('2d');
-            var blogChart = new Chart(ctxBlog, {
-                type: 'line',
-                data: {
-                    labels: blogLabels,
-                    datasets: [{
-                            label: 'Blogs Created',
-                            data: blogData,
-                            borderColor: 'green',
-                            tension: 0.2
-                        }]
-                }
-            });
-
-            // Lấy dữ liệu feedbackStats
-            var feedbackStats = <%= new Gson().toJson(statisticsMap.get("feedbackStats")) %>;
-            var feedbackLabels = feedbackStats.map(stat => stat.date);
-            var feedbackData = feedbackStats.map(stat => stat.feedbackCount);
-
-            var ctxFeedback = document.getElementById('feedbackChart').getContext('2d');
-            var feedbackChart = new Chart(ctxFeedback, {
-                type: 'line',
-                data: {
-                    labels: feedbackLabels,
-                    datasets: [{
-                            label: 'Feedbacks Received',
-                            data: feedbackData,
-                            borderColor: 'rgb(153, 102, 255)',
-                            tension: 0.2
-                        }]
-                }
-            });
-        </script>
+        </section>
 
         <!-- Footer -->
         <footer id="footer"><!--Footer-->
@@ -332,7 +275,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -347,7 +289,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -362,7 +303,6 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
-
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -405,7 +345,7 @@
                         </div>
                         <div class="col-sm-2">
                             <div class="single-widget">
-                                <h2>Quick Shop</h2>
+                                <h2>Quock Shop</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">T-Shirt</a></li>
                                     <li><a href="#">Mens</a></li>
@@ -420,7 +360,7 @@
                                 <h2>Policies</h2>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="#">Terms of Use</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
+                                    <li><a href="#">Privecy Policy</a></li>
                                     <li><a href="#">Refund Policy</a></li>
                                     <li><a href="#">Billing System</a></li>
                                     <li><a href="#">Ticket System</a></li>
@@ -434,7 +374,7 @@
                                     <li><a href="#">Company Information</a></li>
                                     <li><a href="#">Careers</a></li>
                                     <li><a href="#">Store Location</a></li>
-                                    <li><a href="#">Affiliate Program</a></li>
+                                    <li><a href="#">Affillate Program</a></li>
                                     <li><a href="#">Copyright</a></li>
                                 </ul>
                             </div>
@@ -444,13 +384,12 @@
                                 <h2>About Shopper</h2>
                                 <form action="#" class="searchform">
                                     <input type="text" placeholder="Your email address" />
-                                    <button type="submit" class="btn btn-default">
-                                        <i class="fa fa-arrow-circle-o-right"></i>
-                                    </button>
-                                    <p>Get the most recent updates from <br />our site and be updated yourself...</p>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                    <p>Get the most recent updates from <br />our site and be updated your self...</p>
                                 </form>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -464,6 +403,7 @@
                 </div>
             </div>
         </footer><!--/Footer-->
+
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>

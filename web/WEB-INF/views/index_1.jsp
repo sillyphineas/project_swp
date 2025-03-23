@@ -1,4 +1,3 @@
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="entity.User"%>
@@ -81,8 +80,9 @@
                                     <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     
                                                                         <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
-                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
+                                    
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
                                     <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -127,15 +127,15 @@
                                 </ul>
                             </div>
                         </div>
-<!--                        <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>-->
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -213,13 +213,17 @@
                                 <h2>Filter by Price</h2>
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                        <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
 
-                                        <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+                                        
+                                        <label for="minPrice">Min Price:</label>
+                                        <input type="number" name="minPrice" id="minPrice" class="form-control" value="" placeholder="" />
 
-                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
+                                        <label for="maxPrice">Max Price:</label>
+                                        <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="" placeholder="" />
+
+
+                                        <!-- Nút Lọc -->
+                                        <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
                                     </form>
                                 </div>
                             </div>
@@ -237,7 +241,7 @@
                                             <div class="productinfo text-center">
                                                 <img src="${product.imageURL}" alt="Product Image" />
                                                 <c:set var="minPriceKey" value="minPrice_${product.id}" />
-                                                <h2><c:out value="${requestScope[minPriceKey]}" /></h2>
+                                                <h2>₫<c:out value="${requestScope[minPriceKey]}" /></h2>  <!-- Display the price here -->
                                                 <p>${product.name}</p>
                                                 <a href="ProductDetailController?id=${product.id}" class="btn btn-default add-to-cart">Detail</a>  
                                             </div>
@@ -245,6 +249,7 @@
                                     </div>
                                 </div>
                             </c:forEach>
+
                         </div><!--features_items-->
 
                         <!-- Phân trang -->

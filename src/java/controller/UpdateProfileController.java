@@ -13,11 +13,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import model.DAOUser;
+import java.io.File;
+import java.io.FileOutputStream;
 
 @WebServlet(name = "UpdateProfileController", urlPatterns = {"/UpdateProfileController"})
 public class UpdateProfileController extends HttpServlet {
@@ -27,7 +31,11 @@ public class UpdateProfileController extends HttpServlet {
         int userId = Integer.parseInt(request.getParameter("id"));
         DAOUser userDao = new DAOUser();
         User user = userDao.getUserById(userId);
-
+        if (user.getDateOfBirth() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String formattedDate = sdf.format(user.getDateOfBirth());
+            request.setAttribute("formattedDate", formattedDate);
+        }
         request.setAttribute("user", user);  // Đưa đối tượng user vào request để hiển thị trong JSP
         request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
     }
@@ -36,21 +44,20 @@ public class UpdateProfileController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Lấy thông tin người dùng từ session
         HttpSession session = request.getSession();
+        User updatedUser = new User();
         User currentUser = (User) session.getAttribute("user");
         // Lấy thông tin từ form
+        String userfffId = request.getParameter("userId");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String dateOfBirth = request.getParameter("dateOfBirth");
-        
         if (dateOfBirth == null || dateOfBirth.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Date of birth cannot be empty!");
+            request.setAttribute("errorMessage", "Date of birth cannot be empty!!!");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
-        // Kiểm tra định dạng ngày tháng
-        // Kiểm tra định dạng ngày tháng và tạo đối tượng java.util.Date từ chuỗi
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date birthDate = sdf.parse(dateOfBirth);
@@ -60,51 +67,46 @@ public class UpdateProfileController extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
                 return;
             }
-
-            // Cập nhật ngày sinh vào user hiện tại
-            currentUser.setDateOfBirth(new java.sql.Date(birthDate.getTime()));
+            updatedUser.setDateOfBirth(new java.sql.Date(birthDate.getTime()));
         } catch (ParseException e) {
             request.setAttribute("errorMessage", "Invalid date of birth format!");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
-
-        // Kiểm tra email và số điện thoại không trùng
         if (isEmailOrPhoneTaken(email, phoneNumber, currentUser.getId())) {
             request.setAttribute("errorMessage", "Email or phone number is already taken");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
 
-        // Xử lý upload hình ảnh (nếu có)
-        Part imagePart = request.getPart("image");
-        byte[] imageBytes = null;
+        Part filePart = request.getPart("image");  // Nhận tệp từ form
+        if (filePart != null && filePart.getSize() > 0) {
+            InputStream fileContent = filePart.getInputStream();  // Đọc nội dung tệp
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = fileContent.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+            byte[] imageBytes = byteArrayOutputStream.toByteArray();
 
-        if (imagePart != null && imagePart.getSize() > 0) {
-            // Đọc dữ liệu của ảnh vào byte array
-            imageBytes = new byte[(int) imagePart.getSize()];
-            InputStream inputStream = imagePart.getInputStream();
-            inputStream.read(imageBytes);
-            inputStream.close();
+            updatedUser.setImage(imageBytes);
         } else {
-            // Nếu không có ảnh mới, giữ lại ảnh cũ
-            imageBytes = currentUser.getImage();
+            updatedUser.setImage(currentUser.getImage());
         }
-
-        // Cập nhật thông tin vào đối tượng User
-        User updatedUser = new User();
         updatedUser.setId(currentUser.getId());
         updatedUser.setName(name);
         updatedUser.setEmail(email);
         updatedUser.setPhoneNumber(phoneNumber);
         updatedUser.setGender(gender);
-
-        updatedUser.setImage(imageBytes);
-
+        updatedUser.setPassHash(currentUser.getPassHash());
+        updatedUser.setUpdatedBy(currentUser.getId());
+        Date utilDate = new Date();
+        updatedUser.setUpdatedAt(new java.sql.Date(utilDate.getTime()));
         // Cập nhật dữ liệu vào cơ sở dữ liệu
         DAOUser userDao = new DAOUser();
         int result = userDao.updateUser2(updatedUser);
-
+        
         // Kiểm tra kết quả
         if (result > 0) {
             session.setAttribute("user", updatedUser); // Cập nhật thông tin người dùng trong session
