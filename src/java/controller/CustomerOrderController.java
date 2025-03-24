@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import entity.Feedback;
 import entity.Order;
 import entity.OrderInformation;
+import entity.User;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -80,6 +82,15 @@ public class CustomerOrderController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/CustomerOrderController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
 
         DAOOrderInformation daoOdInf = new DAOOrderInformation();
         DAOOrder daoOrder = new DAOOrder();

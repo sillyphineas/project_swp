@@ -5,6 +5,8 @@
 package controller;
 
 import entity.Feedback;
+import entity.User;
+import helper.Authorize;
 import helper.EmailUtil;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -40,8 +42,16 @@ public class MaketingFeedBackController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/MaketingFeedBackController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
+        response.setContentType("text/html;charset=UTF-8");
         DAOFeedback dao = new DAOFeedback();
         DAOUser dAOUser = new DAOUser();
         Integer customerID = (Integer) session.getAttribute("userID");

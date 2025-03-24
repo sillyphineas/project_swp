@@ -65,6 +65,21 @@ public class DAOShipping extends DBConnection {
         return false;
     }
 
+    public boolean updateArrival(int orderId, int shipperId, java.util.Date actualArrival) {
+        String sql = "UPDATE Shipping SET ActualArrival = ? WHERE OrderID = ? AND ShipperID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            java.sql.Date sqlDate = new java.sql.Date(actualArrival.getTime()); // convert here
+            ps.setDate(1, sqlDate);
+            ps.setInt(2, orderId);
+            ps.setInt(3, shipperId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public Shipping getShippingById(int shippingId) {
         String sql = "SELECT * FROM Shipping WHERE ShippingID = ?";
         Shipping shipping = null;
@@ -111,6 +126,7 @@ public class DAOShipping extends DBConnection {
         }
         return shipping;
     }
+
     public Vector<OrderTrend> getOrderTrends(Date startDate, Date endDate, Integer shipperId, String orderStatus) {
         Vector<OrderTrend> trends = new Vector<>();
         Calendar cal = Calendar.getInstance();
@@ -166,6 +182,7 @@ public class DAOShipping extends DBConnection {
 
     /**
      * Get revenue trends by day for a specified date range.
+     *
      * @param startDate Start date for the trend (null for last 7 days)
      * @param endDate End date for the trend (null for today)
      * @param shipperId Specific shipper ID (null for all shippers)
@@ -179,7 +196,7 @@ public class DAOShipping extends DBConnection {
         // Set default start date to 7 days ago if not provided
         if (startDate == null) {
             cal.add(Calendar.DAY_OF_YEAR, -7);
-            
+
         }
         // Set default end date to today if not provided
         if (endDate == null) {
@@ -222,7 +239,8 @@ public class DAOShipping extends DBConnection {
         }
         return trends;
     }
-   public List<Map<String, Object>> getShippingStatsByDate(String startDate, String endDate, String shippingStatus) throws SQLException {
+
+    public List<Map<String, Object>> getShippingStatsByDate(String startDate, String endDate, String shippingStatus) throws SQLException {
         // Chuyển đổi endDate để bao gồm cả ngày cuối
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
@@ -274,6 +292,3 @@ public class DAOShipping extends DBConnection {
         }
     }
 }
-
-
-

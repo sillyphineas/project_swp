@@ -257,9 +257,6 @@
                     <a href="CustomerOrderController?service=displayAllOrders" class="btn btn-primary">
                         <i class="fa fa-arrow-left"></i> Back to Orders
                     </a>
-                    <button onclick="printBill()" class="btn btn-success">
-                        <i class="fa fa-print"></i> Print Bill
-                    </button>
                 </div>
             </div>
         </section>

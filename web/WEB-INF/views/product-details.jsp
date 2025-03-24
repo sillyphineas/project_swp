@@ -277,7 +277,7 @@
                                     Product Reviews
                                 </h2>
                                 <%
-                                if (feedbacks != null && feedbacks.size() >= 3) {
+                                if (feedbacks != null && feedbacks.size() >= 1) {
                                 %>
                                 <div style="text-align: center; margin-top: 20px;">
                                     <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 

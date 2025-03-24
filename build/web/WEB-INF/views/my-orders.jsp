@@ -288,14 +288,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -615,7 +608,7 @@
                                     <!-- Feedback logic cho sp đầu tiên -->
                                     <c:set var="feedbackKeyName" value="feedbackExists_${first.orderDetailID}" />
                                     <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
-                                    <p>${feedbackKey} </p>
+                                    
 
                                     <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                         <c:choose>

@@ -5,7 +5,6 @@
  */
 package model;
 
-
 import entity.Cart;
 import entity.CartItem;
 import entity.Product;
@@ -45,14 +44,12 @@ public class DAOCartItem extends DBConnection {
         return n;
     }
 
-    
-
     public CartItem getCartItemById(int id) {
         String sql = "SELECT * FROM CartItem WHERE CartItemID = ?";
         CartItem cartItem = null;
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(1, id); 
+            pre.setInt(1, id);
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
                 cartItem = new CartItem(
@@ -99,7 +96,7 @@ public class DAOCartItem extends DBConnection {
         String sql = "DELETE FROM CartItem WHERE CartItemID = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, id);
-            n = pre.executeUpdate(); 
+            n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -156,7 +153,6 @@ public class DAOCartItem extends DBConnection {
 
     public CartItem getCartItemByCartIDAndProductID(int cartID, int productID) {
         CartItem cartItem = null;
-
 
         String sql = "SELECT "
                 + "    ci.CartItemID, "
@@ -243,6 +239,19 @@ public class DAOCartItem extends DBConnection {
         }
 
         return cartItem;
+    }
+
+    public int deleteCartItemByCustomerIdAndVariantId(int customerId, int productVariantId) {
+        int result = 0;
+        String sql = "DELETE FROM CartItem WHERE customer_id = ? AND product_variant_id = ?";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setInt(1, customerId);
+            preparedStatement.setInt(2, productVariantId);
+            result = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public CartItem getCartItemByCartIDAndProductVariantID(int cartID, int productVariantID) {
@@ -345,6 +354,7 @@ public class DAOCartItem extends DBConnection {
             e.printStackTrace();
         }
     }
+
     public int updateCartItem(CartItem other) {
         int n = 0;
         String sql = "UPDATE CartItem "
@@ -358,14 +368,14 @@ public class DAOCartItem extends DBConnection {
                 + "WHERE CartItemID = ?";
 
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
-            
-            pre.setInt(1, other.getCartID()); 
+
+            pre.setInt(1, other.getCartID());
             pre.setInt(2, other.getProductVariantID());
-            pre.setDouble(3,other.getPrice()); 
+            pre.setDouble(3, other.getPrice());
             pre.setInt(4, other.getQuantity());
-            pre.setDouble(5, other.getDiscountAmount()); 
+            pre.setDouble(5, other.getDiscountAmount());
             pre.setBigDecimal(6, other.getTotalPrice());
-            pre.setBoolean(7, other.isIsDisabled()); 
+            pre.setBoolean(7, other.isIsDisabled());
             pre.setInt(8, other.getCartItemID());
 
             // Thực thi câu lệnh SQL
@@ -381,12 +391,12 @@ public class DAOCartItem extends DBConnection {
         DAOCart dAOCart = new DAOCart();
 //        System.out.println(dao.calculateTotalCartPrice(1));
 //        System.out.println(dao.delete(30));
-       Cart cart = dAOCart.getCartByCustomerID(4);
+        Cart cart = dAOCart.getCartByCustomerID(4);
 //       CartItem cartItem = new CartItem(54, 1, 1, 29990000.00, 5, 0.00, 89970000.00, false);
 //        System.out.println(dao.addCartItem(cartItem));
 //      System.out.println(dao.updateCartItem(cartItem));
 //        System.out.println(dao.getCartItemByCartIDAndProductVariantID(1, 10));
-  //      System.out.println(dao.getCartItemById(13));
+        //      System.out.println(dao.getCartItemById(13));
 //       System.out.println(dao.updateCartItem(cartItem));
 //        System.out.println(dao.getCartItemById(1));
 //        CartItem cartItem = new CartItem();
