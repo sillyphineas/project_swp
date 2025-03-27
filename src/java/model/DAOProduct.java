@@ -1239,7 +1239,7 @@ public class DAOProduct extends DBConnection {
         }
         return stats;
     }
-    
+        
     
 
     public static void main(String[] args) {
@@ -1263,5 +1263,43 @@ public class DAOProduct extends DBConnection {
             e.printStackTrace();
         }
     }
+     public List<Product> getThreeProductsByBrand(int brandID, int productID) {
+    List<Product> products = new ArrayList<>();
+    String sql = "SELECT * FROM Products WHERE brandID = ? AND id != ? AND isDisabled = 0 ORDER BY createAt DESC LIMIT 3";
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setInt(1, brandID);
+        pre.setInt(2, productID);
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            Product product = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+            products.add(product);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    return products;
+}
 
 }

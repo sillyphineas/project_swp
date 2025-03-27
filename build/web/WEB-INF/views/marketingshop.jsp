@@ -129,15 +129,15 @@
                 white-space: nowrap; /* Ngăn chặn text bị xuống dòng */
             }
             .form-group label {
-    margin-bottom: 5px;  /* Giảm khoảng cách giữa nhãn và trường chọn */
-}
+                margin-bottom: 5px;  /* Giảm khoảng cách giữa nhãn và trường chọn */
+            }
 
-.form-group select {
-    margin-top: 0;  /* Đảm bảo không có khoảng cách thừa trên select */
-    padding: 5px;  /* Điều chỉnh padding để không bị lệch */
-    font-size: 16px;  /* Đảm bảo font đồng nhất */
-}
-            
+            .form-group select {
+                margin-top: 0;  /* Đảm bảo không có khoảng cách thừa trên select */
+                padding: 5px;  /* Điều chỉnh padding để không bị lệch */
+                font-size: 16px;  /* Đảm bảo font đồng nhất */
+            }
+
         </style>
     </head><!--/head-->
 </head><!--/head-->
@@ -249,12 +249,13 @@
                                 <li><a href="SliderController">Slider List</a></li>
                                 <li><a href="CustomerController">Customer List</a></li>
                                 <li><a href="MarketingProductController">Product List</a></li>
-                                
-                                
+                                <li><a href="MaketingFeedBackController">Feedback List</a></li>
+
+
                             </ul>
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
         </div>
@@ -268,19 +269,19 @@
                     <hr>
                     <div class="container">
 
-            
-                           
-                            <form action="MarketingProductController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
-                                <div class="form-group">
-                                    <a href="AddProductController?action=addProduct" class="btn btn-success" onclick="confirmAdd(event, 'addProduct')">Add Product</a>
-                                    <a href="AddProductController?action=addProductVariant" class="btn btn-success" onclick="confirmAdd(event, 'addProductVariant')">Add Product Variant</a>
-                                    <a href="AddProductController?action=addColor" class="btn btn-success" onclick="confirmAdd(event, 'addColor')">Add Color</a>
-                                    <a href="AddProductController?action=addStorage" class="btn btn-success" onclick="confirmAdd(event, 'addStorage')">Add Storage</a>
-                                </div>       
-                            </form>
 
-                            <hr>
-                            <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
+
+                        <form action="MarketingProductController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-group">
+                                <a href="AddProductController?action=addProduct" class="btn btn-success" onclick="confirmAdd(event, 'addProduct')">Add Product</a>
+                                <a href="AddProductController?action=addProductVariant" class="btn btn-success" onclick="confirmAdd(event, 'addProductVariant')">Add Product Variant</a>
+                                <a href="AddProductController?action=addColor" class="btn btn-success" onclick="confirmAdd(event, 'addColor')">Add Color</a>
+                                <a href="AddProductController?action=addStorage" class="btn btn-success" onclick="confirmAdd(event, 'addStorage')">Add Storage</a>
+                            </div>       
+                        </form>
+
+                        <hr>
+                        <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
                             <div class="d-flex align-items-center">
                                 <input type="text" name="search" value="${param.search}" class="form-control" placeholder="Search by product name" style="margin-right: 5px;" />
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
@@ -290,79 +291,79 @@
 
 
                         <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
-                             <div class="row">
-        <!-- Cột 1 -->
-       <div class="row">
-    <!-- Cột 1 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="brandID" class="d-block">Brand:</label>
-        <select id="brandID" name="brandID" class="form-control">
-            <option value="0">All Brands</option>
-            <c:forEach var="brand" items="${brands}">
-                <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
-            </c:forEach>
-        </select>
-    </div>
+                            <div class="row">
+                                <!-- Cột 1 -->
+                                <div class="row">
+                                    <!-- Cột 1 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="brandID" class="d-block">Brand:</label>
+                                        <select id="brandID" name="brandID" class="form-control">
+                                            <option value="0">All Brands</option>
+                                            <c:forEach var="brand" items="${brands}">
+                                                <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-    <!-- Cột 2 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="os" class="d-block">Operating System:</label>
-        <select id="os" name="os" class="form-control">
-            <option value="">All</option>
-            <c:forEach var="osItem" items="${osList}">
-                <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
-            </c:forEach>
-        </select>
-    </div>
-    
-    <!-- Cột 3 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="connectivity" class="d-block">Connectivity:</label>
-        <select id="connectivity" name="connectivity" class="form-control">
-            <option value="">All</option>
-            <c:forEach var="connect" items="${connectivityList}">
-                <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
-            </c:forEach>
-        </select>
-    </div>
-</div>
+                                    <!-- Cột 2 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="os" class="d-block">Operating System:</label>
+                                        <select id="os" name="os" class="form-control">
+                                            <option value="">All</option>
+                                            <c:forEach var="osItem" items="${osList}">
+                                                <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-<div class="row">
-    <!-- Cột 1 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="statusFilter" class="d-block">Status:</label>
-        <select id="statusFilter" name="statusFilter" class="form-control">
-            <option value="">All</option>
-            <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
-            <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
-        </select>
-    </div>
+                                    <!-- Cột 3 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="connectivity" class="d-block">Connectivity:</label>
+                                        <select id="connectivity" name="connectivity" class="form-control">
+                                            <option value="">All</option>
+                                            <c:forEach var="connect" items="${connectivityList}">
+                                                <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
 
-    <!-- Cột 2 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="screenSize" class="d-block">Screen Size (inches):</label>
-        <select id="screenSize" name="screenSize" class="form-control">
-            <option value="0">All</option>
-            <c:forEach var="size" items="${screenSizeList}">
-                <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
-            </c:forEach>
-        </select>
-    </div>
+                                <div class="row">
+                                    <!-- Cột 1 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="statusFilter" class="d-block">Status:</label>
+                                        <select id="statusFilter" name="statusFilter" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
+                                            <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
+                                        </select>
+                                    </div>
 
-    <!-- Cột 3 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="batteryCapacity" class="d-block">Battery Capacity:</label>
-        <select id="batteryCapacity" name="batteryCapacity" class="form-control">
-            <option value="0">All</option>
-            <c:forEach var="capacity" items="${batteryCapacityList}">
-                <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
-            </c:forEach>
-        </select>
-    </div>
-</div>
+                                    <!-- Cột 2 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="screenSize" class="d-block">Screen Size (inches):</label>
+                                        <select id="screenSize" name="screenSize" class="form-control">
+                                            <option value="0">All</option>
+                                            <c:forEach var="size" items="${screenSizeList}">
+                                                <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
+                                    <!-- Cột 3 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="batteryCapacity" class="d-block">Battery Capacity:</label>
+                                        <select id="batteryCapacity" name="batteryCapacity" class="form-control">
+                                            <option value="0">All</option>
+                                            <c:forEach var="capacity" items="${batteryCapacityList}">
+                                                <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
 
 
-    <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
                         <br>
 
@@ -422,26 +423,26 @@
                         </c:forEach>
                     </tbody>
                 </table>
-               <div class="pagination">
-    <ul class="pagination">
-        <!-- Previous Page Link -->
-        <c:if test="${currentPage > 1}">
-            <li><a href="MarketingProductController?page=${currentPage - 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">&laquo; Prev</a></li>
-        </c:if>
-        
-        <!-- Page Number Links -->
-        <c:forEach begin="1" end="${totalPages}" var="i">
-            <li class="${i == currentPage ? 'active' : ''}">
-                <a href="MarketingProductController?page=${i}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">${i}</a>
-            </li>
-        </c:forEach>
-        
-        <!-- Next Page Link -->
-        <c:if test="${currentPage < totalPages}">
-            <li><a href="MarketingProductController?page=${currentPage + 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">Next &raquo;</a></li>
-        </c:if>
-    </ul>
-</div>
+                <div class="pagination">
+                    <ul class="pagination">
+                        <!-- Previous Page Link -->
+                        <c:if test="${currentPage > 1}">
+                            <li><a href="MarketingProductController?page=${currentPage - 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">&laquo; Prev</a></li>
+                            </c:if>
+
+                        <!-- Page Number Links -->
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="${i == currentPage ? 'active' : ''}">
+                                <a href="MarketingProductController?page=${i}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">${i}</a>
+                            </li>
+                        </c:forEach>
+
+                        <!-- Next Page Link -->
+                        <c:if test="${currentPage < totalPages}">
+                            <li><a href="MarketingProductController?page=${currentPage + 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">Next &raquo;</a></li>
+                            </c:if>
+                    </ul>
+                </div>
 
 
             </div>
@@ -650,8 +651,8 @@
                                                    }
                                                }
                                                $('#addProductVariantModal').on('shown.bs.modal', function () {
-    $('#myInput').trigger('focus');
-});
+                                                   $('#myInput').trigger('focus');
+                                               });
 </script>
 
 </body>

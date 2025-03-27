@@ -90,41 +90,41 @@
                 width: 100% !important; /* Đảm bảo canvas sử dụng toàn bộ chiều rộng container */
                 height: auto !important; /* Giữ tỷ lệ hình ảnh */
             }
-           .total-stats {
-            margin: 20px 0;
-            font-size: 16px;
-            display: flex;
-            justify-content: space-between;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+            .total-stats {
+                margin: 20px 0;
+                font-size: 16px;
+                display: flex;
+                justify-content: space-between;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
 
-        .total-stats p {
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-        }
+            .total-stats p {
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
 
-        .total-stats p strong {
-            font-weight: 600;
-            color: #333;
-        }
+            .total-stats p strong {
+                font-weight: 600;
+                color: #333;
+            }
 
-        .total-stats p span {
-            color: #4e73df; /* Change color as per your requirement */
-            font-weight: 700;
-            font-size: 18px;
-        }
+            .total-stats p span {
+                color: #4e73df; /* Change color as per your requirement */
+                font-weight: 700;
+                font-size: 18px;
+            }
 
-        .total-stats p span#totalShipping {
-            color: #36b9cc; /* Shipping color */
-        }
+            .total-stats p span#totalShipping {
+                color: #36b9cc; /* Shipping color */
+            }
 
-        .total-stats p span#totalDelivered {
-            color: #f6c23e; /* Delivered color */
-        }
+            .total-stats p span#totalDelivered {
+                color: #f6c23e; /* Delivered color */
+            }
 
         </style>
     </head>
@@ -262,13 +262,17 @@
                     </select>
 
                     <button type="submit" class="btn btn-warning" style="margin-left: 10px;">Generate Report</button>
-                
-                <div class="total-stats" style="margin: 20px 0; font-size: 16px;">
-                    
-                    <p><strong>Total Orders:</strong> <span id="totalOrders">0</span></p>
-                   
-                    <p><strong>Total Revenue:</strong> <span id="totalRevenue">đ0</span></p>
-                </div>
+
+                    <div class="total-stats" style="margin: 20px 0; font-size: 16px;">
+
+                        <p><strong>Total Orders:</strong> <span id="totalOrders">0</span></p>
+                        <p><strong>Awaiting Pickup:</strong> <span id="totalAwaitingPickup">0</span></p>
+                        <p><strong>Shipping:</strong> <span id="totalShipping">0</span></p>
+                        <p><strong>Delivered:</strong> <span id="totalDelivered">0</span></p>
+                        <p><strong>Cancel:</strong> <span id="totalCancel">0</span></p>
+                        <p><strong>Refund:</strong> <span id="totalRefund">0</span></p>
+                        <p><strong>Total Revenue:</strong> <span id="totalRevenue">đ0</span></p>
+                    </div>
                 </form>
             </div>
         </div>
@@ -417,77 +421,83 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
-        <script type="text/javascript">
-           var orderStats = <%= orderStatsJson %>;
-           var orderLabels = orderStats.map(stat => stat.date);
-           var totalOrdersData = orderStats.map(stat => stat.totalOrders);
-           var successOrdersData = orderStats.map(stat => stat.successOrders);
-           var revenueData = orderStats.map(stat => stat.revenue);
+       <script type="text/javascript">
+    var orderStats = <%= orderStatsJson %>;
+    var orderLabels = orderStats.map(stat => stat.date);
+    var totalOrdersData = orderStats.map(stat => stat.totalOrders);
+    var successOrdersData = orderStats.map(stat => stat.successOrders);
+    var revenueData = orderStats.map(stat => stat.revenue);
 
-           // Tính tổng số đơn hàng và tổng doanh thu
-           var totalOrders = totalOrdersData.reduce((sum, value) => sum + value, 0);
-           var totalRevenue = revenueData.reduce((sum, value) => sum + value, 0);
+    var totalOrders = totalOrdersData.reduce((sum, value) => sum + value, 0);
+    var totalRevenue = revenueData.reduce((sum, value) => sum + value, 0);
+    var totalAwaitingPickup = orderStats.reduce((sum, stat) => sum + (stat.awaitingPickup || 0), 0);
+    var totalShipping = orderStats.reduce((sum, stat) => sum + (stat.shipping || 0), 0);
+    var totalDelivered = orderStats.reduce((sum, stat) => sum + (stat.delivered || 0), 0);
+    var totalCancel = orderStats.reduce((sum, stat) => sum + (stat.cancel || 0), 0);
+    var totalRefund = orderStats.reduce((sum, stat) => sum + (stat.refund || 0), 0);
 
-           // Hiển thị tổng lên giao diện
-           document.getElementById('totalOrders').textContent = totalOrders;
-           document.getElementById('totalRevenue').textContent = 'đ' + totalRevenue.toFixed(2);
+    document.getElementById('totalOrders').textContent = totalOrders;
+    document.getElementById('totalAwaitingPickup').textContent = totalAwaitingPickup;
+    document.getElementById('totalShipping').textContent = totalShipping;
+    document.getElementById('totalDelivered').textContent = totalDelivered;
+    document.getElementById('totalCancel').textContent = totalCancel;
+    document.getElementById('totalRefund').textContent = totalRefund;
+    document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('vi-VN') + ' đ';
 
-           // Biểu đồ xu hướng đơn hàng
-           var ctxOrder = document.getElementById('orderTrendChart').getContext('2d');
-           var orderTrendChart = new Chart(ctxOrder, {
-               type: 'bar',
-               data: {
-                   labels: orderLabels,
-                   datasets: [
-                       {
-                           label: 'Total Orders',
-                           data: totalOrdersData,
-                           backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                           borderColor: 'rgb(54, 162, 235)',
-                           borderWidth: 1
-                       },
-                       {
-                           label: 'Success Orders',
-                           data: successOrdersData,
-                           backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                           borderColor: 'rgb(75, 192, 192)',
-                           borderWidth: 1
-                       }
-                   ]
-               },
-               options: {
-                   scales: {
-                       y: {
-                           beginAtZero: true,
-                           ticks: {
-                               stepSize: 1
-                           }
-                       }
-                   }
-               }
-           });
+    var ctxOrder = document.getElementById('orderTrendChart').getContext('2d');
+    var orderTrendChart = new Chart(ctxOrder, {
+        type: 'bar',
+        data: {
+            labels: orderLabels,
+            datasets: [
+                {
+                    label: 'Total Orders',
+                    data: totalOrdersData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)', 
+                    borderColor: 'rgb(255, 99, 132)', 
+                    borderWidth: 1
+                },
+                {
+                    label: 'Success Orders',
+                    data: successOrdersData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgb(75, 192, 192)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
 
-           // Biểu đồ xu hướng doanh thu
-           var ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-           var revenueChart = new Chart(ctxRevenue, {
-               type: 'line',
-               data: {
-                   labels: orderLabels,
-                   datasets: [{
-                           label: 'Revenue (đ)',
-                           data: revenueData,
-                           borderColor: 'rgb(255, 99, 132)',
-                           tension: 0.2
-                       }]
-               },
-               options: {
-                   scales: {
-                       y: {
-                           beginAtZero: true
-                       }
-                   }
-               }
-           });
-        </script>
+    var ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    var revenueChart = new Chart(ctxRevenue, {
+        type: 'line',
+        data: {
+            labels: orderLabels,
+            datasets: [{
+                label: 'Revenue (đ)',
+                data: revenueData,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.2
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
     </body>
 </html>

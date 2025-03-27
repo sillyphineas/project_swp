@@ -294,13 +294,6 @@
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="feedbackCount">Feedback Count:</label>
-                        <input type="number" class="form-control" id="feedbackCount" name="feedbackCount">
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-group">
                         <label for="simType">Sim Type:</label>
                         <input type="text" class="form-control" id="simType" name="simType">
                     </div>
@@ -363,6 +356,19 @@
             </div>
 
             <!-- Row 9: Status, Disable Product -->
+             <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Disable Product:</label>
+                        <input type="checkbox" name="isDisabled">
+                    </div>
+                </div>
+            <div class="form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="feedbackCount"></label>
+                        <input type="hidden" class="form-control" id="feedbackCount" name="feedbackCount">
+                    </div>
+                </div>
             <div class="form-row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -371,12 +377,6 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Disable Product:</label>
-                        <input type="checkbox" name="isDisabled">
-                    </div>
-                </div>
             </div>
 
             <button type="submit" class="btn btn-custom-blue">Add Product</button>

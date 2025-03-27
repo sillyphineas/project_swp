@@ -41,8 +41,8 @@ public class DAOUser extends DBConnection {
 
     public int addUser(User user) {
         int n = 0;
-        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at, image) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, user.getName());
             pre.setString(2, user.getEmail());
@@ -56,7 +56,7 @@ public class DAOUser extends DBConnection {
             pre.setBoolean(10, user.isDisabled());
             pre.setInt(11, user.getUpdatedBy());
             pre.setDate(12, user.getUpdatedAt());
-
+            pre.setBytes(13, user.getImage());
             n = pre.executeUpdate();  // 
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -279,7 +279,7 @@ public class DAOUser extends DBConnection {
         int n = 0;
         String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?,"
                 + " phoneNumber = ?, resetToken = ?, resetTokenExpired = ?,"
-                + " DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ? WHERE id = ?";
+                + " DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ?, WHERE id = ?";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, user.getName());
@@ -294,7 +294,8 @@ public class DAOUser extends DBConnection {
             pre.setBoolean(10, user.isIsDisabled());
             pre.setInt(11, user.getUpdatedBy());
             pre.setDate(12, user.getUpdatedAt());
-            pre.setInt(13, user.getId());
+            pre.setBytes(13, user.getImage());
+            pre.setInt(14, user.getId());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
