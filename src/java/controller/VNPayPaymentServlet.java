@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import helper.VNPayConfig;
 import jakarta.servlet.http.HttpSession;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import model.DAOOrder;
 
 /**
@@ -93,13 +94,26 @@ public class VNPayPaymentServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         long amount;
-        try {
-            double amountDouble = (Double) request.getAttribute("amount"); // Dùng Double để tránh lỗi số khoa học
-            amount = (long) (amountDouble * 100); // Chuyển sang VND theo yêu cầu VNPay
-        } catch (NumberFormatException e) {
-            response.sendRedirect("checkout.jsp?error=InvalidAmountFormat");
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect("checkout.jsp?error=SessionExpired");
             return;
         }
+        Object amountObj = session.getAttribute("discountedTotal");
+        if (amountObj == null) {
+            response.sendRedirect("checkout.jsp?error=InvalidAmount");
+            return;
+        }
+        double amountDouble;
+        if (amountObj instanceof BigDecimal) {
+            amountDouble = ((BigDecimal) amountObj).doubleValue();
+        } else if (amountObj instanceof Double) {
+            amountDouble = (Double) amountObj;
+        } else {
+            response.sendRedirect("checkout.jsp?error=InvalidAmountType");
+            return;
+        }
+        amount = (long) (amountDouble * 100);
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";

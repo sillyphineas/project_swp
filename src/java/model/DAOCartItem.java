@@ -130,7 +130,7 @@ public class DAOCartItem extends DBConnection {
     }
 
     public void removeCartItem(int cartItemId) throws SQLException {
-        String sql = "UPDATE CartItem SET isDisabled = 1 WHERE CartItemID = ?";
+        String sql = "DELETE FROM CartItem WHERE CartItemID = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, cartItemId);
             pre.executeUpdate();

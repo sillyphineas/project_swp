@@ -5,7 +5,7 @@
 package controller;
 
 import entity.User;
-import helper.Validate;
+import entity.Voucher;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,15 +15,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.DAOOrder;
+import java.util.Vector;
 import model.DAOUser;
+import model.DAOVoucher;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "CustomerPointController", urlPatterns = {"/CustomerPointController"})
+public class CustomerPointController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +43,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet CustomerPointController</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CustomerPointController at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,16 +64,21 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        int currentPoints = 0;
         if (user != null) {
-            response.sendRedirect("HomePageController");
-            return;
+            DAOUser daoU = new DAOUser();
+            currentPoints = daoU.getUserPoints(user.getId());
+            user.setPoint(currentPoints);
+            session.setAttribute("user", user);
         }
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/login.jsp");
+        DAOVoucher daoV = new DAOVoucher();
+        Vector<Voucher> voucherList = daoV.getVouchers("SELECT * FROM Vouchers");
+        request.setAttribute("currentPoints", currentPoints);
+        request.setAttribute("voucherList", voucherList);
+
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/my-points.jsp");
         rd.forward(request, response);
     }
 
@@ -87,25 +93,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DAOUser daouser = new DAOUser();
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        User user = daouser.getUserByEmail(email);
-
-        System.out.println(email);
-        System.out.println(password);
-        System.out.println(user.getPassHash());
-        if (Validate.checkLoginValidUser(email, password)) {
-            System.out.println("true");
-            HttpSession session = request.getSession(true);
-            session.setAttribute("isLoggedIn", true);
-            session.setAttribute("user", daouser.getUserByEmail(email));
-            session.setAttribute("userID", user.getId());
-            response.getWriter().write("success:" + daouser.getUserByEmail(email).getRoleId());
-            DAOOrder daoOrder = new DAOOrder();
-        } else {
-            response.getWriter().write("Invalid account");
-        }
+        doGet(request, response);
     }
 
     /**

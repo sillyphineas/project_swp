@@ -4,8 +4,7 @@
  */
 package controller;
 
-import entity.User;
-import helper.Validate;
+
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,16 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.DAOOrder;
-import model.DAOUser;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "LuckyDrawForward", urlPatterns = {"/LuckyDrawForward"})
+public class LuckyDrawForward extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +38,10 @@ public class LoginController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");
+            out.println("<title>Servlet LuckyDrawForward</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LuckyDrawForward at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,16 +59,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
-        if (user != null) {
-            response.sendRedirect("HomePageController");
-            return;
-        }
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/login.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/lucky-draw.jsp");
         rd.forward(request, response);
     }
 
@@ -87,25 +74,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        DAOUser daouser = new DAOUser();
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        User user = daouser.getUserByEmail(email);
-
-        System.out.println(email);
-        System.out.println(password);
-        System.out.println(user.getPassHash());
-        if (Validate.checkLoginValidUser(email, password)) {
-            System.out.println("true");
-            HttpSession session = request.getSession(true);
-            session.setAttribute("isLoggedIn", true);
-            session.setAttribute("user", daouser.getUserByEmail(email));
-            session.setAttribute("userID", user.getId());
-            response.getWriter().write("success:" + daouser.getUserByEmail(email).getRoleId());
-            DAOOrder daoOrder = new DAOOrder();
-        } else {
-            response.getWriter().write("Invalid account");
-        }
+        processRequest(request, response);
     }
 
     /**

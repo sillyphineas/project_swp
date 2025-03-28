@@ -43,19 +43,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -68,49 +68,34 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
 
-                                    <% 
+
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+                                    
+                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
+
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
                             </div>
                         </div>
@@ -132,39 +117,35 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkout">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li>  
-                                        </ul>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs" class="active">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL" class="active">Blog List</a></li>
-                                        </ul>
-                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <%
-                            String query = (String) request.getAttribute("query");
-                        %>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <form action="BlogURL" method="get">
-                                    <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>">
-                                    <button type="submit">Search</button>
-                                </form>
-                            </div>
-                        </div>
-
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
+        </header>
 
         <section>
             <div class="container">
@@ -178,20 +159,20 @@
                                         <li> 
                                             <a href="BlogURL?service=listAllBlogs">All Categories</a> 
                                         </li> 
-                                        <% 
-                                        List<Category> categories = (List<Category>) request.getAttribute("categories");
-                                        if (categories != null && !categories.isEmpty()) {
-                                            for (Category category : categories) {
+                                        <%
+                                            List<Category> categories = (List<Category>) request.getAttribute("categories");
+                                            if (categories != null && !categories.isEmpty()) {
+                                                for (Category category : categories) {
                                         %>
 
                                         <li> 
-                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>">
-                                                <%= category.getCategoryName() %>
+                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId()%>">
+                                                <%= category.getCategoryName()%>
                                             </a>
                                         </li> 
-                                        <% 
+                                        <%
+                                                }
                                             }
-                                        }
                                         %> 
                                     </ul> 
                                 </div>
@@ -205,21 +186,21 @@
                             <c:if test="${not empty message}">
                                 <div class="alert alert-warning">${message}</div>
                             </c:if> 
-                            <% 
-                            List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+                            <%
+                                List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
 
-                            if (blogs != null && !blogs.isEmpty()) {
-                                DAOBlog dao = new DAOBlog();
-                                for (Blog blog : blogs){
-                                    int authorID = blog.getAuthorID();
-                                    String authname = dao.getAuthorNameById(blog.getAuthorID());
+                                if (blogs != null && !blogs.isEmpty()) {
+                                    DAOBlog dao = new DAOBlog();
+                                    for (Blog blog : blogs) {
+                                        int authorID = blog.getAuthorID();
+                                        String authname = dao.getAuthorNameById(blog.getAuthorID());
                             %>
                             <div class="single-blog-post">
-                                <h3><%= blog.getTitle() %></h3>
+                                <h3><%= blog.getTitle()%></h3>
                                 <div class="post-meta">
                                     <ul>
-                                        <li><i class="fa fa-user"></i><%= authname %></li>
-                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime() %></li>
+                                        <li><i class="fa fa-user"></i><%= authname%></li>
+                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime()%></li>
                                     </ul>
                                     <span>
                                         <i class="fa fa-star"></i>
@@ -231,48 +212,48 @@
                                 </div>
                                 <div style="display: flex;">
                                     <a href="">
-                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
+                                        <img src="<%= blog.getImageURL()%>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
                                     </a>
-                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
+                                    <p style="color: #808080;"><%= blog.getSubContent()%></p>
                                 </div>
-                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>">Read More</a>
+                                <a class="btn btn-primary" href="<%= request.getContextPath()%>/BlogDetailServlet?id=<%= blog.getId()%>">Read More</a>
                             </div>
-                            <% 
+                            <%
+                                    }
                                 }
-                            }
                             %>
 
                             <div class="pagination-area">
                                 <ul class="pagination">
-                                    <% 
-                                    Integer totalPages = (Integer) request.getAttribute("totalPages");
-                                    Integer currentPage = (Integer) request.getAttribute("currentPage");
-                                    String service = request.getParameter("service");
-                                    String baseURL = "BlogURL?service=" + service;
+                                    <%
+                                        Integer totalPages = (Integer) request.getAttribute("totalPages");
+                                        Integer currentPage = (Integer) request.getAttribute("currentPage");
+                                        String service = request.getParameter("service");
+                                        String baseURL = "BlogURL?service=" + service;
 
-                                    if (service.equals("search") && request.getParameter("query") != null) {
-                                        query = request.getParameter("query");
-                                        baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
-                                    }
-                                     if ("CatewithID".equals(service)) {
-                                        String categoryIdParam = request.getParameter("categoryID");
-                                        if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
-                                            baseURL += "&categoryID=" + categoryIdParam;  // Add category ID to the base URL
+                                        if (service.equals("search") && request.getParameter("query") != null) {
+                                            query = request.getParameter("query");
+                                            baseURL += "&query=" + java.net.URLEncoder.encode(query, "UTF-8");
                                         }
-                                    }
+                                        if ("CatewithID".equals(service)) {
+                                            String categoryIdParam = request.getParameter("categoryID");
+                                            if (categoryIdParam != null && !categoryIdParam.trim().isEmpty()) {
+                                                baseURL += "&categoryID=" + categoryIdParam;  // Add category ID to the base URL
+                                            }
+                                        }
 
-                                    if (totalPages != null && totalPages > 0) {
-                                        for (int i = 1; i <= totalPages; i++) {
+                                        if (totalPages != null && totalPages > 0) {
+                                            for (int i = 1; i <= totalPages; i++) {
                                     %>
                                     <li>
-                                        <a href="<%= baseURL %>&page=<%= i %>" 
-                                           class="<%= (i == currentPage) ? "active" : "" %>">
-                                            <%= i %>
+                                        <a href="<%= baseURL%>&page=<%= i%>" 
+                                           class="<%= (i == currentPage) ? "active" : ""%>">
+                                            <%= i%>
                                         </a>
                                     </li>
-                                    <% 
+                                    <%
+                                            }
                                         }
-                                    }
                                     %>
                                 </ul>
                             </div>
