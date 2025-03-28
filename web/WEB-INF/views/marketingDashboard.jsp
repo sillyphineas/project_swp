@@ -184,6 +184,7 @@
         <!-- Form xuất báo cáo -->
         <div class="container">
             <div class="report-form">
+                <h1>Marketing Dashboard</h1>
                 <form action="MarketingDashboardController" method="get">
                     <label for="startDate">Start Date:</label>
                     <input type="date" id="startDate" name="startDate"
@@ -202,12 +203,15 @@
         <div class="container">
             <div class="row">
                 <!-- Biểu đồ số 1: User Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
+                <div class="col-md-12 col-sm-12 chart-container" style="display: block; width: 100%; margin-bottom: 30px;">
                     <div class="chart-title">Customer Statistics</div>
                     <canvas id="userChart"></canvas>
                 </div>
+            </div>
+
+            <div class="row">
                 <!-- Biểu đồ số 2: Product Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
+                <div class="col-md-12 col-sm-12 chart-container" style="display: block; width: 100%; margin-bottom: 30px;">
                     <div class="chart-title">Product Statistics</div>
                     <canvas id="productChart"></canvas>
                 </div>
@@ -215,17 +219,21 @@
 
             <div class="row">
                 <!-- Biểu đồ số 3: Blog Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
+                <div class="col-md-12 col-sm-12 chart-container" style="display: block; width: 100%; margin-bottom: 30px;">
                     <div class="chart-title">Blog Statistics</div>
                     <canvas id="blogChart"></canvas>
                 </div>
+            </div>
+
+            <div class="row">
                 <!-- Biểu đồ số 4: Feedback Statistics -->
-                <div class="col-md-6 col-sm-6 chart-container">
+                <div class="col-md-12 col-sm-12 chart-container" style="display: block; width: 100%; margin-bottom: 30px;">
                     <div class="chart-title">Feedback Statistics</div>
                     <canvas id="feedbackChart"></canvas>
                 </div>
             </div>
         </div>
+
 
         <!-- Code ChartJS -->
         <script type="text/javascript">

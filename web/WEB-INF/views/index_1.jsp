@@ -3,6 +3,9 @@
 <%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -80,7 +83,7 @@
                                     <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
                                     
                                                                         <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
-                                    
+
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
                                     <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
@@ -159,17 +162,17 @@
                                         <div class="col-sm-6">
                                             <h1><span>E</span>-SHOPPER</h1>
                                             <h2>${blog.title}</h2>
-                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                            <a href="${blog.backlinks}" class="btn btn-primary">
+
+                                            <a href="${blog.backlinks}" class="btn btn-warning">
                                                 Read More
                                             </a>
 
 
                                         </div>
                                         <div class="col-sm-6">
-                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
-                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
+                                            <img style="height: 400px; width: auto" src="${blog.imageURL}" class="girl img-responsive" alt="" />
+
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -214,7 +217,7 @@
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
 
-                                        
+
                                         <label for="minPrice">Min Price:</label>
                                         <input type="number" name="minPrice" id="minPrice" class="form-control" value="" placeholder="" />
 
@@ -227,6 +230,24 @@
                                     </form>
                                 </div>
                             </div>
+                            <div class="latest-products">
+                                <c:if test="${not empty latestProducts}">
+                                    <div class="latest-product">
+                                        <h2>Newest Products</h2>
+                                        <c:forEach var="product" items="${latestProducts}">
+                                            <div class="product-item" style="margin-bottom: 10px;">
+                                                <!-- Link bao bọc sản phẩm -->
+                                                <a href="ProductDetailController?id=${product.id}">
+                                                    <img src="${product.imageURL}" alt="${product.name}" style="width: 100%; height: auto;">
+                                                    <h3 style="color: black;">${product.name}</h3>
+<!--                                                    <p style="color: black;">${product.description}</p>-->
+                                                </a>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
+                            </div>
+
 
                         </div>
                     </div>
@@ -282,7 +303,7 @@
 
                                         <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-warning">
                                             Read More
                                         </a>
                                     </div>

@@ -106,9 +106,9 @@ public class DAOBlog extends DBConnection {
                         rs.getInt("authorID"),
                         rs.getString("postTime"),
                         rs.getString("title"),
-                        rs.getString("content"),
-                        rs.getString("imageURL"),
+                        rs.getString("content"),                      
                         rs.getString("backlinks"),
+                        rs.getString("imageURL"),
                         rs.getString("status"),
                         rs.getBoolean("isSlider"),
                         rs.getBoolean("isDisabled")
@@ -147,7 +147,7 @@ public class DAOBlog extends DBConnection {
     }
 
     public List<Blog> getPaginatedBlogs(int page, int pageSize) throws SQLException {
-        String sql = "SELECT * FROM Blogs WHERE isDisabled = 0 ORDER BY postTime DESC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Blogs WHERE isDisabled = 0 and isSlider = 0 ORDER BY postTime DESC LIMIT ? OFFSET ?";
         List<Blog> blogs = new ArrayList<>();
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, pageSize);

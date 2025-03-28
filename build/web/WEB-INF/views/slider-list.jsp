@@ -26,144 +26,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-        <style>
-            /* Search and Filter Form */
-            /* Cập nhật lại form để các phần tử căn chỉnh đúng */
-            .form-section {
-                display: flex;
-                justify-content: flex-start;  /* Căn trái các phần tử */
-                gap: 10px;  /* Giảm khoảng cách giữa các phần tử */
-                align-items: center;  /* Căn giữa theo chiều dọc */
-                margin-bottom: 20px;
-            }
 
-            form {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-
-            form input, form select {
-                padding: 10px;
-                font-size: 16px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                width: 200px;  /* Giữ chiều rộng đồng nhất */
-                height: 40px;  /* Căn chỉnh chiều cao cho đồng nhất */
-            }
-
-            /* Cập nhật các button trong form để có kích thước bằng nhau */
-            /* Đảm bảo các button có chiều cao và chiều rộng đồng nhất */
-            button, .btn {
-                padding: 10px 20px;
-                font-size: 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                height: 35px;  /* Đảm bảo chiều cao giống nhau */
-                width: 100px;  /* Chiều rộng đồng nhất cho các button */
-                text-align: center;  /* Căn giữa chữ trong button */
-            }
-
-            button:hover, .btn:hover {
-                opacity: 0.8; /* Thêm hiệu ứng hover */
-            }
-
-            /* Responsive cho các button trên màn hình nhỏ */
-            @media screen and (max-width: 768px) {
-                button, .btn {
-                    width: 100%;  /* Button chiếm toàn bộ chiều rộng trên thiết bị nhỏ */
-                }
-            }
-
-            /* Đảm bảo button trong bảng có cùng kích thước */
-            .table button {
-                width: 100px;
-                height: 35px;
-            }
-
-            /* Thêm một chút padding cho các button bên ngoài bảng (form) */
-            .form-section button {
-                width: 100px;
-                height: 35px;
-            }
-
-
-
-
-            /* Pagination Styling */
-            .pagination {
-                text-align: center; /* Căn giữa các liên kết phân trang */
-                margin-top: 20px;
-                display: flex;
-                justify-content: center; /* Căn giữa phần tử con (nút phân trang) */
-                align-items: center; /* Đảm bảo rằng phần tử được căn giữa theo chiều dọc */
-                width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
-            }
-
-            .pagination a {
-                margin: 0 5px;
-                padding: 8px 16px;
-                background-color: #f39c12;
-                color: white;
-                text-decoration: none;
-                border-radius: 4px;
-                transition: background-color 0.3s;
-            }
-
-            .pagination a:hover {
-                background-color: #e67e22;
-            }
-
-
-            /* Table Styling */
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 30px;
-            }
-
-            table th, table td {
-                padding: 12px;
-                text-align: left;
-                border: 1px solid #ddd;
-                background-color: #f9f9f9;
-            }
-
-            /*            table th {
-                            background-color: #f1c40f;
-                            color: white;
-                            font-weight: bold;
-                        }*/
-
-            table tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-
-            table tr:hover {
-                background-color: #f0e68c;
-            }
-
-            /* Responsive Styling */
-            @media screen and (max-width: 768px) {
-                form {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                form input, form select {
-                    width: 100%;
-                }
-
-                form button {
-                    width: 100%;
-                    margin-top: 10px;
-                }
-            }
-
-        </style>
     </head><!--/head-->
 
     <body>
@@ -266,12 +129,13 @@
                                     <li><a href="SliderController" class="active">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <div>
-                                <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form">
+                                <form action="${pageContext.request.contextPath}/SliderController" method="post" class="search-form" style="display: flex; gap: 10px; align-items: center;">
                                     <input type="text" name="query" placeholder="Search by Title or Backlinks" class="form-control d-inline-block" />
                                     <button type="submit" name="action" value="search" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Search</button>
                                 </form>
@@ -283,17 +147,125 @@
         </header><!--/header-->
 
         <section id="settings-section">
+            <style>
+                /* CSS chỉ áp dụng cho phần này */
+                #settings-section .form-section {
+                    display: flex;
+                    justify-content: flex-start;
+                    gap: 10px;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+
+                #settings-section form {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                }
+
+                #settings-section form input, #settings-section form select {
+                    padding: 10px;
+                    font-size: 16px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    width: 200px;
+                    height: 40px;
+                }
+
+                #settings-section button, #settings-section .btn {
+                    padding: 10px 20px;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    height: 35px;
+                    width: 100px;
+                    text-align: center;
+                }
+
+                #settings-section button:hover, #settings-section .btn:hover {
+                    opacity: 0.8;
+                }
+
+                #settings-section .pagination {
+                    text-align: center;
+                    margin-top: 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                }
+
+                #settings-section .pagination a {
+                    margin: 0 5px;
+                    padding: 8px 16px;
+                    background-color: #f39c12;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 4px;
+                    transition: background-color 0.3s;
+                }
+
+                #settings-section .pagination a:hover {
+                    background-color: #e67e22;
+                }
+
+                #settings-section table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 30px;
+                }
+
+                #settings-section table th, #settings-section table td {
+                    padding: 12px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                    background-color: #f9f9f9;
+                }
+
+                #settings-section table tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                #settings-section table tr:hover {
+                    background-color: #f0e68c;
+                }
+
+                @media screen and (max-width: 768px) {
+                    #settings-section form {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+
+                    #settings-section form input, #settings-section form select {
+                        width: 100%;
+                    }
+
+                    #settings-section form button {
+                        width: 100%;
+                        margin-top: 10px;
+                    }
+                }
+            </style>
+
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Slider List</h2>                        
+                        <h2>Slider List</h2>
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-${messageType}" style="margin-bottom: 20px; font-size: 16px; padding: 15px; border-radius: 5px;">
+                                ${message}
+                            </div>
+                        </c:if>
                         <!-- Search and Filter Form -->
                         <div class="form-section">
                             <form action="${pageContext.request.contextPath}/SliderController" method="get" class="filter-form">
-                                <select name="status"  style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc; height: 35px">
+                                <select name="status" style="width: 130px; font-size: 13px; padding: 6px; margin-right: 8px; border-radius: 4px; border: 1px solid #ccc; height: 35px">
                                     <option value="">All</option>
-                                    <option value="0">Visible</option>
-                                    <option value="1">Hidden</option>
+                                    <option value="0">Active</option>
+                                    <option value="1">Inactive</option>
                                 </select>
                                 <button type="submit" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Filter</button>
                                 <div class="add-setting-button">
@@ -301,11 +273,7 @@
                                 </div>
                             </form>
                         </div>
-                        <c:if test="${not empty message}">
-                            <div class="alert alert-${messageType}">
-                                ${message}
-                            </div>
-                        </c:if>
+
                         <!-- Slider Table -->
                         <table class="table table-bordered">
                             <thead class="thead-dark">
@@ -341,7 +309,7 @@
                                                 <c:choose>
                                                     <c:when test="${slider.isDisabled == true}">
                                                         <input type="hidden" name="isDisabled" value="false" />
-                                                        <button type="submit" name="action" value="toggleStatus" class="btn btn-success " style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Activate</button>
+                                                        <button type="submit" name="action" value="toggleStatus" class="btn btn-success" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Activate</button>
                                                     </c:when>
                                                     <c:otherwise>
                                                         <input type="hidden" name="isDisabled" value="true" />
@@ -357,29 +325,24 @@
                         </table>
 
                         <!-- Pagination -->
-                        <div>
-                            <div class="pagination">
-                                <!-- Nút Previous -->
-                                <c:if test="${currentPage > 1}">
-                                    <a href="SliderController?page=${currentPage - 1}" aria-label="Previous">&laquo; Previous</a>
-                                </c:if>
+                        <div class="pagination" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center; width: 100%;">
+                            <c:if test="${currentPage > 1}">
+                                <a href="SliderController?page=${currentPage - 1}&status=${param.status}" aria-label="Previous" style="margin: 0 5px; padding: 8px 16px; background-color: #f39c12; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s;">&laquo; Previous</a>
+                            </c:if>
 
-                                <!-- Các số trang -->
-                                <c:forEach begin="1" end="${totalPages}" var="i">
-                                    <a href="SliderController?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
-                                </c:forEach>
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <a href="SliderController?page=${i}&status=${param.status}" class="${i == currentPage ? 'active' : ''}" style="margin: 0 5px; padding: 8px 16px; background-color: #f39c12; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s;">${i}</a>
+                            </c:forEach>
 
-                                <!-- Nút Next -->
-                                <c:if test="${currentPage < totalPages}">
-                                    <a href="SliderController?page=${currentPage + 1}" aria-label="Next">Next &raquo;</a>
-                                </c:if>
-                            </div>                                       
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="SliderController?page=${currentPage + 1}&status=${param.status}" aria-label="Next" style="margin: 0 5px; padding: 8px 16px; background-color: #f39c12; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s;">Next &raquo;</a>
+                            </c:if>
                         </div>
-
                     </div>
                 </div>
             </div>
         </section>
+
 
 
         <footer id="footer"><!--Footer-->

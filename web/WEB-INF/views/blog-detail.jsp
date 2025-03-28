@@ -175,21 +175,23 @@
                         <div class="card blog-detail-card">
                             <div class="card-header">
                                 <div class="text-center mb-3">
-                                    <img class="img-fluid rounded" src="${blog.imageURL}">
+                                    <img style="height: 400px; width: auto" src="${blog.imageURL}" alt="Image" class="img-fluid rounded">
                                 </div>
+                                <div style="display: flex; gap: 20px;">
+                                    <p><strong>Author:</strong> ${authorName}</p>
+                                    <p><strong>Post time:</strong> ${blog.postTime}</p>
+                                </div>
+
                                 <h1 class="card-title mb-0">${blog.title}</h1>
                             </div>
                             <div class="card-body">
-                                <p><strong>Author:</strong> ${authorName}</p>
-                                <p><strong>Post time:</strong> ${blog.postTime}</p>
+
 
                                 <div>
 
                                     <p>${blog.content}</p>
                                 </div>
-                                <c:if test="${blog.isDisabled}">
-                                    <p class="text-danger">This blog is disabled.</p>
-                                </c:if>
+
                             </div>
                         </div>
                     </c:if>
@@ -212,17 +214,34 @@
                     </div>
 
                     <div class="card mt-3">
-                        <div class="card-header">
-                            <h3>Newest Products</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group">
-                                <c:forEach var="newProduct" items="${newProducts}">
-                                    <li class="list-group-item">
-                                        <a href="ProductDetailController?id=${newProduct.id}">${newProduct.name}</a>
-                                    </li>
-                                </c:forEach>
-                            </ul>
+                        <!--                        <div class="card-header">
+                                                    <h3>Newest Products</h3>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-group">
+                        <c:forEach var="newProduct" items="${newProducts}">
+                            <li class="list-group-item">
+                                <a href="ProductDetailController?id=${newProduct.id}">${newProduct.name}</a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </div>-->
+                        <div class="latest-products">
+                            <c:if test="${not empty newProducts}">
+                                <div class="latest-product">
+                                    <h3>Newest Products</h3>
+                                    <c:forEach var="product" items="${newProducts}">
+                                        <div class="product-item" style="margin-bottom: 10px;">
+                                            <!-- Link bao bọc sản phẩm -->
+                                            <a href="ProductDetailController?id=${product.id}">
+                                                <img src="${product.imageURL}" alt="${product.name}" style="width: 100%; height: auto;">
+                                                <h3 style="color: black;">${product.name}</h3>
+<!--                                                    <p style="color: black;">${product.description}</p>-->
+                                            </a>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

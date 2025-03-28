@@ -118,23 +118,41 @@ public class SliderController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/edit-slider.jsp").forward(request, response);
         } else {
             String status = request.getParameter("status");
+            int page = 1;
+            int pageSize = 5;
 
-            if (status != null) {
-                List<Blog> filteredSliders = null;
+            // Lấy page từ request nếu có
+            if (request.getParameter("page") != null) {
                 try {
-                    filteredSliders = daoSlider.getSlidersByStatus(status);
-                } catch (SQLException ex) {
-                    Logger.getLogger(SliderController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                request.setAttribute("sliders", filteredSliders);
-                request.getRequestDispatcher("WEB-INF/views/slider-list.jsp").forward(request, response);
-            } else {
-                try {
-                    processRequest(request, response);
-                } catch (SQLException ex) {
-                    Logger.getLogger(SliderController.class.getName()).log(Level.SEVERE, null, ex);
+                    page = Integer.parseInt(request.getParameter("page"));
+                } catch (NumberFormatException e) {
+                    page = 1;
                 }
             }
+
+            // Lọc slider theo trạng thái và thực hiện phân trang
+            List<Blog> sliders = null;
+            try {
+                sliders = daoSlider.getSlidersByStatus(status, page, pageSize);
+            } catch (SQLException ex) {
+                Logger.getLogger(SliderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            request.setAttribute("sliders", sliders);
+
+            // Lấy tổng số sliders để tính tổng số trang
+            int totalSliders = 0;
+            try {
+                totalSliders = daoSlider.getTotalSlidersByStatus(status);  // Hàm mới để đếm tổng số slider với status
+            } catch (SQLException ex) {
+                Logger.getLogger(SliderController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            int totalPages = (int) Math.ceil((double) totalSliders / pageSize);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
+
+            request.getRequestDispatcher("WEB-INF/views/slider-list.jsp").forward(request, response);
         }
     }
 
@@ -153,12 +171,11 @@ public class SliderController extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("add".equals(action)) {
-            // Lấy dữ liệu từ form
             String title = request.getParameter("title");
-            String content = request.getParameter("content");
             String imageURL = request.getParameter("imageURL");
             String backlinks = request.getParameter("backlinks");
-            String status = request.getParameter("status");
+
+            // Validate if the user is logged in
             Integer authorID = (Integer) session.getAttribute("userID");
 
             if (authorID == null) {
@@ -167,16 +184,25 @@ public class SliderController extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/views/login.jsp").forward(request, response);
                 return;
             }
+
+            // Set the post time
             String postTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date());
+
+            // Create a new Blog object and set the values
             Blog blog = new Blog();
             blog.setTitle(title);
-            blog.setContent(content);
             blog.setImageURL(imageURL);
             blog.setBacklinks(backlinks);
-            blog.setStatus(status);
+            blog.setStatus("visible");  // Default to visible
             blog.setPostTime(postTime);
             blog.setAuthorID(authorID);
+            blog.setIsSlider(true);  // Mark it as a slider
+            blog.setIsDisabled(false); // By default, not disabled
+
+            // Call the DAO to add the slider
             int result = daoSlider.addSlider(blog);
+            System.out.println("Slider added, result: " + result);
+            // Set success or error message based on result
             if (result > 0) {
                 request.setAttribute("message", "Slider added successfully.");
                 request.setAttribute("messageType", "success");
