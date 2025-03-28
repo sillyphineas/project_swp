@@ -191,7 +191,7 @@ public class MarketingPostController extends HttpServlet {
                     sortOrder = "asc";
                 }
                 List<Blog> blogs = dao.sortBlogs(sortBy, sortOrder, page, pageSize);
-                int totalBlogs = dao.getTotalBlogs();
+                int totalBlogs = dao.getMaketingTotalBlogs();
                 int totalPages = (int) Math.ceil((double) totalBlogs / pageSize);
                 if (blogs.isEmpty()) {
                     request.setAttribute("message", "No results found.");

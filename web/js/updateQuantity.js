@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === 'success') {
                     let unitPrice = parseFloat(document.getElementById(`row_${cartItemId}`).querySelector(".cart-price").textContent.replace(/₫|,/g, ""));
                     totalPriceCell.textContent = `₫${(unitPrice * newQuantity).toLocaleString()}`;
-
-                    updateTotal(); 
+                    updateTotal();
                 } else {
                     showAlert("An error occurred while updating the quantity.");
                 }
@@ -71,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.status === 'success') {
                 document.getElementById(`total_${cartItemId}`).textContent = `₫${data.totalOrderPrice}`;
+                updateTotal();
             } else {
                 showAlert("An error occurred while updating the quantity.");
             }
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({cartItemId: cartItemId})
+            body: JSON.stringify({ cartItemId: cartItemId })
         })
         .then(response => response.json())
         .then(data => {
@@ -122,24 +122,43 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
         document.body.appendChild(alertBox);
-
         setTimeout(() => alertBox.remove(), 1000);
     }
 
+    function saveCheckboxState(cartItemId, isChecked) {
+        localStorage.setItem(`checkbox_${cartItemId}`, isChecked);
+    }
+
+    function loadCheckboxState(cartItemId) {
+        return localStorage.getItem(`checkbox_${cartItemId}`) === 'true';
+    }
+
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", updateTotal);
+        const cartItemId = checkbox.value;
+        checkbox.checked = loadCheckboxState(cartItemId);
+
+        checkbox.addEventListener("change", function () {
+            saveCheckboxState(cartItemId, this.checked);
+            updateTotal();
+        });
     });
 
     document.getElementById("select_all").addEventListener("change", function () {
         let isChecked = this.checked;
-        checkboxes.forEach(cb => cb.checked = isChecked);
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+            saveCheckboxState(cb.value, isChecked);
+        });
         document.getElementById("select_all_footer").checked = isChecked;
         updateTotal();
     });
 
     document.getElementById("select_all_footer").addEventListener("change", function () {
         let isChecked = this.checked;
-        checkboxes.forEach(cb => cb.checked = isChecked);
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+            saveCheckboxState(cb.value, isChecked);
+        });
         document.getElementById("select_all").checked = isChecked;
         updateTotal();
     });
@@ -158,9 +177,9 @@ document.addEventListener("DOMContentLoaded", function () {
             let quantityInput = document.getElementById(`quantity_${cartItemId}`);
             let newQuantity = quantityInput.value;
             let hiddenQuantityInput = document.querySelector(`input[name="quantity_${cartItemId}"]`);
-            
+
             if (hiddenQuantityInput) {
-                hiddenQuantityInput.value = newQuantity; 
+                hiddenQuantityInput.value = newQuantity;
             }
         });
 
