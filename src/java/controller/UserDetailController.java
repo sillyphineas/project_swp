@@ -141,86 +141,102 @@ public class UserDetailController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action");
-        System.out.println("Post       " + action);
-        DAOUser dao = new DAOUser();
+       String action = request.getParameter("action");
+    System.out.println("Post       " + action);
+    DAOUser dao = new DAOUser();
+    DAORole daoRole = new DAORole();  // Khai báo DAORole ở đây để dùng chung
 
-        if (action != null && action.equals("addUser")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String name = request.getParameter("name");
-            String email = request.getParameter("email");
-            String password = request.getParameter("password");
-            boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-            String phoneNumber = request.getParameter("phoneNumber");
-            String dateOfBirth = request.getParameter("dateOfBirth");
-            boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
-            int roleId = Integer.parseInt(request.getParameter("roleId"));
+    if (action != null && action.equals("addUser")) {
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
+        String phoneNumber = request.getParameter("phoneNumber");
+        String dateOfBirth = request.getParameter("dateOfBirth");
+        boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
+        int roleId = Integer.parseInt(request.getParameter("roleId"));
 
-            String passHashed = BCrypt.hashpw(password, BCrypt.gensalt());
-            if (dao.isEmailExists(email)) {
-                request.setAttribute("error", "Email already exists, please re-enter!");
-                request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
-                return;
-            }
-            byte[] image = null;
-            Part imagePart = request.getPart("image");
-            if (imagePart != null && imagePart.getSize() > 0) {
-                // Kiểm tra kích thước file
-                if (imagePart.getSize() > 1024 * 1024 * 5) { // 5MB
-                    request.setAttribute("error", "File size exceeds 5MB limit!");
-                    DAORole daoRole = new DAORole();
-                    List<Role> roles = daoRole.getAllRoles();
-                    request.setAttribute("roles", roles);
-                    request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
-                    return;
-                }
-                try (InputStream inputStream = imagePart.getInputStream()) {
-                    image = inputStream.readAllBytes();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    request.setAttribute("error", "Error uploading image!");
-                    DAORole daoRole = new DAORole();
-                    List<Role> roles = daoRole.getAllRoles();
-                    request.setAttribute("roles", roles);
-                    request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
-                    return;
-                }
-            }
-
+        String passHashed = BCrypt.hashpw(password, BCrypt.gensalt());
+        if (dao.isEmailExists(email)) {
+            // Lấy danh sách roles để hiển thị lại trong form
+            List<Role> roles = daoRole.getAllRoles();
+            request.setAttribute("roles", roles);
+            // Set lại các giá trị đã nhập để người dùng không phải nhập lại
             User user = new User();
             user.setId(userId);
             user.setName(name);
             user.setEmail(email);
-            user.setPassHash(passHashed);
             user.setGender(gender);
             user.setPhoneNumber(phoneNumber);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            java.util.Date parsedDate = null;
-            try {
-                parsedDate = sdf.parse(dateOfBirth);
-                java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
-
-                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
-
-                if (sqlDate.after(currentDate)) {
-                    request.setAttribute("error", "Ngày sinh không thể lớn hơn ngày hiện tại.");
-                    request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
-                    return;
-                }
-
-                user.setDateOfBirth(sqlDate);
-            } catch (Exception e) {
-
-            }
             user.setIsDisabled(isDisabled);
             user.setRoleId(roleId);
-            user.setUpdatedBy(userId);
-            user.setImage(image);
-
-            dao.addUser(user);
-            response.sendRedirect("UserController");
+            request.setAttribute("user", user);
+            
+            request.setAttribute("error", "Email already exists, please re-enter!");
+            request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+            return;
         }
+        
+        byte[] image = null;
+        Part imagePart = request.getPart("image");
+        if (imagePart != null && imagePart.getSize() > 0) {
+            // Kiểm tra kích thước file
+            if (imagePart.getSize() > 1024 * 1024 * 5) { // 5MB
+                List<Role> roles = daoRole.getAllRoles();
+                request.setAttribute("roles", roles);
+                request.setAttribute("error", "File size exceeds 5MB limit!");
+                request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+                return;
+            }
+            try (InputStream inputStream = imagePart.getInputStream()) {
+                image = inputStream.readAllBytes();
+            } catch (IOException e) {
+                e.printStackTrace();
+                List<Role> roles = daoRole.getAllRoles();
+                request.setAttribute("roles", roles);
+                request.setAttribute("error", "Error uploading image!");
+                request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        User user = new User();
+        user.setId(userId);
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassHash(passHashed);
+        user.setGender(gender);
+        user.setPhoneNumber(phoneNumber);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = null;
+        try {
+            parsedDate = sdf.parse(dateOfBirth);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+
+            java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+
+            if (sqlDate.after(currentDate)) {
+                List<Role> roles = daoRole.getAllRoles();
+                request.setAttribute("roles", roles);
+                request.setAttribute("error", "Ngày sinh không thể lớn hơn ngày hiện tại.");
+                request.getRequestDispatcher("/WEB-INF/views/add_user.jsp").forward(request, response);
+                return;
+            }
+
+            user.setDateOfBirth(sqlDate);
+        } catch (Exception e) {
+            // Xử lý exception nếu cần
+        }
+        user.setIsDisabled(isDisabled);
+        user.setRoleId(roleId);
+        user.setUpdatedBy(userId);
+        user.setImage(image);
+
+        dao.addUser(user);
+        response.sendRedirect("UserController");
+    }
 
         if (action != null && action.equals("updateUser")) {
             int userId = Integer.parseInt(request.getParameter("userId"));
@@ -256,7 +272,7 @@ public class UserDetailController extends HttpServlet {
             }
             boolean isDisabled = Boolean.parseBoolean(request.getParameter("isDisabled"));
             int roleId = Integer.parseInt(request.getParameter("roleId"));
-            DAORole daoRole = new DAORole();
+            
             Role role = daoRole.getRoleById(roleId);
             if (role == null) {
                 request.setAttribute("error", "Invalid role ID!");
@@ -270,8 +286,8 @@ public class UserDetailController extends HttpServlet {
     User existingUser = daoUser.getUserById(userId); // Lấy thông tin user hiện tại
 
     if (imagePart != null && imagePart.getSize() > 0) {
-        // Kiểm tra kích thước file
-        if (imagePart.getSize() > 1024 * 1024 * 5) { // 5MB
+        
+        if (imagePart.getSize() > 1024 * 1024 * 5) { 
             request.setAttribute("error", "File size exceeds 5MB limit!");
             request.setAttribute("user", existingUser);
             List<Role> roles = daoRole.getAllRoles();
@@ -291,7 +307,6 @@ public class UserDetailController extends HttpServlet {
             return;
         }
     } else {
-        // Nếu không có ảnh mới, giữ ảnh cũ
         image = existingUser.getImage();
     }
             User user = new User();

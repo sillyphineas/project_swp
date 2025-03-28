@@ -129,88 +129,135 @@ public class AddProductController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        DAOProduct daoProduct = new DAOProduct();
-        DAOProductVariant daoVariant = new DAOProductVariant();
-        DAOColor daocolor = new DAOColor();
-        DAOStorage daostorage = new DAOStorage();
+        throws ServletException, IOException {
+    DAOProduct daoProduct = new DAOProduct();
+    DAOProductVariant daoVariant = new DAOProductVariant();
+    DAOColor daocolor = new DAOColor();
+    DAOStorage daostorage = new DAOStorage();
 
-        String action = request.getParameter("action");
+    String action = request.getParameter("action");
 
-        if (action != null && "addProduct".equals(action)) {
-            int productId = parseIntSafe(request.getParameter("id"), 0);
-            int brandID = parseIntSafe(request.getParameter("brandID"), 0);
-            int ram = parseIntSafe(request.getParameter("ram"), 0);
-            int batteryCapacity = parseIntSafe(request.getParameter("batteryCapacity"), 0);
+    if (action != null && "addProduct".equals(action)) {
+        int productId = parseIntSafe(request.getParameter("id"), 0);
+        int brandID = parseIntSafe(request.getParameter("brandID"), 0);
+        int ram = parseIntSafe(request.getParameter("ram"), 0);
+        int batteryCapacity = parseIntSafe(request.getParameter("batteryCapacity"), 0);
 
-            String name = request.getParameter("name");
-            String description = request.getParameter("description");
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
 
-            boolean isDisabled = request.getParameter("isDisabled") != null;
-            String status = request.getParameter("status");
-            String imageURL = request.getParameter("imageURL");
-            String chipset = request.getParameter("chipset");
+        boolean isDisabled = request.getParameter("isDisabled") != null;
+        String status = request.getParameter("status");
+        String imageURL = request.getParameter("imageURL");
+        String chipset = request.getParameter("chipset");
 
-            double screenSize = Double.parseDouble(request.getParameter("screenSize"));
-            String screenType = request.getParameter("screenType");
-            String resolution = request.getParameter("resolution");
+        double screenSize = Double.parseDouble(request.getParameter("screenSize"));
+        String screenType = request.getParameter("screenType");
+        String resolution = request.getParameter("resolution");
 
-            String os = request.getParameter("os");
-            String connectivity = request.getParameter("connectivity");
-            int feedbackCount = parseIntSafe(request.getParameter("feedbackCount"), 0);
-            String cameraSpecs = request.getParameter("cameraSpecs");
-            String simType = request.getParameter("simType");
+        String os = request.getParameter("os");
+        String connectivity = request.getParameter("connectivity");
+        int feedbackCount = parseIntSafe(request.getParameter("feedbackCount"), 0);
+        String cameraSpecs = request.getParameter("cameraSpecs");
+        String simType = request.getParameter("simType");
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date createAt = new Date();
-            String createAtString = request.getParameter("createAt");
-            if (createAtString != null && !createAtString.isEmpty()) {
-                try {
-                    createAt = sdf.parse(createAtString);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date createAt = new Date();
+        String createAtString = request.getParameter("createAt");
+        if (createAtString != null && !createAtString.isEmpty()) {
+            try {
+                createAt = sdf.parse(createAtString);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            Product addProduct = new Product(productId, brandID, name, description, isDisabled, feedbackCount, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, createAt, 2);
-            daoProduct.addProduct(addProduct);
-            response.sendRedirect("MarketingProductController");
         }
-
-        if (action != null && "addProductVariant".equals(action)) {
-            int variantId = parseIntSafe(request.getParameter("variantId"), 0);
-            int productID = parseIntSafe(request.getParameter("productID"), 0);
-            int color_id = parseIntSafe(request.getParameter("color_id"), 0);
-            String priceStr = request.getParameter("price");
-            double price = parseDoubleSafe(request.getParameter("price"), 0.0);
-            int storage_id = parseIntSafe(request.getParameter("storage_id"), 0);
-            int stock = parseIntSafe(request.getParameter("stock"), 0);
-
-            String status = request.getParameter("status");
-            ProductVariant addVariant = new ProductVariant(stock, productID, color_id, storage_id, price, stock, status);
-            daoVariant.addProductVariant(addVariant);
-            response.sendRedirect("MarketingProductController");
-        }
-        if (action != null && "addColor".equals(action)) {
-            int colorid = parseIntSafe(request.getParameter("colorid"), 0);
-            String colorName = request.getParameter("colorName");
-            String status = request.getParameter("status");
-            Color color = new Color(colorid, colorName, status);
-             daocolor.addColor(color);
-            response.sendRedirect("MarketingProductController");
-        }
-        if (action != null && "addStorage".equals(action)) {
-            int storageid = parseIntSafe(request.getParameter("storage_id"), 0);
-            String capacity = request.getParameter("capacity");
-            String status = request.getParameter("status");
-            Storage storage = new Storage(storageid, capacity, status);
-            daostorage.addStorage(storage);
-            response.sendRedirect("MarketingProductController");
-           
-        }
-
+        Product addProduct = new Product(productId, brandID, name, description, isDisabled, feedbackCount, status, imageURL, chipset, ram, screenSize, screenType, resolution, batteryCapacity, cameraSpecs, os, simType, connectivity, createAt, 2);
+        daoProduct.addProduct(addProduct);
+        response.sendRedirect("MarketingProductController");
     }
+
+    if (action != null && "addProductVariant".equals(action)) {
+        int variantId = parseIntSafe(request.getParameter("variantId"), 0);
+        int productID = parseIntSafe(request.getParameter("productID"), 0);
+        int color_id = parseIntSafe(request.getParameter("color_id"), 0);
+        double price = parseDoubleSafe(request.getParameter("price"), 0.0);
+        int storage_id = parseIntSafe(request.getParameter("storage_id"), 0);
+        int stock = parseIntSafe(request.getParameter("stock"), 0);
+        String status = request.getParameter("status");
+
+        // Validation cho price và stock
+        String priceError = null;
+        String stockError = null;
+        boolean hasError = false;
+
+        // Kiểm tra price
+        if (price <= 0) {
+            priceError = "Price must be greater than 0.";
+            hasError = true;
+        } else if (price > 100_000_000) {
+            priceError = "Price must not exceed 100,000,000.";
+            hasError = true;
+        }
+
+        // Kiểm tra stock
+        if (stock <= 0) {
+            stockError = "Stock cannot be negative.";
+            hasError = true;
+        }
+
+        if (hasError) {
+            // Nếu có lỗi, gửi thông báo lỗi riêng cho từng trường
+            request.setAttribute("priceError", priceError);
+            request.setAttribute("stockError", stockError);
+            request.setAttribute("productID", productID);
+            request.setAttribute("color_id", color_id);
+            request.setAttribute("price", price);
+            request.setAttribute("storage_id", storage_id);
+            request.setAttribute("stock", stock);
+            request.setAttribute("status", status);
+
+            // Load lại danh sách cần thiết cho form
+            DAOBrand daoBrand = new DAOBrand();
+            
+            Vector<Brand> brandList = daoBrand.getAllBrands();
+            Vector<Color> colorlist = daocolor.getAllColors();
+            Vector<Storage> storagelist = daostorage.getAllStorages();
+            Vector<Product> productList = daoProduct.getProducts("SELECT * FROM Products WHERE isDisabled = 0");
+
+            request.setAttribute("products", productList);
+            request.setAttribute("brands", brandList);
+            request.setAttribute("colorlist", colorlist);
+            request.setAttribute("storagelist", storagelist);
+
+            request.getRequestDispatcher("WEB-INF/views/add_productvariant.jsp").forward(request, response);
+            return;
+        }
+
+        // Nếu không có lỗi, tiến hành thêm ProductVariant
+        ProductVariant addVariant = new ProductVariant(stock, productID, color_id, storage_id, price, stock, status);
+        daoVariant.addProductVariant(addVariant);
+        response.sendRedirect("MarketingProductController");
+    }
+
+    if (action != null && "addColor".equals(action)) {
+        int colorid = parseIntSafe(request.getParameter("colorid"), 0);
+        String colorName = request.getParameter("colorName");
+        String status = request.getParameter("status");
+        Color color = new Color(colorid, colorName, status);
+        daocolor.addColor(color);
+        response.sendRedirect("MarketingProductController");
+    }
+
+    if (action != null && "addStorage".equals(action)) {
+        int storageid = parseIntSafe(request.getParameter("storage_id"), 0);
+        String capacity = request.getParameter("capacity");
+        String status = request.getParameter("status");
+        Storage storage = new Storage(storageid, capacity, status);
+        daostorage.addStorage(storage);
+        response.sendRedirect("MarketingProductController");
+    }
+}
 
     /**
      * Returns a short description of the servlet.

@@ -175,6 +175,10 @@
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
                             </div>
+                             <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" id="email" name="email" value="${user.email}" readonly required />
+    </div>
 
                             <!-- Password -->
                             <div class="form-group">
@@ -201,6 +205,7 @@
                             <div class="form-group">
                                 <label for="dateOfBirth">Date of Birth</label>
                                 <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
+                                       value="${user.dateOfBirth != null ? user.dateOfBirth : ''}" 
                                        max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
                             </div>
 
@@ -248,10 +253,7 @@
 
                             <button type="submit" class="btn btn-danger">Update User</button>
                             <a href="UserController" class="btn btn-danger">Cancel</a>
-                            <div class="form-group">
-
-                                <input type="hidden" class="form-control" id="email" name="email" value="${user.email}" required />
-                            </div>
+                           
                         </form>
 
                     </div>
@@ -427,5 +429,28 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('email');
+        const originalValue = emailInput.value;
+        emailInput.addEventListener('input', function(e) {
+            e.preventDefault();
+            emailInput.value = originalValue;
+        });
+        emailInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+        });
+        emailInput.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+        Object.defineProperty(emailInput, 'value', {
+            get: function() {
+                return originalValue;
+            },
+            set: function() {
+            }
+        });
+    });
+</script>
     </body>
 </html>

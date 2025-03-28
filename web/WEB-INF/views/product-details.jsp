@@ -35,87 +35,88 @@
     </head><!--/head-->
 
     <body>
-      <style>
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-        padding: 30px; /* Increase padding to make the card appear larger */
-        margin: 0; /* Remove margins to maximize width */
-    }
+        <style>
+            .card {
+                border: 1px solid #ddd;
+                border-radius: 10px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+                padding: 30px; /* Increase padding to make the card appear larger */
+                margin: 0; /* Remove margins to maximize width */
+            }
 
-    .list-group-item {
-        font-size: 16px; /* Increase font size for better readability and height */
-        padding: 15px 20px; /* Increase padding to make each item taller */
-        margin-bottom: 10px; /* Add spacing between items to elongate the card */
-        border-bottom: 0.5px solid #ddd !important; /* Thinner line, lighter color */
-    }
+            .list-group-item {
+                font-size: 16px; /* Increase font size for better readability and height */
+                padding: 15px 20px; /* Increase padding to make each item taller */
+/*                margin-bottom: 10px;  Add spacing between items to elongate the card */
+                border-bottom: 0.5px solid #ddd !important; /* Thinner line, lighter color */
+            }
 
-    .card-title {
-        color: #007bff;
-        font-weight: bold;
-        font-size: 24px; /* Increase the title font size */
-        margin-bottom: 25px; /* Add more space below the title */
-    }
+            .card-title {
+                color: #007bff;
+                font-weight: bold;
+                font-size: 24px; /* Increase the title font size */
+                margin-bottom: 25px; /* Add more space below the title */
+            }
 
-    .list-group-item b {
-        color: #333;
-    }
+            .list-group-item b {
+                color: #333;
+            }
 
-    .nav-tabs {
-        display: flex;
-        justify-content: center;
-        background-color: white;
-        padding: 10px 0;
-        border-bottom: 2px solid #ddd;
-    }
+            .nav-tabs {
+                display: flex;
+                justify-content: center;
+                background-color: white;
+                padding: 10px 0;
+                border-bottom: 2px solid #ddd;
+            }
 
-    .nav-tabs li {
-        list-style: none;
-        margin: 0 15px;
-    }
+            .nav-tabs li {
+                list-style: none;
+                margin: 0 15px;
+            }
 
-    .nav-tabs a {
-        text-decoration: none;
-        color: black;
-        font-weight: bold;
-        padding: 10px 20px;
-        display: inline-block;
-        text-align: center;
-    }
+            .nav-tabs a {
+                text-decoration: none;
+                color: black;
+                font-weight: bold;
+                padding: 10px 20px;
+                display: inline-block;
+                text-align: center;
+            }
 
-    .nav-tabs a:hover {
-        color: #007bff;
-    }
+            .nav-tabs a:hover {
+                color: #007bff;
+            }
 
-    .tab-content {
-        text-align: center;
-        padding: 20px;
-    }
+            .tab-content {
+                text-align: center;
+                padding: 20px;
+            }
 
-    .related-products .product-item {
-        transition: all 0.3s ease;
-    }
+            .related-products .product-item {
+                transition: all 0.3s ease;
+            }
 
-    .related-products .product-item:hover {
-        background-color: #f9f9f9;
-        transform: translateY(-5px);
-    }
+            .related-products .product-item:hover {
+                background-color: #f9f9f9;
+                transform: translateY(-5px);
+            }
 
-    .related-products h2 {
-        font-size: 18px;
-        color: #333;
-        border-bottom: 2px solid #ff8c00;
-        padding-bottom: 5px;
-        margin-bottom: 15px;
-    }
+            .related-products h2 {
+                font-size: 18px;
+                color: #333;
+                border-bottom: 2px solid #ff8c00;
+                padding-bottom: 5px;
+                margin-bottom: 15px;
+            }
 
-    .related-products p {
-        color: #888;
-        font-size: 14px;
-    }
-</style>
+            .related-products p {
+                color: #888;
+                font-size: 14px;
+            }
+            
+        </style>
 
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -268,11 +269,11 @@
                                 <h2>Filter by Price</h2>
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                        <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <label for="minPrice">Min Price</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="" max="" step="10" class="form-control">
 
-                                        <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <label for="maxPrice">Max Price </label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="" max="" step="10" class="form-control">
 
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
                                     </form>
@@ -285,8 +286,8 @@
                                         <div class="product-item" style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
                                             <a href="${pageContext.request.contextPath}/ProductDetailController?id=${relatedProduct.id}">
                                                 <img src="${relatedProduct.imageURL}" alt="${relatedProduct.name}" style="width: 100%; height: auto; object-fit: cover;">
-                                                <h3 style="font-size: 16px; margin: 10px 0;">${relatedProduct.name}</h3>
-                                                
+                                                <h3 style="font-size: 19px; margin: 10px 0; text-align: center">${relatedProduct.name}</h3>
+
                                             </a>
                                         </div>
                                     </c:forEach>
@@ -414,7 +415,7 @@
                                     <img src="${product.imageURL}" alt=""  style="width: 100%; height: auto; object-fit: cover; " />
 
                                 </div>
-                               
+
                             </div>
                             <div class="col-sm-7">
 
@@ -455,6 +456,7 @@
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
+                                        <p><b>Availability:</b> <span id="productStock">Loading...</span></p>
                                         <h2><b>Price: </b> <span id="productPrice">${price != null ? String.format("%,.0f", price) : 'Loading...'} ₫</span></h2>
 
                                         <button type="submit" id="addToCartBtn" class="btn btn-default cart">
@@ -485,9 +487,9 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
-                                                            <li class="list-group-item"><b>Availability:</b> In Stock</li>
+                                                            <li class="list-group-item"><b>Ram: </b>${product.ram} GB</li>
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
-                                                            <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize}</li>
+                                                            <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize} inch</li>
                                                             <li class="list-group-item"><b>Screen Type:</b> ${product.screenType}</li>
                                                             <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
                                                         </ul>
@@ -507,7 +509,7 @@
                                     </div>
                                 </div>
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -699,61 +701,65 @@
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
 
-            <script>
-            document.addEventListener( "DOMContentLoaded",    function() {
-                    var colorSelector = document.getElementById("colorSelector");
-            var storageSelector = document.getElementById("storageSelector");
-            var defaultColor = colorSelector.options[0].value;
-            var defaultStorage = storageSelector.options[0].value;
-            // Cập nhật thông tin ngay khi tải trang
-            updateProductInfo(defaultColor, defaultStorage);
-            // Cập nhật khi thay đổi color hoặc storage
-            colorSelector.addEventListener("change", function() {
+     <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var colorSelector = document.getElementById("colorSelector");
+        var storageSelector = document.getElementById("storageSelector");
+        var defaultColor = colorSelector.options[0].value;
+        var defaultStorage = storageSelector.options[0].value;
+      
+        updateProductInfo(defaultColor, defaultStorage);
+      
+        colorSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
-            });
-            storageSelector.addEventListener("change", function() {
+        });
+        
+        storageSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
-updateProductInfo(selectedColor, selectedStorage);
-            });
-                });
-                
-            function updateProductInfo(color, storage) {
-                    var productId = '${product.id}'; var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
+            updateProductInfo(selectedColor, selectedStorage);
+        });
+    });
+
+    function updateProductInfo(color, storage) {
+        var productId = '${product.id}';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
             if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
-            document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
-            document.getElementById("productStock").innerText = data.stock;
-            // Cập nhật max của quantity dựa trên stock
-            document.getElementById("quantity").max = data.stock;
-            // Vô hiệu hóa nút "Add to cart" nếu hết hàng
-            document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
+                var stockElement = document.getElementById("productStock");
+                if (data.stock > 0) {
+                    stockElement.innerText = "In stock";
+                } else if (data.stock == 0) {
+                    stockElement.innerText = "Out of stock";
+                }
+
+                document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
             } else {
-            console.error("Error fetching product info: " + xhr.status);
+                console.error("Error fetching product info: " + xhr.status);
+                document.getElementById("productPrice").innerText = "Error";
+                document.getElementById("productStock").innerText = "Error";
+            }
+        };
+        xhr.onerror = function() {
+            console.error("Request failed");
             document.getElementById("productPrice").innerText = "Error";
             document.getElementById("productStock").innerText = "Error";
-            }
-            };
-            xhr.onerror = function() {
-            console.error("Request failed");
-                document.getElementById("productPrice").innerText = "Error";
-            document.getElementById("productStock").innerText = "Error";
-                };
-            xhr.send();
-                                    }
-                                    
-                function formatPrice(price)  {
-            return price.toLocaleString('vi-VN');
-                                    }
-                                    </script>
-                                    <script>
-                                    let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
-                                    console.log("không nhận được",isLoggedIn);
-                            </script>            
+        };
+        xhr.send();
+    }
+
+    function formatPrice(price) {
+        return price.toLocaleString('vi-VN');
+    }
+</script>
+        <script>
+                                        let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
+                                            console.log("không nhận được",isLoggedIn);
+        </script>            
 </html>

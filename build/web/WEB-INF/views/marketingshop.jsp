@@ -137,6 +137,45 @@
                 padding: 5px;  /* Điều chỉnh padding để không bị lệch */
                 font-size: 16px;  /* Đảm bảo font đồng nhất */
             }
+            .search-form {
+                margin-bottom: 15px;
+            }
+
+            .search-container {
+                display: flex;
+                max-width: 500px;
+            }
+
+            .search-input {
+                flex: 1;
+                padding: 8px 15px;
+                border: 1px solid #ddd;
+                border-right: none;
+                border-radius: 4px 0 0 4px;
+                height: 38px;
+                font-size: 14px;
+            }
+
+            .search-button {
+                padding: 8px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: 1px solid #4CAF50;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                height: 38px;
+                font-size: 14px;
+                transition: background-color 0.3s;
+            }
+
+            .search-button:hover {
+                background-color: #45a049;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #4CAF50;
+            }
 
         </style>
     </head><!--/head-->
@@ -281,10 +320,12 @@
                         </form>
 
                         <hr>
-                        <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
-                            <div class="d-flex align-items-center">
-                                <input type="text" name="search" value="${param.search}" class="form-control" placeholder="Search by product name" style="margin-right: 5px;" />
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
+                        <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET" class="search-form">
+                            <div class="search-container">
+                                <input type="text" name="search" value="${param.search}" class="search-input" placeholder="Search by product name"/>
+                                <button type="submit" class="search-button">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
                             </div>
                         </form>
                         <hr>
@@ -625,31 +666,6 @@
                                                    }
                                                }
 
-                                               function confirmAction(event, action) {
-                                                   var message = (action === 'hide') ? "Do you sure you want to hide this product?" : "Do you sure you want to show this product?";
-                                                   var result = confirm(message);
-                                                   if (!result) {
-                                                       event.preventDefault();
-                                                   }
-                                               }
-
-                                               function confirmAdd(event, action) {
-                                                   var message = "";
-                                                   if (action === 'addProduct') {
-                                                       message = "Do you sure you want to add this product?";
-                                                   } else if (action === 'addProductVariant') {
-                                                       message = "Do you sure you want to add this product variant?";
-                                                   } else if (action === 'addColor') {
-                                                       message = "Do you sure you want to add this color?";
-                                                   } else if (action === 'addStorage') {
-                                                       message = "Do you sure you want to add this storage?";
-                                                   }
-
-                                                   var result = confirm(message);
-                                                   if (!result) {
-                                                       event.preventDefault(); // Ngừng hành động nếu người dùng không xác nhận
-                                                   }
-                                               }
                                                $('#addProductVariantModal').on('shown.bs.modal', function () {
                                                    $('#myInput').trigger('focus');
                                                });

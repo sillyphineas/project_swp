@@ -172,9 +172,12 @@
             <h2 class="add-pr">Add Storage</h2>
             <form action="AddProductController?action=addStorage" method="post">
                 <div class="form-group">
-                    <label for="capacity">Storage Capacity (GB):</label>
-                    <input type="text" class="form-control" name="capacity" required />
-                </div>
+            <label for="capacity">Storage Capacity (GB):</label>
+            <input type="number" class="form-control" name="capacity" id="capacity" 
+                   min="1" max="2056" required 
+                   oninput="this.value = Math.abs(this.value)" />
+            <span id="capacityError" style="color: red;"></span>
+        </div>
                 <div class="form-group">
                     <label for="status">Status:</label>
                     <select class="form-control" name="status" required>
@@ -354,5 +357,23 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script>
+    function validateForm() {
+        const capacity = document.getElementById("capacity").value;
+        const errorElement = document.getElementById("capacityError");
+        
+        if (capacity <= 0) {
+            errorElement.textContent = "Capacity must be greater than 0";
+            return false;
+        }
+        if (capacity > 2056) {
+            errorElement.textContent = "Capacity must not exceed 2056 GB";
+            return false;
+        }
+        
+        errorElement.textContent = "";
+        return true;
+    }
+</script
     </body>
 </html>

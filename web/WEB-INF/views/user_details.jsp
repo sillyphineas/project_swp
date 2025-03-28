@@ -36,7 +36,15 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
-
+           
+            .table th {
+                width: 150px; /* Chiều rộng cột tiêu đề */
+            }
+            .table td {
+                max-width: 100px;
+                word-wrap: break-word;
+            
+            }
         </style>
     </head><!--/head-->
 
@@ -225,6 +233,7 @@
 
                 <a href="UserController" class="btn btn-primary">Back to User List</a>
             </div>
+                        <br>
         </body>
 
         <footer id="footer"><!--Footer-->

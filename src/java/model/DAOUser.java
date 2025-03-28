@@ -275,35 +275,34 @@ public class DAOUser extends DBConnection {
         return user;
     }
 
-    public int updateUser(User user) {
-        int n = 0;
-        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?,"
-                + " phoneNumber = ?, resetToken = ?, resetTokenExpired = ?,"
-                + " DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ?, WHERE id = ?";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, user.getName());
-            pre.setString(2, user.getEmail());
-            pre.setString(3, user.getPassHash());
-            pre.setBoolean(4, user.isGender());
-            pre.setString(5, user.getPhoneNumber());
-            pre.setString(6, user.getResetToken());
-            pre.setTimestamp(7, user.getResetTokenExpired());
-            pre.setDate(8, user.getDateOfBirth());
-            pre.setInt(9, user.getRoleId());
-            pre.setBoolean(10, user.isIsDisabled());
-            pre.setInt(11, user.getUpdatedBy());
-            pre.setDate(12, user.getUpdatedAt());
-            pre.setBytes(13, user.getImage());
-            pre.setInt(14, user.getId());
-            n = pre.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return n;
-
+   public int updateUser(User user) {
+    int n = 0;
+    String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, " +
+                 "phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, " +
+                 "DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? " +
+                 "WHERE id = ?"; // Removed the comma before WHERE
+    try {
+        PreparedStatement pre = conn.prepareStatement(sql);
+        pre.setString(1, user.getName());
+        pre.setString(2, user.getEmail());
+        pre.setString(3, user.getPassHash());
+        pre.setBoolean(4, user.isGender());
+        pre.setString(5, user.getPhoneNumber());
+        pre.setString(6, user.getResetToken());
+        pre.setTimestamp(7, user.getResetTokenExpired());
+        pre.setDate(8, user.getDateOfBirth());
+        pre.setInt(9, user.getRoleId());
+        pre.setBoolean(10, user.isIsDisabled());
+        pre.setInt(11, user.getUpdatedBy());
+        pre.setDate(12, user.getUpdatedAt());
+        pre.setBytes(13, user.getImage());
+        pre.setInt(14, user.getId());
+        n = pre.executeUpdate();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
     }
-
+    return n;
+}
     public int updateUser2(User user) {
         int n = 0;
         String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, "
@@ -813,6 +812,37 @@ public class DAOUser extends DBConnection {
         }
         return stats;
     }
+     public int getUserPoints(int userId) {
+        int points = 0;
+        String sql = "SELECT point FROM Users WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                points = rs.getInt("point");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return points;
+    }
+     public void updateUserPoint(int userId, int newPoint) {
+        String sql = "UPDATE Users SET point = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, newPoint);
+            ps.setInt(2, userId);
+
+            int rows = ps.executeUpdate();
+            System.out.println("Updated user point. Rows affected = " + rows);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public static void main(String[] args) {
 

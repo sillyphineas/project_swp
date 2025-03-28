@@ -579,12 +579,12 @@ document.addEventListener("DOMContentLoaded",    function() {
         function updateProductInfo(color, storage) {
                     var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.open('GET', '${pageContext.request.contextPath}/MarketingProductDetails?id=' + productId + '&color=' + color + '&storage=' + storage, true);
+            xhr.('Content-Type', 'application/json');
             xhr.onload = function() {
             if (xhr.status == 200) {
             var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
+            // Cập nhật giá và số lượng sản psetRequestHeaderhẩm
             document.getElementById("productPrice").innerText = '₫' + data.price; ;
             document.getElementById("productStock").innerText = data.stock;
             } else {

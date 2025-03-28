@@ -260,9 +260,9 @@
             <c:forEach var="variant" items="${variants}">
                 <form action="MarketingProductDetails" method="post">
                     <input type="hidden" name="action" value="editVariant">
-                    <input type="hidden" name="id" value="${variant.product_id}">
+                   <input type="hidden" name="variantId" value="${variant.id}">
                     <input type="hidden" name="productID" value="${product.id}">
-
+                 
 
                     <div class="form-group">
                         <label for="color">Color:</label>
