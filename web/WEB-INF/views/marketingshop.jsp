@@ -129,15 +129,54 @@
                 white-space: nowrap; /* Ngăn chặn text bị xuống dòng */
             }
             .form-group label {
-    margin-bottom: 5px;  /* Giảm khoảng cách giữa nhãn và trường chọn */
-}
+                margin-bottom: 5px;  /* Giảm khoảng cách giữa nhãn và trường chọn */
+            }
 
-.form-group select {
-    margin-top: 0;  /* Đảm bảo không có khoảng cách thừa trên select */
-    padding: 5px;  /* Điều chỉnh padding để không bị lệch */
-    font-size: 16px;  /* Đảm bảo font đồng nhất */
-}
-            
+            .form-group select {
+                margin-top: 0;  /* Đảm bảo không có khoảng cách thừa trên select */
+                padding: 5px;  /* Điều chỉnh padding để không bị lệch */
+                font-size: 16px;  /* Đảm bảo font đồng nhất */
+            }
+            .search-form {
+                margin-bottom: 15px;
+            }
+
+            .search-container {
+                display: flex;
+                max-width: 500px;
+            }
+
+            .search-input {
+                flex: 1;
+                padding: 8px 15px;
+                border: 1px solid #ddd;
+                border-right: none;
+                border-radius: 4px 0 0 4px;
+                height: 38px;
+                font-size: 14px;
+            }
+
+            .search-button {
+                padding: 8px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: 1px solid #4CAF50;
+                border-radius: 0 4px 4px 0;
+                cursor: pointer;
+                height: 38px;
+                font-size: 14px;
+                transition: background-color 0.3s;
+            }
+
+            .search-button:hover {
+                background-color: #45a049;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #4CAF50;
+            }
+
         </style>
     </head><!--/head-->
 </head><!--/head-->
@@ -151,123 +190,115 @@
 
 <body>
     <header id="header"><!--header-->
-            <div class="header_top"><!--header_top-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="contactinfo">
-                                <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
-                                </ul>
-                            </div>
+        <div class="header_top"><!--header_top-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 ">
+                        <div class="contactinfo">
+                            <ul class="nav nav-pills">
+                                <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                            </ul>
                         </div>
-                        <div class="col-sm-6">
-                            <div class="social-icons pull-right">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                </ul>
-                            </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="social-icons pull-right">
+                            <ul class="nav navbar-nav">
+                                <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-            </div><!--/header_top-->
+            </div>
+        </div><!--/header_top-->
 
-            <div class="header-middle"><!--header-middle-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+        <div class="header-middle"><!--header-middle-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="logo pull-left">
+                            <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                         </div>
-                        <div class="col-sm-8">
-                            <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav">
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!--/header-middle-->
-
-            <div class="header-bottom"><!--header-bottom-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
+                        <div class="btn-group pull-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                    USA
+                                    <span class="caret"></span>
                                 </button>
-                            </div>
-                            <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
-
+                                <ul class="dropdown-menu">
+                                    <li><a href="">Canada</a></li>
+                                    <li><a href="">UK</a></li>
                                 </ul>
                             </div>
-                        </div>                        
+
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                    DOLLAR
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="">Canadian Dollar</a></li>
+                                    <li><a href="">Pound</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="shop-menu pull-right">
+                            <ul class="nav navbar-nav">
+                                <!--                                <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                                                <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                <% 
+                                    Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                    User user = (User) session.getAttribute("user");
+                                    if (isLoggedIn != null && isLoggedIn) {
+                                %>
+                                <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    <% } else { %>
+                                <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                    <% } %>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div><!--/header-bottom-->
-        </header><!--/header-->
+            </div>
+        </div><!--/header-middle-->
+
+        <div class="header-bottom"><!--header-bottom-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                        <div class="mainmenu pull-left">
+                            <ul class="nav navbar-nav collapse navbar-collapse">
+                                <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                <li><a href="SliderController">Slider List</a></li>
+                                <li><a href="CustomerController">Customer List</a></li>
+                                <li><a href="MarketingProductController">Product List</a></li>
+                                <li><a href="MaketingFeedBackController">Feedback List</a></li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </header>
 
     <section id="settings-section">
         <div class="container">
@@ -277,101 +308,103 @@
                     <hr>
                     <div class="container">
 
-            
-                           
-                            <form action="MarketingProductController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
-                                <div class="form-group">
-                                    <a href="AddProductController?action=addProduct" class="btn btn-success" onclick="confirmAdd(event, 'addProduct')">Add Product</a>
-                                    <a href="AddProductController?action=addProductVariant" class="btn btn-success" onclick="confirmAdd(event, 'addProductVariant')">Add Product Variant</a>
-                                    <a href="AddProductController?action=addColor" class="btn btn-success" onclick="confirmAdd(event, 'addColor')">Add Color</a>
-                                    <a href="AddProductController?action=addStorage" class="btn btn-success" onclick="confirmAdd(event, 'addStorage')">Add Storage</a>
-                                </div>       
-                            </form>
 
-                            <hr>
-                            <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
-                            <div class="d-flex align-items-center">
-                                <input type="text" name="search" value="${param.search}" class="form-control" placeholder="Search by product name" style="margin-right: 5px;" />
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> Search</button>
+
+                        <form action="MarketingProductController" method="GET" class="form-row d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-group">
+                                <a href="AddProductController?action=addProduct" class="btn btn-success" onclick="confirmAdd(event, 'addProduct')">Add Product</a>
+                                <a href="AddProductController?action=addProductVariant" class="btn btn-success" onclick="confirmAdd(event, 'addProductVariant')">Add Product Variant</a>
+                                <a href="AddProductController?action=addColor" class="btn btn-success" onclick="confirmAdd(event, 'addColor')">Add Color</a>
+                                <a href="AddProductController?action=addStorage" class="btn btn-success" onclick="confirmAdd(event, 'addStorage')">Add Storage</a>
+                            </div>       
+                        </form>
+
+                        <hr>
+                        <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET" class="search-form">
+                            <div class="search-container">
+                                <input type="text" name="search" value="${param.search}" class="search-input" placeholder="Search by product name"/>
+                                <button type="submit" class="search-button">
+                                    <i class="fa fa-search"></i> Search
+                                </button>
                             </div>
                         </form>
                         <hr>
 
 
                         <form action="${pageContext.request.contextPath}/MarketingProductController" method="GET">
-                             <div class="row">
-        <!-- Cột 1 -->
-       <div class="row">
-    <!-- Cột 1 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="brandID" class="d-block">Brand:</label>
-        <select id="brandID" name="brandID" class="form-control">
-            <option value="0">All Brands</option>
-            <c:forEach var="brand" items="${brands}">
-                <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
-            </c:forEach>
-        </select>
-    </div>
+                            <div class="row">
+                                <!-- Cột 1 -->
+                                <div class="row">
+                                    <!-- Cột 1 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="brandID" class="d-block">Brand:</label>
+                                        <select id="brandID" name="brandID" class="form-control">
+                                            <option value="0">All Brands</option>
+                                            <c:forEach var="brand" items="${brands}">
+                                                <option value="${brand.id}" ${param.brandID == brand.id ? 'selected' : ''}>${brand.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-    <!-- Cột 2 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="os" class="d-block">Operating System:</label>
-        <select id="os" name="os" class="form-control">
-            <option value="">All</option>
-            <c:forEach var="osItem" items="${osList}">
-                <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
-            </c:forEach>
-        </select>
-    </div>
-    
-    <!-- Cột 3 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="connectivity" class="d-block">Connectivity:</label>
-        <select id="connectivity" name="connectivity" class="form-control">
-            <option value="">All</option>
-            <c:forEach var="connect" items="${connectivityList}">
-                <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
-            </c:forEach>
-        </select>
-    </div>
-</div>
+                                    <!-- Cột 2 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="os" class="d-block">Operating System:</label>
+                                        <select id="os" name="os" class="form-control">
+                                            <option value="">All</option>
+                                            <c:forEach var="osItem" items="${osList}">
+                                                <option value="${osItem}" ${param.os == osItem ? 'selected' : ''}>${osItem}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
 
-<div class="row">
-    <!-- Cột 1 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="statusFilter" class="d-block">Status:</label>
-        <select id="statusFilter" name="statusFilter" class="form-control">
-            <option value="">All</option>
-            <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
-            <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
-        </select>
-    </div>
+                                    <!-- Cột 3 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="connectivity" class="d-block">Connectivity:</label>
+                                        <select id="connectivity" name="connectivity" class="form-control">
+                                            <option value="">All</option>
+                                            <c:forEach var="connect" items="${connectivityList}">
+                                                <option value="${connect}" ${param.connectivity == connect ? 'selected' : ''}>${connect}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
 
-    <!-- Cột 2 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="screenSize" class="d-block">Screen Size (inches):</label>
-        <select id="screenSize" name="screenSize" class="form-control">
-            <option value="0">All</option>
-            <c:forEach var="size" items="${screenSizeList}">
-                <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
-            </c:forEach>
-        </select>
-    </div>
+                                <div class="row">
+                                    <!-- Cột 1 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="statusFilter" class="d-block">Status:</label>
+                                        <select id="statusFilter" name="statusFilter" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Show" ${param.statusFilter == 'Show' ? 'selected' : ''}>Show</option>
+                                            <option value="Hide" ${param.statusFilter == 'Hide' ? 'selected' : ''}>Hide</option>
+                                        </select>
+                                    </div>
 
-    <!-- Cột 3 -->
-    <div class="col-md-4 form-group d-flex flex-column">
-        <label for="batteryCapacity" class="d-block">Battery Capacity:</label>
-        <select id="batteryCapacity" name="batteryCapacity" class="form-control">
-            <option value="0">All</option>
-            <c:forEach var="capacity" items="${batteryCapacityList}">
-                <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
-            </c:forEach>
-        </select>
-    </div>
-</div>
+                                    <!-- Cột 2 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="screenSize" class="d-block">Screen Size (inches):</label>
+                                        <select id="screenSize" name="screenSize" class="form-control">
+                                            <option value="0">All</option>
+                                            <c:forEach var="size" items="${screenSizeList}">
+                                                <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
+                                    <!-- Cột 3 -->
+                                    <div class="col-md-4 form-group d-flex flex-column">
+                                        <label for="batteryCapacity" class="d-block">Battery Capacity:</label>
+                                        <select id="batteryCapacity" name="batteryCapacity" class="form-control">
+                                            <option value="0">All</option>
+                                            <c:forEach var="capacity" items="${batteryCapacityList}">
+                                                <option value="${capacity}" ${batteryCapacity == capacity ? 'selected' : ''}>${capacity} mAh</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </div>
 
 
-    <button type="submit" class="btn btn-primary">Filter</button>
+                                <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
                         <br>
 
@@ -431,26 +464,26 @@
                         </c:forEach>
                     </tbody>
                 </table>
-               <div class="pagination">
-    <ul class="pagination">
-        <!-- Previous Page Link -->
-        <c:if test="${currentPage > 1}">
-            <li><a href="MarketingProductController?page=${currentPage - 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">&laquo; Prev</a></li>
-        </c:if>
-        
-        <!-- Page Number Links -->
-        <c:forEach begin="1" end="${totalPages}" var="i">
-            <li class="${i == currentPage ? 'active' : ''}">
-                <a href="MarketingProductController?page=${i}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">${i}</a>
-            </li>
-        </c:forEach>
-        
-        <!-- Next Page Link -->
-        <c:if test="${currentPage < totalPages}">
-            <li><a href="MarketingProductController?page=${currentPage + 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">Next &raquo;</a></li>
-        </c:if>
-    </ul>
-</div>
+                <div class="pagination">
+                    <ul class="pagination">
+                        <!-- Previous Page Link -->
+                        <c:if test="${currentPage > 1}">
+                            <li><a href="MarketingProductController?page=${currentPage - 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">&laquo; Prev</a></li>
+                            </c:if>
+
+                        <!-- Page Number Links -->
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <li class="${i == currentPage ? 'active' : ''}">
+                                <a href="MarketingProductController?page=${i}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">${i}</a>
+                            </li>
+                        </c:forEach>
+
+                        <!-- Next Page Link -->
+                        <c:if test="${currentPage < totalPages}">
+                            <li><a href="MarketingProductController?page=${currentPage + 1}&brandID=${param.brandID}&search=${param.search}&os=${param.os}&connectivity=${param.connectivity}&statusFilter=${param.statusFilter}&screenSize=${param.screenSize}&batteryCapacity=${param.batteryCapacity}&sortby=${param.sortby}&sortOrder=${param.sortOrder}">Next &raquo;</a></li>
+                            </c:if>
+                    </ul>
+                </div>
 
 
             </div>
@@ -633,34 +666,9 @@
                                                    }
                                                }
 
-                                               function confirmAction(event, action) {
-                                                   var message = (action === 'hide') ? "Do you sure you want to hide this product?" : "Do you sure you want to show this product?";
-                                                   var result = confirm(message);
-                                                   if (!result) {
-                                                       event.preventDefault();
-                                                   }
-                                               }
-
-                                               function confirmAdd(event, action) {
-                                                   var message = "";
-                                                   if (action === 'addProduct') {
-                                                       message = "Do you sure you want to add this product?";
-                                                   } else if (action === 'addProductVariant') {
-                                                       message = "Do you sure you want to add this product variant?";
-                                                   } else if (action === 'addColor') {
-                                                       message = "Do you sure you want to add this color?";
-                                                   } else if (action === 'addStorage') {
-                                                       message = "Do you sure you want to add this storage?";
-                                                   }
-
-                                                   var result = confirm(message);
-                                                   if (!result) {
-                                                       event.preventDefault(); // Ngừng hành động nếu người dùng không xác nhận
-                                                   }
-                                               }
                                                $('#addProductVariantModal').on('shown.bs.modal', function () {
-    $('#myInput').trigger('focus');
-});
+                                                   $('#myInput').trigger('focus');
+                                               });
 </script>
 
 </body>

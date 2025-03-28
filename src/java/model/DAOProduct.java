@@ -436,7 +436,7 @@ public class DAOProduct extends DBConnection {
         String sqlDeleteCartItem = "DELETE FROM CartItem WHERE ProductVariantID = ?";
         String sqlDeleteOrderDetails = "DELETE FROM OrderDetails WHERE productVariantID = ?";
         String sqlDeleteProductVariants = "DELETE FROM ProductVariants WHERE product_id = ?";
-        String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE productID = ?";
+        String sqlDeleteFeedbacks = "DELETE FROM Feedbacks WHERE product_id = ?";
         String sqlDeleteProduct = "DELETE FROM Products WHERE id = ?";
 
         PreparedStatement psDeleteCartItem = null;
@@ -721,72 +721,59 @@ public class DAOProduct extends DBConnection {
         return productList;
     }
 
-    public int getTotalProductsByFilters(int brandID, String searchQuery, double minPrice, double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity, int ram, String screenType) {
-
-        String sql = "SELECT COUNT(DISTINCT p.id) FROM Products p "
-                + "LEFT JOIN ProductVariants v ON p.id = v.product_id " // Đảm bảo sử dụng v.product_id
+    public int getTotalProductsByFilters(int brandID, String searchQuery,
+            double minPrice, double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity,
+            int ram, String screenType) {
+        String sql = "SELECT COUNT(DISTINCT p.id) "
+                + "FROM Products p "
+                + "LEFT JOIN ProductVariants v ON p.id = v.product_id "
                 + "WHERE p.isDisabled = 0 ";
 
+        List<Object> params = new ArrayList<>();
         if (brandID > 0) {
             sql += " AND p.brandID = ?";
+            params.add(brandID);
         }
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             sql += " AND p.name LIKE ?";
+            params.add("%" + searchQuery + "%");
         }
-        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
-            sql += " AND v.price BETWEEN ? AND ?";
+        if (minPrice > 0 || maxPrice < Double.MAX_VALUE) {
+            sql += " AND p.id IN (SELECT v2.product_id FROM ProductVariants v2 "
+                    + "GROUP BY v2.product_id "
+                    + "HAVING MIN(v2.price) >= ? AND MIN(v2.price) <= ?)";
+            params.add(minPrice);
+            params.add(maxPrice);
         }
         if (os != null && !os.isEmpty()) {
             sql += " AND p.os = ?";
+            params.add(os);
         }
         if (connectivity != null && !connectivity.isEmpty()) {
             sql += " AND p.connectivity = ?";
+            params.add(connectivity);
         }
         if (ram > 0) {
             sql += " AND p.ram = ?";
+            params.add(ram);
         }
         if (screenType != null && !screenType.isEmpty()) {
             sql += " AND p.screenType = ?";
+            params.add(screenType);
         }
         if (screenSize > 0) {
             sql += " AND p.screenSize = ?";
+            params.add(screenSize);
         }
         if (batteryCapacity > 0) {
             sql += " AND p.batteryCapacity = ?";
+            params.add(batteryCapacity);
         }
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            int index = 1;
-
-            if (brandID > 0) {
-                ps.setInt(index++, brandID);
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
             }
-            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                ps.setString(index++, "%" + searchQuery + "%");
-            }
-            if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
-                ps.setDouble(index++, minPrice);
-                ps.setDouble(index++, maxPrice);
-            }
-            if (os != null && !os.isEmpty()) {
-                ps.setString(index++, os);
-            }
-            if (connectivity != null && !connectivity.isEmpty()) {
-                ps.setString(index++, connectivity);
-            }
-            if (ram > 0) {
-                ps.setInt(index++, ram);
-            }
-            if (screenType != null && !screenType.isEmpty()) {
-                ps.setString(index++, screenType);
-            }
-            if (screenSize > 0) {
-                ps.setDouble(index++, screenSize);
-            }
-            if (batteryCapacity > 0) {
-                ps.setInt(index++, batteryCapacity);
-            }
-
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -936,120 +923,101 @@ public class DAOProduct extends DBConnection {
         }
         return n;
     }
+public Vector<Product> getProductsByFilter(int brandID, String searchQuery, double minPrice,
+        double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity,
+        int ram, String screenType, int currentPage, int itemsPerPage) {
+    Vector<Product> productList = new Vector<>();
+    int startIndex = (currentPage - 1) * itemsPerPage;
 
-    public Vector<Product> getProductsByFilter(int brandID, String searchQuery, double minPrice,
-            double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity,
-            int ram, String screenType, int currentPage, int itemsPerPage) {
-        Vector<Product> productList = new Vector<>();
-        int startIndex = (currentPage - 1) * itemsPerPage;
+    String sql = "SELECT p.*, MIN(v.price) AS minPrice "
+            + "FROM Products p "
+            + "LEFT JOIN ProductVariants v ON p.id = v.product_id "
+            + "WHERE p.isDisabled = 0 ";
 
-        String sql = "SELECT p.*, MIN(v.price) AS minPrice "
-                + "FROM Products p "
-                + "LEFT JOIN ProductVariants v ON p.id = v.product_id "
-                + "LEFT JOIN Colors c ON v.color_id = c.id "
-                + "LEFT JOIN Storages s ON v.storage_id = s.id "
-                + "WHERE p.isDisabled = 0 ";
-
-        if (brandID > 0) {
-            sql += " AND p.brandID = ?";
-        }
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            sql += " AND p.name LIKE ?";
-        }
-        if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
-            sql += " AND v.price BETWEEN ? AND ?";
-        }
-        if (os != null && !os.isEmpty()) {
-            sql += " AND p.os = ?";
-        }
-        if (connectivity != null && !connectivity.isEmpty()) {
-            sql += " AND p.connectivity = ?";
-        }
-        if (ram > 0) {
-            sql += " AND p.ram = ?";
-        }
-        if (screenType != null && !screenType.isEmpty()) {
-            sql += " AND p.screenType = ?";
-        }
-        if (screenSize > 0) {
-            sql += " AND p.screenSize = ?";
-        }
-        if (batteryCapacity > 0) {
-            sql += " AND p.batteryCapacity = ?";
-        }
-
-        sql += " GROUP BY p.id "
-                + "ORDER BY p.createAt DESC "
-                + "LIMIT ?, ?";
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            int index = 1;
-
-            if (brandID > 0) {
-                ps.setInt(index++, brandID);
-            }
-            if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                ps.setString(index++, "%" + searchQuery + "%");
-            }
-            if (minPrice >= 0 && maxPrice < Double.MAX_VALUE) {
-                ps.setDouble(index++, minPrice);
-                ps.setDouble(index++, maxPrice);
-            }
-            if (os != null && !os.isEmpty()) {
-                ps.setString(index++, os);
-            }
-            if (connectivity != null && !connectivity.isEmpty()) {
-                ps.setString(index++, connectivity);
-            }
-            if (ram > 0) {
-                ps.setInt(index++, ram);
-            }
-            if (screenType != null && !screenType.isEmpty()) {
-                ps.setString(index++, screenType);
-            }
-            if (screenSize > 0) {
-                ps.setDouble(index++, screenSize);
-            }
-            if (batteryCapacity > 0) {
-                ps.setInt(index++, batteryCapacity);
-            }
-
-            ps.setInt(index++, startIndex);
-            ps.setInt(index++, itemsPerPage);
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Product product = new Product(
-                        rs.getInt("id"),
-                        rs.getInt("brandID"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getBoolean("isDisabled"),
-                        rs.getInt("feedbackCount"),
-                        rs.getString("status"),
-                        rs.getString("imageURL"),
-                        rs.getString("chipset"),
-                        rs.getInt("ram"),
-                        rs.getDouble("screenSize"),
-                        rs.getString("screenType"),
-                        rs.getString("resolution"),
-                        rs.getInt("batteryCapacity"),
-                        rs.getString("cameraSpecs"),
-                        rs.getString("os"),
-                        rs.getString("simType"),
-                        rs.getString("connectivity"),
-                        rs.getDate("createAt"),
-                        rs.getInt("createdBy")
-                );
-                product.setVariantPrice(rs.getDouble("minPrice"));  // Lấy giá thấp nhất của biến thể sản phẩm
-                productList.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return productList;
+    List<Object> params = new ArrayList<>();
+    if (brandID > 0) {
+        sql += " AND p.brandID = ?";
+        params.add(brandID);
     }
+    if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+        sql += " AND p.name LIKE ?";
+        params.add("%" + searchQuery + "%");
+    }
+    if (minPrice > 0 || maxPrice < Double.MAX_VALUE) {
+        sql += " AND p.id IN (SELECT v2.product_id FROM ProductVariants v2 "
+                + "GROUP BY v2.product_id "
+                + "HAVING MIN(v2.price) >= ? AND MIN(v2.price) <= ?)";
+        params.add(minPrice);
+        params.add(maxPrice);
+    }
+    if (os != null && !os.isEmpty()) {
+        sql += " AND p.os = ?";
+        params.add(os);
+    }
+    if (connectivity != null && !connectivity.isEmpty()) {
+        sql += " AND p.connectivity = ?";
+        params.add(connectivity);
+    }
+    if (ram > 0) {
+        sql += " AND p.ram = ?";
+        params.add(ram);
+    }
+    if (screenType != null && !screenType.isEmpty()) {
+        sql += " AND p.screenType = ?";
+        params.add(screenType);
+    }
+    if (screenSize > 0) {
+        sql += " AND p.screenSize = ?";
+        params.add(screenSize);
+    }
+    if (batteryCapacity > 0) {
+        sql += " AND p.batteryCapacity = ?";
+        params.add(batteryCapacity);
+    }
+
+    sql += " GROUP BY p.id "
+            + "ORDER BY p.createAt DESC "
+            + "LIMIT ? OFFSET ?";
+    params.add(itemsPerPage);
+    params.add(startIndex);
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        for (int i = 0; i < params.size(); i++) {
+            ps.setObject(i + 1, params.get(i));
+        }
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Product product = new Product(
+                    rs.getInt("id"),
+                    rs.getInt("brandID"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    rs.getBoolean("isDisabled"),
+                    rs.getInt("feedbackCount"),
+                    rs.getString("status"),
+                    rs.getString("imageURL"),
+                    rs.getString("chipset"),
+                    rs.getInt("ram"),
+                    rs.getDouble("screenSize"),
+                    rs.getString("screenType"),
+                    rs.getString("resolution"),
+                    rs.getInt("batteryCapacity"),
+                    rs.getString("cameraSpecs"),
+                    rs.getString("os"),
+                    rs.getString("simType"),
+                    rs.getString("connectivity"),
+                    rs.getDate("createAt"),
+                    rs.getInt("createdBy")
+            );
+            product.setVariantPrice(rs.getDouble("minPrice")); // Gán giá nhỏ nhất vào sản phẩm
+            productList.add(product);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return productList;
+}
 
     public Vector<Product> getProductsByFilterAdmin(int brandID, String searchQuery, double minPrice,
             double maxPrice, String os, double screenSize, int batteryCapacity, String connectivity,
@@ -1307,6 +1275,45 @@ public class DAOProduct extends DBConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Product> getThreeProductsByBrand(int brandID, int productID) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Products WHERE brandID = ? AND id != ? AND isDisabled = 0 ORDER BY createAt DESC LIMIT 3";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, brandID);
+            pre.setInt(2, productID);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                );
+                products.add(product);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return products;
     }
 
 }

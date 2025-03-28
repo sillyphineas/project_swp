@@ -80,10 +80,10 @@ public class ProductDetailController extends HttpServlet {
         DAOBrand daoBrand = new DAOBrand();
         DAOProductVariant daoProductVariants = new DAOProductVariant();
         DAOFeedback daoFeedback = new DAOFeedback(); // Thêm DAOFeedback
-        
+
         int productID = Integer.parseInt(request.getParameter("id"));
         List<Feedback> feedbacks = daoFeedback.getLatestFeedbacksByProductId(productID);
-        
+
         Product product = dao.getProductById(productID);
         if (product == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Product not found");
@@ -95,6 +95,8 @@ public class ProductDetailController extends HttpServlet {
         double minPrice = daoProductVariants.getMinPriceByProductId(productID);
         Vector<String> colors = daoProductVariants.getDistinctColorsByProductId1(productID);
         Vector<String> storages = daoProductVariants.getDistinctStorageByProductId1(productID);
+        List<Product> relatedProducts = dao.getThreeProductsByBrand(product.getBrandID(), productID);
+        request.setAttribute("relatedProducts", relatedProducts);
 
         String color = request.getParameter("color");
         String storage = request.getParameter("storage");

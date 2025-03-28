@@ -268,12 +268,12 @@
                                         <option value="${size}" ${screenSize == size ? 'selected' : ''}>${size} inches</option>
                                     </c:forEach>
                                 </select>
-                                <label for="minPrice">Min Price:</label>
-                                <input type="number" name="minPrice" id="minPrice" class="form-control" value="" placeholder="" />
+                                
+                                        <label for="minPrice">Min Price</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="" max="" step="10" class="form-control">
 
-                                <label for="maxPrice">Max Price:</label>
-                                <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="" placeholder="" />
-
+                                        <label for="maxPrice">Max Price </label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="" max="" step="10" class="form-control">
 
                                 <!-- Nút Lọc -->
                                 <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
@@ -284,15 +284,15 @@
 
                         <br>
                         <div class="latest-products">
-
                             <c:if test="${not empty latestProduct}">
                                 <div class="latest-product">
                                     <h2>Newest Product</h2>
                                     <div class="product-item">
-                                        <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
-                                        <h3>${latestProduct.name}</h3>
-                                        <p>${latestProduct.description}</p>
-<!--                                            <a href="product-details.jsp?id=${latestProduct.id}" class="btn btn-primary">View Details</a>-->
+                                        <a href="${pageContext.request.contextPath}/ProductDetailController?id=${latestProduct.id}">
+                                            <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
+                                            <h3 style="text-align: center;">${latestProduct.name}</h3>
+                                            <p style="text-align: center;">${latestProduct.description}</p>
+                                           </a>
                                     </div>
                                 </div>
                             </c:if>

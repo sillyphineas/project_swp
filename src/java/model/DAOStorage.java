@@ -21,7 +21,7 @@ public class DAOStorage extends DBConnection {
 
     public int addStorage(Storage storage) {
         int n = 0;
-        String sql = "INSERT INTO Storage (capacity, status) VALUES (?, ?)";
+        String sql = "INSERT INTO Storages (capacity, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, storage.getCapacity());
             pre.setString(2, storage.getStatus());  

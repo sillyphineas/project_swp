@@ -194,14 +194,22 @@
                                 </button>
                             </div>
                             <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
 
+                                  <ul class="nav navbar-nav collapse navbar-collapse">
+                                <li><a href="MarketingDashboardController" class="active">Home</a></li>
+                                <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                <li><a href="SliderController">Slider List</a></li>
+                                <li><a href="CustomerController">Customer List</a></li>
+                                <li><a href="MarketingProductController">Product List</a></li>
+                                <li><a href="MaketingFeedBackController">Feedback List</a></li>
+                            </ul>
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/MarketingProductDetails" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
                                 </ul>
                             </div>
                         </div>                        
@@ -579,12 +587,12 @@ document.addEventListener("DOMContentLoaded",    function() {
         function updateProductInfo(color, storage) {
                     var productId = '${product.id}';
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + color + '&storage=' + storage, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.open('GET', '${pageContext.request.contextPath}/MarketingProductDetails?id=' + productId + '&color=' + color + '&storage=' + storage, true);
+            xhr.('Content-Type', 'application/json');
             xhr.onload = function() {
             if (xhr.status == 200) {
             var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
+            // Cập nhật giá và số lượng sản psetRequestHeaderhẩm
             document.getElementById("productPrice").innerText = '₫' + data.price; ;
             document.getElementById("productStock").innerText = data.stock;
             } else {

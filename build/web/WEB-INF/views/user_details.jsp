@@ -36,7 +36,15 @@
                 color: green; /* Màu xanh cho trạng thái Active */
                 font-weight: bold;
             }
-
+           
+            .table th {
+                width: 150px; /* Chiều rộng cột tiêu đề */
+            }
+            .table td {
+                max-width: 100px;
+                word-wrap: break-word;
+            
+            }
         </style>
     </head><!--/head-->
 
@@ -102,13 +110,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -150,71 +158,85 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>User Details</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <h2>User Details</h2>
-        
-        <c:set var="user" value="${user}" />
-        
-        <table class="table table-bordered">
-            <tr>
-                <th>ID</th>
-                <td>${user.id}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>${user.name}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>${user.email}</td>
-            </tr>
-            <tr>
-                <th>Gender</th>
-                <td>${user.gender ? 'Male' : 'Female'}</td>
-            </tr>
-            <tr>
-                <th>Phone Number</th>
-                <td>${user.phoneNumber}</td>
-            </tr>
-            <tr>
-                <th>Password</th>
-                <td>${user.passHash}</td>
-            </tr>
-            <tr>
-                <th>Date of Birth</th>
-                <td>${user.dateOfBirth}</td>
-            </tr>
-            <tr>
-                <th>Role</th>
-                <td>
-                    <c:forEach var="role" items="${roles}">
-                        <c:if test="${role.roleId == user.roleId}">
-                            ${role.roleName}
-                        </c:if>
-                    </c:forEach>
-                </td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <td class="${user.disabled ? 'inactive-status' : 'active-status'}">
-                    ${user.disabled ? 'Inactive' : 'Active'}
-                </td>
-            </tr>
-        </table>
+        <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>User Details</title>
+            <link href="/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <div class="container">
+                <h2>User Details</h2>
 
-        <a href="UserController" class="btn btn-primary">Back to User List</a>
-    </div>
-</body>
+                <c:set var="user" value="${user}" />
 
-<footer id="footer"><!--Footer-->
+                <table class="table table-bordered">
+                    <tr>
+                        <th>ID</th>
+                        <td>${user.id}</td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td>${user.name}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>${user.email}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td>${user.gender ? 'Male' : 'Female'}</td>
+                    </tr>
+                    <tr>
+                        <th>Phone Number</th>
+                        <td>${user.phoneNumber}</td>
+                    </tr>
+                    <tr>
+                        <th>Password</th>
+                        <td>${user.passHash}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td>${user.dateOfBirth}</td>
+                    </tr>
+                    <tr>
+                        <th>Image</th>
+                        <td>
+                            <c:choose>
+                                <c:when test="${user.image != null}">
+                                    <img src="${pageContext.request.contextPath}/ImageUser?userId=${user.id}" alt="User Image" style="max-width: 400px; max-height: 400px;" />
+                                </c:when>
+                                <c:otherwise>
+                                    No Image Available
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td>
+                            <c:forEach var="role" items="${roles}">
+                                <c:if test="${role.roleId == user.roleId}">
+                                    ${role.roleName}
+                                </c:if>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td class="${user.disabled ? 'inactive-status' : 'active-status'}">
+                            ${user.disabled ? 'Inactive' : 'Active'}
+                        </td>
+                    </tr>
+                </table>
+
+                <a href="UserController" class="btn btn-primary">Back to User List</a>
+            </div>
+                        <br>
+        </body>
+
+        <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
                     <div class="row">

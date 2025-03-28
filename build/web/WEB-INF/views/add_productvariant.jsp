@@ -34,34 +34,27 @@
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
         <style>
            
-            .inactive-status {
+      .inactive-status {
                 color: red;
                 font-weight: bold;
             }
-
             .active-status {
                 color: green;
                 font-weight: bold;
             }
-
             .add-pr {
                 text-align: center;
                 color: black;
                 margin-bottom: 20px;
             }
-
-            /* Chia cột với Flexbox */
             .form-row {
                 display: flex;
                 justify-content: space-between;
-                gap: 20px; /* Khoảng cách giữa các cột */
+                gap: 20px;
             }
-
             .form-row .col-md-6 {
                 width: 48%;
             }
-
-            /* Điều chỉnh style cho các input, select và textarea */
             .form-group input, 
             .form-group select, 
             .form-group textarea {
@@ -73,14 +66,12 @@
                 margin-bottom: 10px;
                 box-sizing: border-box;
             }
-
             .form-group input:focus, 
             .form-group select:focus, 
             .form-group textarea:focus {
                 border-color: #4CAF50;
                 outline: none;
             }
-
             .btn {
                 padding: 10px 20px;
                 font-size: 14px;
@@ -91,23 +82,9 @@
                 width: 32%;
                 box-sizing: border-box;
             }
-
-            .btn-success {
+            .btn-custom-blue {
                 background-color: #28a745;
                 color: white;
-            }
-
-            .btn-danger {
-                background-color: #dc3545;
-                color: white;
-            }
-
-            .btn:hover {
-                opacity: 0.8;
-            }
-            .btn-custom-blue {
-                background-color: #4CAF50;  /* Màu xanh lá cây */
-                color: white;
                 font-weight: bold;
                 border-radius: 5px;
                 padding: 10px 20px;
@@ -116,15 +93,12 @@
                 border: none;
                 transition: background-color 0.3s ease;
             }
-
             .btn-custom-blue:hover {
-                background-color: #45a049;  /* Màu xanh đậm hơn khi hover */
+                background-color: #45a049;
                 cursor: pointer;
             }
-
-            /* Tùy chỉnh cho nút "Back to List" màu đỏ */
             .btn-custom-red {
-                background-color: #f44336;  /* Màu đỏ */
+                background-color: #f44336;
                 color: white;
                 font-weight: bold;
                 border-radius: 5px;
@@ -134,14 +108,20 @@
                 border: none;
                 transition: background-color 0.3s ease;
             }
-
             .btn-custom-red:hover {
-                background-color: #d32f2f;  /* Màu đỏ đậm khi hover */
+                background-color: #d32f2f;
                 cursor: pointer;
             }
-            .form-control    {
-                width: 100%; 
-                height: 120%;/* Giảm chiều rộng xuống còn 80% so với kích thước mặc định */
+            .form-control {
+                width: 100%;
+                height: 120%;
+            }
+            .error-message {
+                color: red;
+                font-size: 12px;
+                margin-top: -5px;
+                margin-bottom: 10px;
+                display: block;
             }
 
 
@@ -260,75 +240,79 @@
                 </div>
             </div><!--/header-bottom-->
         </header>
-   <div class="container">
+  <div class="container">
             <h2 class="add-pr">Add Product Variants</h2>
+
             <form action="AddProductController" method="post">
                 <input type="hidden" name="action" value="addProductVariant">
                
-        <div class="form-row">
-            <!-- Cột bên trái với 3 trường -->
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="productID">Product:</label>
-                    <select class="form-control" name="productID" required>
-                        <option value="">-- Select Product --</option>
-                        <c:forEach var="product" items="${products}">
-                            <option value="${product.id}">${product.name} (ID: ${product.id})</option>
-                        </c:forEach>
-                    </select>
+                <div class="form-row">
+                    <!-- Cột bên trái với 3 trường -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="productID">Product:</label>
+                            <select class="form-control" name="productID" required>
+                                <option value="">-- Select Product --</option>
+                                <c:forEach var="product" items="${products}">
+                                    <option value="${product.id}" ${product.id == productID ? 'selected' : ''}>${product.name} (ID: ${product.id})</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="color">Color:</label>
+                            <select class="form-control" name="color_id" required>
+                                <c:forEach var="color" items="${colorlist}">
+                                    <option value="${color.id}" ${color.id == color_id ? 'selected' : ''}>${color.colorName}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="price">Price:</label>
+                            <input type="number" step="0.01" class="form-control" name="price" value="${price}" required />
+                            <c:if test="${not empty priceError}">
+                                <span class="error-message">${priceError}</span>
+                            </c:if>
+                        </div>
+                    </div>
+
+                    <!-- Cột bên phải với 3 trường -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="stock">Stock:</label>
+                            <input type="number" class="form-control" name="stock" value="${stock}" required />
+                            <c:if test="${not empty stockError}">
+                                <span class="error-message">${stockError}</span>
+                            </c:if>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="storage">Storage (GB):</label>
+                            <select class="form-control" name="storage_id" required>
+                                <c:forEach var="storage" items="${storagelist}">
+                                    <option value="${storage.id}" ${storage.id == storage_id ? 'selected' : ''}>${storage.capacity}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select class="form-control" name="status" required>
+                                <option value="Active" ${status == 'Active' ? 'selected' : ''}>Active</option>
+                                <option value="Inactive" ${status == 'Inactive' ? 'selected' : ''}>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="color">Color:</label>
-                    <select class="form-control" name="color_id" required>
-                        <c:forEach var="color" items="${colorlist}">
-                            <option value="${color.id}">${color.colorName}</option>
-                        </c:forEach>
-                    </select>
+                <!-- Nút submit và cancel -->
+                <div class="form-row">
+                    <button type="submit" class="btn btn-custom-blue">Add Variant</button>
+                    <a href="MarketingProductController" class="btn btn-custom-red">Cancel</a>
                 </div>
-
-                <div class="form-group">
-                    <label for="price">Price:</label>
-                    <input type="number" step="0.01" class="form-control" name="price" required />
-                </div>
-            </div>
-
-            <!-- Cột bên phải với 3 trường -->
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="stock">Stock:</label>
-                    <input type="number" class="form-control" name="stock" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="storage">Storage (GB):</label>
-                    <select class="form-control" name="storage_id" required>
-                        <c:forEach var="storage" items="${storagelist}">
-                            <option value="${storage.id}">${storage.capacity}</option>
-                        </c:forEach>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="status">Status:</label>
-                    <select class="form-control" name="status" required>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-            </div>
+            </form>
         </div>
-
-        <!-- Nút submit và cancel -->
-        <div class="form-row">
-            <button type="submit" class="btn btn-custom-blue">Add Variant</button>
-            <a href="MarketingProductController" class="btn btn-custom-red">Cancel</a>
-        </div>
-    </form>
-</div>
-
-
-        </
         <br>
         <br>
 
