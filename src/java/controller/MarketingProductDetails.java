@@ -102,6 +102,7 @@ public class MarketingProductDetails extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/marketingproduct-details.jsp").forward(request, response);
         }
         if ("editVariant".equals(action)) {
+            System.out.println("nam dep trai nhat hung yen " );
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
             Vector<Brand> brandList = daoBrand.getAllBrands();
@@ -124,10 +125,12 @@ public class MarketingProductDetails extends HttpServlet {
         }
 
         if ("editProduct".equals(action)) {
+           
             int productID = Integer.parseInt(request.getParameter("id"));
             Product product = dao.getProductById(productID);
             Vector<Brand> brandList = daoBrand.getAllBrands();
             Vector<ProductVariant> variants = daoProductVariants.getVariantsByProductId(productID);
+            
             double minPrice = daoProductVariants.getMinPriceByProductId(productID);
             Vector<Color> colorlist = daocolor.getAllColors();
             Vector<Storage> storagelist = daoStorage.getAllStorages();
@@ -217,21 +220,23 @@ public class MarketingProductDetails extends HttpServlet {
             response.sendRedirect("MarketingProductDetails?id=" + productId);
         }
 
-        if ("editVariant".equals(action)) {
-            
-            int variantId = Integer.parseInt(request.getParameter("id"));
-            int productID = Integer.parseInt(request.getParameter("productID"));
-            
-            int color_id = Integer.parseInt(request.getParameter("color_id"));
-            int storage_id = Integer.parseInt(request.getParameter("storage_id"));
-            double price = Double.parseDouble(request.getParameter("price"));
-            int stock = Integer.parseInt(request.getParameter("stock"));
-             String status = request.getParameter("status");
-             System.out.println(variantId+" "+ productID +" " +color_id+" "+ storage_id+"  "+price);
-            ProductVariant updatedVariant =  new ProductVariant(variantId, productID, color_id, storage_id, price, stock, status);
-             daoVariant.updateProductVariant(updatedVariant);
-            response.sendRedirect("MarketingProductDetails?id=" + productID);
-        }
+       if ("editVariant".equals(action)) {
+    int variantId = Integer.parseInt(request.getParameter("variantId")); // lấy từ input name="variantId"
+    int productID = Integer.parseInt(request.getParameter("productID")); // vẫn đúng
+
+    int color_id = Integer.parseInt(request.getParameter("color_id"));
+    int storage_id = Integer.parseInt(request.getParameter("storage_id"));
+    double price = Double.parseDouble(request.getParameter("price"));
+    int stock = Integer.parseInt(request.getParameter("stock"));
+    String status = request.getParameter("status");
+
+    ProductVariant updatedVariant = new ProductVariant(
+        variantId, productID, color_id, storage_id, price, stock, status
+    );
+
+    daoVariant.updateProductVariant(updatedVariant);
+    response.sendRedirect("MarketingProductDetails?id=" + productID);
+}
     }
 
     @Override

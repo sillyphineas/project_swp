@@ -62,6 +62,7 @@ public class DAOUser extends DBConnection {
             pre.setInt(13, user.getPoint()); // Mới thêm
 
             n = pre.executeUpdate();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -870,6 +871,37 @@ public class DAOUser extends DBConnection {
         }
         return stats;
     }
+     public int getUserPoints(int userId) {
+        int points = 0;
+        String sql = "SELECT point FROM Users WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                points = rs.getInt("point");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return points;
+    }
+     public void updateUserPoint(int userId, int newPoint) {
+        String sql = "UPDATE Users SET point = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, newPoint);
+            ps.setInt(2, userId);
+
+            int rows = ps.executeUpdate();
+            System.out.println("Updated user point. Rows affected = " + rows);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     public static void main(String[] args) {
         // Test DAO here if needed

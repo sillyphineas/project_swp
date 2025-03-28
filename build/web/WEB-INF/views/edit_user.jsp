@@ -166,9 +166,7 @@
                     <div class="col-sm-12">
                         <h2>Edit User</h2>
 
-
-                        <!-- Lấy thông tin người dùng và điền vào form -->
-                        <form action="UserDetailController?action=updateUser" method="post">
+                        <form action="UserDetailController?action=updateUser" method="post" enctype="multipart/form-data">
                             <c:set var="user" value="${user}" />
                             <input type="hidden" name="userId" value="${user.id}"/>
 
@@ -177,6 +175,10 @@
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control" id="name" name="name" value="${user.name}" required />
                             </div>
+                             <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" class="form-control" id="email" name="email" value="${user.email}" readonly required />
+    </div>
 
                             <!-- Password -->
                             <div class="form-group">
@@ -203,13 +205,27 @@
                             <div class="form-group">
                                 <label for="dateOfBirth">Date of Birth</label>
                                 <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
+                                       value="${user.dateOfBirth != null ? user.dateOfBirth : ''}" 
                                        max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
                             </div>
+
                             <div class="form-group">
-                            <label for="image">Avatar/Image</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*" />
-                            <small class="form-text text-muted">Choose a new image if you want to update the avatar. (Optional)</small>
-                           </div>
+                                <label>Current Profile Image</label><br/>
+                                <c:choose>
+                                    <c:when test="${user.image != null}">
+                                        <img src="${pageContext.request.contextPath}/ImageUser?userId=${user.id}" alt="User Image" style="max-width: 200px; max-height: 200px;" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        No Image Available
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+
+                            <!-- Upload New Image -->
+                            <div class="form-group">
+                                <label for="image">Upload New Profile Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+                            </div>
 
                             <!-- Role -->
                             <div class="form-group">
@@ -237,17 +253,14 @@
 
                             <button type="submit" class="btn btn-danger">Update User</button>
                             <a href="UserController" class="btn btn-danger">Cancel</a>
-                             <div class="form-group">
-                                
-                                 <input type="hidden" class="form-control" id="email" name="email" value="${user.email}" required />
-                            </div>
+                           
                         </form>
 
                     </div>
                 </div>
             </div>
         </section>
-        
+
         <br>
 
         <footer id="footer"><!--Footer-->
@@ -416,5 +429,28 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const emailInput = document.getElementById('email');
+        const originalValue = emailInput.value;
+        emailInput.addEventListener('input', function(e) {
+            e.preventDefault();
+            emailInput.value = originalValue;
+        });
+        emailInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+        });
+        emailInput.addEventListener('drop', function(e) {
+            e.preventDefault();
+        });
+        Object.defineProperty(emailInput, 'value', {
+            get: function() {
+                return originalValue;
+            },
+            set: function() {
+            }
+        });
+    });
+</script>
     </body>
 </html>

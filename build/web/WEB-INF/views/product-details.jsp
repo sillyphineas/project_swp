@@ -41,22 +41,28 @@
                 border-radius: 10px;
                 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
                 background-color: #fff;
+                padding: 30px; /* Increase padding to make the card appear larger */
+                margin: 0; /* Remove margins to maximize width */
+            }
+
+            .list-group-item {
+                font-size: 16px; /* Increase font size for better readability and height */
+                padding: 15px 20px; /* Increase padding to make each item taller */
+/*                margin-bottom: 10px;  Add spacing between items to elongate the card */
+                border-bottom: 0.5px solid #ddd !important; /* Thinner line, lighter color */
             }
 
             .card-title {
                 color: #007bff;
                 font-weight: bold;
-                margin-bottom: 15px;
-            }
-
-            .list-group-item {
-                font-size: 14px;
-                padding: 8px 15px;
+                font-size: 24px; /* Increase the title font size */
+                margin-bottom: 25px; /* Add more space below the title */
             }
 
             .list-group-item b {
                 color: #333;
             }
+
             .nav-tabs {
                 display: flex;
                 justify-content: center;
@@ -88,6 +94,28 @@
                 padding: 20px;
             }
 
+            .related-products .product-item {
+                transition: all 0.3s ease;
+            }
+
+            .related-products .product-item:hover {
+                background-color: #f9f9f9;
+                transform: translateY(-5px);
+            }
+
+            .related-products h2 {
+                font-size: 18px;
+                color: #333;
+                border-bottom: 2px solid #ff8c00;
+                padding-bottom: 5px;
+                margin-bottom: 15px;
+            }
+
+            .related-products p {
+                color: #888;
+                font-size: 14px;
+            }
+            
         </style>
 
         <header id="header"><!--header-->
@@ -226,33 +254,35 @@
                                 <h2>Filter by Price</h2>
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                        <label for="minPrice">Min Price ($)</label>
-                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <label for="minPrice">Min Price</label>
+                                        <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="" max="" step="10" class="form-control">
 
-                                        <label for="maxPrice">Max Price ($)</label>
-                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="0" max="500000" step="10" class="form-control">
+                                        <label for="maxPrice">Max Price </label>
+                                        <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="" max="" step="10" class="form-control">
 
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
                                     </form>
                                 </div>
                             </div>
+                            <div class="related-products">
+                                <h2>Related Product</h2>
+                                <c:if test="${not empty relatedProducts}">
+                                    <c:forEach var="relatedProduct" items="${relatedProducts}">
+                                        <div class="product-item" style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                                            <a href="${pageContext.request.contextPath}/ProductDetailController?id=${relatedProduct.id}">
+                                                <img src="${relatedProduct.imageURL}" alt="${relatedProduct.name}" style="width: 100%; height: auto; object-fit: cover;">
+                                                <h3 style="font-size: 19px; margin: 10px 0; text-align: center">${relatedProduct.name}</h3>
 
-
-                            <div class="latest-products">
-
-                                <c:if test="${not empty latestProduct}">
-                                    <div class="latest-product">
-                                        <h2>Newest Product</h2>
-                                        <div class="product-item">
-                                            <img src="${latestProduct.imageURL}" alt="${latestProduct.name}" style="width: 100%; height: auto;">
-                                            <h3>${latestProduct.name}</h3>
-                                            <p>${latestProduct.description}</p>
-
-<!--                                            <a href="product-details.jsp?id=${latestProduct.id}" class="btn btn-primary">View Details</a>-->
+                                            </a>
                                         </div>
-                                    </div>
+                                    </c:forEach>
+                                </c:if>
+                                <c:if test="${empty relatedProducts}">
+                                    <p>No related products available.</p>
                                 </c:if>
                             </div>
+
+
                             <%
                                 List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
                             %>
@@ -367,38 +397,8 @@
                         <div class="product-details"><!--product-details-->
                             <div class="col-sm-5">
                                 <div class="view-product">
-                                    <img src="${product.imageURL}" alt="" />
+                                    <img src="${product.imageURL}" alt=""  style="width: 100%; height: auto; object-fit: cover; " />
 
-                                </div>
-                                <div id="similar-product" class="carousel slide" data-ride="carousel">
-
-                                    <!--                                     Wrapper for slides -->
-                                    <!--                                    <div class="carousel-inner">
-                                                                            <div class="item active">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                                                            <div class="item">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                                                            <div class="item">
-                                                                                <a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar2.jpg" alt=""></a>
-                                                                                <a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
-                                                                            </div>
-                                    
-                                                                        </div>-->
-
-                                    <!--                                     Controls -->
-                                    <!--                                    <a class="left item-control" href="#similar-product" data-slide="prev">
-                                                                            <i class="fa fa-angle-left"></i>
-                                                                        </a>
-                                                                        <a class="right item-control" href="#similar-product" data-slide="next">
-                                                                            <i class="fa fa-angle-right"></i>
-                                                                        </a>-->
                                 </div>
 
                             </div>
@@ -411,7 +411,7 @@
                                     <input type="hidden" id="productID" name="productID" value="${product.id}">
                                     <input type="hidden" name="service" value="add2cart">
                                     <div class="product-information">
-                                        <h2>${product.name}</h2>
+                                        <h1>${product.name}</h1>
 
                                         <p><b>Color:</b>
                                             <select id="colorSelector" name="color" class="form-control">
@@ -441,7 +441,8 @@
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
-                                        <p><b>Price: </b> <span id="productPrice">${price != null ? String.format("%,.0f", price) : 'Loading...'} ₫</span></p>
+                                        <p><b>Availability:</b> <span id="productStock">Loading...</span></p>
+                                        <h2><b>Price: </b> <span id="productPrice">${price != null ? String.format("%,.0f", price) : 'Loading...'} ₫</span></h2>
 
                                         <button type="submit" id="addToCartBtn" class="btn btn-default cart">
                                             <i class="fa fa-shopping-cart"></i>
@@ -457,37 +458,29 @@
                         <div class="category-tab shop-details-tab"><!--category-tab-->
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs">
-                                    <li class="col-md-6" ><a href="#">Details</a></li>
-                                    <li class="col-md-6"><a href="#">Reviews</a></li>
+                                    <li class="col-md-12" ><a>Details</a></li>
+
                                 </ul>
                             </div>
 
                             <div class="tab-content">
                                 <div id="details">
-                                    <div class="col-sm-6">
+                                    <div class="col-md-12">
                                         <div class="card">
                                             <div class="card-body">
                                                 <h4 class="card-title text-center">Product Specifications</h4>
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
-
-                                                            <li class="list-group-item"><b>Availability:</b></li>
-
+                                                            <li class="list-group-item"><b>Ram: </b>${product.ram} GB</li>
                                                             <li class="list-group-item"><b>Chipset:</b> ${product.chipset}</li>
-                                                            <li class="list-group-item"><b>RAM:</b> ${product.ram}</li>
-
-                                                            <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize}</li>
+                                                            <li class="list-group-item"><b>Screen Size:</b> ${product.screenSize} inch</li>
                                                             <li class="list-group-item"><b>Screen Type:</b> ${product.screenType}</li>
                                                             <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
-
                                                         </ul>
                                                     </div>
                                                     <div class="col-sm-6">
                                                         <ul class="list-group list-group-flush">
-
-                                                            <li class="list-group-item"><b>Resolution:</b> ${product.resolution}</li>
-
                                                             <li class="list-group-item"><b>Battery Capacity:</b> ${product.batteryCapacity}</li>
                                                             <li class="list-group-item"><b>Operating System:</b> ${product.os}</li>
                                                             <li class="list-group-item"><b>SIM Type:</b> ${product.simType}</li>
@@ -498,14 +491,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div id="reviews">
-                                    <div class="col-sm-6">
-                                        <h4><b>${product.description}</b></h4>
-
-                                        <img src="${product.imageURL}" alt="alt"/>
                                     </div>
                                 </div>
                             </div>
@@ -700,62 +685,65 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
-
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    var colorSelector = document.getElementById("colorSelector");
-            var storageSelector = document.getElementById("storageSelector");
-            var defaultColor = colorSelector.options[0].value;
-            var defaultStorage = storageSelector.options[0].value;
-            // Cập nhật thông tin ngay khi tải trang
-            updateProductInfo(defaultColor, defaultStorage);
-            // Cập nhật khi thay đổi color hoặc storage
-            colorSelector.addEventListener("change", function() {
+     <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var colorSelector = document.getElementById("colorSelector");
+        var storageSelector = document.getElementById("storageSelector");
+        var defaultColor = colorSelector.options[0].value;
+        var defaultStorage = storageSelector.options[0].value;
+      
+        updateProductInfo(defaultColor, defaultStorage);
+      
+        colorSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
-            });
-            storageSelector.addEventListener("change", function() {
+        });
+        
+        storageSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
-updateProductInfo(selectedColor, selectedStorage);
-            });
-                });
-                
-            function updateProductInfo(color, storage) {
-                    var productId = '${product.id}'; var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
+            updateProductInfo(selectedColor, selectedStorage);
+        });
+    });
+
+    function updateProductInfo(color, storage) {
+        var productId = '${product.id}';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
             if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
-            document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
-            document.getElementById("productStock").innerText = data.stock;
-            // Cập nhật max của quantity dựa trên stock
-            document.getElementById("quantity").max = data.stock;
-            // Vô hiệu hóa nút "Add to cart" nếu hết hàng
-            document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
+                var stockElement = document.getElementById("productStock");
+                if (data.stock > 0) {
+                    stockElement.innerText = "In stock";
+                } else if (data.stock == 0) {
+                    stockElement.innerText = "Out of stock";
+                }
+
+                document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
             } else {
-            console.error("Error fetching product info: " + xhr.status);
+                console.error("Error fetching product info: " + xhr.status);
+                document.getElementById("productPrice").innerText = "Error";
+                document.getElementById("productStock").innerText = "Error";
+            }
+        };
+        xhr.onerror = function() {
+            console.error("Request failed");
             document.getElementById("productPrice").innerText = "Error";
             document.getElementById("productStock").innerText = "Error";
-            }
-            };
-            xhr.onerror = function() {
-            console.error("Request failed");
-                document.getElementById("productPrice").innerText = "Error";
-            document.getElementById("productStock").innerText = "Error";
-                };
-            xhr.send();
-            }
-            
-            function formatPrice(price) {
-                return price.toLocaleString('vi-VN');
-                         }
-                        </script>
-                            <script>
-                            let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false"%>;
-                                console.log("không nhận được",isLoggedIn);
-                                    </script>            
+        };
+        xhr.send();
+    }
+
+    function formatPrice(price) {
+        return price.toLocaleString('vi-VN');
+    }
+</script>
+        <script>
+                                        let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
+                                            console.log("không nhận được",isLoggedIn);
+        </script>       
 </html>

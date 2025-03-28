@@ -171,8 +171,8 @@
                             <div style="color: red;">${error}</div>
                         </c:if>
                         <h2>Add New User</h2>
-                       
-                        <form action="UserDetailController?action=addUser" method="post">
+
+                        <form action="UserDetailController?action=addUser" method="post" enctype="multipart/form-data">
                             <c:set var="user" value="${user}" />
                             <input type="hidden" type="text" name="userId" value="${user.id}"/>
                             <!-- User Name -->
@@ -185,7 +185,10 @@
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required />
-
+                            </div>
+                            <div class="form-group">
+                                <label for="image">Profile Image</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" />
                             </div>
 
                             <!-- Password -->
@@ -210,11 +213,11 @@
                             </div>
 
                             <!-- Date of Birth -->
-                           <div class="form-group">
-    <label for="dateOfBirth">Date of Birth</label>
-    <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
-           max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
-</div>
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" 
+                                       max="<%= new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()) %>" />
+                            </div>
 
                             <!-- Role -->
 
@@ -226,12 +229,10 @@
                                             <option value="${role.roleId}" ${role.roleId == user.roleId ? 'selected' : ''}>${role.roleName}</option>
                                         </c:if>
                                     </c:forEach>
-
-
                                 </select>
                             </div>
 
-                            <!-- Status (Active/Inactive) -->
+
                             <div class="form-group">
                                 <label for="isDisabled">Status</label>
                                 <select class="form-control" id="isDisabled" name="isDisabled" required>
@@ -240,7 +241,7 @@
                                 </select>
                             </div>
 
-                            <!-- Submit Button -->
+
                             <button type="submit" class="btn btn-primary">Add User</button>
                             <a href="UserController" class="btn btn-primary">Cancel</a>
                         </form>

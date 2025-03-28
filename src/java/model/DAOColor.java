@@ -24,7 +24,7 @@ public class DAOColor extends DBConnection {
     // Thêm màu mới
     public int addColor(Color color) {
         int n = 0;
-        String sql = "INSERT INTO Color (colorName, status) VALUES (?, ?)";
+        String sql = "INSERT INTO Colors (colorName, status) VALUES (?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
             pre.setString(2, color.getStatus());
@@ -56,7 +56,7 @@ public class DAOColor extends DBConnection {
 
     public Vector<Color> getColorById(int id) {
         Vector<Color> colors = new Vector<>();
-        String sql = "SELECT * FROM Color WHERE id = ?";
+        String sql = "SELECT * FROM Colors WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, id);
             ResultSet rs = pre.executeQuery();
@@ -77,7 +77,7 @@ public class DAOColor extends DBConnection {
     // Cập nhật thông tin màu
     public int updateColor(Color color) {
         int n = 0;
-        String sql = "UPDATE Color SET colorName = ?, status = ? WHERE id = ?";
+        String sql = "UPDATE Colors SET colorName = ?, status = ? WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, color.getColorName());
             pre.setString(2, color.getStatus());
@@ -92,7 +92,7 @@ public class DAOColor extends DBConnection {
     // Xóa màu
     public int deleteColor(int id) {
         int n = 0;
-        String sql = "DELETE FROM Color WHERE id = ?";
+        String sql = "DELETE FROM Colors WHERE id = ?";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, id);
             n = pre.executeUpdate();
@@ -104,7 +104,7 @@ public class DAOColor extends DBConnection {
 
     // Lấy danh sách màu có phân trang
     public List<Color> getPaginatedColors(int page, int pageSize) throws SQLException {
-        String sql = "SELECT * FROM Color ORDER BY id ASC LIMIT ? OFFSET ?";
+        String sql = "SELECT * FROM Colors ORDER BY id ASC LIMIT ? OFFSET ?";
         List<Color> colors = new ArrayList<>();
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, pageSize);
