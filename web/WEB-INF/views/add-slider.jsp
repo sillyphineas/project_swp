@@ -26,158 +26,39 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .btn-container {
+                display: flex;
+                justify-content: center; /* Centers the buttons */
+                gap: 20px; /* Adds space between the buttons */
+                margin-top: 20px; /* Adds some margin above the buttons */
+            }
+            .btn-custom {
+                padding: 12px 25px;
+                font-size: 16px;
+                font-weight: bold;
+                border-radius: 5px;
+            }
+
+            .btn-back {
+                background-color: #0083C9;
+                color: #333;
+                border: 1px solid #ccc;
+            }
+
+            .btn-success {
+                background-color: #5cb85c;
+                border-color: #4cae4c;
+                color: white;
+            }
+
+            .btn-back:hover,
+            .btn-success:hover {
+                opacity: 0.8;
+            }
+        </style>
     </head><!--/head-->
-    <style>
-        /* Tổng thể giao diện */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 0;
-        }
 
-        /* Định dạng form */
-        .form-control {
-            font-size: 16px;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 100%; /* Đảm bảo form rộng 100% */
-            box-sizing: border-box; /* Bao gồm padding và border trong kích thước */
-        }
-
-        .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-
-        /* Button */
-        .btn {
-            font-size: 16px;
-            padding: 12px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-
-        /* Tạo khoảng cách giữa các phần tử */
-        .container {
-            margin-top: 30px;
-        }
-
-        /* Định dạng bảng */
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table th, table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        table tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        table tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        /* Liên kết "View Detail" */
-        a {
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        a:hover {
-            color: #0056b3;
-        }
-
-        /* Phân trang */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .pagination li {
-            margin-right: 5px;
-        }
-
-        .pagination li a {
-            padding: 8px 16px;
-            background-color: #f1f1f1;
-            color: #007bff;
-            text-decoration: none;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .pagination li a:hover {
-            background-color: #ddd;
-        }
-
-        .pagination li.active a {
-            background-color: #007bff;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .form-control {
-                width: 100%;
-            }
-
-            .container {
-                margin-top: 20px;
-            }
-
-            table th, table td {
-                padding: 10px;
-            }
-
-            .btn {
-                width: 100%;
-            }
-        }
-
-    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -240,13 +121,13 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-<!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
+                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                    <% 
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
                                     <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
                                     <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
                                         <% } else { %>
@@ -278,6 +159,7 @@
                                     <li><a href="SliderController" class="active">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -287,26 +169,36 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="container">
-            <h2>Add Slider</h2>
+        <div class="container" style="margin-top: 10px; max-width: 600px;">
+            <h2 style="font-size: 28px; font-weight: bold; text-align: center; margin-bottom: 20px;">Add Slider</h2>
+
             <!-- Display success or error message -->
             <c:if test="${not empty message}">
-                <div class="alert alert-${messageType}">
+                <div class="alert alert-${messageType}" style="margin-bottom: 20px; font-size: 16px; padding: 15px; border-radius: 5px;">
                     ${message}
                 </div>
             </c:if>
-            <form action="${pageContext.request.contextPath}/SliderController" method="post">
-                <input type="text" name="title" placeholder="Title" class="form-control" required /><br>
-                <textarea name="content" placeholder="Content" class="form-control" required></textarea><br>
-                <input type="text" name="imageURL" placeholder="Image URL" class="form-control" /><br>
-                <input type="text" name="backlinks" placeholder="Backlinks" class="form-control" /><br>
-                <select name="status" class="form-control">
-                    <option value="visible">Visible</option>
-                    <option value="hidden">Hidden</option>
-                </select><br><br>
-                <button type="submit" name="action" value="add" class="btn btn-success">Add Slider</button>
+
+            <form action="${pageContext.request.contextPath}/SliderController" method="post" style="background-color: #f8f8f8; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 15px;">
+                    <input type="text" name="title" placeholder="Title" class="form-control" required style="padding: 10px; font-size: 16px; height: 60px" />
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" name="imageURL" placeholder="Image URL" class="form-control" required style="padding: 10px; font-size: 16px; height: 60px" />
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" name="backlinks" placeholder="Backlinks" class="form-control" required style="padding: 10px; font-size: 16px; height: 60px" />
+                </div>
+                <div class="btn-container" style="text-align: center; margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+                    <div style="text-align: center; margin-bottom: 20px; width: 48%">
+                        <button type="submit" name="action" value="add" class="btn btn-success btn-custom">Add Slider</button>
+                    </div>
+                    <div style="text-align: center; width: 48%">
+                        <a href="${pageContext.request.contextPath}/SliderController" class="btn btn-back btn-custom" style="color: white ">Back to List</a>
+                    </div>
+                </div>
             </form>
-            <a href="${pageContext.request.contextPath}/SliderController">Back to Slider List</a>
+
         </div>
 
         <footer id="footer"><!--Footer-->

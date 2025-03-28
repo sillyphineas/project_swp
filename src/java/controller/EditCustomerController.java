@@ -94,8 +94,6 @@ public class EditCustomerController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        System.out.println("id "+id);
-        String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
         String name = request.getParameter("name");
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
@@ -109,8 +107,7 @@ public class EditCustomerController extends HttpServlet {
         DAOUser dao = new DAOUser();
         User customer = dao.getUserById(id);
 
-        if (customer != null) {
-            customer.setEmail(email);
+        if (customer != null) {            
             customer.setPhoneNumber(phoneNumber);
             customer.setName(name);  // Cập nhật tên
             customer.setGender(gender);  // Cập nhật giới tính

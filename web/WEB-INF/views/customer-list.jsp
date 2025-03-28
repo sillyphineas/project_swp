@@ -29,285 +29,231 @@
             <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
             <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
-            <!-- Direct CSS for Style Enhancements -->
-            <style>
-                /* Search and Filter Form */
-                /* Cập nhật lại form để các phần tử căn chỉnh đúng */
-                .form-section {
-                    display: flex;
-                    justify-content: flex-start;  /* Căn trái các phần tử */
-                    gap: 10px;  /* Giảm khoảng cách giữa các phần tử */
-                    align-items: center;  /* Căn giữa theo chiều dọc */
-                    margin-bottom: 20px;
-                }
-
-                form {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: 10px;
-                    margin-bottom: 20px;
-                }
-
-                form input {
-                    padding: 10px;
-                    font-size: 16px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    width: 200px;  /* Giữ chiều rộng đồng nhất */
-                    height: 40px;  /* Căn chỉnh chiều cao cho đồng nhất */
-                }
-
-                /* Cập nhật các button trong form để có kích thước bằng nhau */
-                /* Đảm bảo các button có chiều cao và chiều rộng đồng nhất */
-                button, .btn {
-                    padding: 10px 20px;
-                    font-size: 16px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    height: 35px;  /* Đảm bảo chiều cao giống nhau */
-                    width: 100px;  /* Chiều rộng đồng nhất cho các button */
-                    text-align: center;  /* Căn giữa chữ trong button */
-                }
-
-                button:hover, .btn:hover {
-                    opacity: 0.8; /* Thêm hiệu ứng hover */
-                }
-
-                /* Responsive cho các button trên màn hình nhỏ */
-                @media screen and (max-width: 768px) {
-                    button, .btn {
-                        width: 100%;  /* Button chiếm toàn bộ chiều rộng trên thiết bị nhỏ */
-                    }
-                }
-
-                /* Đảm bảo button trong bảng có cùng kích thước */
-                .table button {
-                    display: inline-block; /* Đảm bảo các button nằm cùng một hàng */
-                    width: auto;  /* Không cố định chiều rộng */
-                    margin-right: 10px; /* Khoảng cách giữa các button */
-                    height: 35px;
-                    padding: 6px 15px;
-                    font-size: 13px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-
-                .table td a {
-                    display: inline-block; /* Đảm bảo liên kết nằm ngang */
-                    margin-right: 10px; /* Khoảng cách giữa các button */
-                    padding: 6px 15px;
-                    font-size: 13px;
-                    height: 35px;
-                    border-radius: 4px;
-                    cursor: pointer;
-                }
-
-
-                /* Thêm một chút padding cho các button bên ngoài bảng (form) */
-                .form-section button {
-                    width: 100px;
-                    height: 35px;
-                }
-
-
-
-
-                /* Pagination Styling */
-                .pagination {
-                    text-align: center; /* Căn giữa các liên kết phân trang */
-                    margin-top: 20px;
-                    display: flex;
-                    justify-content: center; /* Căn giữa phần tử con (nút phân trang) */
-                    align-items: center; /* Đảm bảo rằng phần tử được căn giữa theo chiều dọc */
-                    width: 100%; /* Chiếm toàn bộ chiều rộng của phần tử cha */
-                }
-
-                .pagination a {
-                    margin: 0 5px;
-                    padding: 8px 16px;
-                    background-color: #f39c12;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 4px;
-                    transition: background-color 0.3s;
-                }
-
-                .pagination a:hover {
-                    background-color: #e67e22;
-                }
-
-
-                /* Table Styling */
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 30px;
-                }
-
-                table th, table td {
-                    padding: 12px;
-                    text-align: left;
-                    border: 1px solid #ddd;
-                    background-color: #f9f9f9;
-                }
-
-                /*            table th {
-                                background-color: #f1c40f;
-                                color: white;
-                                font-weight: bold;
-                            }*/
-
-                table tr:nth-child(even) {
-                    background-color: #f2f2f2;
-                }
-
-                table tr:hover {
-                    background-color: #f0e68c;
-                }
-
-                /* Responsive Styling */
-                @media screen and (max-width: 768px) {
-                    form {
-                        flex-direction: column;
-                        align-items: flex-start;
-                    }
-
-                    form input{
-                        width: 100%;
-                    }
-
-                    form button {
-                        width: 100%;
-                        margin-top: 10px;
-                    }
-                }
-
-            </style>
 
         </head><!--/head-->
 
         <body>
             <header id="header"><!--header-->
-            <div class="header_top"><!--header_top-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="contactinfo">
-                                <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="social-icons pull-right">
-                                <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!--/header_top-->
-
-            <div class="header-middle"><!--header-middle-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                <div class="header_top"><!--header_top-->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="contactinfo">
+                                    <ul class="nav nav-pills">
+                                        <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                        <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                     </ul>
                                 </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="social-icons pull-right">
+                                    <ul class="nav navbar-nav">
+                                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-8">
-                            <div class="shop-menu pull-right">
-                                <ul class="nav navbar-nav">
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
-                                </ul>
+                    </div>
+                </div><!--/header_top-->
+
+                <div class="header-middle"><!--header-middle-->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="logo pull-left">
+                                    <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                </div>
+                                <div class="btn-group pull-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                            USA
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">Canada</a></li>
+                                            <li><a href="#">UK</a></li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
+                                            DOLLAR
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="#">Canadian Dollar</a></li>
+                                            <li><a href="#">Pound</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="shop-menu pull-right">
+                                    <ul class="nav navbar-nav">
+                                        <!--                                        <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
+                                                                                <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
+                                        <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                        <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                            <% } else { %>
+                                        <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                            <% } %>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div><!--/header-middle-->
+                </div><!--/header-middle-->
 
-            <div class="header-bottom"><!--header-bottom-->
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <div class="navbar-header">
-                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">Toggle navigation</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                </button>
+                <div class="header-bottom"><!--header-bottom-->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                </div>
+                                <div class="mainmenu pull-left">
+                                    <ul class="nav navbar-nav collapse navbar-collapse">
+                                        <li><a href="MarketingDashboardController">Home</a></li>
+                                        <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
+                                        <li><a href="SliderController">Slider List</a></li>
+                                        <li><a href="CustomerController" class="active">Customer List</a></li>
+                                        <li><a href="MarketingProductController">Product List</a></li>
+                                        <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="mainmenu pull-left">
-                                <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="MarketingDashboardController" class="active">Home</a></li>
-                                    <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
-                                    <li><a href="SliderController">Slider List</a></li>
-                                    <li><a href="CustomerController">Customer List</a></li>
-                                    <li><a href="MarketingProductController">Product List</a></li>
-                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
+                            <div class="col-sm-3">
+                                <form method="get" action="CustomerController" style="display: flex; gap: 10px; align-items: center;">
+                                    <div >
+                                        <input type="text" name="search" class="form-control d-inline-block" placeholder="Search by Name, Email, Phone">
+                                    </div> 
 
-                                </ul>
+                                    <div >
+                                        <button type="submit" class="btn btn-warning" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">Search</button>
+                                    </div>
+                                </form>
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                </div>
-            </div><!--/header-bottom-->
-        </header><!--/header-->
+                </div><!--/header-bottom-->
+            </header><!--/header-->
             <section id="settings-section">
+                <style>
+                    /* CSS chỉ áp dụng cho phần này */
+                    #settings-section .form-section {
+                        display: flex;
+                        justify-content: flex-start;
+                        gap: 10px;
+                        align-items: center;
+                        margin-bottom: 20px;
+                    }
+
+                    #settings-section form {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                    }
+
+                    #settings-section form input, #settings-section form select {
+                        padding: 10px;
+                        font-size: 16px;
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                        width: 200px;
+                        height: 40px;
+                    }
+
+                    #settings-section button, #settings-section .btn {
+                        padding: 10px 20px;
+                        font-size: 16px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        height: 35px;
+                        width: 100px;
+                        text-align: center;
+                    }
+
+                    #settings-section button:hover, #settings-section .btn:hover {
+                        opacity: 0.8;
+                    }
+
+                    #settings-section .pagination {
+                        text-align: center;
+                        margin-top: 20px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                    }
+
+                    #settings-section .pagination a {
+                        margin: 0 5px;
+                        padding: 8px 16px;
+                        background-color: #f39c12;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 4px;
+                        transition: background-color 0.3s;
+                    }
+
+                    #settings-section .pagination a:hover {
+                        background-color: #e67e22;
+                    }
+
+                    #settings-section table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-top: 30px;
+                    }
+
+                    #settings-section table th, #settings-section table td {
+                        padding: 12px;
+                        text-align: left;
+                        border: 1px solid #ddd;
+                        background-color: #f9f9f9;
+                    }
+
+                    #settings-section table tr:nth-child(even) {
+                        background-color: #f2f2f2;
+                    }
+
+                    #settings-section table tr:hover {
+                        background-color: #f0e68c;
+                    }
+
+                    @media screen and (max-width: 768px) {
+                        #settings-section form {
+                            flex-direction: column;
+                            align-items: flex-start;
+                        }
+
+                        #settings-section form input, #settings-section form select {
+                            width: 100%;
+                        }
+
+                        #settings-section form button {
+                            width: 100%;
+                            margin-top: 10px;
+                        }
+                    }
+                </style>
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-12">
@@ -360,7 +306,7 @@
                                             <td style="text-align: center">
                                                 <a href="CustomerController?service=changeStatus&id=${customer.id}" class="btn btn-info btn-sm" style="font-size: 13px; margin: 0 2px; display: inline-block;">Change</a>
                                                 <a href="CustomerDetailController?id=${customer.id}" class="btn btn-success" style="font-size: 13px; margin: 0 2px; display: inline-block;">View</a>
-                                                <a href="EditCustomerController?id=${customer.id}" class="btn btn-warning" style="font-size: 13px; margin: 0 2px; display: inline-block;">Edit</a>
+<!--                                                <a href="EditCustomerController?id=${customer.id}" class="btn btn-warning" style="font-size: 13px; margin: 0 2px; display: inline-block;">Edit</a>-->
                                             </td>
                                         </tr>
                                     </c:forEach>

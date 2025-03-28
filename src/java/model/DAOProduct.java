@@ -1255,6 +1255,53 @@ public Vector<Product> getProductsByFilter(int brandID, String searchQuery, doub
         return stats;
     }
 
+    public Vector<Product> getNewProductsForHomePage(int page, int itemsPerPage) {
+        Vector<Product> productList = new Vector<>();
+
+        // Tính toán chỉ mục bắt đầu cho phân trang
+        int startIndex = (page - 1) * itemsPerPage;
+
+        // SQL để lấy sản phẩm theo phân trang
+        String sql = "SELECT * FROM Products WHERE isDisabled = 0 ORDER BY createAt DESC LIMIT ?, ?";
+
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, startIndex);  // Chỉ mục bắt đầu
+            pre.setInt(2, itemsPerPage); // Số lượng sản phẩm mỗi trang
+
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                Product product = new Product(
+                        rs.getInt("id"),
+                        rs.getInt("brandID"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        rs.getBoolean("isDisabled"),
+                        rs.getInt("feedbackCount"),
+                        rs.getString("status"),
+                        rs.getString("imageURL"),
+                        rs.getString("chipset"),
+                        rs.getInt("ram"),
+                        rs.getDouble("screenSize"),
+                        rs.getString("screenType"),
+                        rs.getString("resolution"),
+                        rs.getInt("batteryCapacity"),
+                        rs.getString("cameraSpecs"),
+                        rs.getString("os"),
+                        rs.getString("simType"),
+                        rs.getString("connectivity"),
+                        rs.getDate("createAt"),
+                        rs.getInt("createdBy")
+                );
+                productList.add(product);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return productList;
+    }
+
     public static void main(String[] args) {
         // Make sure DBConnection is properly initialized
         DAOProduct daoProduct = new DAOProduct();

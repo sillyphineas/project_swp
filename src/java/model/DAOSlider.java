@@ -57,14 +57,15 @@ public class DAOSlider extends DBConnection {
 
     public int addSlider(Blog blog) {
         int result = 0;
-        String sql = "INSERT INTO Blogs (authorID, postTime, title, content, imageURL, backlinks, status, isSlider, isDisabled) VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0)";
+        String sql = "INSERT INTO Blogs (authorID, postTime, title, imageURL, backlinks, content, status, isSlider, isDisabled) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, blog.getAuthorID());
             ps.setString(2, blog.getPostTime());
             ps.setString(3, blog.getTitle());
-            ps.setString(4, blog.getContent());
-            ps.setString(5, blog.getImageURL());
-            ps.setString(6, blog.getBacklinks());
+            ps.setString(4, blog.getImageURL());
+            ps.setString(5, blog.getBacklinks());
+            ps.setString(6, ""); // Giá trị mặc định cho content
             ps.setString(7, blog.getStatus());
             result = ps.executeUpdate();
         } catch (SQLException ex) {
@@ -148,11 +149,27 @@ public class DAOSlider extends DBConnection {
         return n;
     }
 
-    public List<Blog> getSlidersByStatus(String status) throws SQLException {
-        String sql = "SELECT * FROM Blogs WHERE isDisabled = ? AND isSlider = 1";
+    public List<Blog> getSlidersByStatus(String status, int page, int pageSize) throws SQLException {
+        String sql;
+        if (status != null && !status.isEmpty()) {
+            sql = "SELECT * FROM Blogs WHERE isSlider = 1 AND isDisabled = ? ORDER BY postTime DESC LIMIT ? OFFSET ?";
+        } else {
+            sql = "SELECT * FROM Blogs WHERE isSlider = 1 ORDER BY postTime DESC LIMIT ? OFFSET ?";
+        }
+
         List<Blog> sliders = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status);
+            int paramIndex = 1;
+
+            // Nếu có filter status, set parameter cho status
+            if (status != null && !status.isEmpty()) {
+                ps.setString(paramIndex++, status);
+            }
+
+            // Set pageSize và offset cho phân trang
+            ps.setInt(paramIndex++, pageSize);
+            ps.setInt(paramIndex++, (page - 1) * pageSize); // Offset = (page - 1) * pageSize
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 sliders.add(new Blog(
@@ -170,6 +187,27 @@ public class DAOSlider extends DBConnection {
             }
         }
         return sliders;
+    }
+
+    public int getTotalSlidersByStatus(String status) throws SQLException {
+        String sql;
+        if (status != null && !status.isEmpty()) {
+            sql = "SELECT COUNT(*) FROM Blogs WHERE isSlider = 1 AND isDisabled = ?";
+        } else {
+            sql = "SELECT COUNT(*) FROM Blogs WHERE isSlider = 1";
+        }
+
+        int total = 0;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            if (status != null && !status.isEmpty()) {
+                ps.setString(1, status);
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        }
+        return total;
     }
 
     public Blog getSliderById(int id) throws SQLException {
@@ -197,28 +235,28 @@ public class DAOSlider extends DBConnection {
     }
 
     public static void main(String[] args) {
-        // Tạo đối tượng DAOSlider
         DAOSlider dao = new DAOSlider();
 
-        // Tạo một đối tượng Blog để cập nhật
-        Blog sliderToUpdate = new Blog();
-        sliderToUpdate.setId(1);  // Chọn ID của blog cần cập nhật
-        sliderToUpdate.setTitle("Updated Slider Title");
-        sliderToUpdate.setContent("This is the updated content of the slider.");
-        sliderToUpdate.setImageURL("https://example.com/updated-image.jpg");
-        sliderToUpdate.setBacklinks("https://example.com/updated-backlink");
-        sliderToUpdate.setStatus("visible");  // Cập nhật trạng thái
-        sliderToUpdate.setIsSlider(true);     // Giữ trạng thái là slider
-        sliderToUpdate.setIsDisabled(false);  // Giữ trạng thái là không bị ẩn
+        // Create a new Blog object to represent the slider
+        Blog newSlider = new Blog();
+        newSlider.setTitle("Test Slider Title");
+        newSlider.setContent("This is the content for the new slider.");
+        newSlider.setImageURL("https://example.com/slider-image.jpg");
+        newSlider.setBacklinks("https://example.com/backlink");
+        newSlider.setStatus("visible");  // Set the slider status
+        newSlider.setPostTime(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
+        newSlider.setAuthorID(1);  // Set the author's ID (this should come from the session or the user)
+        newSlider.setIsSlider(true); // Mark this as a slider
+        newSlider.setIsDisabled(false);  // Make sure the slider is not disabled initially
 
-        // Gọi hàm updateSlider để cập nhật slider
-        int result = dao.UpdateSlider(sliderToUpdate);
+        // Add the new slider to the database
+        int result = dao.addSlider(newSlider);
 
-        // Kiểm tra kết quả
+        // Check the result and print appropriate message
         if (result > 0) {
-            System.out.println("Slider updated successfully.");
+            System.out.println("Slider added successfully!");
         } else {
-            System.out.println("Failed to update slider.");
+            System.out.println("Failed to add the slider.");
         }
     }
 

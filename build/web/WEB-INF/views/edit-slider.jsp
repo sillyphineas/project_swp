@@ -28,125 +28,7 @@
             <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
             <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
             <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-            <style>
-                .inactive-status {
-                    color: red; /* Màu đỏ cho trạng thái Inactive */
-                    font-weight: bold;
-                }
 
-                .active-status {
-                    color: green; /* Màu xanh cho trạng thái Active */
-                    font-weight: bold;
-                }
-
-                /* Container của phần Update Customer */
-                #update-setting-section {
-                    padding: 30px;
-                    background-color: #fff;
-                    margin-top: 50px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                }
-
-                /* Tiêu đề của phần Update Customer */
-                #update-setting-section h2 {
-                    text-align: center;
-                    color: #333;
-                    font-size: 28px;
-                    margin-bottom: 30px;
-                }
-
-                /* Phần thông báo lỗi */
-                #update-setting-section .message {
-                    color: red;
-                    font-weight: bold;
-                    text-align: center;
-                    margin-bottom: 20px;
-                    font-size: 16px;
-                }
-
-                /* Định dạng các trường nhập liệu */
-                #update-setting-section form {
-                    max-width: 600px;
-                    margin: 0 auto;
-                }
-
-                #update-setting-section form div {
-                    margin-bottom: 20px;
-                }
-
-                #update-setting-section label {
-                    font-size: 16px;
-                    font-weight: bold;
-                    color: #333;
-                    display: block;
-                    margin-bottom: 8px;
-                }
-
-                #update-setting-section input[type="text"],
-                #update-setting-section input[type="email"],
-                #update-setting-section input[type="radio"] {
-                    width: 100%;
-                    padding: 12px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    box-sizing: border-box;
-                    font-size: 16px;
-                    color: #333;
-                }
-
-                #update-setting-section input[type="radio"] {
-                    width: auto;
-                    margin-right: 10px;
-                }
-
-                /* Định dạng nút Save Changes */
-                #update-setting-section button {
-                    padding: 12px 20px;
-                    background-color: #f39c12;
-                    color: white;
-                    font-size: 16px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                    display: block;
-                    width: 100%;
-                    text-align: center;
-                    margin-top: 20px;
-                }
-
-                #update-setting-section button:hover {
-                    background-color: #e67e22;
-                }
-
-                /* Responsive Design */
-                @media screen and (max-width: 768px) {
-                    #update-setting-section {
-                        padding: 20px;
-                    }
-
-                    #update-setting-section h2 {
-                        font-size: 22px;
-                    }
-
-                    #update-setting-section label {
-                        font-size: 14px;
-                    }
-
-                    #update-setting-section input[type="text"],
-                    #update-setting-section input[type="email"] {
-                        padding: 10px;
-                        font-size: 14px;
-                    }
-
-                    #update-setting-section button {
-                        font-size: 14px;
-                    }
-                }
-
-
-            </style>
         </head><!--/head-->
 
         <body>
@@ -249,6 +131,7 @@
                                         <li><a href="SliderController" class="active">Slider List</a></li>
                                         <li><a href="CustomerController">Customer List</a></li>
                                         <li><a href="MarketingProductController">Product List</a></li>
+                                        <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -258,33 +141,40 @@
                 </div><!--/header-bottom-->
             </header><!--/header-->
             <section id="update-setting-section">
-                <div class="container">
+                <div class="container" style="max-width: 800px; margin-top: 10px; padding: 30px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
                     <div class="row">
                         <div class="col-sm-12">
-                            <h2>Edit Slider</h2>
+                            <h2 style="font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 30px; color: #333;">Edit Slider</h2>
                             <form action="${pageContext.request.contextPath}/SliderController" method="post">
-                                <div>
+                                <div style="margin-bottom: 20px;">
                                     <input type="hidden" name="id" value="${slider.id}" />
                                 </div>
-                                <div>
-                                    <label for="title">Title:</label>
-                                    <input type="text" name="title" value="${slider.title}" required><br>
+                                <div style="margin-bottom: 20px;">
+                                    <label for="title" style="font-size: 18px; font-weight: bold; color: #444;">Title:</label>
+                                    <input type="text" name="title" value="${slider.title}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;">
                                 </div>
-                                <div>
-                                    <label for="imageURL">Image URL:</label>
-                                    <input type="text" name="imageURL" value="${slider.imageURL}" required><br>
+                                <div style="margin-bottom: 20px;">
+                                    <label for="imageURL" style="font-size: 18px; font-weight: bold; color: #444;">Image URL:</label>
+                                    <input type="text" name="imageURL" value="${slider.imageURL}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;">
                                 </div>
-                                <div>
-                                    <label for="backlinks">Backlinks:</label>
-                                    <input type="text" name="backlinks" value="${slider.backlinks}" required><br>
+                                <div style="margin-bottom: 20px;">
+                                    <label for="backlinks" style="font-size: 18px; font-weight: bold; color: #444;">Backlinks:</label>
+                                    <input type="text" name="backlinks" value="${slider.backlinks}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;">
                                 </div>
-                                <button type="submit" name="action" value="updateSlider">Update</button>
-                            </form>
+                                <div style="text-align: center; margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+                                    <!-- Update Button -->
+                                    <button type="submit" name="action" value="updateSlider" style="padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 5px; background-color: orange; color: white; border: none; cursor: pointer; width: 48%;">Save Change</button>
 
+                                    <!-- Back Button -->
+                                    <a href="${pageContext.request.contextPath}/SliderController?service=viewDetail&id=${slider.id}" class="btn btn-info" style="padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 5px; background-color: #5bc0de; color: white; text-decoration: none; border: none; cursor: pointer; width: 48%;">Back</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </section>
+
+
             <footer id="footer"><!--Footer-->
                 <div class="footer-top">
                     <div class="container">

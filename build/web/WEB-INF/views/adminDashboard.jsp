@@ -37,94 +37,46 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .other-statistics {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .other-statistics div {
+                flex: 1;
+                min-width: 200px;
+                padding: 20px;
+                background-color: transparent;
+                border-radius: 0;
+                box-shadow: none;
+                display: flex;
+                flex-direction: column;  /* Đảm bảo mỗi ô có thể hiển thị các phần tử theo cột */
+                justify-content: center;
+            }
+
+            .other-statistics h4 {
+                font-size: 18px;
+                color: #333;
+                font-weight: normal;
+                margin: 0;
+            }
+
+            .other-statistics h4 span {
+                font-size: 20px;
+                font-weight: bold;
+                color: #007bff;
+                display: block;  /* Đảm bảo giá trị hiển thị dưới tên */
+            }
+
+        </style>
     </head><!--/head-->
-    <style>
 
-        .content {
-            margin: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group input {
-            margin-right: 10px;
-        }
-        .stat-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .stat-list li {
-            margin-bottom: 10px;
-        }
-        .stat-list h3 {
-            margin-top: 20px;
-        }
-        canvas {
-            max-width: 100%;
-            margin-top: 30px;
-        }
-        /* Container cho nội dung */
-        .content {
-            padding: 30px;
-            background-color: #f9f9f9;
-            margin: 0 auto;
-        }
-
-        /* Thống kê khác sẽ chiếm toàn bộ chiều rộng */
-        .statistics-container {
-            margin-bottom: 30px;
-            width: 100%;
-        }
-
-        /* Cập nhật cấu trúc Flexbox để các phần tử con nằm ngang */
-        .statistics-item {
-            flex: 1;
-            margin-right: 15px;
-        }
-
-        /* Đảm bảo rằng các phần tử có chiều rộng hợp lý */
-        .table-container, .chart-container {
-            width: 48%; /* Cả bảng và biểu đồ sẽ chiếm 48% chiều rộng của container */
-            display: inline-block; /* Đảm bảo các phần tử sẽ nằm cạnh nhau */
-            margin-top: 30px;
-        }
-
-        /* Đảm bảo "Other Statistics" nằm trên một hàng riêng */
-        /* Cấu hình Flexbox để các phần tử trong 'Other Statistics' nằm trên một hàng ngang */
-        .other-statistics {
-            display: flex;
-
-            justify-content: space-between;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-
-        }
-
-        .other-statistics div {
-            flex: 1 1 45%; /* Chiếm 45% chiều rộng của container và co giãn khi cần */
-            margin-right: 15px; /* Khoảng cách giữa các phần tử */
-        }
-
-        .other-statistics div:last-child {
-            margin-right: 0; /* Loại bỏ margin phải của phần tử cuối cùng */
-        }
-
-        /* Đảm bảo các tiêu đề và nội dung có khoảng cách phù hợp */
-        h3, h4 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-
-        /* Cập nhật các kiểu cho bảng */
-        table {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -236,7 +188,8 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <div class="content" style="padding: 30px; background-color: #f9f9f9;">
+        <div class="container" >
+            <h2 style="margin-bottom: 30px">Admin Dashboard </h2>
             <!-- Phần chọn ngày -->
             <div class="row">
                 <div class="col-md-12 text-center">
@@ -254,78 +207,81 @@
                     </form>
                 </div>
             </div>
-
+            <h3>Statistic</h3>
             <div class="other-statistics">
+
                 <div>
                     <% 
-    Double totalRevenue = (Double) request.getAttribute("totalRevenue");
-    if (totalRevenue != null) {
-        NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
-        String formattedRevenue = currencyFormat.format(totalRevenue);
+                        Double totalRevenue = (Double) request.getAttribute("totalRevenue");
+                        if (totalRevenue != null) {
+                            NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("vi", "VN"));
+                            String formattedRevenue = currencyFormat.format(totalRevenue);
                     %>
-                    <h4>Total Revenue: <%= formattedRevenue %></h4>
+                    <h4>Total Revenue: <span><%= formattedRevenue %></span></h4>
                     <% 
                         } else { 
                     %>
-                    <h4>Total Revenue: 0</h4>
+                    <h4>Total Revenue: <span>0</span></h4>
                     <% 
                         } 
                     %>
-
                 </div>
                 <div>
-                    <h4>New Customers: <%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></h4>
+                    <h4>New Customers: <span><%= request.getAttribute("newCustomersCount") != null ? request.getAttribute("newCustomersCount") : "0" %></span></h4>
                 </div>
                 <div>
-                    <h4>New Buyers: <%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></h4>
+                    <h4>New Buyers: <span><%= request.getAttribute("newBuyersCount") != null ? request.getAttribute("newBuyersCount") : "0" %></span></h4>
                 </div>
                 <div>
-                    <h4>Average Rating: <%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></h4>
+                    <h4>Average Rating: <span><%= request.getAttribute("averageRating") != null ? request.getAttribute("averageRating") : "0" %></span></h4>
                 </div>
             </div>
 
 
-            <div class="statistics-container" style="display: flex; justify-content: space-between;">
-                <!-- Bảng Order Status Counts -->
-                <div class="table-container" style="width: 48%; box-sizing: border-box; padding-right: 10px;">
-                    <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Status Counts</h3>
-                    <table class="table table-bordered" style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
-                        <thead>
-                            <tr>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Order Status</th>
-                                <th style="text-align: center; padding: 8px; border: 1px solid #ddd;">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% 
+
+
+            <div class="statistics-container" >
+                <h3>Order status count</h3>
+                <% 
                                 Map<String, Integer> orderStatusCounts = (Map<String, Integer>) request.getAttribute("orderStatusCounts");
-                            %>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Delivered</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Cancelled</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Shipping</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Pickup</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %></td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">Refund</td>
-                                <td style="text-align: center; padding: 8px; border: 1px solid #ddd;"><%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                %>
+                <div class="order-status-container" style="background-color: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                        <div class="order-status-card" style="flex: 1; min-width: 200px; padding: 20px;">
+                            <h4 style="font-size: 18px; color: #333;">Delivered</h4>
+                            <p style="font-size: 20px; font-weight: bold; color: #007bff;">
+                                <%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Delivered", 0) : 0 %>
+                            </p>
+                        </div>
+                        <div class="order-status-card" style="flex: 1; min-width: 200px; padding: 20px;">
+                            <h4 style="font-size: 18px; color: #333;">Cancelled</h4>
+                            <p style="font-size: 20px; font-weight: bold; color: #007bff;">
+                                <%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Cancel", 0) : 0 %>
+                            </p>
+                        </div>
+                        <div class="order-status-card" style="flex: 1; min-width: 200px; padding: 20px;">
+                            <h4 style="font-size: 18px; color: #333;">Shipping</h4>
+                            <p style="font-size: 20px; font-weight: bold; color: #007bff;">
+                                <%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Shipping", 0) : 0 %>
+                            </p>
+                        </div>
+                        <div class="order-status-card" style="flex: 1; min-width: 200px; padding: 20px;">
+                            <h4 style="font-size: 18px; color: #333;">Pickup</h4>
+                            <p style="font-size: 20px; font-weight: bold; color: #007bff;">
+                                <%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Pickup", 0) : 0 %>
+                            </p>
+                        </div>
+                        <div class="order-status-card" style="flex: 1; min-width: 200px; padding: 20px;">
+                            <h4 style="font-size: 18px; color: #333;">Refund</h4>
+                            <p style="font-size: 20px; font-weight: bold; color: #007bff;">
+                                <%= orderStatusCounts != null ? orderStatusCounts.getOrDefault("Refund", 0) : 0 %>
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Biểu đồ Order Trend -->
-                <div class="chart-container" style="width: 48%; box-sizing: border-box; padding-left: 10px;">
+                <div class="chart-container" style=" box-sizing: border-box; padding-left: 10px;">
                     <h3 style="font-size: 24px; color: #333; margin-bottom: 20px;">Order Trend</h3>
                     <canvas id="orderTrendChart" style="width: 100%; height: 300px;"></canvas>
                     <script>

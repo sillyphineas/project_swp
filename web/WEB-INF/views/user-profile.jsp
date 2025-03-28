@@ -29,89 +29,72 @@
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
         <style>
-            /* Đặt lại phần mặc định, cơ bản cho toàn trang */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+            .profile-container {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 40px;
             }
 
-            body {
-                font-family: Arial, sans-serif;
-                background: #ffffff;
+            .profile-left {
+                text-align: center;
+                width: 30%;
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-right {
+                width: 65%;
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-left h3 {
+                font-size: 24px;
                 color: #333;
             }
 
-            /* Container bao quanh nội dung chính */
-            /*        .container {
-                        max-width: 100%;
-                        margin: 50px auto;
-                        background: #fff;
-                        padding: 30px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    }*/
-
-            h3 {
-                margin-bottom: 20px;
-                font-size: 28px;
-                text-align: center;
-                color: #444;
+            .profile-left p {
+                font-size: 16px;
+                color: #777;
             }
 
-            /* Container for the two tables */
-            .table-container {
-                display: flex;
-                justify-content: space-between; /* Aligns tables with space in between */
-                /*                gap: 20px;  Space between the two tables */
-                margin-top: 20px; /* Optional, adjust spacing from previous content */
-            }
-
-            /* Style for the tables */
             table {
-                width: 48%; /* Adjust width so that both tables fit side by side */
-                /*                border-collapse: collapse;*/
-                /*                background: #fff;*/
-                /*                border-radius: 8px;
-                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
-                padding: 10px;
+                width: 100%;
+                margin-bottom: 20px;
+                border-collapse: collapse;
             }
 
-            /* Table headers */
             th {
-                width: 30%;
                 text-align: left;
-                /*                background-color: #f0f0f0;*/
+                font-weight: bold;
+                color: #555;
             }
 
-            /* Table cells */
             td {
                 padding: 12px;
-                /*                border-bottom: 1px solid #ddd;*/
-                vertical-align: middle;
+                color: #777;
             }
 
-
-            /* Chỉnh sửa nút */
-            .button-group {
-                margin-top: 20px;
-                text-align: center;
-            }
-
-            .btn {
+            .button-group a {
                 display: inline-block;
-                margin: 0 10px;
-                padding: 12px 20px;
+                padding: 10px 20px;
                 font-size: 14px;
                 text-decoration: none;
                 border-radius: 5px;
-                color: #fff;
-                background: #007bff;
                 transition: background 0.3s ease;
             }
 
+            .btn {
+                background-color: #007bff;
+                color: #fff;
+            }
+
             .btn:hover {
-                background: #0056b3;
+                background-color: #0056b3;
             }
 
             .btn-back {
@@ -122,6 +105,7 @@
                 background-color: #495057;
             }
         </style>
+
     </head><!--/head-->
 
     <body>
@@ -228,41 +212,47 @@
 
         <div class="container">
             <h1>User Profile</h1>
-            <div class="profile-image" style="text-align: center">
-                <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
-            </div>
-            <h3>${user.name}</h3>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <th>Email:</th>
-                        <td>${user.email}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone:</th>
-                        <td>${user.phoneNumber}</td>
-                    </tr>
-                </table>
+            <div class="profile-container">
+                <!-- Profile Image and Name -->
+                <div class="profile-left">
+                    <div class="profile-image" style="text-align: center; margin-bottom: 20px;">
+                        <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
+                    </div>
+                    <h3 style="text-align: center; font-size: 24px; color: #333;">${user.name}</h3>
+                    
+                </div>
 
-                <table>
-                    <tr>
-                        <th>Gender:</th>
-                        <td>${user.gender ? 'Male' : 'Female'}</td>
-                    </tr>
-                    <tr>
-                        <th>Date of Birth:</th>
-                        <td>${user.dateOfBirth}</td>
-                    </tr>
-                </table>
-            </div>
+                <!-- Profile Details and Buttons -->
+                <div class="profile-right" style="padding-left: 30px;">
+                    <table style="width: 100%; margin-bottom: 20px;">
+                        <tr>
+                            <th>Email:</th>
+                            <td>${user.email}</td>
+                        </tr>
+                        <tr>
+                            <th>Phone:</th>
+                            <td>${user.phoneNumber}</td>
+                        </tr>
+                        <tr>
+                            <th>Gender:</th>
+                            <td>${user.gender ? 'Male' : 'Female'}</td>
+                        </tr>
+                        <tr>
+                            <th>Date of Birth:</th>
+                            <td>${user.dateOfBirth}</td>
+                        </tr>
+                    </table>
 
-            <div class="button-group">
-
-                <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}">Update Profile</a>
-                <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}">Change Password</a>
-                <a class="btn btn-back" href="HomePageController">Back to Home</a>
+                    <!-- Buttons -->
+                    <div class="button-group" style="text-align: center;">
+                        <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}" style="margin: 10px;">Update Profile</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}" style="margin: 10px;">Change Password</a>                       
+                        <a class="btn btn-back" href="HomePageController" style="margin: 10px; background-color: #6c757d; color: white;">Back to Home</a>
+                    </div>
+                </div>
             </div>
         </div>
+
 
 
 
