@@ -121,7 +121,7 @@ public class HomePageController extends HttpServlet {
         }
         java.util.List<Blog> recentBlogs = null;
         try {
-            recentBlogs = daoBlog.getPaginatedBlogs(1, 3);
+            recentBlogs = daoBlog.getPaginatedBlogs(1, 4);
         } catch (SQLException ex) {
             Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -131,7 +131,9 @@ public class HomePageController extends HttpServlet {
             double minPrice = dao.getMinPriceForProduct(product.getId());
             request.setAttribute("minPrice_" + product.getId(), minPrice);
         }
-
+        
+        Vector<Product> latestProducts = dao.getNewProductsForHomePage(1, 3);
+        request.setAttribute("latestProducts", latestProducts);
         request.setAttribute("products", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);

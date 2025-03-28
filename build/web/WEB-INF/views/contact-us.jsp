@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="entity.User"%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -29,6 +30,128 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            /* Đảm bảo code này ở CUỐI, sau các file bootstrap.min.css, main.css, v.v. */
+
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #fff;
+            }
+            .contact-section {
+                text-align: center;
+                padding: 40px 20px;
+            }
+            .contact-section h1 {
+                margin: 0;
+                font-size: 2rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .contact-section p {
+                margin-top: 10px;
+                color: #444;
+            }
+
+            /* Container gộp 2 cột */
+            .contact-container {
+                display: flex;
+                /* Không cho xuống hàng khi đủ rộng */
+                flex-wrap: nowrap;
+                /* Kéo cột thấp bằng cột cao */
+                align-items: stretch;
+
+                /* Nếu bootstrap có .row .col, ta KHÔNG dùng .col-... ở đây */
+                margin: 0 auto;       /* canh giữa */
+                max-width: 1200px;    /* giới hạn bề ngang */
+                background-color: #fff;
+            }
+
+            /* Cột trái: Thông tin liên hệ */
+            .contact-info {
+                display: flex;
+                flex-direction: column;
+                flex: 1;              /* tỉ lệ 1 */
+                min-width: 300px;
+                background-color: #2f2f2f;
+                color: #fff;
+                padding: 40px 30px;
+                box-sizing: border-box; /* gộp padding vào chiều cao */
+            }
+            .contact-info h2 {
+                margin-top: 0;
+                font-size: 1.2rem;
+                text-transform: uppercase;
+                margin-bottom: 20px;
+                letter-spacing: 1px;
+            }
+            .contact-info .info-block {
+                margin-bottom: 30px;
+            }
+            .contact-info .info-block i {
+                font-size: 1.3rem;
+                margin-right: 12px;
+                color: #f1f1f1;
+            }
+            .contact-info .info-block p {
+                margin: 0;
+                line-height: 1.6;
+            }
+            .contact-info .social {
+                margin-top: 20px;
+            }
+            .contact-info .social a {
+                display: inline-block;
+                margin-right: 10px;
+                color: #fff;
+                font-size: 1.2rem;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+            .contact-info .social a:hover {
+                color: #ccc;
+            }
+
+            /* Cột phải: Google Map */
+            .contact-map {
+                flex: 2;             /* cột phải to hơn */
+                min-width: 300px;
+                background-color: #fafafa;
+
+                display: flex;       /* cho iframe fill hết chiều cao */
+                flex-direction: column;
+
+                /* Thêm padding giống cột trái nếu muốn cân đối */
+                padding: 40px 30px;
+                box-sizing: border-box;
+            }
+            .contact-map iframe {
+                flex: 1;
+                width: 100%;
+                border: none;
+                min-height: 450px; /* Giữ map đủ lớn */
+            }
+
+            /* Responsive: màn hình nhỏ thì cho 2 cột xếp dọc */
+            @media (max-width: 768px) {
+                .contact-container {
+                    flex-wrap: wrap;         /* cột map xuống dưới info */
+                    align-items: flex-start; /* hủy stretch khi xếp dọc */
+                }
+                .contact-info,
+                .contact-map {
+                    width: 100%;
+                    flex: none;
+                }
+                .contact-map {
+                    padding: 20px;  /* có thể giảm padding ở mobile */
+                }
+                .contact-map iframe {
+                    flex: none;
+                    min-height: 300px;
+                }
+            }
+        </style>
     </head><!--/head-->
 
     <body>
@@ -39,19 +162,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -64,40 +187,34 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-                                    <li><a href="CartURL?service=checkOut"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                    <li><a href="CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-                                    <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
+
+
+                                    <%
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
+                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
+                                    
+                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
+                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% }%>
                                 </ul>
                             </div>
                         </div>
@@ -119,100 +236,98 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL">Blog List</a></li>
-                                        </ul>
-                                    </li> 
-                                    <li><a href="404.html">404</a></li>
-                                    <li><a href="contact-us.html" class="active">Contact</a></li>
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header><!--/header-->
+        </header>
 
-        <div id="contact-page" class="container">
-            <div class="bg">
-                <div class="row">    		
-                    <div class="col-sm-12">    			   			
-                        <h2 class="title text-center">Contact <strong>Us</strong></h2>    			    				    				
-                        <div id="gmap" class="contact-map">
-                        </div>
-                    </div>			 		
-                </div>    	
-                <div class="row">  	
-                    <div class="col-sm-8">
-                        <div class="contact-form">
-                            <h2 class="title text-center">Get In Touch</h2>
-                            <div class="status alert alert-success" style="display: none"></div>
-                            <form id="main-contact-form" class="contact-form row" name="contact-form" method="post">
-                                <div class="form-group col-md-6">
-                                    <input type="text" name="name" class="form-control" required="required" placeholder="Name">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input type="email" name="email" class="form-control" required="required" placeholder="Email">
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <input type="text" name="subject" class="form-control" required="required" placeholder="Subject">
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <textarea name="message" id="message" required="required" class="form-control" rows="8" placeholder="Your Message Here"></textarea>
-                                </div>                        
-                                <div class="form-group col-md-12">
-                                    <input type="submit" name="submit" class="btn btn-primary pull-right" value="Submit">
-                                </div>
-                            </form>
-                        </div>
+        <div class="contact-section">
+            <h1>CONTACT US</h1>
+            <p>We align leaders around a shared purpose and strategic story that catalyzes their business and brand to take action.</p>
+        </div>
+
+        <!-- Khối bao gồm thông tin liên hệ (trái) và map (phải) -->
+        <div class="contact-container">
+
+            <!-- Cột bên trái: Thông tin -->
+            <div class="contact-info">
+                <h2>Contact Details</h2>
+
+                <!-- Address -->
+                <div class="info-block">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>Yen My, Hung Yen <br> Viet Nam</p>
+                </div>
+
+                <!-- Email -->
+                <div class="info-block">
+                    <i class="fas fa-envelope"></i>
+                    <p>
+                        haiductran712@gmail.com<br>
+                        dquangdat04@gmail.com
+                    </p>
+                </div>
+
+                <!-- Phone -->
+                <div class="info-block">
+                    <i class="fas fa-phone-alt"></i>
+                    <p>+84 373 335 357<br>
+                        +84 335 125 198</p>
+                </div>
+
+                <!-- Mạng xã hội -->
+                <div class="info-block">
+                    <h2>Contact us</h2>
+                    <p>Contact us for a quote. Help or to join the team.</p>
+                    <div class="social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest"></i></a>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="contact-info">
-                            <h2 class="title text-center">Contact Info</h2>
-                            <address>
-                                <p>E-Shopper Inc.</p>
-                                <p>935 W. Webster Ave New Streets Chicago, IL 60614, NY</p>
-                                <p>Newyork USA</p>
-                                <p>Mobile: +2346 17 38 93</p>
-                                <p>Fax: 1-714-252-0026</p>
-                                <p>Email: info@e-shopper.com</p>
-                            </address>
-                            <div class="social-networks">
-                                <h2 class="title text-center">Social Networking</h2>
-                                <ul>
-                                    <li>
-                                        <a href="#"><i class="fa fa-facebook"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-google-plus"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-youtube"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>    			
-                </div>  
-            </div>	
-        </div><!--/#contact-page-->
+                </div>
+            </div>
+
+            <!-- Cột bên phải: Google Map -->
+            <div class="contact-map">
+                <!-- Thay src bằng location Google Maps bạn mong muốn -->
+                <iframe
+                    src="https://www.google.com/maps?q=20.870016,105.984966&hl=vi&z=14&output=embed"
+                    style="border:0; width:100%;"
+                    allowfullscreen=""
+                    loading="lazy">
+                </iframe>
+
+
+            </div>
+
+        </div>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

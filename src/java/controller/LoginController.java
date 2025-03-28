@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.DAOOrder;
 import model.DAOUser;
 
 /**
@@ -101,6 +102,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("user", daouser.getUserByEmail(email));
             session.setAttribute("userID", user.getId());
             response.getWriter().write("success:" + daouser.getUserByEmail(email).getRoleId());
+            DAOOrder daoOrder = new DAOOrder();
         } else {
             response.getWriter().write("Invalid account");
         }

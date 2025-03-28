@@ -20,11 +20,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DAOCart;
 import model.DAOCartItem;
 import model.DAOOrder;
@@ -145,7 +148,6 @@ public class VNPayReturnServlet extends HttpServlet {
             newOrder.setRecipientName((String) session.getAttribute("newFullName"));
             newOrder.setRecipientPhone((String) session.getAttribute("newPhone"));
             newOrder.setAssignedSaleId(3);
-
             Payment newPayment = new Payment();
 
             newPayment.setPaymentStatus("Paid");
@@ -185,7 +187,13 @@ public class VNPayReturnServlet extends HttpServlet {
                     variantNames.put(variantId, variantName);
                     daoProductVariant.reduceStock(variantId, quantity);
                 }
-                daoCartItem.clearCart(customerID);
+                for (CartItem item : selectedCartItems) {
+                    try {
+                        daoCartItem.removeCartItem(item.getCartItemID());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
 
                 List<OrderDetail> details = daoOrderDetail.getOrderDetailsByOrderId(OrderId);
 

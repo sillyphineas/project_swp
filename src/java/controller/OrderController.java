@@ -1,243 +1,226 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
+import entity.Address;
 import entity.CartItem;
 import entity.User;
-import entity.Cart;
 import entity.Order;
 import entity.OrderDetail;
 import entity.Payment;
+import entity.Voucher;
 import helper.Authorize;
-import jakarta.servlet.RequestDispatcher;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import model.DAOCart;
-import model.DAOCartItem;
-import model.DAOOrder;
-import model.DAOOrderDetail;
-import model.DAOProductVariant;
-import helper.EmailUtil;
-import java.util.HashMap;
-import java.util.Map;
-import model.DAOPayment;
-import model.DAOProduct;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import model.*;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
-/**
- *
- * @author HP
- */
 @WebServlet(name = "OrderController", urlPatterns = {"/OrderController"})
 public class OrderController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet OrderController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet OrderController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
+
         HttpSession session = request.getSession(false);
-        User user = null;
-        if (session != null) {
-            user = (User) session.getAttribute("user");
-        }
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
+
         if (!Authorize.isAccepted(user, "/OrderController")) {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
-        String service = request.getParameter("service");
 
-        if (service.equals("orderSuccess")) {
+        String service = request.getParameter("service");
+        if ("orderSuccess".equals(service)) {
             request.getRequestDispatcher("/WEB-INF/views/order-success.jsp").forward(request, response);
-        }
-        if (service.equals("cancelOrder")) {
+        } else if ("cancelOrder".equals(service)) {
             request.getRequestDispatcher("/WEB-INF/views/checkout.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String service = request.getParameter("service");
         HttpSession session = request.getSession(false);
+        User user = (session != null) ? (User) session.getAttribute("user") : null;
 
-        if (service.equals("createOrder")) {
-            String paymentMethod = request.getParameter("paymentMethod");
-            User user = (User) session.getAttribute("user");
+        if ("createOrder".equals(service)) {
+            // Kiểm tra đăng nhập
             if (user == null) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("LoginController");
                 return;
             }
-            int customerID = user.getId();
-            DAOCartItem daoCartItem = new DAOCartItem();
+
+            // Lấy thông tin form
+            String fullName = request.getParameter("newFullName");
+            String phone = request.getParameter("newPhone");
+            String address = request.getParameter("addressSelect");
+            String paymentMethod = request.getParameter("paymentMethod");
+
+            // Validate cơ bản
+            if (fullName == null || fullName.trim().isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập Họ tên người nhận");
+                forwardToCheckout(request, response);
+                return;
+            }
+            if (phone == null || phone.trim().isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập Số điện thoại");
+                forwardToCheckout(request, response);
+                return;
+            }
+            if (!phone.matches("\\d{9,11}")) {
+                request.setAttribute("error", "Số điện thoại không hợp lệ");
+                forwardToCheckout(request, response);
+                return;
+            }
+            if (paymentMethod == null || (!paymentMethod.equals("1") && !paymentMethod.equals("2"))) {
+                request.setAttribute("error", "Vui lòng chọn phương thức thanh toán");
+                forwardToCheckout(request, response);
+                return;
+            }
+
+            // Lấy giỏ hàng đã chọn
+            List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+            if (selectedCartItems == null || selectedCartItems.isEmpty()) {
+                request.setAttribute("error", "EmptyCart");
+                forwardToCheckout(request, response);
+                return;
+            }
+
+            // Lấy discountedTotal
+            String discountedTotalParam = request.getParameter("discountedTotal");
+            BigDecimal discountedTotal = BigDecimal.ZERO;
+            if (discountedTotalParam != null && !discountedTotalParam.isEmpty()) {
+                try {
+                    discountedTotal = new BigDecimal(discountedTotalParam);
+                } catch (NumberFormatException e) {
+                    discountedTotal = BigDecimal.ZERO;
+                }
+            }
+
+            // Lấy voucherId (chuỗi rỗng => null)
+            String voucherIdParam = request.getParameter("voucherId");
+            // Dùng Integer thay vì int, để có thể là null
+            Integer intVoucherId = null;
+            if (voucherIdParam != null && !voucherIdParam.trim().isEmpty()) {
+                try {
+                    intVoucherId = Integer.valueOf(voucherIdParam.trim());
+                } catch (NumberFormatException e) {
+                    // Nếu parse lỗi => để null
+                }
+            }
+
+            // Chuẩn bị DAO
             DAOOrder daoOrder = new DAOOrder();
             DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
             DAOPayment daoPayment = new DAOPayment();
-            
+            DAOCartItem daoCartItem = new DAOCartItem();
+            DAOProductVariant daoProductVariant = new DAOProductVariant();
 
-            List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
-            System.out.println(selectedCartItems);
-            if (selectedCartItems == null || selectedCartItems.isEmpty()) {
-                response.sendRedirect("checkout.jsp?error=EmptyCart");
-                return;
+            // Tính tổng gốc (trước khi áp voucher)
+            double totalAmount = 0;
+            for (CartItem ci : selectedCartItems) {
+                totalAmount += ci.getTotalPrice().doubleValue();
             }
+            // Nếu voucherId là null => người dùng không chọn
+            if (intVoucherId == null) {
+                discountedTotal = BigDecimal.valueOf(totalAmount);
+            }
+
+            // Tạo Order
+            Date now = new Date();
+            Order newOrder = new Order();
+            newOrder.setBuyerID(user.getId());
+            newOrder.setOrderTime(now);
+            newOrder.setOrderStatus("Awaiting Pickup");
+            newOrder.setShippingAddress(address);
+            newOrder.setTotalPrice(totalAmount);
+            newOrder.setDiscountedPrice(discountedTotal.doubleValue());
+            // Nếu intVoucherId == null => setVoucherID(null)
+            newOrder.setVoucherID(intVoucherId);
+            newOrder.setRecipientName(fullName);
+            newOrder.setRecipientPhone(phone);
+            newOrder.setAssignedSaleId(3);
+
             if ("1".equals(paymentMethod)) {
-                System.out.println("Bat dau ");
-                Date time = new Date();
-                double totalAmount = 0.0;
+                // Thanh toán COD
+                int orderId = daoOrder.addOrder(newOrder);
+                if (orderId > 0) {
+                    // Tạo Payment
+                    Payment newPayment = new Payment();
+                    newPayment.setPaymentStatus("Pending");
+                    newPayment.setPaymentMethodId(1); // COD
+                    newPayment.setAmount(discountedTotal.doubleValue());
+                    newPayment.setNote("");
+                    newPayment.setConfirmBy(null);
+                    newPayment.setOrderId(orderId);
+                    daoPayment.addPayment(newPayment);
 
-                if (selectedCartItems != null) {
-                    for (CartItem item : selectedCartItems) {
-                        totalAmount += item.getTotalPrice().doubleValue();
+                    // Lưu order detail, giảm stock
+                    for (CartItem ci : selectedCartItems) {
+                        OrderDetail detail = new OrderDetail();
+                        detail.setOrderId(orderId);
+                        detail.setProductVariantID(ci.getProductVariantID());
+                        detail.setQuantity(ci.getQuantity());
+                        daoOrderDetail.addOrderDetail(detail);
+
+                        // Giảm stock
+                        daoProductVariant.reduceStock(ci.getProductVariantID(), ci.getQuantity());
+
+                        // Xoá cartItem
+                        daoCartItem.delete(ci.getCartItemID());
                     }
-                }
 
-                Order newOrder = new Order();
-                newOrder.setBuyerID(customerID);
-                newOrder.setOrderTime(time);
-                newOrder.setOrderStatus("Awaiting Pickup");
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(time);
-                calendar.add(Calendar.DATE, 3);
-                newOrder.setShippingAddress(request.getParameter("addressSelect"));
-                newOrder.setTotalPrice(totalAmount);
-                newOrder.setDiscountedPrice(0.0);
-                newOrder.setDisabled(false);
-                newOrder.setVoucherID(null);
-                newOrder.setRecipientName(request.getParameter("newFullName"));
-                newOrder.setRecipientPhone(request.getParameter("newPhone"));
-                newOrder.setAssignedSaleId(3);
+                    // Xoá session
+                    session.removeAttribute("selectedCartItems");
+                    session.removeAttribute("totalOrderPrice");
 
-  
-                Payment newPayment = new Payment();
-                
-                newPayment.setPaymentStatus("Pending");
-                newPayment.setPaymentMethodId(1);
-                newPayment.setAmount(totalAmount);
-                newPayment.setNote("");
-                newPayment.setConfirmBy(null);
-                
-                int OrderId = daoOrder.addOrder(newOrder);
-                
-                newPayment.setOrderId(OrderId);
-                daoPayment.addPayment(newPayment);
-                
-                for (CartItem item : selectedCartItems) {
-                    OrderDetail newOrderDetail = new OrderDetail();
-                    newOrderDetail.setOrderId(OrderId);
-                    newOrderDetail.setProductVariantID(item.getProductVariantID());
-                    newOrderDetail.setQuantity(item.getQuantity());
-                    System.out.println("OrderId" + newOrderDetail.getOrderId());
-                    System.out.println("ProductVariantID" + newOrderDetail.getProductVariantID());
-                    System.out.println("Quantity" + newOrderDetail.getQuantity());
-                    daoOrderDetail.addOrderDetail(newOrderDetail);
-                }
-                if (OrderId > 0) {
-                    DAOProductVariant daoProductVariant = new DAOProductVariant();
-                    DAOProduct daoProduct = new DAOProduct();
-                    Map<Integer, String> variantNames = new HashMap<>();
-                    for (CartItem item : selectedCartItems) {
-                        int variantId = item.getProductVariantID();
-                        int quantity = item.getQuantity();
-                        int productId = daoProductVariant.getProductVariantById(variantId).getProduct_id();
-                        String variantName = daoProduct.getProductById(productId).getName();
-                        variantNames.put(variantId, variantName);
-                        System.out.println(variantId);
-                        System.out.println(quantity);
-                        daoProductVariant.reduceStock(variantId, quantity);
-                        
-                    }
-                    daoCartItem.clearCart(customerID);
-
-                    List<OrderDetail> details = daoOrderDetail.getOrderDetailsByOrderId(OrderId);
-
-                    EmailUtil.sendOrderMail(user.getEmail(), newOrder, details, variantNames);
+                    // Điều hướng sang trang thành công
                     response.sendRedirect("OrderController?service=orderSuccess");
                 } else {
                     response.sendRedirect("order-fail.jsp");
                 }
+
             } else if ("2".equals(paymentMethod)) {
-                double totalAmount = 0.0;
+                // Thanh toán VNPay
+                // (Chưa tạo order ngay, chỉ lưu tạm data => VNPayPaymentServlet)
+                session.setAttribute("addressSelect", address);
+                session.setAttribute("newFullName", fullName);
+                session.setAttribute("newPhone", phone);
+                session.setAttribute("voucherId", intVoucherId);
+                session.setAttribute("discountedTotal", discountedTotal);
 
-                if (selectedCartItems != null) {
-                    for (CartItem item : selectedCartItems) {
-                        totalAmount += item.getTotalPrice().doubleValue();
-                    }
-                }
-                request.setAttribute("amount", totalAmount);
-                session.setAttribute("addressSelect", request.getParameter("addressSelect"));
-                session.setAttribute("newFullName", request.getParameter("newFullName"));
-                session.setAttribute("newPhone", request.getParameter("newPhone"));
-                RequestDispatcher rd = request.getRequestDispatcher("VNPayPaymentServlet");
-                rd.forward(request, response);
-
-            } else {
-
-                response.sendRedirect("checkout.jsp?error=NoPaymentMethodSelected");
+                request.getRequestDispatcher("VNPayPaymentServlet").forward(request, response);
             }
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+    private void forwardToCheckout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+            if (selectedCartItems != null) {
+                request.setAttribute("cartItems", selectedCartItems);
+            }
+            BigDecimal totalOrderPrice = (BigDecimal) session.getAttribute("totalOrderPrice");
+            if (totalOrderPrice != null) {
+                request.setAttribute("totalOrderPrice", totalOrderPrice);
+            }
+            Vector<Voucher> vouchers = (Vector<Voucher>) session.getAttribute("vouchers");
+            if (vouchers != null) {
+                request.setAttribute("vouchers", vouchers);
+            }
+            List<Address> addresses = (List<Address>) session.getAttribute("userAddresses");
+            if (addresses != null) {
+                request.setAttribute("userAddresses", addresses);
+            }
+        }
+        request.getRequestDispatcher("WEB-INF/views/checkout.jsp").forward(request, response);
+    }
 }

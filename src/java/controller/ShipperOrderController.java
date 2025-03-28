@@ -102,6 +102,8 @@ public class ShipperOrderController extends HttpServlet {
             String newShippingStatus = request.getParameter("newShippingStatus");
             DAOShipping daoShipping = new DAOShipping();
             DAOOrder daoOrder = new DAOOrder();
+            java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+            daoShipping.updateArrival(orderId, shipperId, currentDate);
             daoShipping.updateShippingStatus(orderId, shipperId, newShippingStatus);
             daoOrder.updateStatus(orderId, newShippingStatus);
 

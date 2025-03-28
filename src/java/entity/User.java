@@ -5,30 +5,31 @@ import java.sql.Timestamp;
 
 public class User {
 
-    private int id;                // ID của user
-    private String name;           // Tên user
-    private String email;          // Email user
-    private String passHash;       // Mật khẩu (hash)
-    private boolean gender;        // Giới tính (true = Nam, false = Nữ)
-    private String phoneNumber;    // Số điện thoại
-    private String resetToken;     // Mã reset mật khẩu
-    private Timestamp resetTokenExpired;// Ngày hết hạn mã reset
-    private Date dateOfBirth;      // Ngày sinh
-    private int roleId;            // Vai trò (role ID)
-    private boolean isDisabled;    // Trạng thái vô hiệu hóa
-    private int updatedBy;         // Người cập nhật (tham chiếu đến id)
-    private Date updatedAt;        // Thời gian cập nhật
-    private byte[] image;          // Avatar người dùng (dữ liệu hình ảnh dưới dạng byte)
-    private Date registeredAt; // Ngày đăng ký
-    // Constructor không tham số
+    private int id;
+    private String name;
+    private String email;
+    private String passHash;
+    private boolean gender;
+    private String phoneNumber;
+    private String resetToken;
+    private Timestamp resetTokenExpired;
+    private Date dateOfBirth;
+    private int roleId;
+    private boolean isDisabled;
+    private int updatedBy;
+    private Date updatedAt;
+    private byte[] image;
+    private Date registeredAt;
+    private int point; // ✅ Trường mới
+
     public User() {
     }
 
-    // Constructor đầy đủ tham số
+    // ✅ Constructor đầy đủ có thêm point
     public User(int id, String name, String email, String passHash, boolean gender,
             String phoneNumber, String resetToken, Timestamp resetTokenExpired,
             Date dateOfBirth, int roleId, boolean isDisabled,
-            int updatedBy, Date updatedAt, byte[] image, Date registeredAt) {
+            int updatedBy, Date updatedAt, byte[] image, Date registeredAt, int point) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -36,17 +37,27 @@ public class User {
         this.gender = gender;
         this.phoneNumber = phoneNumber;
         this.resetToken = resetToken;
-        this.resetTokenExpired = resetTokenExpired; // bây giờ là Timestamp
-        this.dateOfBirth = dateOfBirth; // Có thể giữ nguyên kiểu Date cho ngày sinh
+        this.resetTokenExpired = resetTokenExpired;
+        this.dateOfBirth = dateOfBirth;
         this.roleId = roleId;
         this.isDisabled = isDisabled;
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
         this.image = image;
         this.registeredAt = registeredAt;
+        this.point = point;
     }
 
-    // Getters và Setters cho từng thuộc tính
+    // ✅ Getter & Setter cho point
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
+    // Các getter/setter còn lại
     public int getId() {
         return id;
     }
@@ -136,7 +147,7 @@ public class User {
             case 5:
                 return "Customer";
             default:
-                throw new AssertionError();
+                return "Unknown";
         }
     }
 
@@ -176,7 +187,6 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    // Getter và Setter cho trường image (avatar)
     public byte[] getImage() {
         return image;
     }
@@ -185,12 +195,6 @@ public class User {
         this.image = image;
     }
 
-    public String getStatus() {
-        if (this.isDisabled == true) {
-            return "Disabled";
-        }
-        return "Active";
-    }
     public Date getRegisteredAt() {
         return registeredAt;
     }
@@ -198,7 +202,11 @@ public class User {
     public void setRegisteredAt(Date registeredAt) {
         this.registeredAt = registeredAt;
     }
-    // Override toString() để dễ dàng hiển thị thông tin user
+
+    public String getStatus() {
+        return this.isDisabled ? "Disabled" : "Active";
+    }
+
     @Override
     public String toString() {
         return "User{"
@@ -216,6 +224,7 @@ public class User {
                 + ", updatedBy=" + updatedBy
                 + ", updatedAt=" + updatedAt
                 + ", registeredAt=" + registeredAt
+                + ", point=" + point
                 + ", image=" + (image != null ? "[image data]" : "null")
                 + '}';
     }

@@ -13,27 +13,30 @@ import java.util.Date;
 public class Voucher {
     private int VoucherID;
     private String VoucherCode;
-    private String VoucherType;
+    private int voucherTypeID;
     private String Description;
-    private String DiscountAmount;
+    private int Point;
     private Date StartDate;
     private Date ExpiredDate;
     private int UsageLimit;
     private boolean isDisabled;
+    private int Value;
+
 
     public Voucher() {
     }
 
-    public Voucher(int VoucherID, String VoucherCode, String VoucherType, String Description, String DiscountAmount, Date StartDate, Date ExpiredDate, int UsageLimit, boolean isDisabled) {
+    public Voucher(int VoucherID, String VoucherCode, int voucherTypeID, String Description, int Point, Date StartDate, Date ExpiredDate, int UsageLimit, boolean isDisabled, int Value) {
         this.VoucherID = VoucherID;
         this.VoucherCode = VoucherCode;
-        this.VoucherType = VoucherType;
+        this.voucherTypeID = voucherTypeID;
         this.Description = Description;
-        this.DiscountAmount = DiscountAmount;
+        this.Point = Point;
         this.StartDate = StartDate;
         this.ExpiredDate = ExpiredDate;
         this.UsageLimit = UsageLimit;
         this.isDisabled = isDisabled;
+        this.Value = Value;
     }
 
     public int getVoucherID() {
@@ -52,12 +55,21 @@ public class Voucher {
         this.VoucherCode = VoucherCode;
     }
 
-    public String getVoucherType() {
-        return VoucherType;
+    public int getvoucherTypeID() {
+        return voucherTypeID;
     }
+    
+    public int getValue() {
+    return Value;
+}
 
-    public void setVoucherType(String VoucherType) {
-        this.VoucherType = VoucherType;
+public void setValue(int Value) {
+    this.Value = Value;
+}
+
+
+    public void setvoucherTypeID(int voucherTypeID) {
+        this.voucherTypeID = voucherTypeID;
     }
 
     public String getDescription() {
@@ -68,12 +80,12 @@ public class Voucher {
         this.Description = Description;
     }
 
-    public String getDiscountAmount() {
-        return DiscountAmount;
+    public int getPoint() {
+        return Point;
     }
 
-    public void setDiscountAmount(String DiscountAmount) {
-        this.DiscountAmount = DiscountAmount;
+    public void setPoint(int Point) {
+        this.Point = Point;
     }
 
     public Date getStartDate() {
@@ -110,7 +122,7 @@ public class Voucher {
 
     @Override
     public String toString() {
-        return "Voucher{" + "VoucherID=" + VoucherID + ", VoucherCode=" + VoucherCode + ", VoucherType=" + VoucherType + ", Description=" + Description + ", DiscountAmount=" + DiscountAmount + ", StartDate=" + StartDate + ", ExpiredDate=" + ExpiredDate + ", UsageLimit=" + UsageLimit + ", isDisabled=" + isDisabled + '}';
+        return "Voucher{" + "VoucherID=" + VoucherID + ", VoucherCode=" + VoucherCode + ", VoucherType=" + voucherTypeID + ", Description=" + Description + ", DiscountAmount=" + Point + ", StartDate=" + StartDate + ", ExpiredDate=" + ExpiredDate + ", UsageLimit=" + UsageLimit + ", isDisabled=" + isDisabled + '}';
     }
     
     

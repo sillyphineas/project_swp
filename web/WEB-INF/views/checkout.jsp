@@ -1,13 +1,48 @@
-<%-- 
-    Document   : checkout
-    Created on : Jan 18, 2025, 1:13:09 PM
-    Author     : HP
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.math.BigDecimal" %>
+<%@page import="entity.User" %>
+<%@page import="entity.Voucher" %>
+<%@page import="java.util.Vector" %>
+<%@page import="java.util.List" %>
+<%@page import="entity.CartItem" %>
+<%@page import="entity.Product" %>
+<%@page import="entity.ProductVariant" %>
+<%@page import="entity.Address" %>
+<%@page import="entity.Storage" %>
+<%@page import="entity.Color" %>
 
-<%@page import="java.util.List,entity.Cart,entity.CartItem,entity.Product,jakarta.servlet.http.HttpSession,entity.User,entity.ProductVariant,entity.Address,entity.Storage,entity.Color" %>
+<%
+    // Không khai báo lại session vì JSP đã có sẵn implicit object "session"
+    String error = (String) request.getAttribute("error");
 
+    // Lấy giỏ hàng, tổng tiền, danh sách voucher và địa chỉ từ session (nếu có), nếu không thì lấy từ request.
+    List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+    if (cartItems == null) {
+        cartItems = (List<CartItem>) request.getAttribute("cartItems");
+    }
+
+    BigDecimal totalOrderPrice = (BigDecimal) session.getAttribute("totalOrderPrice");
+    if (totalOrderPrice == null) {
+        totalOrderPrice = (BigDecimal) request.getAttribute("totalOrderPrice");
+    }
+    if (totalOrderPrice == null) {
+        totalOrderPrice = BigDecimal.ZERO;
+    }
+
+    Vector<Voucher> vouchers = (Vector<Voucher>) session.getAttribute("vouchers");
+    if (vouchers == null) {
+        vouchers = (Vector<Voucher>) request.getAttribute("vouchers");
+    }
+    // Nếu danh sách voucher rỗng, khởi tạo mới để tránh lỗi
+    if (vouchers == null || vouchers.isEmpty()) {
+        vouchers = new Vector<Voucher>();
+    }
+
+    List<Address> addresses = (List<Address>) session.getAttribute("userAddresses");
+    if (addresses == null) {
+        addresses = (List<Address>) request.getAttribute("userAddresses");
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -25,101 +60,86 @@
         <link href="css/responsive.css" rel="stylesheet">
         <link href="css/cart.css" rel="stylesheet">
         <!--[if lt IE 9]>
-        <script src="js/html5shiv.js"></script>
-        <script src="js/respond.min.js"></script>
-        <![endif]-->       
+            <script src="js/html5shiv.js"></script>
+            <script src="js/respond.min.js"></script>
+        <![endif]-->
         <link rel="shortcut icon" href="images/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    </head><!--/head-->
-    <style>
-
-        /* General styles for the form */
-        .shipping-address {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            max-width: 600px;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
-        }
-
-        h3 {
-            text-align: center;
-        }
-
-        #currentAddress p {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-        }
-
-        #currentAddress {
-            margin-bottom: 20px;
-        }
-
-        #addressOptions {
-            margin-top: 20px;
-        }
-
-        #defaultAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        #newAddress select, #newAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
-
-        #changeAddressBtn, #confirmAddressBtn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #ff7f00;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #changeAddressBtn:hover, #confirmAddressBtn:hover {
-            background-color: #e67000;
-        }
-
-        .submit-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-
-
-    </style>
-
+        <style>
+            /* General styles for the form */
+            .shipping-address {
+                margin-bottom: 20px;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                max-width: 600px;
+                margin: 0 auto;
+                font-family: Arial, sans-serif;
+            }
+            h3 {
+                text-align: center;
+            }
+            #currentAddress p {
+                margin: 0;
+                font-size: 16px;
+                color: #333;
+            }
+            #currentAddress {
+                margin-bottom: 20px;
+            }
+            #addressOptions {
+                margin-top: 20px;
+            }
+            #defaultAddress input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+            #newAddress select, #newAddress input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            #changeAddressBtn, #confirmAddressBtn {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 8px 16px;
+                background-color: #ff7f00;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            #changeAddressBtn:hover, #confirmAddressBtn:hover {
+                background-color: #e67000;
+            }
+            .submit-container {
+                text-align: center;
+                margin-top: 30px;
+            }
+            .submit-btn {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                border: none;
+            }
+            .submit-btn:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -185,7 +205,7 @@
                                     <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                        <% 
+                                        <%
                                             Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                             User user = (User) session.getAttribute("user");
                                             if (isLoggedIn != null && isLoggedIn) {
@@ -241,84 +261,113 @@
                 </div>
             </div><!--/header-bottom-->
         </header><!--/header-->
+
         <section id="checkout_section">
             <div class="container" style="max-width: 800px; margin: auto;">
                 <div class="shipping-address">
                     <h3 style="font-size: 24px; font-weight: bold; color: #333;">Shipping Information</h3>
+
+                    <% if (error != null) {%>
+                    <div style="color: red; font-weight: bold; margin-bottom: 10px;">
+                        <%= error%>
+                    </div>
+                    <% } %>
+
                     <form id="orderForm" action="OrderController" method="POST">
                         <input type="hidden" name="service" value="createOrder">
+
+                        <!-- Chọn địa chỉ giao hàng -->
                         <label for="addressSelect" style="font-weight: bold;">Select Shipping Address:</label>
                         <select name="addressSelect" id="addressSelect" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                            <% 
-                                List<Address> addresses = (List<Address>) request.getAttribute("userAddresses"); 
-                            %>
-                            <% if (addresses != null && !addresses.isEmpty()) { %>
-                            <% for (Address addr : addresses) { %>
-                            <option value="<%= addr.getId() %>">
-                                <%= addr.getAddress() %>, <%= addr.getDistrict() %>, <%= addr.getCity() %>
+                            <% if (addresses != null && !addresses.isEmpty()) {
+                                    for (Address addr : addresses) {%>
+                            <option value="<%= addr.getId()%>">
+                                <%= addr.getAddress()%>, <%= addr.getDistrict()%>, <%= addr.getCity()%>
                             </option>
-                            <% } %>
-                            <% } else { %>
+                            <% }
+                            } else { %>
                             <option value="">No address available. Please add a new one!</option>
                             <% } %>
                         </select>
 
                         <h4 style="font-size: 20px; font-weight: bold; color: #555;">Recipient Information</h4>
-                        <input type="text" name="newFullName" placeholder="Full Name *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        <input type="text" name="newPhone" placeholder="Phone Number *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newFullName" placeholder="Full Name *" required style="width: 100%; margin-bottom: 10px;">
+                        <input type="text" name="newPhone" placeholder="Phone Number *" required style="width: 100%; margin-bottom: 10px;">
 
                         <div class="review-payment">
                             <h3 style="font-size: 22px; font-weight: bold; color: #333;">Review & Payment</h3>
                         </div>
 
+                        <!-- Hiển thị giỏ hàng -->
                         <div class="cart_info">
-                            <% 
-                                List<CartItem> cartItems = (List<CartItem>) request.getAttribute("cartItems"); 
-                                if (cartItems != null && !cartItems.isEmpty()) { 
+                            <% if (cartItems != null && !cartItems.isEmpty()) {
                                     for (CartItem item : cartItems) {
                                         Product product = item.getProduct();
-                                        ProductVariant productVariant = item.getProductVariant();
+                                        ProductVariant variant = item.getProductVariant();
                                         Color color = item.getColor();
                                         Storage storage = item.getStorage();
                             %>
                             <div style="display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 15px;">
-                                <img src="<%= product.getImageURL() %>" alt="Product" style="width: 80px; height: 80px; border-radius: 5px; margin-right: 15px;">
+                                <img src="<%= product.getImageURL()%>" style="width: 80px; height: 80px; margin-right: 15px;">
                                 <div>
-                                    <p style="margin: 0; font-weight: bold; font-size: 16px; color: #333;"><%= product.getName() %></p>
-                                    <p style="margin: 2px 0; color: #666; font-size: 14px;">
-                                        Color: <%= item.getColor().getColorName() %> / Storage: <%= item.getStorage().getCapacity() %>GB
+                                    <p style="margin: 0; font-weight: bold; font-size: 16px;"><%= product.getName()%></p>
+                                    <p style="margin: 2px 0; font-size: 14px; color: #666;">
+                                        Color: <%= color != null ? color.getColorName() : ""%> /
+                                        Storage: <%= storage != null ? storage.getCapacity() : ""%>GB
                                     </p>
                                     <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">
-                                        ₫<%= String.format("%,.0f", item.getPrice()) %> x <%= item.getQuantity() %>
+                                        ₫<%= String.format("%,.0f", item.getPrice())%> x <%= item.getQuantity()%>
                                     </p>
                                     <p style="margin: 2px 0; font-weight: bold; color: #e74c3c;">
-                                        Total: ₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue()) %>
+                                        Total: ₫<%= String.format("%,.0f", item.getTotalPrice().doubleValue())%>
                                     </p>
                                 </div>
                             </div>
-                            <% } } else { %>
-                            <p style="text-align: center; font-size: 16px; color: #777;">Your cart is empty!</p>
+                            <%   }
+                            } else { %>
+                            <p style="text-align: center; color: #777;">Your cart is empty!</p>
+                            <% }%>
+                        </div>
+
+                        <!-- hidden fields -->
+                        <!-- CHÚ Ý: voucherId="" => gửi chuỗi rỗng khi không có voucher -->
+                        <input type="hidden" name="discountedTotal" id="discountedTotal" value="<%= totalOrderPrice%>">
+                        <input type="hidden" name="voucherId" id="voucherId" value="">
+
+                        <h3 style="font-weight: bold; color: #e74c3c;">
+                            Total: ₫<span id="totalDisplay"><%= String.format("%,.0f", totalOrderPrice)%></span>
+                        </h3>
+
+                        <hr>
+                        <label for="voucherSelect" style="font-weight: bold;">Select Vouchers:</label>
+                        <select name="voucherSelect" id="voucherSelect" style="width: 100%; margin-bottom: 10px;">
+                            <!-- Khi người dùng không chọn voucher, value="" -->
+                            <option value="">Do not apply voucher</option>
+
+                            <% if (vouchers != null && !vouchers.isEmpty()) {
+                                    for (Voucher v : vouchers) {
+                            %>
+                            <!-- Nếu có voucher, hiển thị chúng -->
+                            <option value="<%= v.getVoucherID()%>"><%= v.getVoucherCode()%></option>
+                            <%   }
+                            } else { %>
+                            <!-- Trường hợp không có voucher trong DB, cũng set value="" -->
+                            <option value="">No voucher available</option>
                             <% } %>
-                        </div>
+                        </select>
 
+                        <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
+                        <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
+                        <label><input type="radio" name="paymentMethod" value="2"> Pay with VNPay</label><br>
 
-                        <div class="payment-options" style="margin-top: 10px;">
-                            <h3 style="font-size: 18px; font-weight: bold;">Select Payment Method</h3>
-                            <label><input type="radio" name="paymentMethod" value="1" required> Cash on Delivery (COD)</label><br>
-                            <label><input type="radio" name="paymentMethod" value="2"> Pay with VNPay</label><br>
-                        </div>
-                        <div class="submit-container" style="margin-top: 10px; text-align: center;">
-                            <button type="submit" class="submit-btn" 
-                                    style="width: 100%; background-color: #e67e22; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px;">
-                                Place Order
-                            </button>
-                        </div>
-                    </form>            
+                        <button type="submit" class="submit-btn">Place Order</button>
+                    </form>
                 </div>
             </div>
         </section>
-
-
+        <br>
+        <br>
+        <br>
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -477,14 +526,50 @@
 
         </footer><!--/Footer-->
 
-
-
         <script src="js/jquery.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.scrollUp.min.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="js/updateQuantity.js"></script>
-        <!--        <script src="js/checkOut.js"></script>-->
+        <script>
+            // Tạo map voucherId -> giá trị
+            const voucherValues = {
+            <% if (vouchers != null && !vouchers.isEmpty()) {
+                    for (Voucher vv : vouchers) {%>
+            <%= vv.getVoucherID()%>: <%= vv.getValue()%>,
+            <% }
+                }%>
+            };
+
+            const baseTotal = <%= totalOrderPrice%>;
+            const voucherSelect = document.getElementById('voucherSelect');
+            const totalDisplay = document.getElementById('totalDisplay');
+            const hiddenDiscountedTotal = document.getElementById('discountedTotal');
+            const voucherId = document.getElementById('voucherId'); // hidden field
+
+            function formatCurrency(amount) {
+                return amount.toLocaleString('vi-VN');
+            }
+
+            voucherSelect.addEventListener('change', function () {
+                const selectedVal = this.value; // Lấy giá trị chuỗi
+                if (selectedVal === "") {
+                    // Không chọn voucher => discountedTotal = baseTotal
+                    totalDisplay.innerText = formatCurrency(baseTotal);
+                    hiddenDiscountedTotal.value = baseTotal;
+                    voucherId.value = "";
+                } else {
+                    // parse sang số
+                    const selectedId = parseInt(selectedVal) || 0;
+                    const voucherValue = voucherValues[selectedId] || 0;
+                    const discountedTotal = Math.max(0, baseTotal - voucherValue);
+
+                    totalDisplay.innerText = formatCurrency(discountedTotal);
+                    hiddenDiscountedTotal.value = discountedTotal;
+                    voucherId.value = selectedId;
+                }
+            });
+        </script>
     </body>
 </html>
