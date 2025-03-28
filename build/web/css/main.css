@@ -2571,6 +2571,44 @@ h2.title {
     transition: opacity 0.5s ease-in-out;
 }
  
+#error-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 16px;
+    display: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    min-width: 320px;
+    max-width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #dc3545; /* Màu đỏ cho lỗi */
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+#error-notification.show {
+    display: block !important;
+    opacity: 1 !important;
+}
 
 
 

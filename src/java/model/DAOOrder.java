@@ -728,17 +728,17 @@ public class DAOOrder extends DBConnection {
                 + "LEFT JOIN paymentmethod pm ON p.paymentMethodId = pm.id "
                 + "WHERE LOWER(u.name) LIKE ? OR LOWER(o.orderStatus) LIKE ? "
                 + "OR LOWER(o.recipientPhone) LIKE ? OR LOWER(s.ShippingStatus) LIKE ? "
-                + "OR LOWER(a.address) LIKE ? OR LOWER(pm.paymentName) LIKE ? "
+                + "OR LOWER(a.address) LIKE ? OR LOWER(pm.paymentName) LIKE ? OR LOWER(o.orderTime) LIKE ?"
                 + "ORDER BY o.orderTime DESC "
                 + "LIMIT ? OFFSET ?";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            for (int i = 1; i <= 6; i++) {
+            for (int i = 1; i <= 7; i++) {
                 ps.setString(i, "%" + query.toLowerCase() + "%");
             }
-            ps.setInt(7, pageSize);
-            ps.setInt(8, offset);
+            ps.setInt(8, pageSize);
+            ps.setInt(9, offset);
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -1101,30 +1101,6 @@ public class DAOOrder extends DBConnection {
     // Test DAOOrder
     public static void main(String[] args) {
         DAOOrder daoOrder = new DAOOrder();
-
-        int shipperId = 2;
-        String statusFilter = "";
-        String searchQuery = "";
-        int page = 1;
-        int pageSize = 10;
-
-        List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
-        if (orders.isEmpty()) {
-            System.out.println("No orders found for the given criteria.");
-        } else {
-            for (Order order : orders) {
-                System.out.println("Order ID: " + order.getId());
-                System.out.println("Buyer ID: " + order.getBuyerID());
-                System.out.println("Order Status: " + order.getOrderStatus());
-                System.out.println("Shipping Address: " + order.getShippingAddress());
-                System.out.println("Total Price: " + order.getTotalPrice());
-                System.out.println("Discounted Price: " + order.getDiscountedPrice());
-                System.out.println("Recipient Name: " + order.getRecipientName());
-                System.out.println("Recipient Phone: " + order.getRecipientPhone());
-                System.out.println("Assigned Sale ID: " + order.getAssignedSaleId());
-                System.out.println("isDisabled: " + order.isDisabled());
-                System.out.println("-----------------------------");
-            }
-        }
+        System.out.println(daoOrder.SalesearchOrders("2025-03-24 01:47:35", 1, 7));
     }
 }

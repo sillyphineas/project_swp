@@ -58,7 +58,7 @@ public class FeedBackController extends HttpServlet {
                     if (pageStr != null && pageStr.matches("\\d+")) {
                         page = Integer.parseInt(pageStr);
                     }
-                    int pageSize = 10;
+                    int pageSize = 3;
 
                     List<Feedback> feedbacks = dao.getPaginatedFeedbacks(page, pageSize);
                     int totalFeedbacks = dao.getTotalFeedbacks();

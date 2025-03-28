@@ -302,7 +302,7 @@
 
                                     <td class="cart-quantity">
                                         <button type="button" class="quantity-btn minus-btn" onclick="updateQuantity(-1, <%= item.getCartItemID() %>, event)">−</button>
-                                        <input class="cart-quantity-input" id="quantity_<%= item.getCartItemID() %>" type="number" value="<%= item.getQuantity() %>" max="<%=productVariant.getStock()%>" min="1"  readonly>
+                                        <input class="cart-quantity-input" id="quantity_<%= item.getCartItemID() %>" type="number" value="<%= item.getQuantity() %>" max="10" min="1"  readonly>
                                         <button type="button" class="quantity-btn plus-btn" onclick="updateQuantity(+1, <%= item.getCartItemID() %>, event)">+</button>
                                     </td>
                                     <td class="cart-total-price" id="total_<%= item.getCartItemID() %>">

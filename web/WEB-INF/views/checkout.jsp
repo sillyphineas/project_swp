@@ -118,7 +118,92 @@
         }
 
 
+        /* Phông nền mờ khi mở form */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Màu nền mờ */
+            display: none; /* Ẩn phông mờ mặc định */
+            z-index: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Form Thêm Địa Chỉ */
+        #addAddressForm {
+            background-color: #ffffff;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%); /* Đảm bảo form căn giữa màn hình */
+            z-index: 2;
+            opacity: 0;
+            display: none; /* Ẩn form mặc định */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #addAddressForm.show {
+            opacity: 1;
+            display: block;
+        }
+
+        /* Các trường input trong form */
+        #addAddressForm input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+
+        #addAddressForm input:focus {
+            border-color: #4CAF50; /* Đổi màu viền khi focus */
+            outline: none;
+        }
+
+        /* Nút "Thêm Địa Chỉ" trong form */
+        #addAddressForm button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #addAddressForm button:hover {
+            background-color: #45a049;
+        }
+
+        /* Nút đóng form */
+        #closeForm {
+            font-size: 30px;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        #closeForm:hover {
+            color: #ff0000;
+        }
+
+
+
+
     </style>
+
 
     <body>
         <header id="header"><!--header-->
@@ -262,10 +347,39 @@
                             <option value="">No address available. Please add a new one!</option>
                             <% } %>
                         </select>
+                        <!-- Add New Address Button -->
+                        <div style="margin-bottom: 10px; text-align: right;">
+                            <button type="button" id="addAddressBtn" style="background-color: #4CAF50; color: white; padding: 12px 24px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; transition: background-color 0.3s ease;">
+                                Add New Address
+                            </button>
+                        </div>
 
+
+                        <!-- Overlay Background -->
+                        <div id="overlay"></div>
+
+                        <!-- Add New Address Form -->
+                        <div id="addAddressForm">
+                            <span id="closeForm" style="cursor: pointer; position: absolute; top: 10px; right: 10px; font-size: 20px; color: #aaa;">&times;</span>
+                            <h3 style="text-align: center; color: #333;">Add New Address</h3>
+                            <label for="newAddress">Address:</label>
+                            <input type="text" id="newAddress" name="newAddress" required><br>
+
+                            <label for="newDistrict">District:</label>
+                            <input type="text" id="newDistrict" name="newDistrict" required><br>
+
+                            <label for="newCity">City:</label>
+                            <input type="text" id="newCity" name="newCity" required><br>
+
+                            <button id="submitNewAddress">Add Address</button>
+                        </div>
+
+
+
+                        <% User user1 = (User)session.getAttribute("user"); %>
                         <h4 style="font-size: 20px; font-weight: bold; color: #555;">Recipient Information</h4>
-                        <input type="text" name="newFullName" placeholder="Full Name *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        <input type="text" name="newPhone" placeholder="Phone Number *" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newFullName" placeholder="<%=user1.getName()%>"  value="<%=user1.getName()%>"required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newPhone" placeholder="<%=user1.getPhoneNumber()%>" value="<%=user1.getPhoneNumber()%>" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
 
                         <div class="review-payment">
                             <h3 style="font-size: 22px; font-weight: bold; color: #333;">Review & Payment</h3>
@@ -317,7 +431,7 @@
                 </div>
             </div>
         </section>
-
+                        <br>     
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -477,6 +591,97 @@
 
         </footer><!--/Footer-->
 
+        <script>// Xử lý mở và đóng form thêm địa chỉ
+            document.getElementById("addAddressBtn").addEventListener("click", function () {
+                var addAddressForm = document.getElementById("addAddressForm");
+                var overlay = document.getElementById("overlay");
+
+                // Kiểm tra xem form có đang hiển thị hay không
+                if (addAddressForm.style.display === "none" || addAddressForm.style.display === "") {
+                    addAddressForm.style.display = "block";  // Mở form
+                    overlay.style.display = "block";  // Hiển thị phông mờ
+                    setTimeout(function () {
+                        addAddressForm.classList.add("show");
+                        overlay.classList.add("show");
+                    }, 10);  // Thêm class show để tạo hiệu ứng mờ
+                } else {
+                    addAddressForm.classList.remove("show");
+                    overlay.classList.remove("show");
+                    setTimeout(function () {
+                        addAddressForm.style.display = "none";  // Đóng form
+                        overlay.style.display = "none";  // Ẩn phông mờ
+                    }, 300);  // Đợi hiệu ứng chuyển đổi hoàn thành trước khi ẩn form
+                }
+            });
+
+// Xử lý đóng form khi nhấn nút "X"
+            document.getElementById("closeForm").addEventListener("click", function () {
+                var addAddressForm = document.getElementById("addAddressForm");
+                var overlay = document.getElementById("overlay");
+
+                addAddressForm.classList.remove("show");
+                overlay.classList.remove("show");
+                setTimeout(function () {
+                    addAddressForm.style.display = "none";  // Đóng form
+                    overlay.style.display = "none";  // Ẩn phông mờ
+                }, 300);  // Đợi hiệu ứng chuyển đổi hoàn thành trước khi ẩn form
+            });
+
+// Xử lý gửi địa chỉ mới
+            document.getElementById("submitNewAddress").addEventListener("click", function () {
+                var newAddress = document.getElementById("newAddress").value;
+                var newDistrict = document.getElementById("newDistrict").value;
+                var newCity = document.getElementById("newCity").value;
+
+                // Kiểm tra nếu các trường địa chỉ trống
+                if (!newAddress || !newDistrict || !newCity) {
+                    alert("Vui lòng điền đầy đủ thông tin địa chỉ.");
+                    return;
+                }
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "CartURL", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === "success") {
+                            // Thêm địa chỉ vào dropdown
+                            var newOption = document.createElement("option");
+                            newOption.value = response.addressId;
+                            newOption.textContent = newAddress + ", " + newDistrict + ", " + newCity;
+                            document.getElementById("addressSelect").appendChild(newOption);
+
+                            // Hiển thị thông báo thành công
+                            alert("Địa chỉ đã được thêm thành công!");
+
+                            // Đóng form và ẩn phông mờ sau khi thêm thành công
+                            document.getElementById("addAddressForm").style.display = "none";
+                            document.getElementById("overlay").style.display = "none";
+
+                            // Xóa dữ liệu trong các ô input
+                            document.getElementById("newAddress").value = "";
+                            document.getElementById("newDistrict").value = "";
+                            document.getElementById("newCity").value = "";
+                        } else {
+                            alert("Không thể thêm địa chỉ: " + response.message);
+                        }
+                    }
+                };
+                xhr.send("service=addAddress&address=" + newAddress + "&district=" + newDistrict + "&city=" + newCity);
+            });
+
+            document.getElementById("orderForm").addEventListener("submit", function (event) {
+                var addAddressForm = document.getElementById("addAddressForm");
+
+                // Kiểm tra nếu form "Thêm địa chỉ mới" đang hiển thị
+                if (addAddressForm.style.display === "block") {
+                    // Nếu form thêm địa chỉ đang hiển thị, ngừng gửi form checkout
+                    alert("Vui lòng hoàn tất việc thêm địa chỉ trước khi tiếp tục.");
+                    event.preventDefault();  // Ngừng gửi form checkout
+                }
+            });
+        </script>
 
 
         <script src="js/jquery.js"></script>
