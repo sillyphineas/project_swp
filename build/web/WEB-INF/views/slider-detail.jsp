@@ -29,252 +29,7 @@
             <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
             <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
-            <!-- Direct CSS for Style Enhancements -->
-            <style>
-                /* Global Styles */
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f4f4f4;
-                    margin: 0;
-                    padding: 0;
-                }
 
-                /* Main Container */
-
-
-                /* Heading Styles */
-                h2 {
-                    text-align: center;
-                    color: #333;
-                    margin-bottom: 30px;
-                }
-
-                h3 {
-                    color: #333;
-                    margin-bottom: 10px;
-                }
-
-                /* Message Box */
-                .message {
-                    color: green;
-                    font-weight: bold;
-                    text-align: center;
-                    margin-bottom: 20px;
-                }
-
-                /* Form Styling */
-                .form-group {
-                    margin-bottom: 20px;
-                }
-
-                label {
-                    font-weight: bold;
-                    margin-bottom: 8px;
-                    display: block;
-                    color: #333;
-                }
-
-                input.form-control, select.form-control {
-                    width: 100%;
-                    padding: 12px;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    box-sizing: border-box;
-                    font-size: 16px;
-                    color: #333;
-                }
-
-                input.form-control:focus, select.form-control:focus {
-                    border-color: #f39c12;
-                    outline: none;
-                }
-
-                /* Edit Link Styling */
-                a {
-                    display: inline-block;
-
-                    color: white;
-                    padding: 10px 20px;
-                    text-decoration: none;
-                    border-radius: 4px;
-                    margin-top: 20px;
-                    transition: background-color 0.3s;
-                }
-
-                a:hover {
-                    background-color: #e67e22;
-                }
-
-                /* Table Styling */
-                table {
-                    width: 100%;
-                    margin-top: 30px;
-                    border-collapse: collapse;
-                }
-
-                table th, table td {
-                    padding: 12px;
-                    text-align: left;
-                    border: 1px solid #ddd;
-                    background-color: #f9f9f9;
-                }
-
-                table th {
-                    background-color: #f1c40f;
-                    color: white;
-                    font-weight: bold;
-                }
-
-                table tr:nth-child(even) {
-                    background-color: #f2f2f2;
-                }
-
-                table tr:hover {
-                    background-color: #f0e68c;
-                }
-
-                /* Responsive Design */
-                @media screen and (max-width: 768px) {
-                    .container {
-                        padding: 15px;
-                    }
-
-                    h2 {
-                        font-size: 18px;
-                    }
-
-                    .form-group {
-                        margin-bottom: 15px;
-                    }
-
-                    input.form-control, select.form-control {
-                        padding: 10px;
-                        font-size: 14px;
-                    }
-
-                    table th, table td {
-                        font-size: 14px;
-                        padding: 10px;
-                    }
-                }
-
-                /* CSS cho phần Customer Detail */
-
-
-                /* Tiêu đề Customer Detail */
-                h2 {
-                    text-align: center;
-                    color: #333;
-                    margin-bottom: 30px;
-                    font-size: 28px;
-                    font-weight: bold;
-                }
-
-                /* Phần thông báo */
-                .message {
-                    color: green;
-                    font-weight: bold;
-                    text-align: center;
-                    margin-bottom: 20px;
-                    font-size: 16px;
-                }
-
-                /* Các nhóm form */
-                .form-group {
-                    margin-bottom: 20px;
-                }
-
-                /* Định dạng nhãn */
-                label {
-                    font-weight: bold;
-                    color: #333;
-                    font-size: 16px;
-                    margin-bottom: 8px;
-                    display: block;
-                }
-
-                /* Phần hiển thị thông tin */
-                p {
-                    background-color: #f9f9f9;
-                    border: 1px solid #ddd;
-                    padding: 12px;
-                    border-radius: 4px;
-                    font-size: 16px;
-                    color: #333;
-                    margin: 0;
-                }
-
-                /* Định dạng liên kết "Edit" */
-                .edit-link {
-                    display: inline-block;
-                    padding: 12px 20px;
-                    background-color: #f39c12; /* Màu nền */
-                    color: #fff; /* Màu chữ */
-                    text-decoration: none;
-                    font-size: 16px;
-                    border-radius: 4px;
-                    text-align: center;
-                    transition: background-color 0.3s;
-                }
-
-                .edit-link:hover {
-                    background-color: #e67e22; /* Màu nền khi hover */
-                }
-
-                /* Table Styling */
-                table {
-                    width: 100%;
-                    margin-top: 30px;
-                    border-collapse: collapse;
-                }
-
-                table th, table td {
-                    padding: 12px;
-                    text-align: left;
-                    border: 1px solid #ddd;
-                    background-color: #f9f9f9;
-                }
-
-                table th {
-                    background-color: #f1c40f;
-                    color: white;
-                    font-weight: bold;
-                }
-
-                table tr:nth-child(even) {
-                    background-color: #f2f2f2;
-                }
-
-                table tr:hover {
-                    background-color: #f0e68c;
-                }
-
-                /* Responsive Design */
-                @media screen and (max-width: 768px) {
-                    .container {
-                        padding: 15px;
-                    }
-
-                    h2 {
-                        font-size: 22px;
-                    }
-
-                    label {
-                        font-size: 14px;
-                    }
-
-                    p {
-                        font-size: 14px;
-                    }
-
-                    table th, table td {
-                        font-size: 14px;
-                        padding: 10px;
-                    }
-                }
-
-
-            </style>
 
         </head><!--/head-->
 
@@ -378,6 +133,7 @@
                                         <li><a href="SliderController" class="active">Slider List</a></li>
                                         <li><a href="CustomerController">Customer List</a></li>
                                         <li><a href="MarketingProductController">Product List</a></li>
+                                        <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -386,209 +142,217 @@
                     </div>
                 </div><!--/header-bottom-->
             </header><!--/header-->
-            <div class="container">
-                <h2>Slider Detail</h2>
+
+            <div class="container" style="max-width: 800px; margin-top: 50px; padding: 30px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+                <h2 style="font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 30px; color: #333;">Slider Detail</h2>
 
                 <input type="hidden" name="id" value="${slider.id}"/>
 
-                <div class="form-group">
-                    <label for="tilte">Title:</label>
-                    <p>${slider.title}</p>
-
+                <!-- Image Section -->
+                <div class="form-group" style="text-align: center; margin-bottom: 25px;">
+                    <img src="${slider.imageURL}" alt="Slider Image" style="max-width: 50%; height: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);" />
                 </div>
 
-                <div class="form-group">
-                    <label for="image">Image:</label>
-                    <img src="${slider.imageURL}" alt="Slider Image" width="200">
+                <!-- Title Section -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="title" style="font-size: 20px; font-weight: bold; color: #444;">Title:</label>
+                    <input type="text" name="title" value="${slider.title}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;">
                 </div>
 
-                <div class="form-group">
-                    <label for="backlinks">Backlinks:</label>
-                    <p>${slider.backlinks}</p>
-
+                <!-- Backlinks Section -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label for="backlinks" style="font-size: 20px; font-weight: bold; color: #444;">Backlinks:</label>
+                    <input type="text" name="backlinks" value="${slider.backlinks}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;">
                 </div>
-                <div class="form-group">
-                    <label for="starus">Status:</label>
-                    <p>
+
+                <!-- Status Section -->
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label for="status" style="font-size: 20px; font-weight: bold; color: #444;">Status:</label>
+                    <p style="font-size: 18px; color: #555; margin-top: 8px;">
                         <c:choose>
                             <c:when test="${slider.isDisabled}">
-                                Hidden
+                                <span style="color: #e74c3c; font-weight: bold;">Inactive</span>
                             </c:when>
                             <c:otherwise>
-                                Visible
+                                <span style="color: #2ecc71; font-weight: bold;">Active</span>
                             </c:otherwise>
                         </c:choose>
                     </p>
-
                 </div>
 
-                <a href="${pageContext.request.contextPath}/SliderController?service=editSlider&id=${slider.id}" class="edit-link">Edit</a>
+                <!-- Buttons Section -->
+                <div style="text-align: center; margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+                    <a href="${pageContext.request.contextPath}/SliderController?service=editSlider&id=${slider.id}" class="btn btn-primary" style="padding: 12px 25px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px; background-color: #FF9800; color: white; border: none; margin-top: 20px; width: 48%">Update</a>
+                    <a href="SliderController" class="btn btn-primary" style="padding: 12px 25px; font-size: 18px; font-weight: bold; text-decoration: none; border-radius: 5px; background-color: #5bc0de; color: white; border: none; margin-top: 20px; width: 48%">Back to Slider List</a>
+                </div>
+            </div>
 
-                <footer id="footer"><!--Footer-->
-                    <div class="footer-top">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <div class="companyinfo">
-                                        <h2><span>e</span>-shopper</h2>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
-                                    </div>
+
+            <footer id="footer"><!--Footer-->
+                <div class="footer-top">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="companyinfo">
+                                    <h2><span>e</span>-shopper</h2>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
                                 </div>
-                                <div class="col-sm-7">
-                                    <div class="col-sm-3">
-                                        <div class="video-gallery text-center">
-                                            <a href="#">
-                                                <div class="iframe-img">
-                                                    <img src="images/home/iframe1.png" alt="" />
-                                                </div>
-                                                <div class="overlay-icon">
-                                                    <i class="fa fa-play-circle-o"></i>
-                                                </div>
-                                            </a>
-                                            <p>Circle of Hands</p>
-                                            <h2>24 DEC 2014</h2>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <div class="video-gallery text-center">
-                                            <a href="#">
-                                                <div class="iframe-img">
-                                                    <img src="images/home/iframe2.png" alt="" />
-                                                </div>
-                                                <div class="overlay-icon">
-                                                    <i class="fa fa-play-circle-o"></i>
-                                                </div>
-                                            </a>
-                                            <p>Circle of Hands</p>
-                                            <h2>24 DEC 2014</h2>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <div class="video-gallery text-center">
-                                            <a href="#">
-                                                <div class="iframe-img">
-                                                    <img src="images/home/iframe3.png" alt="" />
-                                                </div>
-                                                <div class="overlay-icon">
-                                                    <i class="fa fa-play-circle-o"></i>
-                                                </div>
-                                            </a>
-                                            <p>Circle of Hands</p>
-                                            <h2>24 DEC 2014</h2>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-3">
-                                        <div class="video-gallery text-center">
-                                            <a href="#">
-                                                <div class="iframe-img">
-                                                    <img src="images/home/iframe4.png" alt="" />
-                                                </div>
-                                                <div class="overlay-icon">
-                                                    <i class="fa fa-play-circle-o"></i>
-                                                </div>
-                                            </a>
-                                            <p>Circle of Hands</p>
-                                            <h2>24 DEC 2014</h2>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                            <div class="col-sm-7">
                                 <div class="col-sm-3">
-                                    <div class="address">
-                                        <img src="images/home/map.png" alt="" />
-                                        <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+                                    <div class="video-gallery text-center">
+                                        <a href="#">
+                                            <div class="iframe-img">
+                                                <img src="images/home/iframe1.png" alt="" />
+                                            </div>
+                                            <div class="overlay-icon">
+                                                <i class="fa fa-play-circle-o"></i>
+                                            </div>
+                                        </a>
+                                        <p>Circle of Hands</p>
+                                        <h2>24 DEC 2014</h2>
                                     </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="video-gallery text-center">
+                                        <a href="#">
+                                            <div class="iframe-img">
+                                                <img src="images/home/iframe2.png" alt="" />
+                                            </div>
+                                            <div class="overlay-icon">
+                                                <i class="fa fa-play-circle-o"></i>
+                                            </div>
+                                        </a>
+                                        <p>Circle of Hands</p>
+                                        <h2>24 DEC 2014</h2>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="video-gallery text-center">
+                                        <a href="#">
+                                            <div class="iframe-img">
+                                                <img src="images/home/iframe3.png" alt="" />
+                                            </div>
+                                            <div class="overlay-icon">
+                                                <i class="fa fa-play-circle-o"></i>
+                                            </div>
+                                        </a>
+                                        <p>Circle of Hands</p>
+                                        <h2>24 DEC 2014</h2>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="video-gallery text-center">
+                                        <a href="#">
+                                            <div class="iframe-img">
+                                                <img src="images/home/iframe4.png" alt="" />
+                                            </div>
+                                            <div class="overlay-icon">
+                                                <i class="fa fa-play-circle-o"></i>
+                                            </div>
+                                        </a>
+                                        <p>Circle of Hands</p>
+                                        <h2>24 DEC 2014</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="address">
+                                    <img src="images/home/map.png" alt="" />
+                                    <p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="footer-widget">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-sm-2">
-                                    <div class="single-widget">
-                                        <h2>Service</h2>
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#">Online Help</a></li>
-                                            <li><a href="#">Contact Us</a></li>
-                                            <li><a href="#">Order Status</a></li>
-                                            <li><a href="#">Change Location</a></li>
-                                            <li><a href="#">FAQ’s</a></li>
-                                        </ul>
-                                    </div>
+                <div class="footer-widget">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="single-widget">
+                                    <h2>Service</h2>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li><a href="#">Online Help</a></li>
+                                        <li><a href="#">Contact Us</a></li>
+                                        <li><a href="#">Order Status</a></li>
+                                        <li><a href="#">Change Location</a></li>
+                                        <li><a href="#">FAQ’s</a></li>
+                                    </ul>
                                 </div>
-                                <div class="col-sm-2">
-                                    <div class="single-widget">
-                                        <h2>Quock Shop</h2>
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#">T-Shirt</a></li>
-                                            <li><a href="#">Mens</a></li>
-                                            <li><a href="#">Womens</a></li>
-                                            <li><a href="#">Gift Cards</a></li>
-                                            <li><a href="#">Shoes</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="single-widget">
-                                        <h2>Policies</h2>
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#">Terms of Use</a></li>
-                                            <li><a href="#">Privecy Policy</a></li>
-                                            <li><a href="#">Refund Policy</a></li>
-                                            <li><a href="#">Billing System</a></li>
-                                            <li><a href="#">Ticket System</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="single-widget">
-                                        <h2>About Shopper</h2>
-                                        <ul class="nav nav-pills nav-stacked">
-                                            <li><a href="#">Company Information</a></li>
-                                            <li><a href="#">Careers</a></li>
-                                            <li><a href="#">Store Location</a></li>
-                                            <li><a href="#">Affillate Program</a></li>
-                                            <li><a href="#">Copyright</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3 col-sm-offset-1">
-                                    <div class="single-widget">
-                                        <h2>About Shopper</h2>
-                                        <form action="#" class="searchform">
-                                            <input type="text" placeholder="Your email address" />
-                                            <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-                                            <p>Get the most recent updates from <br />our site and be updated your self...</p>
-                                        </form>
-                                    </div>
-                                </div>
-
                             </div>
+                            <div class="col-sm-2">
+                                <div class="single-widget">
+                                    <h2>Quock Shop</h2>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li><a href="#">T-Shirt</a></li>
+                                        <li><a href="#">Mens</a></li>
+                                        <li><a href="#">Womens</a></li>
+                                        <li><a href="#">Gift Cards</a></li>
+                                        <li><a href="#">Shoes</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="single-widget">
+                                    <h2>Policies</h2>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li><a href="#">Terms of Use</a></li>
+                                        <li><a href="#">Privecy Policy</a></li>
+                                        <li><a href="#">Refund Policy</a></li>
+                                        <li><a href="#">Billing System</a></li>
+                                        <li><a href="#">Ticket System</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="single-widget">
+                                    <h2>About Shopper</h2>
+                                    <ul class="nav nav-pills nav-stacked">
+                                        <li><a href="#">Company Information</a></li>
+                                        <li><a href="#">Careers</a></li>
+                                        <li><a href="#">Store Location</a></li>
+                                        <li><a href="#">Affillate Program</a></li>
+                                        <li><a href="#">Copyright</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 col-sm-offset-1">
+                                <div class="single-widget">
+                                    <h2>About Shopper</h2>
+                                    <form action="#" class="searchform">
+                                        <input type="text" placeholder="Your email address" />
+                                        <button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
+                                        <p>Get the most recent updates from <br />our site and be updated your self...</p>
+                                    </form>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
+                </div>
 
-                    <div class="footer-bottom">
-                        <div class="container">
-                            <div class="row">
-                                <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-                                <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
-                            </div>
+                <div class="footer-bottom">
+                    <div class="container">
+                        <div class="row">
+                            <p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
+                            <p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
                         </div>
                     </div>
+                </div>
 
-                </footer><!--/Footer-->
+            </footer><!--/Footer-->
 
 
 
-                <script src="js/jquery.js"></script>
-                <script src="js/bootstrap.min.js"></script>
-                <script src="js/jquery.scrollUp.min.js"></script>
-                <script src="js/price-range.js"></script>
-                <script src="js/jquery.prettyPhoto.js"></script>
-                <script src="js/main.js"></script>
+            <script src="js/jquery.js"></script>
+            <script src="js/bootstrap.min.js"></script>
+            <script src="js/jquery.scrollUp.min.js"></script>
+            <script src="js/price-range.js"></script>
+            <script src="js/jquery.prettyPhoto.js"></script>
+            <script src="js/main.js"></script>
         </body>
     </html>

@@ -3,6 +3,9 @@
 <%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -76,6 +79,7 @@
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
+
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
 
@@ -169,17 +173,17 @@
                                         <div class="col-sm-6">
                                             <h1><span>E</span>-SHOPPER</h1>
                                             <h2>${blog.title}</h2>
-                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                            <a href="${blog.backlinks}" class="btn btn-primary">
+
+                                            <a href="${blog.backlinks}" class="btn btn-warning">
                                                 Read More
                                             </a>
 
 
                                         </div>
                                         <div class="col-sm-6">
-                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
-                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
+                                            <img style="height: 400px; width: auto" src="${blog.imageURL}" class="girl img-responsive" alt="" />
+
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -311,7 +315,7 @@
 
                                         <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-warning">
                                             Read More
                                         </a>
                                     </div>

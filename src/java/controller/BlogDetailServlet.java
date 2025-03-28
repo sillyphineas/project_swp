@@ -97,7 +97,7 @@ public class BlogDetailServlet extends HttpServlet {
 
                     // Lấy các sản phẩm mới nhất
                     DAOProduct daoProduct = new DAOProduct();
-                    List<Product> newProducts = daoProduct.getProductsWithPagination(1, 5);  // Lấy 5 sản phẩm mới nhất
+                    List<Product> newProducts = daoProduct.getNewProductsForHomePage(1, 3);
                     request.setAttribute("newProducts", newProducts);
                     
                 } else {
