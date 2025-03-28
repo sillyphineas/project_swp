@@ -57,6 +57,29 @@ public class DAOAddress extends DBConnection{
         }
         return address;
     }
+     public int addAddress(Address address) throws SQLException {
+        String sql = "INSERT INTO Addresses (userId, address, district, city) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, address.getUserId());
+            ps.setString(2, address.getAddress());
+            ps.setString(3, address.getDistrict());
+            ps.setString(4, address.getCity());
+
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Thêm địa chỉ thất bại, không có hàng nào được chèn.");
+            }
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Trả về ID của bản ghi vừa chèn
+                } else {
+                    throw new SQLException("Thêm địa chỉ thành công nhưng không lấy được ID.");
+                }
+            }
+        }
+    }
+     
      public static void main(String[] args) {
         DAOAddress dao = new DAOAddress();
          System.out.println(dao.getAddressesByUserId(4));

@@ -1182,31 +1182,5 @@ public class DAOOrder extends DBConnection {
     // Test DAOOrder
     public static void main(String[] args) {
         DAOOrder daoOrder = new DAOOrder();
-        System.out.println(daoOrder.SalesearchOrders("2025", 1, 10));
-//
-//        int shipperId = 2;
-//        String statusFilter = "";
-//        String searchQuery = "";
-//        int page = 1;
-//        int pageSize = 10;
-//
-//        List<Order> orders = daoOrder.getOrdersForShipper(shipperId, statusFilter, searchQuery, page, pageSize);
-//        if (orders.isEmpty()) {
-//            System.out.println("No orders found for the given criteria.");
-//        } else {
-//            for (Order order : orders) {
-//                System.out.println("Order ID: " + order.getId());
-//                System.out.println("Buyer ID: " + order.getBuyerID());
-//                System.out.println("Order Status: " + order.getOrderStatus());
-//                System.out.println("Shipping Address: " + order.getShippingAddress());
-//                System.out.println("Total Price: " + order.getTotalPrice());
-//                System.out.println("Discounted Price: " + order.getDiscountedPrice());
-//                System.out.println("Recipient Name: " + order.getRecipientName());
-//                System.out.println("Recipient Phone: " + order.getRecipientPhone());
-//                System.out.println("Assigned Sale ID: " + order.getAssignedSaleId());
-//                System.out.println("isDisabled: " + order.isDisabled());
-//                System.out.println("-----------------------------");
-//            }
-//        }
     }
 }

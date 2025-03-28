@@ -117,16 +117,30 @@ public class CartController extends HttpServlet {
                     int cartItemId = Integer.parseInt(request.getParameter("cartItemId"));
                     int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
 
+                    // Kiểm tra nếu số lượng mới không hợp lệ
                     if (newQuantity <= 0) {
                         response.setContentType("application/json");
                         response.getWriter().write("{\"status\": \"error\", \"message\": \"Quantity must be a positive integer\"}");
                         return;
                     }
 
+                    // Lấy thông tin CartItem từ cơ sở dữ liệu
                     CartItem cartItem = daoItem.getCartItemById(cartItemId);
                     if (cartItem != null) {
+                        // Cập nhật số lượng của CartItem trong giỏ hàng
                         cartItem.setQuantity(newQuantity);
+
+                        // Tính lại giá trị tổng cho sản phẩm này
+                        BigDecimal price = BigDecimal.valueOf(cartItem.getPrice());
+                        BigDecimal quantity = BigDecimal.valueOf(newQuantity);
+                        BigDecimal newTotalPrice = price.multiply(quantity).setScale(2, RoundingMode.HALF_UP); // Nhân và làm tròn
+
+                        // Cập nhật thông tin CartItem trong cơ sở dữ liệu
+                        cartItem.setTotalPrice(newTotalPrice);
                         daoItem.updateCartItem(cartItem);
+
+                        // Tính lại tổng giá trị đơn hàng
+
                         BigDecimal totalOrderPrice = BigDecimal.ZERO;
                         List<CartItem> cartItems = dao.getCartItemsByCartID1(cart.getCartID());
                         for (CartItem item : cartItems) {
@@ -137,16 +151,20 @@ public class CartController extends HttpServlet {
                             totalOrderPrice = totalOrderPrice.add(itemPrice);
                         }
 
+                        // Trả về kết quả thành công với tổng giá trị đơn hàng
                         response.setContentType("application/json");
                         response.getWriter().write("{\"status\": \"success\", \"totalOrderPrice\": \"" + totalOrderPrice + "\"}");
                     } else {
+                        // Nếu không tìm thấy CartItem trong giỏ hàng
                         response.setContentType("application/json");
                         response.getWriter().write("{\"status\": \"error\", \"message\": \"Product not found in cart\"}");
                     }
                 } catch (NumberFormatException e) {
+                    // Xử lý lỗi khi giá trị đầu vào không hợp lệ
                     response.setContentType("application/json");
                     response.getWriter().write("{\"status\": \"error\", \"message\": \"Invalid input format\"}");
                 } catch (Exception e) {
+                    // Xử lý lỗi bất kỳ trong quá trình cập nhật
                     response.setContentType("application/json");
                     response.getWriter().write("{\"status\": \"error\", \"message\": \"Error updating cart\"}");
                 }
@@ -177,6 +195,7 @@ public class CartController extends HttpServlet {
                 }
                 return;
             }
+
 
             if (service.equals("checkOut")) {
                 String[] selectedItems = request.getParameterValues("selectedItems");
@@ -376,9 +395,45 @@ public class CartController extends HttpServlet {
                 response.getWriter().write("{\"status\": \"success\", \"message\": \"Product added to cart successfully!\"}");
                 return;
             }
+            
+            if (service.equals("addAddress")) {
+                try {
+                    String address = request.getParameter("address");
+                    String district = request.getParameter("district");
+                    String city = request.getParameter("city");
+
+                    if (address == null || district == null || city == null
+                            || address.trim().isEmpty() || district.trim().isEmpty() || city.trim().isEmpty()) {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Vui lòng điền đầy đủ thông tin địa chỉ\"}");
+                        return;
+                    }
+
+                    Address newAddress = new Address();
+                    newAddress.setUserId(customerID);
+                    newAddress.setAddress(address);
+                    newAddress.setDistrict(district);
+                    newAddress.setCity(city);
+
+                    int addressId = daoAdd.addAddress(newAddress);
+
+                    if (addressId > 0) {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"success\", \"addressId\": \"" + addressId + "\"}");
+                    } else {
+                        response.setContentType("application/json");
+                        response.getWriter().write("{\"status\": \"error\", \"message\": \"Không thể thêm địa chỉ\"}");
+                    }
+                } catch (Exception e) {
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"status\": \"error\", \"message\": \"Lỗi: " + e.getMessage() + "\"}");
+                }
+                return;
+            }
         }
     }
 
+  
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

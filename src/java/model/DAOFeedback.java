@@ -139,7 +139,7 @@ public class DAOFeedback extends DBConnection {
                 + "f.content, f.images, u.name, u.email, u.phoneNumber, u.gender, "
                 + "p.id AS productID, p.name AS productName, "
                 + "pv.id AS productVariantID, c.id AS colorID, c.colorName, "
-                + "s.id AS storageID, s.capacity "
+                + "s.id AS storageID, s.capacity, f.reply  "
                 + "FROM Feedbacks f "
                 + "JOIN Users u ON f.reviewerID = u.id "
                 + "JOIN OrderDetails od ON f.orderDetailID = od.id "
@@ -147,7 +147,7 @@ public class DAOFeedback extends DBConnection {
                 + "JOIN Products p ON f.product_id = p.id "
                 + "JOIN Colors c ON pv.color_id = c.id "
                 + "JOIN Storages s ON pv.storage_id = s.id "
-                + "WHERE f.product_id = ? AND f.status = 'visible' ORDER BY f.reviewTime DESC LIMIT 3";
+                + "WHERE f.product_id = ? AND f.status = 'visible' ORDER BY f.reviewTime DESC LIMIT 2";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -163,7 +163,7 @@ public class DAOFeedback extends DBConnection {
                 feedback.setRating(rs.getInt("rating"));
                 feedback.setContent(rs.getString("content"));
                 feedback.setImages(rs.getString("images"));
-
+                feedback.setReply(rs.getString("reply"));
                 // Thông tin người dùng
                 User user = new User();
                 user.setName(rs.getString("name"));
