@@ -133,4 +133,17 @@ public class DAOUserVoucher extends DBConnection {
         return redeemedList;
     }
 
+    public boolean deleteUserVoucher(int userId, int voucherId) {
+        String sql = "DELETE FROM UserVouchers WHERE user_id = ? AND voucher_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, voucherId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

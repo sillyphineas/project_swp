@@ -359,7 +359,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page" />
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
 
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
@@ -461,7 +461,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -548,7 +548,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -622,7 +622,6 @@
                                     <!-- Feedback logic cho sp đầu tiên -->
                                     <c:set var="feedbackKeyName" value="feedbackExists_${first.orderDetailID}" />
                                     <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
-                                    <p>${feedbackKey} </p>
 
                                     <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                         <c:choose>
@@ -713,7 +712,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page" />
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
                                 <!-- Confirm Delivered button for orders in Delivered status -->
@@ -887,7 +886,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -967,7 +966,7 @@
                                         <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                     </c:forEach>
                                     <div class="total-price">
-                                        <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                        <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                     </div>
                                     <a href="ProductController" class="buy-again-btn">Buy Again</a>
                                     <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
@@ -1058,7 +1057,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -1395,10 +1394,9 @@
                                                                                dataType: "json",
                                                                                success: function (response) {
                                                                                    if (response.success) {
-                                                                                       alert(response.message);
-                                                                                       // Reload => sang tab completed => pageCompleted=1 => newlyCompleted
-                                                                                       window.location.href =
-                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
+                                                                                       alert(response.message + "\nCurrent points: " + response.currentPoints + "\nPoints added: " + response.pointsAdded);
+                                                                                       // Reload page: switch to 'completed' tab with updated order
+                                                                                       window.location.href = "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
                                                                                    } else {
                                                                                        alert(response.message);
                                                                                    }
@@ -1409,6 +1407,7 @@
                                                                            });
                                                                        }
                                                                    });
+
                                                                });
 
                                                                // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========

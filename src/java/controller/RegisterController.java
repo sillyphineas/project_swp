@@ -5,7 +5,6 @@
 package controller;
 
 import entity.User;
-import helper.Authorize;
 import helper.EmailUtil;
 import helper.Validate;
 import jakarta.servlet.RequestDispatcher;
@@ -29,20 +28,11 @@ import org.mindrot.jbcrypt.BCrypt;
 @WebServlet(name = "RegisterController", urlPatterns = {"/RegisterController"})
 public class RegisterController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+            /* Sample output */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -55,85 +45,106 @@ public class RegisterController extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
+        // Authorize: kiểm tra người dùng có được phép truy cập trang này không
         HttpSession session = request.getSession(false);
         User user = null;
         if (session != null) {
             user = (User) session.getAttribute("user");
         }
-        if (!Authorize.isAccepted(user, "/RegisterController")) {
-            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+        if (user != null) {
+            // Nếu đã đăng nhập, chuyển hướng về trang chủ
+            response.sendRedirect("HomePageController");
             return;
         }
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/login.jsp");
+        rd.forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        DAOUser daouser = new DAOUser();
+
+        DAOUser daoUser = new DAOUser();
+
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-
-        response.setContentType("text/plain");
+        String name = request.getParameter("name");
+        String genderParam = request.getParameter("gender");
+        String phoneNumber = request.getParameter("phoneNumber");
+        String dateOfBirthStr = request.getParameter("dateOfBirth");
         
-        DAOSetting daosetting = new DAOSetting();
-        if (daosetting.getSettingById(1).getStatus().equals("Inactive")) {
+        
+        response.setContentType("text/plain");
+
+        DAOSetting daoSetting = new DAOSetting();
+        if ("Inactive".equals(daoSetting.getSettingById(1).getStatus())) {
             response.getWriter().write("cancel");
             return;
         }
-        
-        if (Validate.checkRegisterExistedEmail(email)) {
-            if (Validate.checkRegisterPasswordLength(password)) {
-                if (Validate.checkRegisterEqualPassword(password, confirmPassword)) {
-                    String verificationCode = String.format("%06d", new Random().nextInt(999999));
-                    EmailUtil.sendRegisterMail(email, verificationCode);
-                    HttpSession session = request.getSession();
-                    session.setAttribute("email", email);
-                    session.setAttribute("password", BCrypt.hashpw(password, BCrypt.gensalt()));
-                    session.setAttribute("verificationCode", verificationCode);
 
-                    response.getWriter().write("redirect");
-                } else {
-                    response.getWriter().write("Passwords do not match!");
-                }
-            } else {
-                response.getWriter().write("You need to enter a password at least 6 characters!");
-            }
-        } else {
-            response.getWriter().write("Email was existed!");
+        if (!Validate.isValidEmail(email)) {
+            response.getWriter().write("Invalid email format!");
+            return;
         }
+
+        if (!Validate.checkRegisterExistedEmail(email)) {
+            response.getWriter().write("Email was existed!");
+            return;
+        }
+
+        if (!Validate.checkRegisterPasswordLength(password)) {
+            response.getWriter().write("You need to enter a password at least 6 characters!");
+            return;
+        }
+
+        if (!Validate.checkRegisterEqualPassword(password, confirmPassword)) {
+            response.getWriter().write("Passwords do not match!");
+            return;
+        }
+
+        if (!Validate.isValidName(name)) {
+            response.getWriter().write("Name must contain only letters and spaces!");
+            return;
+        }
+
+        if (!Validate.isValidPhoneNumber(phoneNumber)) {
+            response.getWriter().write("Invalid phone number format!");
+            return;
+        }
+
+        if (!Validate.isValidDateOfBirth(dateOfBirthStr)) {
+            response.getWriter().write("Date of birth cannot be in the future and must be in YYYY-MM-DD format!");
+            return;
+        }
+
+        String verificationCode = String.format("%06d", new Random().nextInt(999999));
+        EmailUtil.sendRegisterMail(email, verificationCode);
+
+        HttpSession session = request.getSession();
+
+        System.out.println("name" + name);
+        System.out.println("genderParam" + genderParam);
+        System.out.println("phoneNumber" + phoneNumber);
+        System.out.println("dateOfBirthStr" + dateOfBirthStr);
+
+        session.setAttribute("email", email);
+        session.setAttribute("password", BCrypt.hashpw(password, BCrypt.gensalt()));
+        session.setAttribute("verificationCode", verificationCode);
+
+        session.setAttribute("name", name);
+        session.setAttribute("gender", genderParam);
+        session.setAttribute("phoneNumber", phoneNumber);
+        session.setAttribute("dateOfBirth", dateOfBirthStr);
+
+        response.getWriter().write("redirect");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "RegisterController handles user registration with extended validations";
+    }
 }
