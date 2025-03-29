@@ -50,19 +50,17 @@ public class OrderController extends HttpServlet {
         User user = (session != null) ? (User) session.getAttribute("user") : null;
 
         if ("createOrder".equals(service)) {
-            // Kiểm tra đăng nhập
+
             if (user == null) {
                 response.sendRedirect("LoginController");
                 return;
             }
 
-            // Lấy thông tin form
             String fullName = request.getParameter("newFullName");
             String phone = request.getParameter("newPhone");
             String address = request.getParameter("addressSelect");
             String paymentMethod = request.getParameter("paymentMethod");
 
-            // Validate cơ bản
             if (fullName == null || fullName.trim().isEmpty()) {
                 request.setAttribute("error", "Vui lòng nhập Họ tên người nhận");
                 forwardToCheckout(request, response);
@@ -84,7 +82,6 @@ public class OrderController extends HttpServlet {
                 return;
             }
 
-            // Lấy giỏ hàng đã chọn
             List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
             if (selectedCartItems == null || selectedCartItems.isEmpty()) {
                 request.setAttribute("error", "EmptyCart");
@@ -92,7 +89,6 @@ public class OrderController extends HttpServlet {
                 return;
             }
 
-            // Lấy discountedTotal
             String discountedTotalParam = request.getParameter("discountedTotal");
             BigDecimal discountedTotal = BigDecimal.ZERO;
             if (discountedTotalParam != null && !discountedTotalParam.isEmpty()) {
@@ -103,36 +99,28 @@ public class OrderController extends HttpServlet {
                 }
             }
 
-            // Lấy voucherId (chuỗi rỗng => null)
             String voucherIdParam = request.getParameter("voucherId");
-            // Dùng Integer thay vì int, để có thể là null
             Integer intVoucherId = null;
             if (voucherIdParam != null && !voucherIdParam.trim().isEmpty()) {
                 try {
                     intVoucherId = Integer.valueOf(voucherIdParam.trim());
                 } catch (NumberFormatException e) {
-                    // Nếu parse lỗi => để null
+                    
                 }
             }
 
-            // Chuẩn bị DAO
             DAOOrder daoOrder = new DAOOrder();
             DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
             DAOPayment daoPayment = new DAOPayment();
             DAOCartItem daoCartItem = new DAOCartItem();
             DAOProductVariant daoProductVariant = new DAOProductVariant();
-
-            // Tính tổng gốc (trước khi áp voucher)
             double totalAmount = 0;
             for (CartItem ci : selectedCartItems) {
                 totalAmount += ci.getTotalPrice().doubleValue();
             }
-            // Nếu voucherId là null => người dùng không chọn
             if (intVoucherId == null) {
                 discountedTotal = BigDecimal.valueOf(totalAmount);
             }
-
-            // Tạo Order
             Date now = new Date();
             Order newOrder = new Order();
             newOrder.setBuyerID(user.getId());
@@ -141,54 +129,42 @@ public class OrderController extends HttpServlet {
             newOrder.setShippingAddress(address);
             newOrder.setTotalPrice(totalAmount);
             newOrder.setDiscountedPrice(discountedTotal.doubleValue());
-            // Nếu intVoucherId == null => setVoucherID(null)
             newOrder.setVoucherID(intVoucherId);
             newOrder.setRecipientName(fullName);
             newOrder.setRecipientPhone(phone);
             newOrder.setAssignedSaleId(3);
 
             if ("1".equals(paymentMethod)) {
-                // Thanh toán COD
                 int orderId = daoOrder.addOrder(newOrder);
                 if (orderId > 0) {
-                    // Tạo Payment
                     Payment newPayment = new Payment();
                     newPayment.setPaymentStatus("Pending");
-                    newPayment.setPaymentMethodId(1); // COD
+                    newPayment.setPaymentMethodId(1); 
                     newPayment.setAmount(discountedTotal.doubleValue());
                     newPayment.setNote("");
                     newPayment.setConfirmBy(null);
                     newPayment.setOrderId(orderId);
                     daoPayment.addPayment(newPayment);
 
-                    // Lưu order detail, giảm stock
                     for (CartItem ci : selectedCartItems) {
                         OrderDetail detail = new OrderDetail();
                         detail.setOrderId(orderId);
                         detail.setProductVariantID(ci.getProductVariantID());
                         detail.setQuantity(ci.getQuantity());
                         daoOrderDetail.addOrderDetail(detail);
-
-                        // Giảm stock
                         daoProductVariant.reduceStock(ci.getProductVariantID(), ci.getQuantity());
 
-                        // Xoá cartItem
                         daoCartItem.delete(ci.getCartItemID());
                     }
 
-                    // Xoá session
                     session.removeAttribute("selectedCartItems");
                     session.removeAttribute("totalOrderPrice");
-
-                    // Điều hướng sang trang thành công
                     response.sendRedirect("OrderController?service=orderSuccess");
                 } else {
                     response.sendRedirect("order-fail.jsp");
                 }
 
             } else if ("2".equals(paymentMethod)) {
-                // Thanh toán VNPay
-                // (Chưa tạo order ngay, chỉ lưu tạm data => VNPayPaymentServlet)
                 session.setAttribute("addressSelect", address);
                 session.setAttribute("newFullName", fullName);
                 session.setAttribute("newPhone", phone);

@@ -12,10 +12,8 @@
 <%@page import="entity.Color" %>
 
 <%
-    // Không khai báo lại session vì JSP đã có sẵn implicit object "session"
     String error = (String) request.getAttribute("error");
 
-    // Lấy giỏ hàng, tổng tiền, danh sách voucher và địa chỉ từ session (nếu có), nếu không thì lấy từ request.
     List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
     if (cartItems == null) {
         cartItems = (List<CartItem>) request.getAttribute("cartItems");
@@ -33,11 +31,9 @@
     if (vouchers == null) {
         vouchers = (Vector<Voucher>) request.getAttribute("vouchers");
     }
-    // Nếu danh sách voucher rỗng, khởi tạo mới để tránh lỗi
     if (vouchers == null || vouchers.isEmpty()) {
         vouchers = new Vector<Voucher>();
     }
-
     List<Address> addresses = (List<Address>) session.getAttribute("userAddresses");
     if (addresses == null) {
         addresses = (List<Address>) request.getAttribute("userAddresses");
@@ -68,177 +64,155 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+        <style>
+            .shipping-address {
+                margin-bottom: 20px;
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                max-width: 600px;
+                margin: 0 auto;
+                font-family: Arial, sans-serif;
+            }
+            h3 {
+                text-align: center;
+            }
+            #currentAddress p {
+                margin: 0;
+                font-size: 16px;
+                color: #333;
+            }
+            #currentAddress {
+                margin-bottom: 20px;
+            }
+            #addressOptions {
+                margin-top: 20px;
+            }
+            #defaultAddress input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+            }
+            #newAddress select, #newAddress input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+            }
+            #changeAddressBtn, #confirmAddressBtn {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 8px 16px;
+                background-color: #ff7f00;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            #changeAddressBtn:hover, #confirmAddressBtn:hover {
+                background-color: #e67000;
+            }
+            .submit-container {
+                text-align: center;
+                margin-top: 30px;
+            }
+            .submit-btn {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                font-size: 16px;
+                cursor: pointer;
+                border-radius: 5px;
+                border: none;
+            }
+            .submit-btn:hover {
+                background-color: #45a049;
+            }
 
-    </head><!--/head-->
-    <style>
+            #overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.6);
+                display: none;
+                z-index: 1;
+                transition: opacity 0.3s ease;
+            }
 
-        /* General styles for the form */
-        .shipping-address {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            max-width: 600px;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
-        }
+            #addAddressForm {
+                background-color: #ffffff;
+                padding: 20px;
+                width: 90%;
+                max-width: 400px;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                position: fixed;
+                top: 20%;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2;
+                opacity: 0;
+                display: none;
+                transition: opacity 0.3s ease-in-out;
+            }
 
-        h3 {
-            text-align: center;
-        }
+            #addAddressForm.show {
+                opacity: 1;
+                display: block;
+            }
 
-        #currentAddress p {
-            margin: 0;
-            font-size: 16px;
-            color: #333;
-        }
+            #addAddressForm input {
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+                font-size: 14px;
+                background-color: #f9f9f9;
+                transition: border-color 0.3s ease;
+            }
 
-        #currentAddress {
-            margin-bottom: 20px;
-        }
+            #addAddressForm input:focus {
+                border-color: #4CAF50;
+                outline: none;
+            }
 
-        #addressOptions {
-            margin-top: 20px;
-        }
+            #addAddressForm button {
+                width: 100%;
+                padding: 12px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
 
-        #defaultAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
+            #addAddressForm button:hover {
+                background-color: #45a049;
+            }
 
-        #newAddress select, #newAddress input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-        }
+            /* Nút đóng form */
+            #closeForm {
+                font-size: 30px;
+                color: #aaa;
+                transition: color 0.3s ease;
+            }
 
-        #changeAddressBtn, #confirmAddressBtn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #ff7f00;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+            #closeForm:hover {
+                color: #ff0000;
+            }
 
-        #changeAddressBtn:hover, #confirmAddressBtn:hover {
-            background-color: #e67000;
-        }
-
-        .submit-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .submit-btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-
-
-        /* Phông nền mờ khi mở form */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Màu nền mờ */
-            display: none; /* Ẩn phông mờ mặc định */
-            z-index: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Form Thêm Địa Chỉ */
-        #addAddressForm {
-            background-color: #ffffff;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%); /* Đảm bảo form căn giữa màn hình */
-            z-index: 2;
-            opacity: 0;
-            display: none; /* Ẩn form mặc định */
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        #addAddressForm.show {
-            opacity: 1;
-            display: block;
-        }
-
-        /* Các trường input trong form */
-        #addAddressForm input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            background-color: #f9f9f9;
-            transition: border-color 0.3s ease;
-        }
-
-        #addAddressForm input:focus {
-            border-color: #4CAF50; /* Đổi màu viền khi focus */
-            outline: none;
-        }
-
-        /* Nút "Thêm Địa Chỉ" trong form */
-        #addAddressForm button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #addAddressForm button:hover {
-            background-color: #45a049;
-        }
-
-        /* Nút đóng form */
-        #closeForm {
-            font-size: 30px;
-            color: #aaa;
-            transition: color 0.3s ease;
-        }
-
-        #closeForm:hover {
-            color: #ff0000;
-        }
-
-
-
-
-    </style>
+        </style>
+    </head>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -247,19 +221,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -272,49 +246,46 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <%
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                        <%
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -335,27 +306,31 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut" class="active">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
-                                        </ul>
-                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -386,41 +361,44 @@
                             <% }
                             } else { %>
                             <option value="">No address available. Please add a new one!</option>
-                            <% } %>
+                            <% }%>
                         </select>
-                        <!-- Add New Address Button -->
                         <div style="margin-bottom: 10px; text-align: right;">
                             <button type="button" id="addAddressBtn" style="background-color: #4CAF50; color: white; padding: 12px 24px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; transition: background-color 0.3s ease;">
                                 Add New Address
                             </button>
                         </div>
 
-
                         <!-- Overlay Background -->
                         <div id="overlay"></div>
 
-                        <!-- Add New Address Form -->
+                        Add New Address Form 
                         <div id="addAddressForm">
                             <span id="closeForm" style="cursor: pointer; position: absolute; top: 10px; right: 10px; font-size: 20px; color: #aaa;">&times;</span>
                             <h3 style="text-align: center; color: #333;">Add New Address</h3>
                             <label for="newAddress">Address:</label>
-                            <input type="text" id="newAddress" name="newAddress" required><br>
+                            <input type="text" id="newAddress" name="newAddress"><br>
 
                             <label for="newDistrict">District:</label>
-                            <input type="text" id="newDistrict" name="newDistrict" required><br>
+                            <input type="text" id="newDistrict" name="newDistrict"><br>
 
                             <label for="newCity">City:</label>
-                            <input type="text" id="newCity" name="newCity" required><br>
+                            <input type="text" id="newCity" name="newCity"><br>
 
                             <button id="submitNewAddress">Add Address</button>
                         </div>
 
 
 
-                        <% User user1 = (User)session.getAttribute("user"); %>
+
+
+
+
+
+
                         <h4 style="font-size: 20px; font-weight: bold; color: #555;">Recipient Information</h4>
-                        <input type="text" name="newFullName" placeholder="<%=user1.getName()%>"  value="<%=user1.getName()%>"required style="width: 100%; padding: 8px; margin-bottom: 10px;">
-                        <input type="text" name="newPhone" placeholder="<%=user1.getPhoneNumber()%>" value="<%=user1.getPhoneNumber()%>" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newFullName" placeholder="<%=user.getName()%>"  value="<%=user.getName()%>"required style="width: 100%; padding: 8px; margin-bottom: 10px;">
+                        <input type="text" name="newPhone" placeholder="<%=user.getPhoneNumber()%>" value="<%=user.getPhoneNumber()%>" required style="width: 100%; padding: 8px; margin-bottom: 10px;">
 
 
                         <div class="review-payment">
@@ -497,7 +475,6 @@
         <br>
         <br>
         <br>
-
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
                 <div class="container">
@@ -655,6 +632,53 @@
             </div>
 
         </footer><!--/Footer-->
+
+        <script src="js/jquery.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.scrollUp.min.js"></script>
+        <script src="js/jquery.prettyPhoto.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/updateQuantity.js"></script>
+        <script>
+            // Tạo map voucherId -> giá trị
+            const voucherValues = {
+            <% if (vouchers != null && !vouchers.isEmpty()) {
+                    for (Voucher vv : vouchers) {%>
+            <%= vv.getVoucherID()%>: <%= vv.getValue()%>,
+            <% }
+                }%>
+            };
+
+            const baseTotal = <%= totalOrderPrice%>;
+            const voucherSelect = document.getElementById('voucherSelect');
+            const totalDisplay = document.getElementById('totalDisplay');
+            const hiddenDiscountedTotal = document.getElementById('discountedTotal');
+            const voucherId = document.getElementById('voucherId'); // hidden field
+
+            function formatCurrency(amount) {
+                return amount.toLocaleString('vi-VN');
+            }
+
+            voucherSelect.addEventListener('change', function () {
+                const selectedVal = this.value; // Lấy giá trị chuỗi
+                if (selectedVal === "") {
+                    // Không chọn voucher => discountedTotal = baseTotal
+                    totalDisplay.innerText = formatCurrency(baseTotal);
+                    hiddenDiscountedTotal.value = baseTotal;
+                    voucherId.value = "";
+                } else {
+                    // parse sang số
+                    const selectedId = parseInt(selectedVal) || 0;
+                    const voucherValue = voucherValues[selectedId] || 0;
+                    const discountedTotal = Math.max(0, baseTotal - voucherValue);
+
+                    totalDisplay.innerText = formatCurrency(discountedTotal);
+                    hiddenDiscountedTotal.value = discountedTotal;
+                    voucherId.value = selectedId;
+                }
+            });
+        </script>
+
         <script>// Xử lý mở và đóng form thêm địa chỉ
             document.getElementById("addAddressBtn").addEventListener("click", function () {
                 var addAddressForm = document.getElementById("addAddressForm");
@@ -747,50 +771,5 @@
             });
         </script>
 
-        <script src="js/jquery.js"></script>
-        <script src="js/bootstrap.min.js"></script>
-        <script src="js/jquery.scrollUp.min.js"></script>
-        <script src="js/jquery.prettyPhoto.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/updateQuantity.js"></script>
-        <script>
-            // Tạo map voucherId -> giá trị
-            const voucherValues = {
-            <% if (vouchers != null && !vouchers.isEmpty()) {
-                    for (Voucher vv : vouchers) {%>
-            <%= vv.getVoucherID()%>: <%= vv.getValue()%>,
-            <% }
-                }%>
-            };
-
-            const baseTotal = <%= totalOrderPrice%>;
-            const voucherSelect = document.getElementById('voucherSelect');
-            const totalDisplay = document.getElementById('totalDisplay');
-            const hiddenDiscountedTotal = document.getElementById('discountedTotal');
-            const voucherId = document.getElementById('voucherId'); // hidden field
-
-            function formatCurrency(amount) {
-                return amount.toLocaleString('vi-VN');
-            }
-
-            voucherSelect.addEventListener('change', function () {
-                const selectedVal = this.value; // Lấy giá trị chuỗi
-                if (selectedVal === "") {
-                    // Không chọn voucher => discountedTotal = baseTotal
-                    totalDisplay.innerText = formatCurrency(baseTotal);
-                    hiddenDiscountedTotal.value = baseTotal;
-                    voucherId.value = "";
-                } else {
-                    // parse sang số
-                    const selectedId = parseInt(selectedVal) || 0;
-                    const voucherValue = voucherValues[selectedId] || 0;
-                    const discountedTotal = Math.max(0, baseTotal - voucherValue);
-
-                    totalDisplay.innerText = formatCurrency(discountedTotal);
-                    hiddenDiscountedTotal.value = discountedTotal;
-                    voucherId.value = selectedId;
-                }
-            });
-        </script>
     </body>
 </html>

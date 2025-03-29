@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -118,20 +119,30 @@ public class VNPayReturnServlet extends HttpServlet {
             DAOCart daoCart = new DAOCart();
             DAOCartItem daoCartItem = new DAOCartItem();
             DAOPayment daoPayment = new DAOPayment();
+            double totalAmount = 0.0;
 
             List<CartItem> selectedCartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
             if (selectedCartItems == null || selectedCartItems.isEmpty()) {
                 response.sendRedirect("checkout.jsp?error=EmptyCart");
                 return;
             }
-            Date time = new Date();
-            double totalAmount = 0.0;
-
             if (selectedCartItems != null) {
                 for (CartItem item : selectedCartItems) {
                     totalAmount += item.getTotalPrice().doubleValue();
                 }
             }
+
+            BigDecimal discountedTotalValue = (BigDecimal) session.getAttribute("discountedTotal");
+            if (discountedTotalValue == null) {
+                discountedTotalValue = BigDecimal.ZERO;
+            }
+
+            Integer intVoucherId = (Integer) session.getAttribute("voucherId");
+
+            if (intVoucherId == null) {
+                discountedTotalValue = BigDecimal.valueOf(totalAmount);
+            }
+            Date time = new Date();
 
             Order newOrder = new Order();
             newOrder.setBuyerID(customerID);
@@ -142,9 +153,9 @@ public class VNPayReturnServlet extends HttpServlet {
             calendar.add(Calendar.DATE, 3);
             newOrder.setShippingAddress((String) session.getAttribute("addressSelect"));
             newOrder.setTotalPrice(totalAmount);
-            newOrder.setDiscountedPrice(0.0);
+            newOrder.setDiscountedPrice(discountedTotalValue.doubleValue());
             newOrder.setDisabled(false);
-            newOrder.setVoucherID(null);
+            newOrder.setVoucherID(intVoucherId);
             newOrder.setRecipientName((String) session.getAttribute("newFullName"));
             newOrder.setRecipientPhone((String) session.getAttribute("newPhone"));
             newOrder.setAssignedSaleId(3);
@@ -155,7 +166,7 @@ public class VNPayReturnServlet extends HttpServlet {
             newPayment.setPaymentMethodId(2);
             calendar.setTime(time);
             calendar.add(Calendar.DATE, 3);
-            newPayment.setAmount(totalAmount);
+            newPayment.setAmount(discountedTotalValue.doubleValue());
             newPayment.setNote("");
             newPayment.setConfirmBy(null);
 

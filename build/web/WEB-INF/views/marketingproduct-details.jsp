@@ -98,19 +98,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -123,7 +123,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
                             </div>
                             <div class="btn-group pull-right">
                                 <div class="btn-group">
@@ -132,8 +132,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canada</a></li>
-                                        <li><a href="#">UK</a></li>
+                                        <li><a href="">Canada</a></li>
+                                        <li><a href="">UK</a></li>
                                     </ul>
                                 </div>
 
@@ -143,8 +143,8 @@
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="#">Canadian Dollar</a></li>
-                                        <li><a href="#">Pound</a></li>
+                                        <li><a href="">Canadian Dollar</a></li>
+                                        <li><a href="">Pound</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -152,28 +152,18 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <% 
-                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                        User user = (User) session.getAttribute("user");
-                                        if (isLoggedIn != null && isLoggedIn) {
-                                    %>
-                                    <li>
-                                        <a style="font-weight: bold">
-                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LogoutController">
-                                            <i class="fa fa-power-off"></i> Logout
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                    <li>
-                                        <a href="${pageContext.request.contextPath}/LoginController">
-                                            <i class="fa fa-lock"></i> Login
-                                        </a>
-                                    </li>
-                                    <% } %>
+                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                        <% 
+                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                            User user = (User) session.getAttribute("user");
+                                            if (isLoggedIn != null && isLoggedIn) {
+                                        %>
+                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
+                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        <% } else { %>
+                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
+                                        <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -194,7 +184,6 @@
                                 </button>
                             </div>
                             <div class="mainmenu pull-left">
-
                                   <ul class="nav navbar-nav collapse navbar-collapse">
                                 <li><a href="MarketingDashboardController" class="active">Home</a></li>
                                 <li><a href="MarketingPostController?service=listAllBlogs">Post List</a></li>
@@ -210,9 +199,12 @@
                             <div class="pull-right">
                                 <form action="${pageContext.request.contextPath}/MarketingProductDetails" method="get">
                                     <input type="text" name="search" value="${param.search}" />
-                                </ul>
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
                             </div>
-                        </div>                        
+
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -609,4 +601,3 @@ document.addEventListener("DOMContentLoaded",    function() {
 
 </body>
 </html>
-

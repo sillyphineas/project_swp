@@ -79,6 +79,7 @@
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
+
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
 
@@ -170,7 +171,7 @@
                                 <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
                                     <div class="item ${status.index == 0 ? 'active' : ''}">
                                         <div class="col-sm-6">
-                                            <h1><span>E</span>-SHOPPER</h1>
+                                            <h1><span>T</span>-PHONE</h1>
                                             <h2>${blog.title}</h2>
 
 
@@ -259,6 +260,7 @@
                                     </div>
                                 </c:if>
                             </div>
+
                         </div>
                     </div>
 

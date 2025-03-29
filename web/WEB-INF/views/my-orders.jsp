@@ -184,16 +184,15 @@
     <body>
 
         <!-- ================= HEADER START ================= -->
-        <header id="header">
-            <!-- Bạn copy đầy đủ code header_top, header_middle, header_bottom... của bạn vào đây -->
-            <div class="header_top">
+        <header id="header"><!--header-->
+            <div class="header_top"><!--header_top-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -210,15 +209,19 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-middle">
+            </div><!--/header_top-->
+
+            <div class="header-middle"><!--header-middle-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
@@ -231,37 +234,44 @@
                                         }
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li>
-                                        <a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%= user.getEmail()%></a>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
                                     </li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <%
-                                        } else {
-                                        %>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <%
-                                            }
-                                        %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-bottom">
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="navbar-header">
-                                <button
-                                    type="button"
-                                    class="navbar-toggle"
-                                    data-toggle="collapse"
-                                    data-target=".navbar-collapse"
-                                    >
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                                     <span class="sr-only">Toggle navigation</span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
@@ -271,25 +281,34 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController" class="active">Home</a></li>
-                                    <li><a href="ProductController">Shop</a></li> 
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
+                                    </li> 
                                     <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
                                     <li><a href="#about-us">About Us</a></li>
                                     <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
-            </div>
-        </header>
+            </div><!--/header-bottom-->
+        </header><!--/header-->
         <!-- ================= HEADER END ================= -->
 
         <!-- Biến sessionUserId để dùng cho feedback -->
@@ -1253,222 +1272,222 @@
         <script src="js/cart.js"></script>
 
         <script>
-            // Lấy param activeTab từ server (nếu có)
-            const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
-            // Hàm hiển thị tab
-            function showTab(tab) {
-                // Ẩn tất cả order-section
-                document.querySelectorAll(".order-section").forEach((sec) => (sec.style.display = "none"));
-                // Hiển thị tab mong muốn
-                const tabDiv = document.getElementById("tab-" + tab);
-                if (tabDiv) {
-                    tabDiv.style.display = "block";
-                }
-                // Bỏ active trên tất cả button
-                document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
-                    btn.classList.remove("active");
-                });
-                // Tìm button có data-tab=xxx => active
-                const activeBtn = document.querySelector('.my-order-tabs button[data-tab="' + tab + '"]');
-                if (activeBtn) {
-                    activeBtn.classList.add("active");
-                }
-            }
+                                                               // Lấy param activeTab từ server (nếu có)
+                                                               const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
+                                                               // Hàm hiển thị tab
+                                                               function showTab(tab) {
+                                                                   // Ẩn tất cả order-section
+                                                                   document.querySelectorAll(".order-section").forEach((sec) => (sec.style.display = "none"));
+                                                                   // Hiển thị tab mong muốn
+                                                                   const tabDiv = document.getElementById("tab-" + tab);
+                                                                   if (tabDiv) {
+                                                                       tabDiv.style.display = "block";
+                                                                   }
+                                                                   // Bỏ active trên tất cả button
+                                                                   document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
+                                                                       btn.classList.remove("active");
+                                                                   });
+                                                                   // Tìm button có data-tab=xxx => active
+                                                                   const activeBtn = document.querySelector('.my-order-tabs button[data-tab="' + tab + '"]');
+                                                                   if (activeBtn) {
+                                                                       activeBtn.classList.add("active");
+                                                                   }
+                                                               }
 
-            // Khi trang load, hiển thị tab theo param activeTab
-            document.addEventListener("DOMContentLoaded", () => {
-                if (serverActiveTab) {
-                    showTab(serverActiveTab);
-                } else {
-                    showTab("all");
-                }
-            });
+                                                               // Khi trang load, hiển thị tab theo param activeTab
+                                                               document.addEventListener("DOMContentLoaded", () => {
+                                                                   if (serverActiveTab) {
+                                                                       showTab(serverActiveTab);
+                                                                   } else {
+                                                                       showTab("all");
+                                                                   }
+                                                               });
 
-            // Gắn sự kiện click cho các button tab
-            document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    const tabName = btn.getAttribute("data-tab");
-                    showTab(tabName);
-                });
-            });
+                                                               // Gắn sự kiện click cho các button tab
+                                                               document.querySelectorAll(".my-order-tabs button").forEach((btn) => {
+                                                                   btn.addEventListener("click", () => {
+                                                                       const tabName = btn.getAttribute("data-tab");
+                                                                       showTab(tabName);
+                                                                   });
+                                                               });
 
-            // Toggle "Show More" cho tất cả tabs
-            $(document).on("click", ".toggle-dropdown", function () {
-                let $dropdown = $(this).closest(".my-order-card").find(".dropdown-products");
-                if ($dropdown.is(":visible")) {
-                    $dropdown.hide();
-                    $(this).text("Show More");
-                } else {
-                    $dropdown.show();
-                    $(this).text("Hide");
-                }
-            });
+                                                               // Toggle "Show More" cho tất cả tabs
+                                                               $(document).on("click", ".toggle-dropdown", function () {
+                                                                   let $dropdown = $(this).closest(".my-order-card").find(".dropdown-products");
+                                                                   if ($dropdown.is(":visible")) {
+                                                                       $dropdown.hide();
+                                                                       $(this).text("Show More");
+                                                                   } else {
+                                                                       $dropdown.show();
+                                                                       $(this).text("Hide");
+                                                                   }
+                                                               });
 
-            // ========== Ajax for Cancel / Refund / Confirm Delivered ==========
-            $(document).ready(function () {
-                // Cancel order
-                $(".cancel-order").click(function () {
-                    let orderId = $(this).data("orderid");
-                    if (confirm("Are you sure you want to cancel this order?")) {
-                        $.ajax({
-                            url: "CustomerOrderController",
-                            type: "GET",
-                            data: {service: "cancelOrder", orderId: orderId, ajax: "true"},
-                            dataType: "json",
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    // Reload => sang tab canceled => pageCanceled=1 => newlyCanceled
-                                    window.location.href =
-                                        "CustomerOrderController?service=displayAllOrders&activeTab=canceled&pageCanceled=1&newlyCanceled=" + orderId;
-                                } else {
-                                    alert(response.message);
-                                }
-                            },
-                            error: function () {
-                                alert("An error occurred while processing your request.");
-                            },
-                        });
-                    }
-                });
+                                                               // ========== Ajax for Cancel / Refund / Confirm Delivered ==========
+                                                               $(document).ready(function () {
+                                                                   // Cancel order
+                                                                   $(".cancel-order").click(function () {
+                                                                       let orderId = $(this).data("orderid");
+                                                                       if (confirm("Are you sure you want to cancel this order?")) {
+                                                                           $.ajax({
+                                                                               url: "CustomerOrderController",
+                                                                               type: "GET",
+                                                                               data: {service: "cancelOrder", orderId: orderId, ajax: "true"},
+                                                                               dataType: "json",
+                                                                               success: function (response) {
+                                                                                   if (response.success) {
+                                                                                       alert(response.message);
+                                                                                       // Reload => sang tab canceled => pageCanceled=1 => newlyCanceled
+                                                                                       window.location.href =
+                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=canceled&pageCanceled=1&newlyCanceled=" + orderId;
+                                                                                   } else {
+                                                                                       alert(response.message);
+                                                                                   }
+                                                                               },
+                                                                               error: function () {
+                                                                                   alert("An error occurred while processing your request.");
+                                                                               },
+                                                                           });
+                                                                       }
+                                                                   });
 
-                // Refund order
-                $(".refund-order").click(function () {
-                    let orderId = $(this).data("orderid");
-                    if (confirm("Are you sure you want to request a refund?")) {
-                        $.ajax({
-                            url: "CustomerOrderController",
-                            type: "GET",
-                            data: {
-                                service: "refundOrder",
-                                orderId: orderId,
-                                ajax: "true"
-                            },
-                            dataType: "json",
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    // Reload => tab return => pageRefund=1 & newlyRefunded=orderId
-                                    window.location.href =
-                                        "CustomerOrderController?service=displayAllOrders"
-                                        + "&activeTab=return"
-                                        + "&pageRefund=1"
-                                        + "&newlyRefunded=" + orderId;
-                                } else {
-                                    alert(response.message);
-                                }
-                            },
-                            error: function () {
-                                alert("An error occurred while processing your request.");
-                            }
-                        });
-                    }
-                });
+                                                                   // Refund order
+                                                                   $(".refund-order").click(function () {
+                                                                       let orderId = $(this).data("orderid");
+                                                                       if (confirm("Are you sure you want to request a refund?")) {
+                                                                           $.ajax({
+                                                                               url: "CustomerOrderController",
+                                                                               type: "GET",
+                                                                               data: {
+                                                                                   service: "refundOrder",
+                                                                                   orderId: orderId,
+                                                                                   ajax: "true"
+                                                                               },
+                                                                               dataType: "json",
+                                                                               success: function (response) {
+                                                                                   if (response.success) {
+                                                                                       alert(response.message);
+                                                                                       // Reload => tab return => pageRefund=1 & newlyRefunded=orderId
+                                                                                       window.location.href =
+                                                                                               "CustomerOrderController?service=displayAllOrders"
+                                                                                               + "&activeTab=return"
+                                                                                               + "&pageRefund=1"
+                                                                                               + "&newlyRefunded=" + orderId;
+                                                                                   } else {
+                                                                                       alert(response.message);
+                                                                                   }
+                                                                               },
+                                                                               error: function () {
+                                                                                   alert("An error occurred while processing your request.");
+                                                                               }
+                                                                           });
+                                                                       }
+                                                                   });
 
-                // Confirm Delivered order (to mark as Completed)
-                $(".confirm-delivered").click(function () {
-                    let orderId = $(this).data("orderid");
-                    if (confirm("Are you sure you want to confirm delivery?")) {
-                        $.ajax({
-                            url: "CustomerOrderController",
-                            type: "GET",
-                            data: {service: "confirmDelivered", orderId: orderId, ajax: "true"},
-                            dataType: "json",
-                            success: function (response) {
-                                if (response.success) {
-                                    alert(response.message);
-                                    // Reload => sang tab completed => pageCompleted=1 => newlyCompleted
-                                    window.location.href =
-                                        "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
-                                } else {
-                                    alert(response.message);
-                                }
-                            },
-                            error: function () {
-                                alert("An error occurred while processing your request.");
-                            },
-                        });
-                    }
-                });
-            });
+                                                                   // Confirm Delivered order (to mark as Completed)
+                                                                   $(".confirm-delivered").click(function () {
+                                                                       let orderId = $(this).data("orderid");
+                                                                       if (confirm("Are you sure you want to confirm delivery?")) {
+                                                                           $.ajax({
+                                                                               url: "CustomerOrderController",
+                                                                               type: "GET",
+                                                                               data: {service: "confirmDelivered", orderId: orderId, ajax: "true"},
+                                                                               dataType: "json",
+                                                                               success: function (response) {
+                                                                                   if (response.success) {
+                                                                                       alert(response.message);
+                                                                                       // Reload => sang tab completed => pageCompleted=1 => newlyCompleted
+                                                                                       window.location.href =
+                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
+                                                                                   } else {
+                                                                                       alert(response.message);
+                                                                                   }
+                                                                               },
+                                                                               error: function () {
+                                                                                   alert("An error occurred while processing your request.");
+                                                                               },
+                                                                           });
+                                                                       }
+                                                                   });
+                                                               });
 
-            // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========
-            // Toggle Feedback Form theo orderDetailID
-            function toggleFeedbackForm(orderDetailID) {
-                var formContainer = document.getElementById("feedback-form-container-" + orderDetailID);
-                if (!formContainer)
-                    return;
-                formContainer.style.display = (formContainer.style.display === "none") ? "block" : "none";
-            }
+                                                               // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========
+                                                               // Toggle Feedback Form theo orderDetailID
+                                                               function toggleFeedbackForm(orderDetailID) {
+                                                                   var formContainer = document.getElementById("feedback-form-container-" + orderDetailID);
+                                                                   if (!formContainer)
+                                                                       return;
+                                                                   formContainer.style.display = (formContainer.style.display === "none") ? "block" : "none";
+                                                               }
 
-            // Preview Images
-            function previewImages(event, orderDetailID) {
-                var previewContainer = document.getElementById("image-preview-" + orderDetailID);
-                if (!previewContainer)
-                    return;
-                previewContainer.innerHTML = '';
-                var files = event.target.files;
-                if (!files.length)
-                    return;
-                for (let i = 0; i < files.length; i++) {
-                    let file = files[i];
-                    let reader = new FileReader();
-                    reader.onload = function (e) {
-                        let imgContainer = document.createElement("div");
-                        imgContainer.style.position = "relative";
-                        imgContainer.style.margin = "5px";
-                        let img = document.createElement("img");
-                        img.src = e.target.result;
-                        img.style.width = "80px";
-                        img.style.height = "80px";
-                        img.style.objectFit = "cover";
-                        img.style.borderRadius = "5px";
-                        img.style.border = "1px solid #ddd";
+                                                               // Preview Images
+                                                               function previewImages(event, orderDetailID) {
+                                                                   var previewContainer = document.getElementById("image-preview-" + orderDetailID);
+                                                                   if (!previewContainer)
+                                                                       return;
+                                                                   previewContainer.innerHTML = '';
+                                                                   var files = event.target.files;
+                                                                   if (!files.length)
+                                                                       return;
+                                                                   for (let i = 0; i < files.length; i++) {
+                                                                       let file = files[i];
+                                                                       let reader = new FileReader();
+                                                                       reader.onload = function (e) {
+                                                                           let imgContainer = document.createElement("div");
+                                                                           imgContainer.style.position = "relative";
+                                                                           imgContainer.style.margin = "5px";
+                                                                           let img = document.createElement("img");
+                                                                           img.src = e.target.result;
+                                                                           img.style.width = "80px";
+                                                                           img.style.height = "80px";
+                                                                           img.style.objectFit = "cover";
+                                                                           img.style.borderRadius = "5px";
+                                                                           img.style.border = "1px solid #ddd";
 
-                        let removeBtn = document.createElement("span");
-                        removeBtn.innerHTML = "❌";
-                        removeBtn.style.position = "absolute";
-                        removeBtn.style.top = "2px";
-                        removeBtn.style.right = "2px";
-                        removeBtn.style.cursor = "pointer";
-                        removeBtn.style.color = "red";
-                        removeBtn.style.background = "white";
-                        removeBtn.style.borderRadius = "50%";
-                        removeBtn.style.padding = "2px 5px";
-                        removeBtn.onclick = function () {
-                            imgContainer.remove();
-                        };
-                        imgContainer.appendChild(img);
-                        imgContainer.appendChild(removeBtn);
-                        previewContainer.appendChild(imgContainer);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
+                                                                           let removeBtn = document.createElement("span");
+                                                                           removeBtn.innerHTML = "❌";
+                                                                           removeBtn.style.position = "absolute";
+                                                                           removeBtn.style.top = "2px";
+                                                                           removeBtn.style.right = "2px";
+                                                                           removeBtn.style.cursor = "pointer";
+                                                                           removeBtn.style.color = "red";
+                                                                           removeBtn.style.background = "white";
+                                                                           removeBtn.style.borderRadius = "50%";
+                                                                           removeBtn.style.padding = "2px 5px";
+                                                                           removeBtn.onclick = function () {
+                                                                               imgContainer.remove();
+                                                                           };
+                                                                           imgContainer.appendChild(img);
+                                                                           imgContainer.appendChild(removeBtn);
+                                                                           previewContainer.appendChild(imgContainer);
+                                                                       };
+                                                                       reader.readAsDataURL(file);
+                                                                   }
+                                                               }
 
-            // Submit Feedback
-            function submitFeedback(e, orderDetailID) {
-                // Nếu muốn xử lý AJAX, bạn viết thêm logic ở đây
-                // Mặc định form sẽ submit sang CustomerOrderController
-            }
+                                                               // Submit Feedback
+                                                               function submitFeedback(e, orderDetailID) {
+                                                                   // Nếu muốn xử lý AJAX, bạn viết thêm logic ở đây
+                                                                   // Mặc định form sẽ submit sang CustomerOrderController
+                                                               }
 
-            // Xử lý rating
-            document.addEventListener("DOMContentLoaded", () => {
-                document.querySelectorAll(".rating").forEach((ratingContainer) => {
-                    let odID = ratingContainer.dataset.orderdetailid;
-                    let stars = ratingContainer.querySelectorAll(".star");
-                    let ratingInput = document.getElementById("rating-" + odID);
-                    stars.forEach((star) => {
-                        star.addEventListener("click", function () {
-                            let value = this.getAttribute("data-value");
-                            ratingInput.value = value;
-                            stars.forEach((s, index) => {
-                                s.style.color = index < value ? "gold" : "gray";
-                            });
-                        });
-                    });
-                });
-            });
+                                                               // Xử lý rating
+                                                               document.addEventListener("DOMContentLoaded", () => {
+                                                                   document.querySelectorAll(".rating").forEach((ratingContainer) => {
+                                                                       let odID = ratingContainer.dataset.orderdetailid;
+                                                                       let stars = ratingContainer.querySelectorAll(".star");
+                                                                       let ratingInput = document.getElementById("rating-" + odID);
+                                                                       stars.forEach((star) => {
+                                                                           star.addEventListener("click", function () {
+                                                                               let value = this.getAttribute("data-value");
+                                                                               ratingInput.value = value;
+                                                                               stars.forEach((s, index) => {
+                                                                                   s.style.color = index < value ? "gold" : "gray";
+                                                                               });
+                                                                           });
+                                                                       });
+                                                                   });
+                                                               });
 
         </script>
     </body>

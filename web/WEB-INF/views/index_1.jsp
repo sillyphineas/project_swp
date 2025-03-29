@@ -171,7 +171,7 @@
                                 <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
                                     <div class="item ${status.index == 0 ? 'active' : ''}">
                                         <div class="col-sm-6">
-                                            <h1><span>E</span>-SHOPPER</h1>
+                                            <h1><span>T</span>-PHONE</h1>
                                             <h2>${blog.title}</h2>
 
 
