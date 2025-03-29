@@ -48,93 +48,103 @@ public class UpdateProfileController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Lấy thông tin người dùng từ session
-        HttpSession session = request.getSession();
-        User updatedUser = new User();
+        HttpSession session = request.getSession(false);
         User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
         // Lấy thông tin từ form
-        String userId = request.getParameter("userId");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String dateOfBirth = request.getParameter("dateOfBirth");
+
         String phonePattern = "^[0-9]{10,11}$";
 
         if (phoneNumber == null || !phoneNumber.matches(phonePattern)) {
             request.setAttribute("errorMessage", "Phone number must be 10 or 11 digits.");
+            request.setAttribute("user", currentUser);
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
+
         if (dateOfBirth == null || dateOfBirth.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Date of birth cannot be empty!!!");
+            request.setAttribute("user", currentUser);
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
+
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date birthDate = sdf.parse(dateOfBirth);
+
             if (birthDate.after(new Date())) {
                 request.setAttribute("errorMessage", "Date of birth cannot be in the future!");
+                request.setAttribute("user", currentUser);
                 request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
                 return;
             }
-            Date today = new Date();
-            SimpleDateFormat sdfToday = new SimpleDateFormat("yyyy-MM-dd");
-            String todayStr = sdfToday.format(today); // Định dạng ngày hiện tại thành chuỗi
-            String birthDateStr = sdfToday.format(birthDate); // Định dạng ngày sinh thành chuỗi
 
-            // So sánh ngày sinh với ngày hiện tại
+            String todayStr = sdf.format(new Date());
+            String birthDateStr = sdf.format(birthDate);
             if (todayStr.equals(birthDateStr)) {
                 request.setAttribute("errorMessage", "Date of birth cannot be today!");
+                request.setAttribute("user", currentUser);
                 request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
                 return;
             }
-            updatedUser.setDateOfBirth(new java.sql.Date(birthDate.getTime()));
+
+            currentUser.setDateOfBirth(new java.sql.Date(birthDate.getTime()));
         } catch (ParseException e) {
             request.setAttribute("errorMessage", "Invalid date of birth format!");
+            request.setAttribute("user", currentUser);
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
+
         if (isEmailOrPhoneTaken(email, currentUser.getId())) {
             request.setAttribute("errorMessage", "Email is already taken");
+            request.setAttribute("user", currentUser);
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
 
-        Part filePart = request.getPart("image");  // Nhận tệp từ form
-        if (filePart != null && filePart.getSize() > 0) {
-            InputStream fileContent = filePart.getInputStream();  // Đọc nội dung tệp
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = fileContent.read(buffer)) != -1) {
-                byteArrayOutputStream.write(buffer, 0, bytesRead);
-            }
-            byte[] imageBytes = byteArrayOutputStream.toByteArray();
-            updatedUser.setImage(imageBytes);
-        } else {
-            updatedUser.setImage(currentUser.getImage());
-        }
-        updatedUser.setId(currentUser.getId());
-        updatedUser.setName(name);
-        updatedUser.setEmail(email);
-        updatedUser.setPhoneNumber(phoneNumber);
-        updatedUser.setGender(gender);
-        updatedUser.setPassHash(currentUser.getPassHash());
-        updatedUser.setUpdatedBy(currentUser.getId());
-        Date utilDate = new Date();
-        updatedUser.setUpdatedAt(new java.sql.Date(utilDate.getTime()));
-        // Cập nhật dữ liệu vào cơ sở dữ liệu
-        DAOUser userDao = new DAOUser();
-        int result = userDao.updateUser2(updatedUser);
+        // Cập nhật thông tin
+        currentUser.setName(name);
+        currentUser.setEmail(email);
+        currentUser.setPhoneNumber(phoneNumber);
+        currentUser.setGender(gender);
 
-        // Kiểm tra kết quả
+        // Xử lý ảnh đại diện nếu có
+        Part filePart = request.getPart("image");
+        if (filePart != null && filePart.getSize() > 0) {
+            try (InputStream fileContent = filePart.getInputStream(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fileContent.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                currentUser.setImage(outputStream.toByteArray());
+            }
+        }
+
+        currentUser.setUpdatedAt(new java.sql.Date(new Date().getTime()));
+        currentUser.setUpdatedBy(currentUser.getId());
+
+        DAOUser userDao = new DAOUser();
+        int result = userDao.updateUser2(currentUser);
+
         if (result > 0) {
-            session.setAttribute("user", updatedUser); // Cập nhật thông tin người dùng trong session
+            session.setAttribute("user", currentUser); // Đảm bảo không tạo user mới
             response.sendRedirect("UserProfileServlet");
         } else {
             request.setAttribute("errorMessage", "Failed to update profile.");
+            request.setAttribute("user", currentUser);
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
         }
     }
