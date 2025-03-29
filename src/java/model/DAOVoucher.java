@@ -156,4 +156,62 @@ public class DAOVoucher extends DBConnection {
         // Tạm để trống nếu chưa cần
         return null;
     }
+    
+    public int getTotalVouchersCount() {
+        String sql = "SELECT COUNT(*) FROM Vouchers";
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    public Vector<Voucher> searchVouchers(String keyword) {
+        Vector<Voucher> voucherList = new Vector<>();
+        String sql = "SELECT * FROM Vouchers WHERE voucherCode LIKE ? OR description LIKE ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Voucher voucher = new Voucher(
+                            rs.getInt("voucherID"),
+                            rs.getString("voucherCode"),
+                            rs.getInt("voucherTypeID"),
+                            rs.getString("description"),
+                            rs.getInt("point"),
+                            rs.getDate("startDate"),
+                            rs.getDate("expiredDate"),
+                            rs.getInt("usageLimit"),
+                            rs.getBoolean("isDisabled"),
+                            rs.getInt("value")
+                    );
+                    voucherList.add(voucher);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return voucherList;
+    }
+    
+    public int getTotalSearchCount(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Vouchers WHERE voucherCode LIKE ? OR description LIKE ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

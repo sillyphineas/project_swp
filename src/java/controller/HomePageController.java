@@ -137,7 +137,6 @@ public class HomePageController extends HttpServlet {
             request.setAttribute("minPrice_" + product.getId(), formattedMinPrice);
         }
         
-        Vector<Product> latestProducts = dao.getNewProductsForHomePage(1, 3);
         request.setAttribute("latestProducts", latestProducts);
         request.setAttribute("products", productList);
         request.setAttribute("brands", brandList);

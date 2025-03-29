@@ -293,9 +293,9 @@
                                         <i  style="margin-right: 5px;"></i> Sort
                                     </button>
                                 </form>
-                                <a href="UserDetailController?action=addUser" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+<!--                                <a href="UserDetailController?action=addUser" class="btn btn-success custom-btn" style="padding: 6px 15px; font-size: 13px; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
                                     <i style="margin-right: 5px;"></i> Add User
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                         <br>

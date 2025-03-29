@@ -196,26 +196,37 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
                                     <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
 
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
                                         <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -264,11 +275,11 @@
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header>
+        </header><!--/header-->
 
         <div class="contact-section">
             <h1>CONTACT US</h1>
-            <p>We align leaders around a shared purpose and strategic story that catalyzes their business and brand to take action.</p>
+            <p>T-Phone Store — Empowering Your Digital Life.</p>
         </div>
 
         <!-- Khối bao gồm thông tin liên hệ (trái) và map (phải) -->
@@ -281,12 +292,12 @@
                 <!-- Address -->
                 <div class="info-block">
                     <i class="fas fa-map-marker-alt"></i>
-                    <p>Yen My, Hung Yen <br> Viet Nam</p>
+                    <p>Yen My, Hung Yen, Viet Nam</p>
                 </div>
 
                 <!-- Email -->
                 <div class="info-block">
-                    <i class="fas fa-envelope"></i>
+                    <h2>Email:</h2>
                     <p>
                         haiductran712@gmail.com<br>
                         dquangdat04@gmail.com
@@ -295,7 +306,7 @@
 
                 <!-- Phone -->
                 <div class="info-block">
-                    <i class="fas fa-phone-alt"></i>
+                    <h2>Phone:</h2>
                     <p>+84 373 335 357<br>
                         +84 335 125 198</p>
                 </div>
@@ -303,13 +314,7 @@
                 <!-- Mạng xã hội -->
                 <div class="info-block">
                     <h2>Contact us</h2>
-                    <p>Contact us for a quote. Help or to join the team.</p>
-                    <div class="social">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-pinterest"></i></a>
-                    </div>
+                    <p>Contact us for a quote.</p>
                 </div>
             </div>
 
@@ -327,7 +332,10 @@
             </div>
 
         </div>
-
+        <br>
+        <br><!-- comment's -->
+        <br><!-- <br> -->
+        <br>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

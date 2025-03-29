@@ -46,16 +46,16 @@
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState == 4 && xhttp.status == 200) {
                         if (xhttp.responseText.trim() === "cancel") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=cancel";
+                            window.location.href = "<%= request.getContextPath()%>/VerifyAccountController?service=cancel";
                         } else if (xhttp.responseText.trim() === "redirect") {
-                            window.location.href = "<%= request.getContextPath() %>/VerifyAccountController?service=forward";
+                            window.location.href = "<%= request.getContextPath()%>/VerifyAccountController?service=forward";
                         } else {
                             document.getElementById("msg").innerHTML = xhttp.responseText;
                         }
                     }
                 };
 
-                xhttp.open("POST", "<%= request.getContextPath() %>/RegisterController", true);
+                xhttp.open("POST", "<%= request.getContextPath()%>/RegisterController", true);
                 xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhttp.send("email=" + email +
                         "&password=" + password +
@@ -75,21 +75,20 @@
 
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState == 4 && xhttp.status == 200) {
-                        if (xhttp.responseText.startsWith("success")) {
+                        if (xhttp.responseText.trim().startsWith("success")) {
                             console.log(xhttp.responseText);
                             let roleId = xhttp.responseText.split(":")[1];
                             console.log(roleId);
                             if (roleId == 1) {
-
-                                window.location.href = "<%= request.getContextPath() %>/AdminDashboardController";
+                                window.location.href = "<%= request.getContextPath()%>/AdminDashboardController";
                             } else if (roleId == 5) {
-                                window.location.href = "<%= request.getContextPath() %>/HomePageController";
+                                window.location.href = "<%= request.getContextPath()%>/HomePageController";
                             } else if (roleId == 4) {
-                                window.location.href = "<%= request.getContextPath() %>/ShipperDashboardController";
+                                window.location.href = "<%= request.getContextPath()%>/ShipperDashboardController";
                             } else if (roleId == 3) {
-                                window.location.href = "<%= request.getContextPath() %>/salesDashboardController";
+                                window.location.href = "<%= request.getContextPath()%>/salesDashboardController";
                             } else if (roleId == 2) {
-                                window.location.href = "<%= request.getContextPath() %>/MarketingDashboardController";
+                                window.location.href = "<%= request.getContextPath()%>/MarketingDashboardController";
 
                             }
                         } else {
@@ -98,7 +97,7 @@
                     }
                 };
 
-                xhttp.open("POST", "<%= request.getContextPath() %>/LoginController", true);
+                xhttp.open("POST", "<%= request.getContextPath()%>/LoginController", true);
                 xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhttp.send("email=" + email +
                         "&password=" + password);
@@ -227,19 +226,19 @@
         <section id="form"><!--form-->
             <div class="container">
                 <c:if test="${not empty successMessage}">
-                                <div style="color:green;">
-                                    ${successMessage}
-                                </div>
-                            </c:if>
+                    <div style="color:green;">
+                        ${successMessage}
+                    </div>
+                </c:if>
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-1">
-                        
+
                         <div class="login-form"><!--login form-->
-                            
+
                             <h2>Login to your account</h2>
                             <form name="loginForm">
                                 <input type="email" name="email" placeholder="Email"  required/>
-                                <input type="password" name="password" placeholder="Password" required/>
+                                <input type="password" name="password" placeholder="Password" maxlength="18" required/>
                                 <div id="error" style="color: red; font-style: italic;"></div>
                                 <a href="ResetController?service=findYourAccount">Forgotten password?</a>
                                 <button type="button" class="btn btn-default" onclick="login()">Login</button>
@@ -255,11 +254,10 @@
                             <h2>New User Signup!</h2>
                             <form name="registerForm">
                                 <input type="email" name="email" placeholder="Email" required/>
-                                <input type="password" name="password" placeholder="Password" required/>
-                                <input type="password" name="confirmPassword" placeholder="Confirm Password" required/>
+                                <input type="password" name="password" placeholder="Password" maxlength="18" required/>
+                                <input type="password" name="confirmPassword" placeholder="Confirm Password" maxlength="18" required/>
                                 <p id="msg" style="color: red; font-style: italic;"></p>
                                 <button type="button" class="btn btn-default" onclick="register()">Register</button>
-
                             </form>
                         </div>
 

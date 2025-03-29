@@ -159,26 +159,37 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
                                     <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
 
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
                                         <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -215,19 +226,20 @@
                                 </ul>
                             </div>
                         </div>
-                        <!--                        <div class="col-sm-3">
-                                                    <div class="pull-right">
-                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                                            <input type="text" name="search" value="${param.search}" />
-                        
-                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                                        </form>
-                                                    </div>
-                                                </div>-->
+                        <div class="col-sm-3">
+                            <div class="pull-right">
+                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                    <input type="text" name="search" value="${param.search}" />
+
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div><!--/header-bottom-->
-        </header>
+        </header><!--/header-->
 
         <section>
             <div class="container">
@@ -281,113 +293,7 @@
                                     <p>No related products available.</p>
                                 </c:if>
                             </div>
-                            <%
-                                List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
-                            %>
-                            <div style="width: 60%; margin: auto; font-family: Arial, sans-serif; text-align: center;">
-                                <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
-                                    Product Reviews
-                                </h2>
-                                <%
-                                    if (feedbacks != null && feedbacks.size() >= 1) {
-                                %>
-                                <div style="text-align: center; margin-top: 20px;">
-                                    <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id")%>" 
-                                       style="color: #ff8c00; font-size: 16px; text-decoration: none; font-weight: bold;">
-                                        View All Reviews
-                                    </a>
-                                </div>
-                                <%
-                                    }
-                                %>
-                                <% if (feedbacks == null || feedbacks.isEmpty()) { %>
-                                <p style="color: #888; font-size: 16px;">No reviews yet. Be the first to review this product!</p>
-                                <% } else { %>
-                                <div style="text-align: left; margin-top: 20px;">
-                                    <% for (Feedback feedback : feedbacks) {%>
-                                    <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                                        <div style="display: flex; align-items: center;">
-                                            <img src="avatar.png" alt="User Avatar" 
-                                                 style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
-                                            <div>
-                                                <span style="font-weight: bold; font-size: 16px;">
-                                                    <%= (feedback.getUser() != null) ? feedback.getUser().getName() : "Anonymous"%>
-                                                </span>
-                                                <br>
-                                                <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime()%></span>
-                                            </div>
-                                        </div>
 
-                                        <!-- Hiển thị sao -->
-                                        <div style="margin: 10px 0;">
-                                            <% for (int i = 1; i <= 5; i++) {%>
-                                            <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc"%>;">★</span>
-                                            <% }%>
-                                        </div>
-
-                                        <!-- Nội dung đánh giá -->
-                                        <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
-                                            <%= feedback.getContent()%>
-                                        </p>
-
-                                        <!-- Hiển thị ảnh từ JSON (nếu có) -->
-                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) {
-                                                int imageCount = feedback.getImages().size();
-                                        %>
-                                        <div style="display: flex; gap: 8px; align-items: center;">
-                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) {%>
-                                            <img src="<%= feedback.getImages().get(i)%>" 
-                                                 alt="Review Image"
-                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
-                                                 onclick="openLightbox('<%= feedback.getImages().get(i)%>', <%= i%>)">
-                                            <% } %>
-
-                                            <% if (imageCount > 2) {%>
-                                            <div onclick="openLightbox('<%= feedback.getImages().get(0)%>', 0)" 
-                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
-                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
-                                                 border-radius: 8px; cursor: pointer;">
-                                                +<%= imageCount - 2%>
-                                            </div>
-                                            <% } %>
-                                        </div>
-
-                                        <!-- Lightbox -->
-                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
-                                             flex-direction: column; z-index: 1000;">
-                                            <span onclick="closeLightbox()" 
-                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
-                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
-
-                                        </div>
-
-                                        <script>
-                                            function openLightbox(imageSrc, index) {
-                                            document.getElementById("lightbox-img").src = imageSrc;
-                                            document.getElementById("lightbox").style.display = "flex";
-                                            }
-                                            function nextImage() {
-                                            currentIndex = (currentIndex + 1) % images.length;
-                                            updateLightbox();
-                                            }
-
-                                            function prevImage() {
-                                            currentIndex = (currentIndex - 1 + images.length) % images.length;
-                                            updateLightbox();
-                                            }
-
-                                            function closeLightbox() {
-                                            document.getElementById("lightbox").style.display = "none";
-                                            }
-                                        </script>
-                                        <% } %>
-
-                                    </div>
-                                    <% } %>
-                                </div>
-                                <% }%>
-                            </div>
                         </div>
                     </div>
 
@@ -486,6 +392,7 @@
                                                             <li class="list-group-item"><b>Created At:</b> ${product.createAt}</li>
                                                         </ul>
                                                     </div>
+                                                        
                                                 </div>
                                             </div>
                                         </div>
@@ -493,7 +400,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div style="width: 100%; margin: auto; font-family: Arial, sans-serif;">   
                             <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
                                 Product Reviews
@@ -628,7 +534,7 @@
                                 <% } %>
                             </div>
                             <% } %>
-                        </div>            
+                        </div>                                   
                     </div>
                 </div>
             </div>
@@ -803,10 +709,6 @@
             <span class="checkmark">✔</span>
             <p>Product added to cart successfully!</p>
         </div>
-        <div id="error-notification" class="hidden">
-            <span class="error-icon">X</span>
-            <p>Product added to cart Unsuccess!</p>
-        </div>
         <script>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
@@ -823,60 +725,65 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
-        <script>
-                       document.addEventListener( " DOMContentLoaded",  function() {
-                    var colorSelector = document.getElementById("colorSelector");
-            var storageSelector = document.getElementById("storageSelector");
-            var defaultColor = colorSelector.options[0].value;
-            var defaultStorage = storageSelector.options[0].value;
-            // Cập nhật thông tin ngay khi tải trang
-            updateProductInfo(defaultColor, defaultStorage);
-            // Cập nhật khi thay đổi color hoặc storage
-            colorSelector.addEventListener("change", function() {
+
+     <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var colorSelector = document.getElementById("colorSelector");
+        var storageSelector = document.getElementById("storageSelector");
+        var defaultColor = colorSelector.options[0].value;
+        var defaultStorage = storageSelector.options[0].value;
+      
+        updateProductInfo(defaultColor, defaultStorage);
+      
+        colorSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
             updateProductInfo(selectedColor, selectedStorage);
-            });
-            storageSelector.addEventListener("change", function() {
+        });
+        
+        storageSelector.addEventListener("change", function() {
             var selectedColor = colorSelector.value;
             var selectedStorage = storageSelector.value;
-updateProductInfo(selectedColor, selectedStorage);
-            });
-                                    });
-                                
-                                function updateProductInfo(color, storage) {
-                    var productId = '${product.id}'; var xhr = new XMLHttpRequest();
-            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
+            updateProductInfo(selectedColor, selectedStorage);
+        });
+    });
+
+    function updateProductInfo(color, storage) {
+        var productId = '${product.id}';
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
             if (xhr.status === 200) {
-            var data = JSON.parse(xhr.responseText);
-            // Cập nhật giá và số lượng sản phẩm
-            document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
-            document.getElementById("productStock").innerText = data.stock;
-            // Cập nhật max của quantity dựa trên stock
-            document.getElementById("quantity").max = data.stock;
-            // Vô hiệu hóa nút "Add to cart" nếu hết hàng
-            document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
+                var stockElement = document.getElementById("productStock");
+                if (data.stock > 0) {
+                    stockElement.innerText = "In stock";
+                } else if (data.stock == 0) {
+                    stockElement.innerText = "Out of stock";
+                }
+
+                document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
             } else {
-            console.error("Error fetching product info: " + xhr.status);
-            document.getElementById("productPrice").innerText = "Error";
-            document.getElementById("productStock").innerText = "Error";
+                console.error("Error fetching product info: " + xhr.status);
+                document.getElementById("productPrice").innerText = "Error";
+                document.getElementById("productStock").innerText = "Error";
             }
-            };
-                xhr.onerror = function() {
+        };
+        xhr.onerror = function() {
             console.error("Request failed");
             document.getElementById("productPrice").innerText = "Error";
-                document.getElementById("productStock").innerText = "Error";
-            };
-            xhr.send();
-                                    }
-                                    
-                                    function formatPrice(price) {
-                    return price.toLocaleString('vi-VN');
-                                        }
-                                    </script>
-                                <script>
+            document.getElementById("productStock").innerText = "Error";
+        };
+        xhr.send();
+    }
+
+    function formatPrice(price) {
+        return price.toLocaleString('vi-VN');
+    }
+</script>
+<script>
                                     function         toggleReply(replyId, buttonElement) {
                                     const replyDiv = document.getElementById(replyId);
             const ar row = buttonElement.querySelector('.arrow');
@@ -889,9 +796,8 @@ updateProductInfo(selectedColor, selectedStorage);
             }
                                     }
                                     </script>
-                                    <script>
+        <script>
                                         let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
                                             console.log("không nhận được",isLoggedIn);
-                                            </script>                   
+        </script>            
 </html>
-

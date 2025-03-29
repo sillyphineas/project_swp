@@ -116,8 +116,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -141,38 +141,52 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
-
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
                                     <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
 
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
                                         <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
             <div class="header-bottom"><!--header-bottom-->
                 <div class="container">
                     <div class="row">
@@ -203,11 +217,18 @@
                                 </ul>
                             </div>
                         </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
             </div><!--/header-bottom-->
-
-
         </header><!--/header-->
 
         <div class="container">
@@ -251,11 +272,12 @@
                     </div>
                 </div>
             </div>
+                        
         </div>
-
-
-
-
+                        <br>
+                        <br>
+                        <br>
+                        <br>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
