@@ -28,7 +28,7 @@ public class DBConnection {
 
     public DBConnection() {
         // Change URL, username, and password to match your MySQL server
-        this("jdbc:mysql://localhost:3306/proj_swp391_update1", "root", "123456");
+        this("jdbc:mysql://localhost:3306/proj_swp391_update1?autoReconnect=true&useSSL=false&serverTimezone=UTC", "root", "123456");
 
     }
 

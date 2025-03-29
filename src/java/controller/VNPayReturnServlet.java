@@ -36,6 +36,7 @@ import model.DAOOrderDetail;
 import model.DAOPayment;
 import model.DAOProduct;
 import model.DAOProductVariant;
+import model.DAOUserVoucher;
 
 /**
  *
@@ -117,6 +118,7 @@ public class VNPayReturnServlet extends HttpServlet {
             }
             int customerID = user.getId();
             DAOCart daoCart = new DAOCart();
+            DAOUserVoucher daoUV = new DAOUserVoucher();
             DAOCartItem daoCartItem = new DAOCartItem();
             DAOPayment daoPayment = new DAOPayment();
             double totalAmount = 0.0;
@@ -141,6 +143,8 @@ public class VNPayReturnServlet extends HttpServlet {
 
             if (intVoucherId == null) {
                 discountedTotalValue = BigDecimal.valueOf(totalAmount);
+            }  else {
+                daoUV.deleteUserVoucher(user.getId(), intVoucherId);
             }
             Date time = new Date();
 

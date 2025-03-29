@@ -33,16 +33,24 @@
         <script type="text/javascript">
             function register() {
                 let form = document.registerForm;
+
                 let email = form.email.value;
                 let password = form.password.value;
                 let confirmPassword = form.confirmPassword.value;
 
+                // Thêm các trường mới:
+                let name = form.name.value;
+                let gender = form.gender.value;         // "1" hoặc "0"
+                let phoneNumber = form.phoneNumber.value;
+                let dateOfBirth = form.dateOfBirth.value; // "YYYY-MM-DD" (theo HTML <input type="date">)
+
+                // Kiểm tra tính hợp lệ của form
                 if (!form.checkValidity()) {
                     document.getElementById("msg").innerHTML = "Please fill in all required fields.";
                     return;
                 }
-                var xhttp = new XMLHttpRequest();
 
+                var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
                     if (xhttp.readyState == 4 && xhttp.status == 200) {
                         if (xhttp.responseText.trim() === "cancel") {
@@ -57,10 +65,19 @@
 
                 xhttp.open("POST", "<%= request.getContextPath()%>/RegisterController", true);
                 xhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhttp.send("email=" + email +
-                        "&password=" + password +
-                        "&confirmPassword=" + confirmPassword);
+
+                // Gửi thêm name, gender, phoneNumber, dateOfBirth
+                xhttp.send(
+                        "email=" + encodeURIComponent(email)
+                        + "&password=" + encodeURIComponent(password)
+                        + "&confirmPassword=" + encodeURIComponent(confirmPassword)
+                        + "&name=" + encodeURIComponent(name)
+                        + "&gender=" + encodeURIComponent(gender)
+                        + "&phoneNumber=" + encodeURIComponent(phoneNumber)
+                        + "&dateOfBirth=" + encodeURIComponent(dateOfBirth)
+                        );
             }
+
 
             function login() {
                 let form = document.loginForm;
@@ -250,16 +267,39 @@
                         <h2 class="or">OR</h2>
                     </div>
                     <div class="col-sm-4">
-                        <div class="signup-form"><!--sign up form-->
+                        <div class="signup-form">
                             <h2>New User Signup!</h2>
                             <form name="registerForm">
+                                <!-- Name -->
+                                <input type="text" name="name" placeholder="Full Name" maxlength="40" required/>
+                                
+                                <!-- Gender (Male / Female). Tùy bạn chọn hiển thị radio, select,... -->
+                                <select name="gender" required style="margin-bottom: 10px;">
+                                    <option value="">--Select Gender--</option>
+                                    <option value="1">Male</option>
+                                    <option value="0">Female</option>
+                                </select>
+
+                                <!-- Phone Number -->
+                                <input type="text" name="phoneNumber" placeholder="Phone Number" required maxlength="10"/>
+
+                                <!-- Date of Birth -->
+                                <input type="date" name="dateOfBirth" placeholder="Date of Birth" required/>
+                                
+                                <!-- Email -->
                                 <input type="email" name="email" placeholder="Email" required/>
+
+                                <!-- Password -->
                                 <input type="password" name="password" placeholder="Password" maxlength="18" required/>
+
+                                <!-- Confirm Password -->
                                 <input type="password" name="confirmPassword" placeholder="Confirm Password" maxlength="18" required/>
+
                                 <p id="msg" style="color: red; font-style: italic;"></p>
                                 <button type="button" class="btn btn-default" onclick="register()">Register</button>
                             </form>
                         </div>
+
 
                     </div>
                 </div>

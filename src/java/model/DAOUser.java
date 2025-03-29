@@ -23,17 +23,21 @@ public class DAOUser extends DBConnection {
 
     public int addUser2(User user) {
         int n = 0;
-        // Thêm cột point vào INSERT
-        String sql = "INSERT INTO Users (email, passHash, roleId, isDisabled, updatedBy, updated_at, point) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try {
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, user.getEmail());
-            pre.setString(2, user.getPassHash());
-            pre.setInt(3, user.getRoleId());
-            pre.setBoolean(4, user.isIsDisabled());
-            pre.setInt(5, user.getUpdatedBy());
-            pre.setDate(6, user.getUpdatedAt());
-            pre.setInt(7, user.getPoint()); // Mới thêm
+        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, dateOfBirth, "
+                + "roleId, isDisabled, updatedBy, updated_at, point) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pre = conn.prepareStatement(sql)) {
+            pre.setString(1, user.getName());
+            pre.setString(2, user.getEmail());
+            pre.setString(3, user.getPassHash());
+            pre.setBoolean(4, user.isGender());
+            pre.setString(5, user.getPhoneNumber());
+            pre.setDate(6, user.getDateOfBirth());
+            pre.setInt(7, user.getRoleId());
+            pre.setBoolean(8, user.isIsDisabled());
+            pre.setInt(9, user.getUpdatedBy());
+            pre.setDate(10, user.getUpdatedAt());
+            pre.setInt(11, user.getPoint());
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -92,7 +96,7 @@ public class DAOUser extends DBConnection {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 points = rs.getInt("point");
             }
         } catch (SQLException e) {
@@ -100,7 +104,7 @@ public class DAOUser extends DBConnection {
         }
         return points;
     }
-    
+
     public void updateUserPoint(int userId, int newPoint) {
         String sql = "UPDATE Users SET point = ? WHERE id = ?";
         try {
@@ -900,8 +904,6 @@ public class DAOUser extends DBConnection {
 //            e.printStackTrace();
 //        }
 //    }
-
-
 
     public static void main(String[] args) {
         // Test DAO here if needed

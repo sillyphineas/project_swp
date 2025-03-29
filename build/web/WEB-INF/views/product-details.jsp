@@ -1,12 +1,14 @@
-<%-- 
+<%--
     Document   : product-details
     Created on : Jan 18, 2025, 1:15:02 PM
     Author     : HP
 --%>
 
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="entity.User,entity.Feedback,java.util.List"%>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,13 +28,14 @@
         <!--[if lt IE 9]>
         <script src="js/html5shiv.js"></script>
         <script src="js/respond.min.js"></script>
-        <![endif]-->       
+        <![endif]-->      
         <link rel="shortcut icon" href="images/ico/favicon.ico">
         <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
+
 
     <body>
         <style>
@@ -45,12 +48,14 @@
                 margin: 0; /* Remove margins to maximize width */
             }
 
+
             .list-group-item {
                 font-size: 16px; /* Increase font size for better readability and height */
                 padding: 15px 20px; /* Increase padding to make each item taller */
-/*                margin-bottom: 10px;  Add spacing between items to elongate the card */
+                /*                margin-bottom: 10px;  Add spacing between items to elongate the card */
                 border-bottom: 0.5px solid #ddd !important; /* Thinner line, lighter color */
             }
+
 
             .card-title {
                 color: #007bff;
@@ -59,9 +64,11 @@
                 margin-bottom: 25px; /* Add more space below the title */
             }
 
+
             .list-group-item b {
                 color: #333;
             }
+
 
             .nav-tabs {
                 display: flex;
@@ -71,10 +78,12 @@
                 border-bottom: 2px solid #ddd;
             }
 
+
             .nav-tabs li {
                 list-style: none;
                 margin: 0 15px;
             }
+
 
             .nav-tabs a {
                 text-decoration: none;
@@ -85,23 +94,28 @@
                 text-align: center;
             }
 
+
             .nav-tabs a:hover {
                 color: #007bff;
             }
+
 
             .tab-content {
                 text-align: center;
                 padding: 20px;
             }
 
+
             .related-products .product-item {
                 transition: all 0.3s ease;
             }
+
 
             .related-products .product-item:hover {
                 background-color: #f9f9f9;
                 transform: translateY(-5px);
             }
+
 
             .related-products h2 {
                 font-size: 18px;
@@ -111,12 +125,14 @@
                 margin-bottom: 15px;
             }
 
+
             .related-products p {
                 color: #888;
                 font-size: 14px;
             }
-            
+
         </style>
+
 
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -196,6 +212,7 @@
                 </div>
             </div><!--/header-middle-->
 
+
             <div class="header-bottom"><!--header-bottom-->
                 <div class="container">
                     <div class="row">
@@ -231,9 +248,11 @@
                                 <form action="${pageContext.request.contextPath}/ProductController" method="get">
                                     <input type="text" name="search" value="${param.search}" />
 
+
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </form>
                             </div>
+
 
                         </div>
                     </div>
@@ -241,26 +260,28 @@
             </div><!--/header-bottom-->
         </header><!--/header-->
 
+
         <section>
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">
                             <div class="brands_products">
-                                <h2>Brands</h2> 
+                                <h2>Brands</h2>
                                 <div class="brands-name">
                                     <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a> 
-                                        </li> 
+                                        <li>
+                                            <a href="${pageContext.request.contextPath}/ProductController?brandID=0">All Brands</a>
+                                        </li>
                                         <c:forEach var="brand" items="${brands}">
-                                            <li> 
+                                            <li>
                                                 <a href="${pageContext.request.contextPath}/ProductController?brandID=${brand.id}"> ${brand.name} </a>
-                                            </li> 
-                                        </c:forEach> 
-                                    </ul> 
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
                                 </div>
                             </div>
+
 
                             <div class="price-range">
                                 <h2>Filter by Price</h2>
@@ -269,8 +290,10 @@
                                         <label for="minPrice">Min Price</label>
                                         <input type="number" id="minPrice" name="minPrice" value="${param.minPrice}" min="" max="" step="10" class="form-control">
 
+
                                         <label for="maxPrice">Max Price </label>
                                         <input type="number" id="maxPrice" name="maxPrice" value="${param.maxPrice}" min="" max="" step="10" class="form-control">
+
 
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Check Price</button>
                                     </form>
@@ -285,6 +308,7 @@
                                                 <img src="${relatedProduct.imageURL}" alt="${relatedProduct.name}" style="width: 100%; height: auto; object-fit: cover;">
                                                 <h3 style="font-size: 19px; margin: 10px 0; text-align: center">${relatedProduct.name}</h3>
 
+
                                             </a>
                                         </div>
                                     </c:forEach>
@@ -294,8 +318,10 @@
                                 </c:if>
                             </div>
 
+
                         </div>
                     </div>
+
 
                     <div class="col-sm-9 padding-right">
                         <div class="product-details"><!--product-details-->
@@ -303,10 +329,16 @@
                                 <div class="view-product">
                                     <img src="${product.imageURL}" alt=""  style="width: 100%; height: auto; object-fit: cover; " />
 
+
                                 </div>
+
 
                             </div>
                             <div class="col-sm-7">
+
+
+
+
 
 
 
@@ -317,6 +349,7 @@
                                     <div class="product-information">
                                         <h1>${product.name}</h1>
 
+
                                         <p><b>Color:</b>
                                             <select id="colorSelector" name="color" class="form-control">
                                                 <c:forEach var="color" items="${colors}">
@@ -324,6 +357,7 @@
                                                 </c:forEach>
                                             </select>
                                         </p>
+
 
                                         <p><b>Storage:</b>
                                             <select id="storageSelector" name="storage" class="form-control">
@@ -336,17 +370,22 @@
 
 
 
+
+
+
                                         <c:forEach var="brand" items="${brands}">
                                             <c:if test="${brand.id == product.brandID}">
                                                 <p><b>Brand: </b>${brand.name}</p>
                                             </c:if>
                                         </c:forEach>
 
+
                                         <p><b>Quantity:</b>
                                             <input type="number" id="quantity" name="quantity" value="1" min="1" class="form-control" required>
                                         </p>
                                         <p><b>Availability:</b> <span id="productStock">Loading...</span></p>
                                         <h2><b>Price: </b> <span id="productPrice">${price != null ? String.format("%,.0f", price) : 'Loading...'} ₫</span></h2>
+
 
                                         <button type="submit" id="addToCartBtn" class="btn btn-default cart">
                                             <i class="fa fa-shopping-cart"></i>
@@ -355,17 +394,22 @@
                                     </div>
                                 </form>
 
+
                             </div>
 
+
                         </div><!--/product-details-->
+
 
                         <div class="category-tab shop-details-tab"><!--category-tab-->
                             <div class="col-sm-12">
                                 <ul class="nav nav-tabs">
                                     <li class="col-md-12" ><a>Details</a></li>
 
+
                                 </ul>
                             </div>
+
 
                             <div class="tab-content">
                                 <div id="details">
@@ -392,7 +436,7 @@
                                                             <li class="list-group-item"><b>Created At:</b> ${product.createAt}</li>
                                                         </ul>
                                                     </div>
-                                                        
+
                                                 </div>
                                             </div>
                                         </div>
@@ -400,18 +444,18 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="width: 100%; margin: auto; font-family: Arial, sans-serif;">   
+                        <div style="width: 100%; margin: auto; font-family: Arial, sans-serif;">  
                             <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
                                 Product Reviews
                             </h2>
                             <%
-                            List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
+                                List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
                             %>
                             <%
-                                    if (feedbacks != null && feedbacks.size() > 2) {
+                                if (feedbacks != null && feedbacks.size() > 2) {
                             %>
                             <div style="text-align: center; margin-top: 20px;">
-                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
+                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id")%>"
                                    style="color: #ff8c00; font-size: 16px; text-decoration: none; font-weight: bold;">
                                     View All Reviews
                                 </a>
@@ -423,65 +467,72 @@
                             <p style="color: #888; font-size: 16px; text-align: center;">No reviews yet. Be the first to review this product!</p>
                             <% } else { %>
                             <div style="margin-top: 20px;">
-                                <% for (Feedback feedback : feedbacks) { %>
+                                <% for (Feedback feedback : feedbacks) {%>
                                 <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
                                     <div style="display: flex; align-items: center;">
-                                        <img src="avatar.png" alt="User Avatar" 
+                                        <img src="avatar.png" alt="User Avatar"
                                              style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
                                         <div>
                                             <span style="font-weight: bold; font-size: 16px;">
-                                                <%= feedback.getUser() != null ? feedback.getUser().getName().replaceAll("(?<=.{2}).", "*") : "Anonymous" %>
+                                                <%= feedback.getUser() != null ? feedback.getUser().getName().replaceAll("(?<=.{2}).", "*") : "Anonymous"%>
                                             </span>
                                             <br>
-                                            <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
+                                            <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime()%></span>
                                         </div>
                                     </div>
                                     <p style="color: #666; font-size: 14px;">
-                                        Product: <%= feedback.getProduct().getName() %>, 
-                                        <%= feedback.getProductVariant().getColor().getColorName() %>, 
-                                        <%= feedback.getProductVariant().getStorage().getCapacity() %>
+                                        Product: <%= feedback.getProduct().getName()%>,
+                                        <%= feedback.getProductVariant().getColor().getColorName()%>,
+                                        <%= feedback.getProductVariant().getStorage().getCapacity()%>
                                     </p>
+
 
                                     <div style="margin: 10px 0;">
-                                        <% for (int i = 1; i <= 5; i++) { %>
-                                        <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc" %>;">★</span>
-                                        <% } %>
+                                        <% for (int i = 1; i <= 5; i++) {%>
+                                        <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc"%>;">★</span>
+                                        <% }%>
                                     </div>
 
+
                                     <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
-                                        <%= feedback.getContent() %>
+                                        <%= feedback.getContent()%>
                                     </p>
 
-                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
-                                        int imageCount = feedback.getImages().size();
+
+                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) {
+                                            int imageCount = feedback.getImages().size();
                                     %>
                                     <div style="display: flex; gap: 8px; align-items: center;">
-                                        <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
-                                        <img src="<%= feedback.getImages().get(i) %>" 
+                                        <% for (int i = 0; i < Math.min(2, imageCount); i++) {%>
+                                        <img src="<%= feedback.getImages().get(i)%>"
                                              alt="Review Image"
                                              style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
-                                             onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                             onclick="openLightbox('<%= feedback.getImages().get(i)%>', <%= i%>)">
                                         <% } %>
 
-                                        <% if (imageCount > 2) { %>
-                                        <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+
+                                        <% if (imageCount > 2) {%>
+                                        <div onclick="openLightbox('<%= feedback.getImages().get(0)%>', 0)"
                                              style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
                                              background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
                                              border-radius: 8px; cursor: pointer;">
-                                            +<%= imageCount - 2 %>
+                                            +<%= imageCount - 2%>
                                         </div>
                                         <% } %>
                                     </div>
+
 
                                     <!-- Lightbox -->
                                     <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                                          background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
                                          flex-direction: column; z-index: 1000;">
-                                        <span onclick="closeLightbox()" 
+                                        <span onclick="closeLightbox()"
                                               style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
                                         <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
 
+
                                     </div>
+
 
                                     <script>
                                         function openLightbox(imageSrc, index) {
@@ -493,48 +544,53 @@
                                         updateLightbox();
                                         }
 
+
                                         function prevImage() {
                                         currentIndex = (currentIndex - 1 + images.length) % images.length;
                                         updateLightbox();
                                         }
+
 
                                         function closeLightbox() {
                                         document.getElementById("lightbox").style.display = "none";
                                         }
                                     </script>
                                     <% } %>
-                                    <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) { %>
+                                    <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) {%>
                                     <div style="margin-top: 15px;">
+
 
                                         <!-- Toggle Button -->
                                         <div style="display: flex; justify-content: flex-end;">
-                                            <button onclick="toggleReply('reply-<%= feedback.getId() %>', this)" 
+                                            <button onclick="toggleReply('reply-<%= feedback.getId()%>', this)"
                                                     style="background-color: #007bff; color: white; padding: 8px 14px;
                                                     border: none; border-radius: 6px; cursor: pointer;
                                                     font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;
                                                     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
-                                                <span>View feedback from Admin</span> 
+                                                <span>View feedback from Admin</span>
                                                 <span class="arrow" style="transition: transform 0.3s;">&#x25BC;</span> <!-- Mũi tên -->
                                             </button>
                                         </div>
 
+
                                         <!-- Reply Content -->
-                                        <div id="reply-<%= feedback.getId() %>" 
+                                        <div id="reply-<%= feedback.getId()%>"
                                              style="display: none; margin-top: 10px; padding: 12px 16px;
                                              border-left: 4px solid #007bff; background-color: #f8f9fa;
                                              border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
                                             <p style="margin: 0; font-size: 14px; color: #333;">
-                                                <strong style="color: #007bff;">Admin:</strong> <%= feedback.getReply() %>
+                                                <strong style="color: #007bff;">Admin:</strong> <%= feedback.getReply()%>
                                             </p>
                                         </div>
                                     </div>
                                     <% } %>
 
+
                                 </div>
                                 <% } %>
                             </div>
-                            <% } %>
-                        </div>                                   
+                            <% }%>
+                        </div>                                  
                     </div>
                 </div>
             </div>
@@ -542,7 +598,12 @@
 
 
 
+
+
+
+
         </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">
@@ -570,6 +631,7 @@
                                 </div>
                             </div>
 
+
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -585,6 +647,7 @@
                                 </div>
                             </div>
 
+
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
                                     <a href="#">
@@ -599,6 +662,7 @@
                                     <h2>24 DEC 2014</h2>
                                 </div>
                             </div>
+
 
                             <div class="col-sm-3">
                                 <div class="video-gallery text-center">
@@ -624,6 +688,7 @@
                     </div>
                 </div>
             </div>
+
 
             <div class="footer-widget">
                 <div class="container">
@@ -687,9 +752,11 @@
                             </div>
                         </div>
 
+
                     </div>
                 </div>
             </div>
+
 
             <div class="footer-bottom">
                 <div class="container">
@@ -700,6 +767,7 @@
                 </div>
             </div>
 
+
         </footer><!--/Footer-->
         <!--        <div id="cart-notification" class="hidden" style="position: fixed; bottom: 20px; right: 20px; background-color: #4CAF50; color: white; padding: 15px; border-radius: 5px; display: none;">
                     <span class="checkmark" style="font-size: 20px; margin-right: 5px;">✔</span>
@@ -709,6 +777,10 @@
             <span class="checkmark">✔</span>
             <p>Product added to cart successfully!</p>
         </div>
+        <div id="error-notification" class="hidden">
+            <span class="error-icon">X</span>
+            <p>Product added to cart Unsuccess!</p>
+        </div>
         <script>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
@@ -717,6 +789,7 @@
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
 
+
         <script src="js/cart.js"></script>
         <script src="js/jquery.js"></script>
         <script src="js/price-range.js"></script>
@@ -726,78 +799,79 @@
         <script src="js/main.js"></script>
         <script src="js/cart.js"></script>
 
-     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var colorSelector = document.getElementById("colorSelector");
-        var storageSelector = document.getElementById("storageSelector");
-        var defaultColor = colorSelector.options[0].value;
-        var defaultStorage = storageSelector.options[0].value;
-      
-        updateProductInfo(defaultColor, defaultStorage);
-      
-        colorSelector.addEventListener("change", function() {
-            var selectedColor = colorSelector.value;
-            var selectedStorage = storageSelector.value;
-            updateProductInfo(selectedColor, selectedStorage);
-        });
-        
-        storageSelector.addEventListener("change", function() {
-            var selectedColor = colorSelector.value;
-            var selectedStorage = storageSelector.value;
-            updateProductInfo(selectedColor, selectedStorage);
-        });
-    });
 
-    function updateProductInfo(color, storage) {
-        var productId = '${product.id}';
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function() {
+                <script>
+                document.addEventListener("DOMC ontentLoaded", function() {
+                    var colorSelector = document.getElementById("colorSelector");
+            var storageSelector = document.getElementById("storageSelector");
+            var defaultColor = colorSelector.options[0].value;
+            var defaultStorage = storageSelector.options[0].value;
+            updateProductInfo(defaultColor, defaultStorage);
+            colorSelector.addEventListener("change", function() {
+            var selectedColor = colorSelector.value;
+            var selectedStorage = storageSelector.value;
+            updateProductInfo(selectedColor, selectedStorage);
+            });
+            storageSelector.addEventListener("change", function() {
+            var selectedColor = colorSelector.value;
+            var selectedStorage = storageSelector.value;
+updateProductInfo(selectedColor, selectedStorage);
+            });
+                });
+                
+                
+                function updateProductInfo(color, storage) {
+                    var productId = '${product.id}';
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '${pageContext.request.contextPath}/ProductDetailController?id=' + productId + '&color=' + encodeURIComponent(color) + '&storage=' + encodeURIComponent(storage), true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
             if (xhr.status === 200) {
-                var data = JSON.parse(xhr.responseText);
-                document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
-                var stockElement = document.getElementById("productStock");
-                if (data.stock > 0) {
-                    stockElement.innerText = "In stock";
-                } else if (data.stock == 0) {
-                    stockElement.innerText = "Out of stock";
-                }
-
-                document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
-            } else {
-                console.error("Error fetching product info: " + xhr.status);
-                document.getElementById("productPrice").innerText = "Error";
-                document.getElementById("productStock").innerText = "Error";
+            var data = JSON.parse(xhr.responseText);
+            document.getElementById("productPrice").innerText = formatPrice(data.price) + ' ₫';
+            var stockElement = document.getElementById("productStock");
+            if (data.stock > 0) {
+            stockElement.innerText = "In stock";
+            } else if (data.stock == 0) {
+            stockElement.innerText = "Out of stock";
             }
-        };
-        xhr.onerror = function() {
-            console.error("Request failed");
+
+
+            document.getElementById("addToCartBtn").disabled = (data.stock <= 0);
+            } else {
+            console.error("Error fetching product info: " + xhr.status);
             document.getElementById("productPrice").innerText = "Error";
             document.getElementById("productStock").innerText = "Error";
-        };
-        xhr.send();
-    }
-
-    function formatPrice(price) {
-        return price.toLocaleString('vi-VN');
-    }
+            }
+            };
+            xhr.onerror = function() {
+            console.error("Request failed");
+            document.getElementById("productPrice").innerText = "Error";
+                document.getElementById("productStock").innerText = "Error";
+            };
+            xhr.send();
+                }
+                            
+                            
+                                function formatPrice(price) {
+                    return price.toLocaleString('vi-VN');
+                                    }
 </script>
-<script>
+                                    <script>
                                     function         toggleReply(replyId, buttonElement) {
-                                    const replyDiv = document.getElementById(replyId);
+                    const replyDiv = document.getElementById(replyId);
             const ar row = buttonElement.querySelector('.arrow');
             if (replyDiv.style.display === 'none') {
             replyDiv.style.display = 'block';
-            arrow.style.transform = 'rotate(180deg)'; // Xoay mũi tên lên
+                                        arrow.style.transform = 'rotate(180deg)'; // Xoay mũi tên lên
             } else {
             replyDiv.style.display = 'none';
-            arrow.style.transform = 'rotate(0deg)'; // Mũi tên xuống
+                                        arrow.style.transform = 'rotate(0deg)'; // Mũi tên xuống
             }
-                                    }
+                                     }
                                     </script>
-        <script>
-                                        let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
-                                            console.log("không nhận được",isLoggedIn);
-        </script>            
+                                    <script>
+                                    let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false"%>;
+                                    console.log("không nhận được",isLoggedIn);
+</script>            
 </html>

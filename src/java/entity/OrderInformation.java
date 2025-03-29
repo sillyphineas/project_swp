@@ -7,6 +7,7 @@ public class OrderInformation {
     private Date orderTime;
     private String orderStatus;
     private double totalPrice;
+    private double discountPrice;
     private String paymentName;
     private String paymentStatus;
     private String recipientName;
@@ -30,11 +31,12 @@ public class OrderInformation {
     public OrderInformation() {
     }
 
-    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, String paymentName, String paymentStatus, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
+    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, double discountPrice, String paymentName, String paymentStatus, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
         this.id = id;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
+        this.discountPrice = discountPrice;
         this.paymentName = paymentName;
         this.paymentStatus = paymentStatus;
         this.recipientName = recipientName;
@@ -61,6 +63,7 @@ public class OrderInformation {
             Date orderTime,
             String orderStatus,
             double totalPrice,
+            double discountPrice,
             String paymentName,
             String paymentStatus,
             String recipientName,
@@ -83,6 +86,7 @@ public class OrderInformation {
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
+        this.discountPrice = discountPrice;
         this.paymentName = paymentName;
         this.paymentStatus = paymentStatus;
         this.recipientName = recipientName;
@@ -102,11 +106,12 @@ public class OrderInformation {
         this.city = city;
     }
 
-    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, String paymentName, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
+    public OrderInformation(int id, Date orderTime, String orderStatus, double totalPrice, double discountPrice, String paymentName, String recipientName, String recipientPhone, int quantity, String shippingStatus, Date shippingDate, Date estimatedArrival, Date actualArrival, String colorName, String capacity, double price, String productName, String imageURL, String address, String district, String city, int productId,int orderDetailID) {
         this.id = id;
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
+        this.discountPrice = discountPrice;
         this.paymentName = paymentName;
         this.recipientName = recipientName;
         this.recipientPhone = recipientPhone;
@@ -132,6 +137,7 @@ public class OrderInformation {
             Date orderTime,
             String orderStatus,
             double totalPrice,
+            double discountPrice,
             String paymentName,
             String recipientName,
             String recipientPhone,
@@ -153,6 +159,7 @@ public class OrderInformation {
         this.orderTime = orderTime;
         this.orderStatus = orderStatus;
         this.totalPrice = totalPrice;
+        this.discountPrice = discountPrice;
         this.paymentName = paymentName;
         this.recipientName = recipientName;
         this.recipientPhone = recipientPhone;
@@ -197,6 +204,13 @@ public class OrderInformation {
     }
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+    
+    public double getDiscountPrice() {
+        return discountPrice;
+    }
+    public void setDiscountPrice(double discountPrice) {
+        this.discountPrice = discountPrice;
     }
 
     public String getPaymentName() {
