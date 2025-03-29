@@ -210,21 +210,21 @@
                     <div style="margin-bottom: 15px;">
                         <label for="name" style="font-weight: bold;">Full Name:</label>
                         <input type="text" name="name" id="name" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px"
                                value="${user.name}" required />
                     </div>
 
                     <div style="margin-bottom: 15px;">
                         <label for="email" style="font-weight: bold;">Email:</label>
                         <input type="email" name="email" id="email" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px"
                                value="${user.email}" required />
                     </div>
 
                     <div style="margin-bottom: 15px;">
                         <label for="phoneNumber" style="font-weight: bold;">Phone Number:</label>
                         <input type="text" name="phoneNumber" id="phoneNumber" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px"
                                value="${user.phoneNumber}" required />
                     </div>
                 </div>
@@ -234,7 +234,7 @@
                     <div style="margin-bottom: 15px;">
                         <label for="gender" style="font-weight: bold;">Gender:</label>
                         <select name="gender" id="gender" class="form-control"
-                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px">
                             <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
                             <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
                         </select>
@@ -243,7 +243,7 @@
                     <div style="margin-bottom: 15px;">
                         <label for="dateOfBirth" style="font-weight: bold;">Date of Birth:</label>
                         <input type="date" name="dateOfBirth" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px"
                                value="<%= (user.getDateOfBirth() != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth()) : "" %>" 
                                required />
                     </div>
@@ -251,7 +251,7 @@
                     <div style="margin-bottom: 15px;">
                         <label for="image" style="font-weight: bold;">Profile Image:</label>
                         <input type="file" name="image" id="image" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;height: 50px" />
                     </div>
                 </div>
             </div>

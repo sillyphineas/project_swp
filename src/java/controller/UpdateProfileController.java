@@ -59,7 +59,13 @@ public class UpdateProfileController extends HttpServlet {
         String phoneNumber = request.getParameter("phoneNumber");
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String dateOfBirth = request.getParameter("dateOfBirth");
-        System.out.println(name + email + phoneNumber + dateOfBirth);
+        String phonePattern = "^[0-9]{10,11}$";
+
+        if (phoneNumber == null || !phoneNumber.matches(phonePattern)) {
+            request.setAttribute("errorMessage", "Phone number must be 10 or 11 digits.");
+            request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
+            return;
+        }
         if (dateOfBirth == null || dateOfBirth.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Date of birth cannot be empty!!!");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
@@ -90,8 +96,8 @@ public class UpdateProfileController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
-        if (isEmailOrPhoneTaken(email, phoneNumber, currentUser.getId())) {
-            request.setAttribute("errorMessage", "Email or phone number is already taken");
+        if (isEmailOrPhoneTaken(email, currentUser.getId())) {
+            request.setAttribute("errorMessage", "Email is already taken");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
             return;
         }
@@ -106,7 +112,6 @@ public class UpdateProfileController extends HttpServlet {
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
             }
             byte[] imageBytes = byteArrayOutputStream.toByteArray();
-            System.out.println(imageBytes);
             updatedUser.setImage(imageBytes);
         } else {
             updatedUser.setImage(currentUser.getImage());
@@ -134,13 +139,11 @@ public class UpdateProfileController extends HttpServlet {
         }
     }
 
-    private boolean isEmailOrPhoneTaken(String email, String phoneNumber, int userId) {
+    private boolean isEmailOrPhoneTaken(String email, int userId) {
         DAOUser userDao = new DAOUser();
         User existingUserByEmail = userDao.getUserByEmail(email);
-        User existingUserByPhone = userDao.getUserByPhoneNumber(phoneNumber);
 
-        if ((existingUserByEmail != null && existingUserByEmail.getId() != userId)
-                || (existingUserByPhone != null && existingUserByPhone.getId() != userId)) {
+        if ((existingUserByEmail != null && existingUserByEmail.getId() != userId)) {
             return true;
         }
         return false;

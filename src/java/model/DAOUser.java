@@ -132,7 +132,7 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
-                        rs.getDate("updated_at"), // Thay "updatedDate" bằng "updated_at"
+                        rs.getDate("updated_at"),
                         rs.getBytes("image"),
                         rs.getDate("registered_at")
                 );

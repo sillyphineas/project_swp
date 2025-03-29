@@ -184,7 +184,7 @@
                         <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
                     </div>
                     <h3 style="text-align: center; font-size: 24px; color: #333;">${user.name}</h3>
-                    
+
                 </div>
 
                 <!-- Profile Details and Buttons -->
@@ -210,7 +210,69 @@
 
                     <!-- Buttons -->
                     <div class="button-group" style="text-align: center;">
-                        <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}" style="margin: 10px;">Update Profile</a>
+                        <a class="btn" id="openPasswordFormBtn" style="margin: 10px;">
+                            Update Profile
+                        </a>
+
+                        <!-- Overlay background, tương tự như khi add Address ở trang checkout -->
+                        <div id="overlay" style="display:none;
+                             position: fixed;
+                             top: 0; left: 0;
+                             width: 100%; height: 100%;
+                             background-color: rgba(0, 0, 0, 0.6);
+                             z-index: 999;">
+                        </div>
+
+                        <!-- Form để nhập lại mật khẩu, có thể thiết kế giống với form "Add Address" -->
+                        <div id="passwordForm" style="display:none;
+                             position: fixed;
+                             top: 20%; left: 50%;
+                             transform: translateX(-50%);
+                             background: #fff;
+                             padding: 20px;
+                             border-radius: 8px;
+                             width: 90%;
+                             max-width: 400px;
+                             z-index: 1000;">
+
+                            <!-- Nút đóng form -->
+                            <span id="closeForm" 
+                                  style="cursor: pointer; position: absolute; top: 10px; right: 10px; font-size: 24px; color: #999;">
+                                &times;
+                            </span>                            
+                            <h3 style="text-align: center; color: #333;">Please enter password</h3>
+                            <div id="errorDiv" style="display:none; color: red; margin-bottom: 10px;"></div>
+                            <form id="checkPasswordForm" action="PasswordCheckController" method="post">
+
+                                <input type="hidden" name="userId" value="${user.id}" />
+
+
+                                <label for="currentPassword">Current password:</label>
+                                <input type="password" 
+                                       id="currentPassword" 
+                                       name="currentPassword" 
+                                       required 
+                                       style="width: 100%; padding: 10px; margin-bottom: 10px;" />
+
+                                <!-- Submit form -->
+                                <button type="submit" 
+                                        style="width: 100%; background-color: #4CAF50; color: #fff; padding: 12px; border: none;
+                                        border-radius: 5px; cursor: pointer; font-size: 16px;">
+                                    Confirm
+                                </button>
+                            </form>
+                        </div>
+                        <c:if test="${not empty errorMsg}">
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    openForm();  // Gọi hàm mở form
+                                    // Nhét errorMsg vào errorDiv
+                                    var errorDiv = document.getElementById("errorDiv");
+                                    errorDiv.textContent = "${errorMsg}";
+                                    errorDiv.style.display = "block";
+                                });
+                            </script>
+                        </c:if>
                         <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}" style="margin: 10px;">Change Password</a>                       
                         <a class="btn btn-back" href="HomePageController" style="margin: 10px; background-color: #6c757d; color: white;">Back to Home</a>
                     </div>
@@ -388,5 +450,37 @@
         <script src="js/price-range.js"></script>
         <script src="js/jquery.prettyPhoto.js"></script>
         <script src="js/main.js"></script>
+        <script>
+                                var openPasswordFormBtn = document.getElementById("openPasswordFormBtn");
+                                var overlay = document.getElementById("overlay");
+                                var passwordForm = document.getElementById("passwordForm");
+                                var closeFormBtn = document.getElementById("closeForm");
+                                var errorDiv = document.getElementById("errorDiv"); // div hiển thị lỗi
+
+                                function openForm() {
+                                    overlay.style.display = "block";
+                                    passwordForm.style.display = "block";
+                                }
+
+                                function closeForm() {
+                                    overlay.style.display = "none";
+                                    passwordForm.style.display = "none";
+
+                                    // --- Xoá nội dung và ẩn errorDiv ---
+                                    errorDiv.textContent = "";
+                                    errorDiv.style.display = "none";
+                                }
+
+                                openPasswordFormBtn.addEventListener("click", openForm);
+
+                                closeFormBtn.addEventListener("click", closeForm);
+
+                                overlay.addEventListener("click", function (e) {
+                                    if (e.target === overlay) {
+                                        closeForm();
+                                    }
+                                });
+        </script>
+
     </body>
 </html>
