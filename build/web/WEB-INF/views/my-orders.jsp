@@ -184,16 +184,15 @@
     <body>
 
         <!-- ================= HEADER START ================= -->
-        <header id="header">
-            <!-- Bạn copy đầy đủ code header_top, header_middle, header_bottom... của bạn vào đây -->
-            <div class="header_top">
+        <header id="header"><!--header-->
+            <div class="header_top"><!--header_top-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -210,58 +209,69 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-middle">
+            </div><!--/header_top-->
+
+            <div class="header-middle"><!--header-middle-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
                                     <%
-                                      Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                      User user = (User) session.getAttribute("user");
-                                      Integer sessionUserId = 0;
-                                      if (user != null) {
-                                        sessionUserId = user.getId();
-                                      }
-                                      if (isLoggedIn != null && isLoggedIn) {
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        Integer sessionUserId = 0;
+                                        if (user != null) {
+                                            sessionUserId = user.getId();
+                                        }
+                                        if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li>
-                                        <a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%= user.getEmail() %></a>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
                                     </li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <%
-                                          } else {
-                                        %>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <%
-                                          }
-                                        %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="header-bottom">
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-9">
                             <div class="navbar-header">
-                                <button
-                                    type="button"
-                                    class="navbar-toggle"
-                                    data-toggle="collapse"
-                                    data-target=".navbar-collapse"
-                                    >
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                                     <span class="sr-only">Toggle navigation</span>
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
@@ -270,40 +280,39 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown">
-                                        <a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li>
-                                            <li><a href="CartURL">Cart</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown">
-                                        <a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
-                                        </ul>
-                                    </li>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
+                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="pull-right">
-                                <form action="${pageContext.request.contextPath}/ProductController" method="get">
-                                    <input type="text" name="search" value="${param.search}" />
-                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                </form>
-                            </div>
-                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
                     </div>
                 </div>
-            </div>
-        </header>
+            </div><!--/header-bottom-->
+        </header><!--/header-->
         <!-- ================= HEADER END ================= -->
 
         <!-- Biến sessionUserId để dùng cho feedback -->
-        <c:set var="sessionUserId" value="<%= sessionUserId %>" />
+        <c:set var="sessionUserId" value="<%= sessionUserId%>" />
 
         <section id="my-orders-section" class="container" style="margin-top: 30px;">
             <!-- Tabs -->
@@ -313,6 +322,7 @@
                     <button data-tab="pending">Awaiting Pickup</button>
                     <button data-tab="shipping">Shipping</button>
                     <button data-tab="delivered">Delivered</button>
+                    <button data-tab="completed">Completed</button>
                     <button data-tab="canceled">Canceled</button>
                     <button data-tab="return">Refund</button>
                 </div>
@@ -373,8 +383,6 @@
                                         Request Refund
                                     </a>
                                 </c:if>
-
-
 
                                 <!-- Show More nếu nhiều sản phẩm -->
                                 <c:if test="${count > 1}">
@@ -463,7 +471,6 @@
                                    style="color: red; font-weight: bold;">
                                     Cancel
                                 </a>
-
 
                                 <c:if test="${count > 1}">
                                     <span style="color:#999; margin-left:10px;">
@@ -592,7 +599,7 @@
             </div>
             <!-- ================= END TAB SHIPPING ================= -->
 
-            <!-- ================= TAB DELIVERED (chứa Feedback) ================= -->
+            <!-- ================= TAB DELIVERED (chứa Feedback & Confirm Delivered) ================= -->
             <div id="tab-delivered" class="order-section">
                 <h3>Delivered</h3>
                 <c:forEach var="entry" items="${deliveredPaged}">
@@ -709,6 +716,15 @@
                                     <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+                                <!-- Confirm Delivered button for orders in Delivered status -->
+                                <c:if test="${first.orderStatus eq 'Delivered'}">
+                                    <a href="javascript:void(0);"
+                                       class="btn-link confirm-delivered"
+                                       data-orderid="${entry.key}"
+                                       style="color: green; font-weight: bold;">
+                                        Confirm Delivered
+                                    </a>
+                                </c:if>
 
                                 <c:if test="${count > 1}">
                                     <span style="color:#999; margin-left:10px;">
@@ -840,6 +856,88 @@
             </div>
             <!-- ================= END TAB DELIVERED ================= -->
 
+            <!-- ================= TAB COMPLETED ================= -->
+            <div id="tab-completed" class="order-section">
+                <h3>Completed</h3>
+                <c:forEach var="entry" items="${completedPaged}">
+                    <c:set var="lines" value="${entry.value}" />
+                    <c:set var="count" value="${fn:length(lines)}" />
+                    <c:set var="first" value="${lines[0]}" />
+
+                    <div class="my-order-card" id="order-completed-${entry.key}">
+                        <div class="order-row">
+                            <!-- Left: image + product info -->
+                            <div class="order-left">
+                                <div>
+                                    <img src="${first.imageURL}" alt="Product Image" />
+                                    <strong>${first.productName}</strong><br/>
+                                    Color: ${first.colorName}, Capacity: ${first.capacity}<br/>
+                                    Quantity: ${first.quantity}<br/>
+                                    Price: <fmt:formatNumber value="${first.price}" type="number" groupingUsed="true"/> ₫<br/>
+                                    Payment Status: <strong>${first.paymentStatus}</strong><br/>
+                                </div>
+                            </div>
+
+                            <!-- Right: status, total, buttons -->
+                            <div class="order-right">
+                                <div class="order-status completed">${first.orderStatus}</div>
+                                <c:set var="sum" value="0" scope="page"/>
+                                <c:forEach var="line" items="${lines}">
+                                    <c:set var="lineTotal" value="${line.price * line.quantity}" scope="page"/>
+                                    <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
+                                </c:forEach>
+                                <div class="total-price">
+                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                </div>
+                                <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
+
+                                <c:if test="${count > 1}">
+                                    <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
+                                    <a href="javascript:void(0);"
+                                       class="toggle-dropdown"
+                                       style="color:blue; text-decoration:underline; margin-left:5px;">
+                                        Show More
+                                    </a>
+                                </c:if>
+                            </div>
+                        </div>
+
+                        <c:if test="${count > 1}">
+                            <div class="dropdown-products">
+                                <c:forEach var="line" items="${lines}" varStatus="loop">
+                                    <c:if test="${loop.index != 0}">
+                                        <div style="margin-bottom: 10px;">
+                                            <img src="${line.imageURL}" alt="Product Image" style="width:60px; height:60px;" />
+                                            <strong>${line.productName}</strong><br/>
+                                            Color: ${line.colorName}, Capacity: ${line.capacity}<br/>
+                                            Quantity: ${line.quantity}<br/>
+                                            Price: <fmt:formatNumber value="${line.price}" type="number" groupingUsed="true"/> ₫<br/>
+                                            Payment Status: <strong>${line.paymentStatus}</strong><br/>
+                                        </div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        </c:if>
+                    </div>
+                </c:forEach>
+
+                <div class="pagination">
+                    <c:forEach begin="1" end="${totalCompletedPages}" var="p">
+                        <c:choose>
+                            <c:when test="${p == currentCompletedPage}">
+                                <span class="active-page">${p}</span>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="CustomerOrderController?service=displayAllOrders&pageCompleted=${p}&activeTab=completed#tab-completed">
+                                    ${p}
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </div>
+            </div>
+            <!-- ================= END TAB COMPLETED ================= -->
+
             <!-- ================= TAB CANCELED ================= -->
             <div id="tab-canceled" class="order-section">
                 <h3>Canceled</h3>
@@ -883,7 +981,6 @@
                                             Request Refund
                                         </a>
                                     </c:if>
-
 
                                     <c:if test="${count > 1}">
                                         <span style="color:#999; margin-left:10px;">(and ${count - 1} more products)</span>
@@ -1177,7 +1274,6 @@
         <script>
                                                                // Lấy param activeTab từ server (nếu có)
                                                                const serverActiveTab = "<c:out value='${param.activeTab}' default='all'/>";
-
                                                                // Hàm hiển thị tab
                                                                function showTab(tab) {
                                                                    // Ẩn tất cả order-section
@@ -1227,7 +1323,7 @@
                                                                    }
                                                                });
 
-                                                               // ========== Ajax for Cancel / Refund ==========
+                                                               // ========== Ajax for Cancel / Refund / Confirm Delivered ==========
                                                                $(document).ready(function () {
                                                                    // Cancel order
                                                                    $(".cancel-order").click(function () {
@@ -1288,6 +1384,31 @@
                                                                        }
                                                                    });
 
+                                                                   // Confirm Delivered order (to mark as Completed)
+                                                                   $(".confirm-delivered").click(function () {
+                                                                       let orderId = $(this).data("orderid");
+                                                                       if (confirm("Are you sure you want to confirm delivery?")) {
+                                                                           $.ajax({
+                                                                               url: "CustomerOrderController",
+                                                                               type: "GET",
+                                                                               data: {service: "confirmDelivered", orderId: orderId, ajax: "true"},
+                                                                               dataType: "json",
+                                                                               success: function (response) {
+                                                                                   if (response.success) {
+                                                                                       alert(response.message);
+                                                                                       // Reload => sang tab completed => pageCompleted=1 => newlyCompleted
+                                                                                       window.location.href =
+                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
+                                                                                   } else {
+                                                                                       alert(response.message);
+                                                                                   }
+                                                                               },
+                                                                               error: function () {
+                                                                                   alert("An error occurred while processing your request.");
+                                                                               },
+                                                                           });
+                                                                       }
+                                                                   });
                                                                });
 
                                                                // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========

@@ -209,18 +209,28 @@
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <!--                                    <li><a href="#"><i class="fa fa-user"></i> Account</a></li>
-                                                                        <li><a href="${pageContext.request.contextPath}/CartController"><i class="fa fa-shopping-cart"></i> Cart</a></li>-->
                                     <% 
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
-                                    <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                    <li>
+                                        <a style="font-weight: bold">
+                                            <i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="${pageContext.request.contextPath}/LogoutController">
+                                            <i class="fa fa-power-off"></i> Logout
+                                        </a>
+                                    </li>
+                                    <% } else { %>
+                                    <li>
+                                        <a href="${pageContext.request.contextPath}/LoginController">
+                                            <i class="fa fa-lock"></i> Login
+                                        </a>
+                                    </li>
+                                    <% } %>
                                 </ul>
                             </div>
                         </div>
@@ -247,24 +257,11 @@
                                     <li><a href="SliderController">Slider List</a></li>
                                     <li><a href="CustomerController">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
+
                                 </ul>
                             </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <form action="MarketingPostController" method="get" onsubmit="return validateSearch()">
-                                <input type="hidden" value="search" name="service">
-                                <div class="search_box pull-right" style="position: relative; display: flex; flex-direction: column; align-items: start; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
-                                    <div style="display: flex; align-items: center; width: 100%;">
-                                        <input type="text" id="searchQuery" name="query" placeholder="Search" value="${param.query}" 
-                                               style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
-                                        <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
-                                            <i class="fa fa-search"></i> 
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </form>
-                        </div
+                        </div>                        
                     </div>
                 </div>
             </div><!--/header-bottom-->

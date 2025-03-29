@@ -10,6 +10,7 @@ import jakarta.servlet.http.*;
 import model.DAOOrderInformation;
 import model.DAOPayment;
 import model.DAOShipping;
+import model.DAOOrder;
 
 @WebServlet(name = "ShipperOrderController", urlPatterns = {"/ShipperOrderController"})
 public class ShipperOrderController extends HttpServlet {
@@ -100,7 +101,11 @@ public class ShipperOrderController extends HttpServlet {
             // Cập nhật shippingStatus
             String newShippingStatus = request.getParameter("newShippingStatus");
             DAOShipping daoShipping = new DAOShipping();
+            DAOOrder daoOrder = new DAOOrder();
+            java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
+            daoShipping.updateArrival(orderId, shipperId, currentDate);
             daoShipping.updateShippingStatus(orderId, shipperId, newShippingStatus);
+            daoOrder.updateStatus(orderId, newShippingStatus);
 
         } else if ("updatePayment".equals(action)) {
             // Cập nhật paymentStatus

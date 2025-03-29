@@ -18,6 +18,8 @@ import java.util.UUID;
 import java.sql.Timestamp;
 import model.DAOUser;
 import entity.User;
+import helper.Authorize;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Date;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -66,6 +68,15 @@ public class ResetController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/ResetController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         String service = request.getParameter("service");
         if (service.equals("findYourAccount")) {
             request.getRequestDispatcher("/WEB-INF/views/find-your-account.jsp").forward(request, response);
@@ -80,7 +91,7 @@ public class ResetController extends HttpServlet {
             }
 
             DAOUser daoUser = new DAOUser();
-            User user = daoUser.getUserByResetToken(token);
+            user = daoUser.getUserByResetToken(token);
             System.out.println("user token" + user.getResetTokenExpired());
             if (user == null) {
                 System.out.println("Hoho");

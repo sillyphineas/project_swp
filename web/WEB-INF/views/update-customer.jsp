@@ -43,7 +43,7 @@
             #update-setting-section {
                 padding: 30px;
                 background-color: #fff;
-                margin-top: 50px;
+                margin-top: 20px;
                 border-radius: 8px;
                 box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             }
@@ -53,7 +53,7 @@
                 text-align: center;
                 color: #333;
                 font-size: 28px;
-                margin-bottom: 30px;
+                margin-bottom: 10px;
             }
 
             /* Phần thông báo lỗi */
@@ -100,21 +100,21 @@
                 margin-right: 10px;
             }
 
-            /* Định dạng nút Save Changes */
-            #update-setting-section button {
-                padding: 12px 20px;
-                background-color: #f39c12;
-                color: white;
-                font-size: 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                display: block;
-                width: 100%;
-                text-align: center;
-                margin-top: 20px;
-            }
+            /*             Định dạng nút Save Changes 
+                        #update-setting-section button {
+                            padding: 12px 20px;
+                            background-color: #f39c12;
+                            color: white;
+                            font-size: 16px;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            transition: background-color 0.3s;
+                            display: block;
+                            width: 100%;
+                            text-align: center;
+                            margin-top: 20px;
+                        }*/
 
             #update-setting-section button:hover {
                 background-color: #e67e22;
@@ -249,6 +249,7 @@
                                     <li><a href="SliderController">Slider List</a></li>
                                     <li><a href="CustomerController" class="active">Customer List</a></li>
                                     <li><a href="MarketingProductController">Product List</a></li>
+                                    <li><a href="MaketingFeedBackController?service=listAllfeedBack">FeedBack List</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -259,44 +260,61 @@
         </header><!--/header-->
 
         <section id="update-setting-section">
-            <div class="container">
+            <div class="container" style="max-width: 800px; margin-top: 10px; margin-bottom: 20px; padding: 30px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h2>Update Customer</h2>
+                        <h2 style="font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 30px; color: #333;">Update Customer</h2>
                         <c:if test="${not empty mess}">
-                            <div style="color: red; font-weight: bold;">${mess}</div>
+                            <div style="color: red; font-weight: bold; text-align: center;">${mess}</div>
                         </c:if>
 
                         <form action="EditCustomerController" method="post">
                             <input type="hidden" name="id" value="${customer.id}" />
 
-                            <div>
-                                <label for="name">Name:</label>
-                                <input type="text" id="name" name="name" value="${customer.name}" required />
+                            <div style="margin-bottom: 20px;">
+                                <label for="name" style="font-size: 18px; font-weight: bold; color: #444;">Name:</label>
+                                <input type="text" id="name" name="name" value="${customer.name}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;" />
                             </div>
 
-                            <div>
-                                <label for="email">Email:</label>
-                                <input type="email" id="email" name="email" value="${customer.email}" required />
+                            <div style="margin-bottom: 20px;">
+                                <label for="email" style="font-size: 18px; font-weight: bold; color: #444;">Email:</label>
+                                <input type="text" id="email" name="email" value="${customer.email}" disabled 
+                                       style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px; background-color: #f4f4f4;"/>
                             </div>
 
-                            <div>
-                                <label for="phoneNumber">Phone Number:</label>
-                                <input type="text" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required />
+
+                            <div style="margin-bottom: 20px;">
+                                <label for="phoneNumber" style="font-size: 18px; font-weight: bold; color: #444;">Phone Number:</label>
+                                <input type="text" id="phoneNumber" name="phoneNumber" value="${customer.phoneNumber}" required style="width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; margin-top: 8px;" />
                             </div>
 
-                            <div>
-                                <label for="gender">Gender:</label>
-                                <input type="radio" id="male" name="gender" value="true" ${customer.gender ? 'checked' : ''} /> Male
-                                <input type="radio" id="female" name="gender" value="false" ${!customer.gender ? 'checked' : ''} /> Female
+                            <div style="margin-bottom: 20px;">
+                                <label for="gender" style="font-size: 18px; font-weight: bold; color: #444;">Gender:</label>
+                                <div style="margin-top: 8px;">
+                                    <input type="radio" id="male" name="gender" value="true" ${customer.gender ? 'checked' : ''} /> Male
+                                    <input type="radio" id="female" name="gender" value="false" ${!customer.gender ? 'checked' : ''} /> Female
+                                </div>
                             </div>
 
-                            <button type="submit">Save Changes</button>
+                            <!-- Buttons Section -->
+                            <div style="text-align: center; margin-top: 20px; display: flex; justify-content: space-between; gap: 10px;">
+                                <!-- Save Changes Button -->
+                                <button type="submit" style="padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 5px; background-color: orange; color: white; border: none; cursor: pointer; width: 48%; transition: background-color 0.3s;">
+                                    Save Changes
+                                </button>
+
+                                <!-- Back Button -->
+                                <a href="CustomerDetailController?id=${customer.id}" class="btn btn-info" style="padding: 12px 25px; font-size: 18px; font-weight: bold; border-radius: 5px; background-color: #5bc0de; color: white; text-decoration: none; border: none; cursor: pointer; width: 48%; transition: background-color 0.3s;">
+                                    Back
+                                </a>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </section>
+
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

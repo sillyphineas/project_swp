@@ -320,7 +320,7 @@
                                     <th><a href="SaleOrderController?service=sort&sortBy=buyer_Name&sortOrder=asc">Buyer Name</a></th>
                                     <th><a href="SaleOrderController?service=sort&sortBy=orderTime&sortOrder=asc">Order time</th>
                                     <th>Shipping Adress</a></th>
-                                    <th>Delivery status</th>
+                                    <th>Order status</th>
                                     <th>Payment status</th>
                                     <th>Payment Method</th>
                                     <th><a href="SaleOrderController?service=sort&sortBy=totalPrice&sortOrder=asc">ToTal Price</a></th>
@@ -402,21 +402,23 @@
                                         </a>
 
                                     </td>
-                                    <%
-                                        int shiperID = order.getShipping().getShippingID();
-                                    %>
-                                    <!-- Assign / Assigned Button -->
+
                                     <td>
-                                        <% if ( shiperID != 0) { %>
-                                        <button style="background-color: grey; color: white; border: none; padding: 8px 16px;
-                                                cursor: not-allowed; opacity: 0.6; border-radius: 5px;" disabled>
-                                            Assigned
-                                        </button>
-                                        <% } else { %>
+                                        <% if ( status.equalsIgnoreCase("Awaiting Pickup")) { %>
                                         <button onclick="location.href = 'SaleOrderController?service=ShipperAssignment&orderID=<%= orderId %>'"
                                                 style="background-color: #17a2b8; color: white; border: none; padding: 8px 16px;
                                                 cursor: pointer; border-radius: 5px;">
                                             Assign
+                                        </button>
+                                        <% }else if(status.equalsIgnoreCase("Cancel") || status.equalsIgnoreCase("Refund")){%>
+                                            <button style="background-color: grey; color: white; border: none; padding: 8px 16px;
+                                                cursor: not-allowed; opacity: 0.6; border-radius: 5px;" disabled>
+                                            Cancelled
+                                        </button>
+                                        <% } else { %>
+                                        <button style="background-color: grey; color: white; border: none; padding: 8px 16px;
+                                                cursor: not-allowed; opacity: 0.6; border-radius: 5px;" disabled>
+                                            Assigned
                                         </button>
                                         <% } %>
                                     </td>

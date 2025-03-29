@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -109,7 +110,7 @@ public class HomePageController extends HttpServlet {
         int totalItems = dao.getTotalProducts();
         // Tổng số trang
         int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage);
-
+        Vector<Product> latestProducts = dao.getNewProductsForHomePage(1, 3);
         // Lấy danh sách thương hiệu
         Vector<Brand> brandList = daoBrand.getAllBrands();
 
@@ -121,24 +122,29 @@ public class HomePageController extends HttpServlet {
         }
         java.util.List<Blog> recentBlogs = null;
         try {
-            recentBlogs = daoBlog.getPaginatedBlogs(1, 3);
+            recentBlogs = daoBlog.getPaginatedBlogs(1, 4);
         } catch (SQLException ex) {
             Logger.getLogger(HomePageController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        DecimalFormat df = new DecimalFormat("###,###,###.##");
         // Gửi thông tin vào JSP
         for (Product product : productList) {
-            double minPrice = dao.getMinPriceForProduct(product.getId());
-            request.setAttribute("minPrice_" + product.getId(), minPrice);
-        }
+            // Lấy giá trị minPrice cho sản phẩm và định dạng nó thành chuỗi
+            double productMinPrice = dao.getMinPriceForProduct(product.getId());
+            String formattedMinPrice = df.format(productMinPrice);
 
+            // Truyền giá trị đã được định dạng vào request
+            request.setAttribute("minPrice_" + product.getId(), formattedMinPrice);
+        }
+        
+        request.setAttribute("latestProducts", latestProducts);
         request.setAttribute("products", productList);
         request.setAttribute("brands", brandList);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
         request.setAttribute("latestBlogs", latestBlogs);
         request.setAttribute("recentBlogs", recentBlogs);
-
+        request.setAttribute("latestProducts", latestProducts);
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/index_1.jsp");
         rd.forward(request, response);
     }

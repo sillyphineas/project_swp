@@ -121,17 +121,12 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="AdminDashboardController" class="active">Home</a></li>
-                                    <li><a href="UserController">Users List</a></li>
-                                    <li><a href="SettingController">Settings List</a></li>
+                                    <li><a href="ShipperDashboardController" class="active">Home</a></li>
+                                    <li><a href="ShipperOrderController">Order List</a></li>
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <input type="text" placeholder="Search"/>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div><!--/header-bottom-->
@@ -162,7 +157,6 @@
                     <tr>
                         <th>Order ID</th>
                         <th>Order Time</th>
-                        <th>Order Status</th>
                         <th>Payment Status</th>
                         <th>Shipping Status</th>
                         <th>Shipping Date</th>
@@ -179,7 +173,6 @@
                         <tr>
                             <td>${oi.id}</td>
                             <td>${oi.orderTime}</td>
-                            <td>${oi.orderStatus}</td>
                             <td>${oi.paymentStatus}</td>
                             <td>${oi.shippingStatus}</td>
                             <td>${oi.shippingDate}</td>

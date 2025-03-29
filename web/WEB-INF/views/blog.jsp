@@ -34,7 +34,20 @@
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
     </head><!--/head-->
+    <style>
+        .categories_products a:hover {
+            background-color: #ff8c00;
+            color: #fff;
+        }
+    </style>
+    <style>
 
+        li a:hover {
+            font-weight: bold; /* Làm đậm chữ */
+            background-color: #f0f0f0; /* Thay đổi màu nền */
+            color: #007bff; /* Thay đổi màu chữ */
+        }
+    </style>
     <body>
         <header id="header"><!--header-->
             <div class="header_top"><!--header_top-->
@@ -43,19 +56,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -68,50 +81,46 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -132,34 +141,50 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkout">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li>  
-                                        </ul>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs" class="active">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL" class="active">Blog List</a></li>
-                                        </ul>
-                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
                         <%
                             String query = (String) request.getAttribute("query");
                         %>
-                        <div class="col-sm-3">
-                            <div class="search_box pull-right">
-                                <form action="BlogURL" method="get">
-                                    <input type="hidden" value="search" name="service">
-                                    <input type="text" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>">
-                                    <button type="submit">Search</button>
-                                </form>
-                            </div>
-                        </div>
+                         <div class="col-sm-3">
+                            <form action="BlogURL" method="get" >
+                                <input type="hidden" value="search" name="service">
+                                <div class="search_box pull-right" style="position: relative; display: flex; flex-direction: column; align-items: start; border: 1px solid #ccc; border-radius: 20px; padding: 5px 10px; background-color: #f8f8f8;">
+                                    <div style="display: flex; align-items: center; width: 100%;">
+                                        <input type="search" name="query" placeholder="Search" value="<%= (request.getParameter("query") != null) ? request.getParameter("query") : "" %>"
+                                               style="border: none; outline: none; background: transparent; flex-grow: 1; font-size: 14px; padding: 5px 10px; border-radius: 20px;">
+                                        <button type="submit" style="border: none; background: transparent; cursor: pointer; font-size: 16px; color: #aaa; margin-left: 5px;">
+                                            <i class="fa fa-search"></i> 
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>           
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const queryInput = document.querySelector('input[name="query"]');
+                                const maxLength = 25;
+
+                                if (queryInput && queryInput.value.length > maxLength) {
+                                    queryInput.value = queryInput.value.substring(0, maxLength) + '...';
+                                }
+                            });
+                        </script>
 
                     </div>
                 </div>
@@ -171,31 +196,33 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="left-sidebar">  
-                            <div class="categories_products">
-                                <h2>Categories</h2> 
-                                <div class="categories-name">
-                                    <ul class="nav nav-pills nav-stacked">
-                                        <li> 
-                                            <a href="BlogURL?service=listAllBlogs">All Categories</a> 
+                            <div style="width: 100%; max-width: 300px; margin: 20px 0; padding: 15px; background-color: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                                <h2 style="font-size: 20px; font-weight: 700; color: #333; margin-bottom: 15px; border-bottom: 2px solid #ff8c00; padding-bottom: 5px; text-transform: uppercase;">Categories</h2> 
+                                <div style="width: 100%;">
+                                    <ul style="padding: 0; list-style: none;">
+                                        <li style="margin-bottom: 5px;"> 
+                                            <a href="BlogURL?service=listAllBlogs" style="display: block; padding: 10px 15px; font-size: 16px; font-weight: 500; color: #333; text-decoration: none; background-color: #fff; border-radius: 5px; transition: all 0.3s ease;">
+                                                All Categories
+                                            </a> 
                                         </li> 
-                                        <% 
-                                        List<Category> categories = (List<Category>) request.getAttribute("categories");
-                                        if (categories != null && !categories.isEmpty()) {
-                                            for (Category category : categories) {
+                                        <%
+                                            List<Category> categories = (List<Category>) request.getAttribute("categories");
+                                            if (categories != null && !categories.isEmpty()) {
+                                                for (Category category : categories) {
                                         %>
-
-                                        <li> 
-                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>">
+                                        <li style="margin-bottom: 5px;">
+                                            <a href="BlogURL?service=CatewithID&categoryID=<%= category.getId() %>" 
+                                               style="display: block; padding: 10px 15px; font-size: 16px; font-weight: 500; color: #333; text-decoration: none; background-color: #fff; border-radius: 5px; transition: all 0.3s ease;">
                                                 <%= category.getCategoryName() %>
                                             </a>
-                                        </li> 
-                                        <% 
+                                        </li>
+                                        <%
+                                                }
                                             }
-                                        }
-                                        %> 
+                                        %>
                                     </ul> 
                                 </div>
-                            </div>                                                       
+                            </div>                                                  
                         </div>
                     </div>
 
@@ -205,41 +232,39 @@
                             <c:if test="${not empty message}">
                                 <div class="alert alert-warning">${message}</div>
                             </c:if> 
-                            <% 
-                            List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
+                            <%
+                                List<Blog> blogs = (List<Blog>) request.getAttribute("blogs");
 
-                            if (blogs != null && !blogs.isEmpty()) {
-                                DAOBlog dao = new DAOBlog();
-                                for (Blog blog : blogs){
-                                    int authorID = blog.getAuthorID();
-                                    String authname = dao.getAuthorNameById(blog.getAuthorID());
+                                if (blogs != null && !blogs.isEmpty()) {
+                                    DAOBlog dao = new DAOBlog();
+                                    for (Blog blog : blogs){
+                                        String authname = dao.getAuthorNameById(blog.getAuthorID());
                             %>
-                            <div class="single-blog-post">
-                                <h3><%= blog.getTitle() %></h3>
-                                <div class="post-meta">
-                                    <ul>
-                                        <li><i class="fa fa-user"></i><%= authname %></li>
-                                        <li><i class="fa fa-calendar"></i><%= blog.getPostTime() %></li>
+                            <div style="border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                                <h3 style="margin-bottom: 10px; font-size: 24px; color: #333;"><%= blog.getTitle() %></h3>
+                                <div style="display: flex; align-items: center; margin-bottom: 15px; font-size: 14px; color: #666;">
+                                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; align-items: center;">
+                                        <li style="display: flex; align-items: center; margin-right: 15px;">
+                                            <i class="fa fa-user" style="margin-right: 5px; color: #F09D3A;"></i>
+                                            <span style="color: #333; font-size: 14px;"><%= authname %></span>
+                                        </li>
+                                        <li style="display: flex; align-items: center;">
+                                            <i class="fa fa-calendar" style="margin-right: 5px; color: #F09D3A;"></i>
+                                            <span style="color: #333; font-size: 14px;"><%= blog.getPostTime() %></span>
+                                        </li>
                                     </ul>
-                                    <span>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star-half-o"></i>
-                                    </span>
                                 </div>
-                                <div style="display: flex;">
-                                    <a href="">
-                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; margin-right: 20px;">
+                                <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                                    <a href="#" style="display: block; max-width: 200px; height: auto; margin-right: 20px; border-radius: 5px;">
+                                        <img src="<%= blog.getImageURL() %>" alt="ảnh lỗi" style="max-width: 200px; height: auto; border-radius: 5px;">
                                     </a>
-                                    <p style="color: #808080;"><%= blog.getSubContent() %></p>
+                                    <p style="color: #808080; flex-grow: 1; line-height: 1.6;"><%= blog.getSubContent() %></p>
                                 </div>
-                                <a class="btn btn-primary" href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>">Read More</a>
+                                <a href="<%= request.getContextPath() %>/BlogDetailServlet?id=<%= blog.getId() %>" style="display: inline-block; padding: 10px 15px; background-color: #F09D3A; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">Read More</a>
                             </div>
-                            <% 
+                            <%
+                                    }
                                 }
-                            }
                             %>
 
                             <div class="pagination-area">

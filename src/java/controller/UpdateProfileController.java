@@ -7,6 +7,7 @@ package controller;
 import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 @WebServlet(name = "UpdateProfileController", urlPatterns = {"/UpdateProfileController"})
+@MultipartConfig(
+        fileSizeThreshold = 2097152, // 2MB
+        maxFileSize = 10485760, // 10MB
+        maxRequestSize = 52428800 // 50MB
+)
 public class UpdateProfileController extends HttpServlet {
 
     @Override
@@ -47,12 +53,13 @@ public class UpdateProfileController extends HttpServlet {
         User updatedUser = new User();
         User currentUser = (User) session.getAttribute("user");
         // Lấy thông tin từ form
-        String userfffId = request.getParameter("userId");
+        String userId = request.getParameter("userId");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String phoneNumber = request.getParameter("phoneNumber");
         boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
         String dateOfBirth = request.getParameter("dateOfBirth");
+        System.out.println(name + email + phoneNumber + dateOfBirth);
         if (dateOfBirth == null || dateOfBirth.trim().isEmpty()) {
             request.setAttribute("errorMessage", "Date of birth cannot be empty!!!");
             request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
@@ -61,9 +68,19 @@ public class UpdateProfileController extends HttpServlet {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date birthDate = sdf.parse(dateOfBirth);
-
             if (birthDate.after(new Date())) {
                 request.setAttribute("errorMessage", "Date of birth cannot be in the future!");
+                request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
+                return;
+            }
+            Date today = new Date();
+            SimpleDateFormat sdfToday = new SimpleDateFormat("yyyy-MM-dd");
+            String todayStr = sdfToday.format(today); // Định dạng ngày hiện tại thành chuỗi
+            String birthDateStr = sdfToday.format(birthDate); // Định dạng ngày sinh thành chuỗi
+
+            // So sánh ngày sinh với ngày hiện tại
+            if (todayStr.equals(birthDateStr)) {
+                request.setAttribute("errorMessage", "Date of birth cannot be today!");
                 request.getRequestDispatcher("WEB-INF/views/updateProfile.jsp").forward(request, response);
                 return;
             }
@@ -89,7 +106,7 @@ public class UpdateProfileController extends HttpServlet {
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
             }
             byte[] imageBytes = byteArrayOutputStream.toByteArray();
-
+            System.out.println(imageBytes);
             updatedUser.setImage(imageBytes);
         } else {
             updatedUser.setImage(currentUser.getImage());
@@ -106,7 +123,7 @@ public class UpdateProfileController extends HttpServlet {
         // Cập nhật dữ liệu vào cơ sở dữ liệu
         DAOUser userDao = new DAOUser();
         int result = userDao.updateUser2(updatedUser);
-        
+
         // Kiểm tra kết quả
         if (result > 0) {
             session.setAttribute("user", updatedUser); // Cập nhật thông tin người dùng trong session

@@ -3,6 +3,9 @@
 <%@page import="entity.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page import="java.util.List,entity.Blog,jakarta.servlet.http.HttpSession,entity.User,model.DAOBlog" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -37,8 +40,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -62,33 +65,46 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
-
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
-                                    
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -110,18 +126,16 @@
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
                                     <li><a href="HomePageController" class="active">Home</a></li>
-                                    <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="CartURL?service=checkOut">Checkout</a></li> 
-                                            <li><a href="CartURL?service=showCart">Cart</a></li> 
-                                        </ul>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
-                                        </ul>
-                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
                                     <!--                                    <li><a href="404.html">404</a></li>
                                                                         <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
@@ -157,19 +171,19 @@
                                 <c:forEach var="blog" items="${latestBlogs}" varStatus="status">
                                     <div class="item ${status.index == 0 ? 'active' : ''}">
                                         <div class="col-sm-6">
-                                            <h1><span>E</span>-SHOPPER</h1>
+                                            <h1><span>T</span>-PHONE</h1>
                                             <h2>${blog.title}</h2>
-                                            <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                            <a href="${blog.backlinks}" class="btn btn-primary">
+
+                                            <a href="${blog.backlinks}" class="btn btn-warning">
                                                 Read More
                                             </a>
 
 
                                         </div>
                                         <div class="col-sm-6">
-                                            <img src="${blog.imageURL}" class="girl img-responsive" alt="" />
-                                            <!--                                            <img src="images/home/pricing.png" class="pricing" alt="" />-->
+                                            <img style="height: 400px; width: auto" src="${blog.imageURL}" class="girl img-responsive" alt="" />
+
                                         </div>
                                     </div>
                                 </c:forEach>
@@ -214,7 +228,7 @@
                                 <div class="well">
                                     <form action="${pageContext.request.contextPath}/ProductController" method="get">
 
-                                        
+
                                         <label for="minPrice">Min Price:</label>
                                         <input type="number" name="minPrice" id="minPrice" class="form-control" value="" placeholder="" />
 
@@ -224,8 +238,27 @@
 
                                         <!-- Nút Lọc -->
                                         <button type="submit" class="btn btn-primary" style="margin-top:10px;">Filter</button>
+
+
                                     </form>
                                 </div>
+                            </div>
+                            <div class="latest-products">
+                                <c:if test="${not empty latestProducts}">
+                                    <div class="latest-product">
+                                        <h2>Newest Products</h2>
+                                        <c:forEach var="product" items="${latestProducts}">
+                                            <div class="product-item" style="margin-bottom: 10px;">
+                                                <!-- Link bao bọc sản phẩm -->
+                                                <a href="ProductDetailController?id=${product.id}">
+                                                    <img src="${product.imageURL}" alt="${product.name}" style="width: 100%; height: auto;">
+                                                    <h3 style="color: black;">${product.name}</h3>
+                                                    <p style="color: black;">${product.description}</p>
+                                                </a>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </c:if>
                             </div>
 
                         </div>
@@ -282,7 +315,7 @@
 
                                         <p>${fn:substring(blog.content, 0, 200)}...</p>
 
-                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-primary">
+                                        <a href="${pageContext.request.contextPath}/BlogDetailServlet?id=${blog.id}" class="btn btn-warning">
                                             Read More
                                         </a>
                                     </div>
@@ -294,6 +327,47 @@
                 </div>
             </div>
         </section>
+        <br>
+        <br>
+        <br>
+        <section id="about-us" style="padding: 50px 0; background-color: #f9f9f9;">
+            <div class="container">
+                <h2 class="title text-center" style="margin-bottom: 30px; font-weight: bold;">About T-Phone Store</h2>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="https://i.pinimg.com/1200x/d3/c9/74/d3c974631604ec4e2f7bc746999de586.jpg" alt="About T-Phone Store" class="img-responsive" style="border-radius: 12px;">
+                        <br>
+                        <img src="https://www.deco-crystal.com/wp-content/uploads/2023/06/image31.jpg" alt="About T-Phone Store" class="img-responsive" style="border-radius: 12px;">
+                        <br>
+                        <img src="https://content.jdmagicbox.com/comp/thane/c1/022pxx22.xx22.130426170856.c4c1/catalogue/top-10-mobile-shop-kalyan-city-thane-mobile-phone-dealers-903m6.jpg" alt="About T-Phone Store" class="img-responsive" style="border-radius: 12px;">
+                    </div>
+                    <div class="col-sm-8">
+                        <div style="font-size: 16px; line-height: 1.8; text-align: justify; color: #333;">
+                            <p><strong>T-Phone Store</strong> is a trusted destination for mobile phone lovers and technology enthusiasts across Vietnam. Established with the mission to bring genuine, high-quality smartphones closer to the hands of every Vietnamese user, T-Phone Store has become more than just an online store — we are a technology partner in your everyday life.</p>
+
+                            <p>In an ever-changing digital world, smartphones are no longer a luxury; they are a necessity. At T-Phone Store, we understand how essential it is to stay connected — not only through calls and messages but also through apps, information, creativity, and productivity. We offer a wide variety of smartphones and accessories from globally renowned brands such as Apple, Samsung, Xiaomi, Oppo, Vivo, and more — ensuring customers have access to the latest innovations at competitive prices.</p>
+
+                            <p>What truly sets us apart is not just our products, but our service. Every member of the T-Phone Store team is passionate about technology and dedicated to delivering the best customer experience. Whether you’re making your first purchase or your fifth, we’re here to support you — from product consultation, secure ordering, fast nationwide delivery, to after-sales service and warranty support.</p>
+
+                            <p>Our goal is not simply to sell phones. We aim to educate customers, help them make informed decisions, and ensure that every purchase adds value to their daily lives. With detailed product descriptions, honest reviews, and real-time support, we empower shoppers to confidently explore the latest in mobile tech.</p>
+
+                            <p>We believe in transparency. Every product on our platform is authentic, sourced directly from authorized distributors, and comes with clear warranty and return policies. No hidden costs, no confusing fine print — just honest service.</p>
+
+                            <p>We also invest in convenience. With 0% installment plans, multiple payment options, and reliable logistics partners, we make the entire shopping process simple and stress-free. Whether you’re in Hanoi, Ho Chi Minh City, or a rural area, your next smartphone is just a few clicks away.</p>
+
+                            <p>Our long-term vision is to become the leading mobile-specialized e-commerce platform not only in Vietnam but also across Southeast Asia. To achieve this, we constantly upgrade our technology systems, expand our product portfolio, and strengthen our partnerships with manufacturers and financial services.</p>
+
+                            <p>But at the heart of everything we do is our commitment to customers. We listen to feedback, adapt to needs, and never stop improving. Because your satisfaction isn't just important to us — it's our reason for being.</p>
+
+                            <p>Thank you for choosing T-Phone Store. We're proud to accompany you on your digital journey — and we look forward to growing with you in a world where technology keeps moving forward.</p>
+
+                            <p style="font-weight: bold; text-align: right; color: #222;">T-Phone Store — Empowering Your Digital Life.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

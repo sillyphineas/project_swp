@@ -29,89 +29,72 @@
         <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
 
         <style>
-            /* Đặt lại phần mặc định, cơ bản cho toàn trang */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+            .profile-container {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 40px;
             }
 
-            body {
-                font-family: Arial, sans-serif;
-                background: #ffffff;
+            .profile-left {
+                text-align: center;
+                width: 30%;
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-right {
+                width: 65%;
+                background-color: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-left h3 {
+                font-size: 24px;
                 color: #333;
             }
 
-            /* Container bao quanh nội dung chính */
-            /*        .container {
-                        max-width: 100%;
-                        margin: 50px auto;
-                        background: #fff;
-                        padding: 30px;
-                        border-radius: 8px;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                    }*/
-
-            h3 {
-                margin-bottom: 20px;
-                font-size: 28px;
-                text-align: center;
-                color: #444;
+            .profile-left p {
+                font-size: 16px;
+                color: #777;
             }
 
-            /* Container for the two tables */
-            .table-container {
-                display: flex;
-                justify-content: space-between; /* Aligns tables with space in between */
-                /*                gap: 20px;  Space between the two tables */
-                margin-top: 20px; /* Optional, adjust spacing from previous content */
-            }
-
-            /* Style for the tables */
             table {
-                width: 48%; /* Adjust width so that both tables fit side by side */
-                /*                border-collapse: collapse;*/
-                /*                background: #fff;*/
-                /*                border-radius: 8px;
-                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
-                padding: 10px;
+                width: 100%;
+                margin-bottom: 20px;
+                border-collapse: collapse;
             }
 
-            /* Table headers */
             th {
-                width: 30%;
                 text-align: left;
-                /*                background-color: #f0f0f0;*/
+                font-weight: bold;
+                color: #555;
             }
 
-            /* Table cells */
             td {
                 padding: 12px;
-                /*                border-bottom: 1px solid #ddd;*/
-                vertical-align: middle;
+                color: #777;
             }
 
-
-            /* Chỉnh sửa nút */
-            .button-group {
-                margin-top: 20px;
-                text-align: center;
-            }
-
-            .btn {
+            .button-group a {
                 display: inline-block;
-                margin: 0 10px;
-                padding: 12px 20px;
+                padding: 10px 20px;
                 font-size: 14px;
                 text-decoration: none;
                 border-radius: 5px;
-                color: #fff;
-                background: #007bff;
                 transition: background 0.3s ease;
             }
 
+            .btn {
+                background-color: #007bff;
+                color: #fff;
+            }
+
             .btn:hover {
-                background: #0056b3;
+                background-color: #0056b3;
             }
 
             .btn-back {
@@ -122,6 +105,7 @@
                 background-color: #495057;
             }
         </style>
+
     </head><!--/head-->
 
     <body>
@@ -132,8 +116,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -157,80 +141,143 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
-
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
 
                                     <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
+                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
+                    </div>
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
         <div class="container">
             <h1>User Profile</h1>
-            <div class="profile-image" style="text-align: center">
-                <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
-            </div>
-            <h3>${user.name}</h3>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <th>Email:</th>
-                        <td>${user.email}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone:</th>
-                        <td>${user.phoneNumber}</td>
-                    </tr>
-                </table>
+            <div class="profile-container">
+                <!-- Profile Image and Name -->
+                <div class="profile-left">
+                    <div class="profile-image" style="text-align: center; margin-bottom: 20px;">
+                        <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="border-radius: 50%; border: none" />
+                    </div>
+                    <h3 style="text-align: center; font-size: 24px; color: #333;">${user.name}</h3>
+                    
+                </div>
 
-                <table>
-                    <tr>
-                        <th>Gender:</th>
-                        <td>${user.gender ? 'Male' : 'Female'}</td>
-                    </tr>
-                    <tr>
-                        <th>Date of Birth:</th>
-                        <td>${user.dateOfBirth}</td>
-                    </tr>
-                </table>
-            </div>
+                <!-- Profile Details and Buttons -->
+                <div class="profile-right" style="padding-left: 30px;">
+                    <table style="width: 100%; margin-bottom: 20px;">
+                        <tr>
+                            <th>Email:</th>
+                            <td>${user.email}</td>
+                        </tr>
+                        <tr>
+                            <th>Phone:</th>
+                            <td>${user.phoneNumber}</td>
+                        </tr>
+                        <tr>
+                            <th>Gender:</th>
+                            <td>${user.gender ? 'Male' : 'Female'}</td>
+                        </tr>
+                        <tr>
+                            <th>Date of Birth:</th>
+                            <td>${user.dateOfBirth}</td>
+                        </tr>
+                    </table>
 
-            <div class="button-group">
-
-                <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}">Update Profile</a>
-                <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}">Change Password</a>
-                <a class="btn btn-back" href="HomePageController">Back to Home</a>
+                    <!-- Buttons -->
+                    <div class="button-group" style="text-align: center;">
+                        <a class="btn" href="${pageContext.request.contextPath}/UpdateProfileController?id=${user.id}" style="margin: 10px;">Update Profile</a>
+                        <a class="btn" href="${pageContext.request.contextPath}/ChangePasswordController?id=${user.id}" style="margin: 10px;">Change Password</a>                       
+                        <a class="btn btn-back" href="HomePageController" style="margin: 10px; background-color: #6c757d; color: white;">Back to Home</a>
+                    </div>
+                </div>
             </div>
+                        
         </div>
-
-
-
+                        <br>
+                        <br>
+                        <br>
+                        <br>
 
         <footer id="footer"><!--Footer-->
             <div class="footer-top">

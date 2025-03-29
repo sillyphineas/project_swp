@@ -38,7 +38,7 @@
 
             body {
                 font-family: Arial, sans-serif;
-                background: #f9f9f9;
+                background: #ffffff;
                 color: #333;
             }
 
@@ -132,8 +132,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -157,76 +157,141 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
-
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>                             
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
+                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
+                    </div>
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
-        <h2>Change Password</h2>
-        <hr/>
+        <h2 style="text-align: center; color: #444; margin-bottom: 20px;">Change Password</h2>
 
         <!-- Hiển thị thông báo lỗi hoặc thành công (nếu có) -->
         <c:if test="${not empty errorMessage}">
-            <div style="color:red;">
+            <div style="color: red; text-align: center; margin-bottom: 20px;">
                 ${errorMessage}
             </div>
         </c:if>
-        <!-- Form đổi mật khẩu -->
-        <form action="<%= request.getContextPath() %>/ChangePasswordController" method="post">
-            <!-- Ẩn userId để servlet biết ai đang đổi password -->
-            <input type="hidden" name="userId" value="${param.id}" />
 
-            <table>
-                <tr>
-                    <td>Current Password:</td>
-                    <td><input type="password" name="currentPassword" value="${param.currentPassword}" required /></td>
-                </tr>
-                <tr>
-                    <td>New Password (min 6 chars):</td>
-                    <td><input type="password" name="newPassword" value="${param.newPassword}" required /></td>
-                </tr>
-                <tr>
-                    <td>Confirm Password:</td>
-                    <td><input type="password" name="confirmPassword" value="${param.newPassword}" required /></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <button type="submit">Change Password</button>
-                    </td>
-                </tr>
-            </table>
-        </form>
+        <!-- Change Password Form -->
+        <div style="max-width: 500px; margin: 0 auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);">
+            <form action="<%= request.getContextPath() %>/ChangePasswordController" method="post">
+                <input type="hidden" name="userId" value="${param.id}" />
 
-        <br/>
-        <a href="UserProfileServlet">Back to Profile</a>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <tr>
+                        <td style="padding: 10px; vertical-align: middle;">Current Password:</td>
+                        <td style="padding: 10px; vertical-align: middle;"><input type="password" name="currentPassword" value="${param.currentPassword}" required style="width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;" /></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; vertical-align: middle;">New Password (min 6 chars):</td>
+                        <td style="padding: 10px; vertical-align: middle;"><input type="password" name="newPassword" value="${param.newPassword}" required style="width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;" /></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; vertical-align: middle;">Confirm Password:</td>
+                        <td style="padding: 10px; vertical-align: middle;"><input type="password" name="confirmPassword" value="${param.confirmPassword}" required style="width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 5px; margin-top: 5px; box-sizing: border-box;" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="padding: 10px; text-align: center;">
+                            <button type="submit" style="width: 100%; padding: 12px; font-size: 16px; color: #fff; background-color: orange; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; transition: background-color 0.3s ease;">
+                                Change Password
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Added Back Button Below Change Password Button -->
+                    <tr>
+                        <td colspan="2" style="padding: 10px; text-align: center;">
+                            <a href="UserProfileServlet" style="display: inline-block; width: 100%; padding: 12px; font-size: 16px; color: #fff; background-color: #6c757d; border: none; border-radius: 5px; text-align: center; text-decoration: none;">
+                                Back to Profile
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
     </body>
 
     <footer id="footer"><!--Footer-->

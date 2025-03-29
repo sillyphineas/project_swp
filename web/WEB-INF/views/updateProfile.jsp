@@ -132,8 +132,8 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href="#"><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href="#"><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -157,119 +157,176 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
-
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-
-
-                                    <% 
+                                    <%
                                         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
                                         User user = (User) session.getAttribute("user");
                                         if (isLoggedIn != null && isLoggedIn) {
                                     %>
-                                    <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <!--                                    <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-                                    
-                                                                        <li><a href="checkout.jsp"><i class="fa fa-crosshairs"></i> Checkout</a></li>-->
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>                             
-                                    <li><a style="font-weight: bold"><img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%;border: none"/> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!--/header-middle-->
+
+            <div class="header-bottom"><!--header-bottom-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="mainmenu pull-left">
+                                <ul class="nav navbar-nav collapse navbar-collapse">
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
+                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
+                                </ul>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-sm-3">
+                                                    <div class="pull-right">
+                                                        <form action="${pageContext.request.contextPath}/ProductController" method="get">
+                                                            <input type="text" name="search" value="${param.search}" />
+                        
+                                                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                                        </form>
+                                                    </div>
+                                                </div>-->
+                    </div>
+                </div>
+            </div><!--/header-bottom-->
         </header><!--/header-->
 
         <div class="container" >
-    <h1 style="text-align: center; font-size: 24px; margin-bottom: 20px; color: #333;">Update Profile</h1>
+            <h1 style="text-align: center; font-size: 24px; margin-bottom: 20px; color: #333;">Update Profile</h1>
 
-    <c:if test="${not empty errorMessage}">
-        <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-            ${errorMessage}
+            <c:if test="${not empty errorMessage}">
+                <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                    ${errorMessage}
+                </div>
+            </c:if>
+            <!--enctype="multipart/form-data"data-->
+            <div class="form-container">
+                <form action="UpdateProfileController" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="userId" value="${user.id}" />
+
+                    <!-- Dùng flex để chia form thành 2 cột -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                        <!-- Cột trái -->
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="margin-bottom: 15px;">
+                                <label for="name" style="font-weight: bold;">Full Name:</label>
+                                <input type="text" name="name" id="name" class="form-control"
+                                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                       value="${user.name}" required />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label for="email" style="font-weight: bold;">Email:</label>
+                                <input type="email" name="email" id="email" class="form-control"
+                                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                       value="${user.email}" readonly />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label for="phoneNumber" style="font-weight: bold;">Phone Number:</label>
+                                <input type="text" name="phoneNumber" id="phoneNumber" class="form-control"
+                                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                       value="${user.phoneNumber}" required />
+                            </div>
+                        </div>
+
+                        <!-- Cột phải -->
+                        <div style="flex: 1; min-width: 300px;">
+                            <div style="margin-bottom: 15px;">
+                                <label for="gender" style="font-weight: bold;">Gender:</label>
+                                <select name="gender" id="gender" class="form-control"
+                                        style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+                                    <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
+                                    <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label for="dateOfBirth" style="font-weight: bold;">Date of Birth:</label>
+                                <input type="date" name="dateOfBirth" class="form-control"
+                                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
+                                       value="<%= (user.getDateOfBirth() != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth()) : ""%>" 
+                                       required />
+                            </div>
+
+                            <div style="margin-bottom: 15px;">
+                                <label for="image" style="font-weight: bold;">Profile Image:</label>
+                                <input type="file" name="image" id="image" class="form-control"
+                                       style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nút cập nhật và hủy -->
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button type="submit" class="btn btn-success"
+                                style="background-color: orange; padding: 12px 20px; border-radius: 5px; border: none; cursor: pointer;">
+                            Update
+                        </button>
+                        <a href="UserProfileServlet" class="btn btn-secondary"
+                           style="background-color: #6c757d; padding: 12px 20px; border-radius: 5px; text-decoration: none; color: white;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
         </div>
-    </c:if>
-<!--enctype="multipart/form-data"data-->
-    <div class="form-container">
-        <form action="UpdateProfileController" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="userId" value="${user.id}" />
-
-            <!-- Dùng flex để chia form thành 2 cột -->
-            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-                <!-- Cột trái -->
-                <div style="flex: 1; min-width: 300px;">
-                    <div style="margin-bottom: 15px;">
-                        <label for="name" style="font-weight: bold;">Full Name:</label>
-                        <input type="text" name="name" id="name" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
-                               value="${user.name}" required />
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <label for="email" style="font-weight: bold;">Email:</label>
-                        <input type="email" name="email" id="email" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
-                               value="${user.email}" required />
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <label for="phoneNumber" style="font-weight: bold;">Phone Number:</label>
-                        <input type="text" name="phoneNumber" id="phoneNumber" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
-                               value="${user.phoneNumber}" required />
-                    </div>
-                </div>
-
-                <!-- Cột phải -->
-                <div style="flex: 1; min-width: 300px;">
-                    <div style="margin-bottom: 15px;">
-                        <label for="gender" style="font-weight: bold;">Gender:</label>
-                        <select name="gender" id="gender" class="form-control"
-                                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-                            <option value="true" ${user.gender ? 'selected' : ''}>Male</option>
-                            <option value="false" ${!user.gender ? 'selected' : ''}>Female</option>
-                        </select>
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <label for="dateOfBirth" style="font-weight: bold;">Date of Birth:</label>
-                        <input type="date" name="dateOfBirth" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;"
-                               value="<%= (user.getDateOfBirth() != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth()) : "" %>" 
-                               required />
-                    </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <label for="image" style="font-weight: bold;">Profile Image:</label>
-                        <input type="file" name="image" id="image" class="form-control"
-                               style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nút cập nhật và hủy -->
-            <div style="text-align: center; margin-top: 20px;">
-                <button type="submit" class="btn btn-success"
-                        style="background-color: orange; padding: 12px 20px; border-radius: 5px; border: none; cursor: pointer;">
-                    Update
-                </button>
-                <a href="UserProfileServlet" class="btn btn-secondary"
-                   style="background-color: #6c757d; padding: 12px 20px; border-radius: 5px; text-decoration: none; color: white;">
-                    Cancel
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
 
 
 

@@ -6,6 +6,8 @@ package controller;
 
 import com.google.gson.Gson;
 import entity.Feedback;
+import entity.User;
+import helper.Authorize;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +16,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.nio.file.Paths;
@@ -43,6 +46,15 @@ public class FeedBackController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        User user = null;
+        if (session != null) {
+            user = (User) session.getAttribute("user");
+        }
+        if (!Authorize.isAccepted(user, "/FeedBackController")) {
+            request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
+            return;
+        }
         response.setContentType("text/html;charset=UTF-8");
         DAOFeedback dao = new DAOFeedback();
         try (PrintWriter out = response.getWriter()) {
@@ -58,7 +70,7 @@ public class FeedBackController extends HttpServlet {
                     if (pageStr != null && pageStr.matches("\\d+")) {
                         page = Integer.parseInt(pageStr);
                     }
-                    int pageSize = 10;
+                    int pageSize = 3;
 
                     List<Feedback> feedbacks = dao.getPaginatedFeedbacks(page, pageSize);
                     int totalFeedbacks = dao.getTotalFeedbacks();

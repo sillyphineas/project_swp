@@ -125,19 +125,19 @@
                         <div class="col-sm-6">
                             <div class="contactinfo">
                                 <ul class="nav nav-pills">
-                                    <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-                                    <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                                    <li><a href="#"><i class="fa fa-phone"></i> +84 373 335 357</a></li>
+                                    <li><a href="#"><i class="fa fa-envelope"></i> haiductran712@gmail.com</a></li>
                                 </ul>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="social-icons pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href=""><i class="fa fa-facebook"></i></a></li>
-                                    <li><a href=""><i class="fa fa-twitter"></i></a></li>
-                                    <li><a href=""><i class="fa fa-linkedin"></i></a></li>
-                                    <li><a href=""><i class="fa fa-dribbble"></i></a></li>
-                                    <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                                    <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -150,49 +150,46 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="logo pull-left">
-                                <a href="HomePageController"><img src="images/home/logo.png" alt="" /></a>
-                            </div>
-                            <div class="btn-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        USA
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canada</a></li>
-                                        <li><a href="">UK</a></li>
-                                    </ul>
-                                </div>
-
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                        DOLLAR
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="">Canadian Dollar</a></li>
-                                        <li><a href="">Pound</a></li>
-                                    </ul>
-                                </div>
+                                <a href="HomePageController">
+                                    <a href="HomePageController"><img src="images/home/logo.png" alt="E-Shopper Logo" /></a>
+                                </a>
                             </div>
                         </div>
+
                         <div class="col-sm-8">
                             <div class="shop-menu pull-right">
                                 <ul class="nav navbar-nav">
-                                    <li><a href="UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
-                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+                                    <%
+                                        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+                                        User user = (User) session.getAttribute("user");
+                                        if (isLoggedIn != null && isLoggedIn) {
+                                    %>
+
+                                    <li><a href="${pageContext.request.contextPath}/CartURL"><i class="fa fa-shopping-cart"></i> Cart</a></li>    
                                     <li><a href="CustomerOrderController"><i class="fa fa-shopping-cart"></i> My Orders</a></li>
-                                        <% 
-                                            Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
-                                            User user = (User) session.getAttribute("user");
-                                            if (isLoggedIn != null && isLoggedIn) {
-                                        %>
-                                    <li><a style="font-weight: bold"><i class="fa fa-hand-o-up"></i> Hello, <%=user.getEmail()%></a></li>
-                                    <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
-                                        <% } else { %>
+
+                                    <!-- Dropdown for User -->
+                                    <li class="dropdown" style="position: relative">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold">
+                                            <img src="UserAvatarController" alt="Profile Image" class="img-thumbnail" style="height: 25px; width: 25px; border-radius: 50%; border: none;"/>
+                                            Hello, <%=user.getEmail()%> <b class="caret"></b>
+                                        </a>
+                                        <ul class="dropdown-menu" style="right: 0; left: auto;">
+                                            <li><a href="${pageContext.request.contextPath}/UserProfileServlet"><i class="fa fa-user"></i> Account</a></li>
+                                            <li><a href="CustomerPointController"><i class="fa fa-star"></i> My Points</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="${pageContext.request.contextPath}/LogoutController"><i class="fa fa-power-off"></i> Logout</a></li>
+                                        </ul>
+                                    </li>
+
+
+                                    <%
+                                    } else {
+                                    %>
                                     <li><a href="${pageContext.request.contextPath}/LoginController"><i class="fa fa-lock"></i> Login</a></li>
-                                        <% } %>
+                                        <% }%>
                                 </ul>
+
                             </div>
                         </div>
                     </div>
@@ -213,19 +210,19 @@
                             </div>
                             <div class="mainmenu pull-left">
                                 <ul class="nav navbar-nav collapse navbar-collapse">
-                                    <li><a href="HomePageController">Home</a></li>
-                                    <li class="dropdown"><a href="ProductController">Shop<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="ProductController">Products</a></li>
-                                            <li><a href="checkout.html">Checkout</a></li> 
-                                            <li><a href="CartURL">Cart</a></li> 
-                                        </ul>
+                                    <li><a href="HomePageController" class="active">Home</a></li>
+                                    <li><a href="ProductController">Shop</a>
+                                        <!--                                        <ul role="menu" class="sub-menu">
+                                                                                    <li><a href="ProductController">Products</a></li>
+                                                                                    <li><a href="CartURL?service=checkOut">Checkout</a></li> 
+                                                                                    <li><a href="CartURL?service=showCart">Cart</a></li> 
+                                                                                </ul>-->
                                     </li> 
-                                    <li class="dropdown"><a href="BlogURL?service=listAllBlogs">Blog<i class="fa fa-angle-down"></i></a>
-                                        <ul role="menu" class="sub-menu">
-                                            <li><a href="BlogURL?service=listAllBlogs">Blog List</a></li>
-                                        </ul>
-                                    </li> 
+                                    <li><a href="BlogURL?service=listAllBlogs">Blog</a></li>
+                                    <li><a href="#about-us">About Us</a></li>
+                                    <li><a href="ContactForward">Contact Us</a></li>
+                                    <!--                                    <li><a href="404.html">404</a></li>
+                                                                        <li><a href="contact-us.html">Contact</a></li>-->
                                 </ul>
                             </div>
                         </div>
@@ -297,114 +294,6 @@
                                 </c:if>
                             </div>
 
-
-                            <%
-                            List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
-                            %>
-                            <div style="width: 60%; margin: auto; font-family: Arial, sans-serif; text-align: center;">
-                                <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
-                                    Product Reviews
-                                </h2>
-                                <%
-                                if (feedbacks != null && feedbacks.size() >= 3) {
-                                %>
-                                <div style="text-align: center; margin-top: 20px;">
-                                    <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
-                                       style="color: #ff8c00; font-size: 16px; text-decoration: none; font-weight: bold;">
-                                        View All Reviews
-                                    </a>
-                                </div>
-                                <%
-                                    }
-                                %>
-                                <% if (feedbacks == null || feedbacks.isEmpty()) { %>
-                                <p style="color: #888; font-size: 16px;">No reviews yet. Be the first to review this product!</p>
-                                <% } else { %>
-                                <div style="text-align: left; margin-top: 20px;">
-                                    <% for (Feedback feedback : feedbacks) { %>
-                                    <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
-                                        <div style="display: flex; align-items: center;">
-                                            <img src="avatar.png" alt="User Avatar" 
-                                                 style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
-                                            <div>
-                                                <span style="font-weight: bold; font-size: 16px;">
-                                                    <%= (feedback.getUser() != null) ? feedback.getUser().getName() : "Anonymous" %>
-                                                </span>
-                                                <br>
-                                                <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Hiển thị sao -->
-                                        <div style="margin: 10px 0;">
-                                            <% for (int i = 1; i <= 5; i++) { %>
-                                            <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc" %>;">★</span>
-                                            <% } %>
-                                        </div>
-
-                                        <!-- Nội dung đánh giá -->
-                                        <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
-                                            <%= feedback.getContent() %>
-                                        </p>
-
-                                        <!-- Hiển thị ảnh từ JSON (nếu có) -->
-                                        <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
-                                        int imageCount = feedback.getImages().size();
-                                        %>
-                                        <div style="display: flex; gap: 8px; align-items: center;">
-                                            <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
-                                            <img src="<%= feedback.getImages().get(i) %>" 
-                                                 alt="Review Image"
-                                                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
-                                                 onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
-                                            <% } %>
-
-                                            <% if (imageCount > 2) { %>
-                                            <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
-                                                 style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
-                                                 background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
-                                                 border-radius: 8px; cursor: pointer;">
-                                                +<%= imageCount - 2 %>
-                                            </div>
-                                            <% } %>
-                                        </div>
-
-                                        <!-- Lightbox -->
-                                        <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                                             background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
-                                             flex-direction: column; z-index: 1000;">
-                                            <span onclick="closeLightbox()" 
-                                                  style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
-                                            <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
-
-                                        </div>
-
-                                        <script>
-                                            function openLightbox(imageSrc, index) {
-                                            document.getElementById("lightbox-img").src = imageSrc;
-                                            document.getElementById("lightbox").style.display = "flex";
-                                            }
-                                            function nextImage() {
-                                            currentIndex = (currentIndex + 1) % images.length;
-                                            updateLightbox();
-                                            }
-
-                                            function prevImage() {
-                                            currentIndex = (currentIndex - 1 + images.length) % images.length;
-                                            updateLightbox();
-                                            }
-
-                                            function closeLightbox() {
-                                            document.getElementById("lightbox").style.display = "none";
-                                            }
-                                        </script>
-                                        <% } %>
-
-                                    </div>
-                                    <% } %>
-                                </div>
-                                <% } %>
-                            </div>
                         </div>
                     </div>
 
@@ -503,6 +392,7 @@
                                                             <li class="list-group-item"><b>Created At:</b> ${product.createAt}</li>
                                                         </ul>
                                                     </div>
+                                                        
                                                 </div>
                                             </div>
                                         </div>
@@ -510,6 +400,141 @@
                                 </div>
                             </div>
                         </div>
+                        <div style="width: 100%; margin: auto; font-family: Arial, sans-serif;">   
+                            <h2 style="color: #ff8c00; text-transform: uppercase; border-bottom: 3px solid #ff8c00; display: inline-block; padding-bottom: 5px;">
+                                Product Reviews
+                            </h2>
+                            <%
+                            List<Feedback> feedbacks = (List<Feedback>) request.getAttribute("feedbacks");
+                            %>
+                            <%
+                                    if (feedbacks != null && feedbacks.size() > 2) {
+                            %>
+                            <div style="text-align: center; margin-top: 20px;">
+                                <a href="FeedBackController?service=ListFeedbackWithId&productId=<%= request.getParameter("id") %>" 
+                                   style="color: #ff8c00; font-size: 16px; text-decoration: none; font-weight: bold;">
+                                    View All Reviews
+                                </a>
+                            </div>
+                            <%
+                                }
+                            %>
+                            <% if (feedbacks == null || feedbacks.isEmpty()) { %>
+                            <p style="color: #888; font-size: 16px; text-align: center;">No reviews yet. Be the first to review this product!</p>
+                            <% } else { %>
+                            <div style="margin-top: 20px;">
+                                <% for (Feedback feedback : feedbacks) { %>
+                                <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #fff; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                    <div style="display: flex; align-items: center;">
+                                        <img src="avatar.png" alt="User Avatar" 
+                                             style="width: 45px; height: 45px; border-radius: 50%; margin-right: 10px;">
+                                        <div>
+                                            <span style="font-weight: bold; font-size: 16px;">
+                                                <%= feedback.getUser() != null ? feedback.getUser().getName().replaceAll("(?<=.{2}).", "*") : "Anonymous" %>
+                                            </span>
+                                            <br>
+                                            <span style="color: #888; font-size: 14px;"><%= feedback.getReviewTime() %></span>
+                                        </div>
+                                    </div>
+                                    <p style="color: #666; font-size: 14px;">
+                                        Product: <%= feedback.getProduct().getName() %>, 
+                                        <%= feedback.getProductVariant().getColor().getColorName() %>, 
+                                        <%= feedback.getProductVariant().getStorage().getCapacity() %>
+                                    </p>
+
+                                    <div style="margin: 10px 0;">
+                                        <% for (int i = 1; i <= 5; i++) { %>
+                                        <span style="font-size: 20px; color: <%= i <= feedback.getRating() ? "#ffcc00" : "#ccc" %>;">★</span>
+                                        <% } %>
+                                    </div>
+
+                                    <p style="margin: 5px 0; font-size: 15px; line-height: 1.5; color: #333;">
+                                        <%= feedback.getContent() %>
+                                    </p>
+
+                                    <% if (feedback.getImages() != null && !feedback.getImages().isEmpty()) { 
+                                        int imageCount = feedback.getImages().size();
+                                    %>
+                                    <div style="display: flex; gap: 8px; align-items: center;">
+                                        <% for (int i = 0; i < Math.min(2, imageCount); i++) { %>
+                                        <img src="<%= feedback.getImages().get(i) %>" 
+                                             alt="Review Image"
+                                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer;"
+                                             onclick="openLightbox('<%= feedback.getImages().get(i) %>', <%= i %>)">
+                                        <% } %>
+
+                                        <% if (imageCount > 2) { %>
+                                        <div onclick="openLightbox('<%= feedback.getImages().get(0) %>', 0)" 
+                                             style="width: 80px; height: 80px; display: flex; justify-content: center; align-items: center;
+                                             background: rgba(0, 0, 0, 0.6); color: white; font-size: 16px; font-weight: bold;
+                                             border-radius: 8px; cursor: pointer;">
+                                            +<%= imageCount - 2 %>
+                                        </div>
+                                        <% } %>
+                                    </div>
+
+                                    <!-- Lightbox -->
+                                    <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                                         background: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+                                         flex-direction: column; z-index: 1000;">
+                                        <span onclick="closeLightbox()" 
+                                              style="position: absolute; top: 20px; right: 30px; font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                                        <img id="lightbox-img" style="max-width: 90%; max-height: 80%; border-radius: 8px;">
+
+                                    </div>
+
+                                    <script>
+                                        function openLightbox(imageSrc, index) {
+                                        document.getElementById("lightbox-img").src = imageSrc;
+                                        document.getElementById("lightbox").style.display = "flex";
+                                        }
+                                        function nextImage() {
+                                        currentIndex = (currentIndex + 1) % images.length;
+                                        updateLightbox();
+                                        }
+
+                                        function prevImage() {
+                                        currentIndex = (currentIndex - 1 + images.length) % images.length;
+                                        updateLightbox();
+                                        }
+
+                                        function closeLightbox() {
+                                        document.getElementById("lightbox").style.display = "none";
+                                        }
+                                    </script>
+                                    <% } %>
+                                    <% if (feedback.getReply() != null && !feedback.getReply().trim().isEmpty()) { %>
+                                    <div style="margin-top: 15px;">
+
+                                        <!-- Toggle Button -->
+                                        <div style="display: flex; justify-content: flex-end;">
+                                            <button onclick="toggleReply('reply-<%= feedback.getId() %>', this)" 
+                                                    style="background-color: #007bff; color: white; padding: 8px 14px;
+                                                    border: none; border-radius: 6px; cursor: pointer;
+                                                    font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;
+                                                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); transition: background-color 0.3s;">
+                                                <span>View feedback from Admin</span> 
+                                                <span class="arrow" style="transition: transform 0.3s;">&#x25BC;</span> <!-- Mũi tên -->
+                                            </button>
+                                        </div>
+
+                                        <!-- Reply Content -->
+                                        <div id="reply-<%= feedback.getId() %>" 
+                                             style="display: none; margin-top: 10px; padding: 12px 16px;
+                                             border-left: 4px solid #007bff; background-color: #f8f9fa;
+                                             border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+                                            <p style="margin: 0; font-size: 14px; color: #333;">
+                                                <strong style="color: #007bff;">Admin:</strong> <%= feedback.getReply() %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                                </div>
+                                <% } %>
+                            </div>
+                            <% } %>
+                        </div>                                   
                     </div>
                 </div>
             </div>
@@ -758,6 +783,19 @@
         return price.toLocaleString('vi-VN');
     }
 </script>
+<script>
+                                    function         toggleReply(replyId, buttonElement) {
+                                    const replyDiv = document.getElementById(replyId);
+            const ar row = buttonElement.querySelector('.arrow');
+            if (replyDiv.style.display === 'none') {
+            replyDiv.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)'; // Xoay mũi tên lên
+            } else {
+            replyDiv.style.display = 'none';
+            arrow.style.transform = 'rotate(0deg)'; // Mũi tên xuống
+            }
+                                    }
+                                    </script>
         <script>
                                         let isLoggedIn = <%= (isLoggedIn != null && isLoggedIn) ? "true" : "false" %>;
                                             console.log("không nhận được",isLoggedIn);

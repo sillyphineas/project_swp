@@ -23,7 +23,8 @@ public class DAOUser extends DBConnection {
 
     public int addUser2(User user) {
         int n = 0;
-        String sql = "INSERT INTO Users (email, passHash, roleId, isDisabled, updatedBy, updated_at) VALUES (?, ?, ?, ?, ?, ?)";
+        // Thêm cột point vào INSERT
+        String sql = "INSERT INTO Users (email, passHash, roleId, isDisabled, updatedBy, updated_at, point) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, user.getEmail());
@@ -31,7 +32,8 @@ public class DAOUser extends DBConnection {
             pre.setInt(3, user.getRoleId());
             pre.setBoolean(4, user.isIsDisabled());
             pre.setInt(5, user.getUpdatedBy());
-            pre.setDate(6, user.getUpdatedAt()); // Sửa thành updatedAt
+            pre.setDate(6, user.getUpdatedAt());
+            pre.setInt(7, user.getPoint()); // Mới thêm
             n = pre.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -41,7 +43,8 @@ public class DAOUser extends DBConnection {
 
     public int addUser(User user) {
         int n = 0;
-        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at, image) "
+        // Thêm cột point vào INSERT
+        String sql = "INSERT INTO Users (name, email, passHash, gender, phoneNumber, resetToken, resetTokenExpired, dateOfBirth, roleId, isDisabled, updatedBy, updated_at, point) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setString(1, user.getName());
@@ -56,8 +59,10 @@ public class DAOUser extends DBConnection {
             pre.setBoolean(10, user.isDisabled());
             pre.setInt(11, user.getUpdatedBy());
             pre.setDate(12, user.getUpdatedAt());
-            pre.setBytes(13, user.getImage());
-            n = pre.executeUpdate();  // 
+            pre.setInt(13, user.getPoint()); // Mới thêm
+
+            n = pre.executeUpdate();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -73,7 +78,38 @@ public class DAOUser extends DBConnection {
             ps.setInt(3, userId);
 
             int rows = ps.executeUpdate();
-            System.out.println("Rows updated = " + rows); // <-- In ra số dòng bị ảnh hưởng
+            System.out.println("Rows updated = " + rows);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getUserPoints(int userId) {
+        int points = 0;
+        String sql = "SELECT point FROM Users WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                points = rs.getInt("point");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return points;
+    }
+    
+    public void updateUserPoint(int userId, int newPoint) {
+        String sql = "UPDATE Users SET point = ? WHERE id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, newPoint);
+            ps.setInt(2, userId);
+
+            int rows = ps.executeUpdate();
+            System.out.println("Updated user point. Rows affected = " + rows);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,6 +122,7 @@ public class DAOUser extends DBConnection {
             Statement state = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             ResultSet rs = state.executeQuery(sql);
             while (rs.next()) {
+                // Lấy thêm cột point
                 User user = new User(
                         rs.getInt("id"),
                         rs.getString("name"),
@@ -98,10 +135,11 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
-                        rs.getDate("updated_at"), // Lấy giá trị updatedDate
+                        rs.getInt("updatedBy"),
+                        rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
                 );
                 vector.add(user);
             }
@@ -132,9 +170,10 @@ public class DAOUser extends DBConnection {
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
                         rs.getInt("updatedBy"),
-                        rs.getDate("updated_at"), // Thay "updatedDate" bằng "updated_at"
+                        rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
                 );
             }
         } catch (SQLException ex) {
@@ -163,10 +202,11 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
                 );
             }
         } catch (SQLException ex) {
@@ -204,23 +244,29 @@ public class DAOUser extends DBConnection {
                     user.setGender(rs.getInt("gender") == 1);
                     user.setPhoneNumber(rs.getString("phoneNumber"));
                     user.setResetToken(rs.getString("resetToken"));
-                    java.sql.Timestamp tsReset = rs.getTimestamp("resetTokenExpired");
+
+                    Timestamp tsReset = rs.getTimestamp("resetTokenExpired");
                     if (tsReset != null) {
                         user.setResetTokenExpired(tsReset);
                     }
-                    java.sql.Timestamp tsDOB = rs.getTimestamp("dateOfBirth");
+
+                    Timestamp tsDOB = rs.getTimestamp("dateOfBirth");
                     if (tsDOB != null) {
                         user.setDateOfBirth(new java.sql.Date(tsDOB.getTime()));
                     }
+
                     user.setRoleId(rs.getInt("roleId"));
                     user.setIsDisabled(rs.getInt("isDisabled") == 1);
-
                     user.setUpdatedBy(rs.getInt("updatedBy"));
-                    java.sql.Timestamp tsUpdated = rs.getTimestamp("updated_at");
+
+                    Timestamp tsUpdated = rs.getTimestamp("updated_at");
                     if (tsUpdated != null) {
                         user.setUpdatedAt(new java.sql.Date(tsUpdated.getTime()));
                     }
+
                     user.setImage(rs.getBytes("image"));
+                    // Lấy thêm point
+                    user.setPoint(rs.getInt("point"));
                 }
             }
         } catch (SQLException e) {
@@ -263,10 +309,11 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
                 );
             }
         } catch (SQLException ex) {
@@ -275,39 +322,43 @@ public class DAOUser extends DBConnection {
         return user;
     }
 
-   public int updateUser(User user) {
-    int n = 0;
-    String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, " +
-                 "phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, " +
-                 "DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? " +
-                 "WHERE id = ?"; // Removed the comma before WHERE
-    try {
-        PreparedStatement pre = conn.prepareStatement(sql);
-        pre.setString(1, user.getName());
-        pre.setString(2, user.getEmail());
-        pre.setString(3, user.getPassHash());
-        pre.setBoolean(4, user.isGender());
-        pre.setString(5, user.getPhoneNumber());
-        pre.setString(6, user.getResetToken());
-        pre.setTimestamp(7, user.getResetTokenExpired());
-        pre.setDate(8, user.getDateOfBirth());
-        pre.setInt(9, user.getRoleId());
-        pre.setBoolean(10, user.isIsDisabled());
-        pre.setInt(11, user.getUpdatedBy());
-        pre.setDate(12, user.getUpdatedAt());
-        pre.setBytes(13, user.getImage());
-        pre.setInt(14, user.getId());
-        n = pre.executeUpdate();
-    } catch (SQLException ex) {
-        ex.printStackTrace();
+    public int updateUser(User user) {
+        int n = 0;
+        // Thêm cột point vào UPDATE
+        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?,"
+                + " phoneNumber = ?, resetToken = ?, resetTokenExpired = ?,"
+                + " DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, point = ?"
+                + " WHERE id = ?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, user.getName());
+            pre.setString(2, user.getEmail());
+            pre.setString(3, user.getPassHash());
+            pre.setBoolean(4, user.isGender());
+            pre.setString(5, user.getPhoneNumber());
+            pre.setString(6, user.getResetToken());
+            pre.setTimestamp(7, user.getResetTokenExpired());
+            pre.setDate(8, user.getDateOfBirth());
+            pre.setInt(9, user.getRoleId());
+            pre.setBoolean(10, user.isIsDisabled());
+            pre.setInt(11, user.getUpdatedBy());
+            pre.setDate(12, user.getUpdatedAt());
+            pre.setInt(13, user.getPoint()); // Mới thêm
+            pre.setInt(14, user.getId());
+            n = pre.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return n;
     }
-    return n;
-}
+
     public int updateUser2(User user) {
         int n = 0;
+        // Thêm cột point vào UPDATE
         String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, "
                 + "phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, "
-                + "DateOfBirth = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ? WHERE id = ?";
+                + "DateOfBirth = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, image = ?, point = ? "
+                + "WHERE id = ?";
 
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
@@ -322,10 +373,9 @@ public class DAOUser extends DBConnection {
             pre.setBoolean(9, user.isIsDisabled());
             pre.setInt(10, user.getUpdatedBy());
             pre.setDate(11, user.getUpdatedAt());
-
-            // Lưu trữ ảnh dạng BLOB
             pre.setBytes(12, user.getImage());
-            pre.setInt(13, user.getId());
+            pre.setInt(13, user.getPoint()); // Mới thêm
+            pre.setInt(14, user.getId());
 
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -357,7 +407,8 @@ public class DAOUser extends DBConnection {
             ResultSet rs = pre.executeQuery();
 
             while (rs.next()) {
-                users.add(new User(rs.getInt("id"),
+                users.add(new User(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("passHash"),
@@ -368,11 +419,12 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")));
-
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
+                ));
             }
         }
         return users;
@@ -427,7 +479,8 @@ public class DAOUser extends DBConnection {
             ResultSet rs = pre.executeQuery();
 
             while (rs.next()) {
-                users.add(new User(rs.getInt("id"),
+                users.add(new User(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("passHash"),
@@ -441,7 +494,9 @@ public class DAOUser extends DBConnection {
                         rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                rs.getDate("registered_at")));
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
+                ));
             }
         }
 
@@ -502,7 +557,6 @@ public class DAOUser extends DBConnection {
         String sql = "SELECT * FROM Users WHERE name LIKE ? OR email LIKE ? OR phoneNumber LIKE ? LIMIT ?, ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             String searchQuery = "%" + query + "%";
             stmt.setString(1, searchQuery);
             stmt.setString(2, searchQuery);
@@ -512,7 +566,8 @@ public class DAOUser extends DBConnection {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                users.add(new User(rs.getInt("id"),
+                users.add(new User(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("passHash"),
@@ -523,10 +578,12 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                rs.getDate("registered_at")));
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -546,7 +603,6 @@ public class DAOUser extends DBConnection {
             e.printStackTrace();
         }
         return null;
-
     }
 
     public int countTotalUsers(String query) {
@@ -554,7 +610,6 @@ public class DAOUser extends DBConnection {
         String sql = "SELECT COUNT(*) FROM Users WHERE name LIKE ? OR email LIKE ? OR phoneNumber LIKE ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             String searchQuery = "%" + query + "%";
             stmt.setString(1, searchQuery);
             stmt.setString(2, searchQuery);
@@ -580,7 +635,8 @@ public class DAOUser extends DBConnection {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    users.add(new User(rs.getInt("id"),
+                    users.add(new User(
+                            rs.getInt("id"),
                             rs.getString("name"),
                             rs.getString("email"),
                             rs.getString("passHash"),
@@ -591,10 +647,12 @@ public class DAOUser extends DBConnection {
                             rs.getDate("DateOfBirth"),
                             rs.getInt("roleId"),
                             rs.getBoolean("isDisabled"),
-                            rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                            rs.getInt("updatedBy"),
                             rs.getDate("updated_at"),
                             rs.getBytes("image"),
-                    rs.getDate("registered_at")));
+                            rs.getDate("registered_at"),
+                            rs.getInt("point") // Mới thêm
+                    ));
                 }
             }
         } catch (SQLException e) {
@@ -621,12 +679,10 @@ public class DAOUser extends DBConnection {
 
             int paramIndex = 1;
 
-            // Thêm filter trạng thái
             if (filterStatus != null && !filterStatus.isEmpty()) {
                 pre.setBoolean(paramIndex++, Boolean.parseBoolean(filterStatus));
             }
 
-            // Thêm tìm kiếm
             if (searchQuery != null && !searchQuery.isEmpty()) {
                 String searchPattern = "%" + searchQuery + "%";
                 pre.setString(paramIndex++, searchPattern);
@@ -634,13 +690,12 @@ public class DAOUser extends DBConnection {
                 pre.setString(paramIndex++, searchPattern);
             }
 
-            // Thêm phân trang
             pre.setInt(paramIndex++, pageSize);
-            pre.setInt(paramIndex, (page - 1) * pageSize); // OFFSET
+            pre.setInt(paramIndex, (page - 1) * pageSize);
 
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
-                User user = new User(
+                customers.add(new User(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email"),
@@ -652,12 +707,12 @@ public class DAOUser extends DBConnection {
                         rs.getDate("DateOfBirth"),
                         rs.getInt("roleId"),
                         rs.getBoolean("isDisabled"),
-                        rs.getInt("updatedBy"), // Lấy giá trị updatedBy
+                        rs.getInt("updatedBy"),
                         rs.getDate("updated_at"),
                         rs.getBytes("image"),
-                        rs.getDate("registered_at")
-                );
-                customers.add(user);
+                        rs.getDate("registered_at"),
+                        rs.getInt("point") // Mới thêm
+                ));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DAOUser.class.getName()).log(Level.SEVERE, null, ex);
@@ -705,7 +760,8 @@ public class DAOUser extends DBConnection {
 
     public int updateCustomer(User user) {
         int n = 0;
-        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ? WHERE id = ?";
+        // Thêm cột point vào UPDATE
+        String sql = "UPDATE Users SET name = ?, email = ?, passHash = ?, gender = ?, phoneNumber = ?, resetToken = ?, resetTokenExpired = ?, DateOfBirth = ?, roleId = ?, isDisabled = ?, updatedBy = ?, updated_at = ?, point = ? WHERE id = ?";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, user.getName());
@@ -718,9 +774,10 @@ public class DAOUser extends DBConnection {
             pre.setDate(8, user.getDateOfBirth());
             pre.setInt(9, user.getRoleId());
             pre.setBoolean(10, user.isIsDisabled());
-            pre.setInt(11, user.getUpdatedBy());  // Đặt giá trị updatedBy
-            pre.setDate(12, user.getUpdatedAt()); // Đặt giá trị updatedDate
-            pre.setInt(13, user.getId());
+            pre.setInt(11, user.getUpdatedBy());
+            pre.setDate(12, user.getUpdatedAt());
+            pre.setInt(13, user.getPoint()); // Mới thêm
+            pre.setInt(14, user.getId());
 
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -745,7 +802,8 @@ public class DAOUser extends DBConnection {
 
     public List<Map<String, Object>> getCustomerChangeHistory(int customerId) {
         List<Map<String, Object>> changeHistory = new ArrayList<>();
-        String sql = "SELECT u.email, u.name, u.gender, u.phoneNumber, u.updatedBy, u.updated_at, "
+        // Thêm cột point vào SELECT nếu muốn xem lịch sử point
+        String sql = "SELECT u.email, u.name, u.gender, u.phoneNumber, u.updatedBy, u.updated_at, u.point, "
                 + "   u2.name AS updatedByName "
                 + "FROM Users u "
                 + "LEFT JOIN Users u2 ON u.updatedBy = u2.id "
@@ -764,6 +822,7 @@ public class DAOUser extends DBConnection {
                 history.put("phoneNumber", rs.getString("phoneNumber"));
                 history.put("updatedByName", rs.getString("updatedByName"));
                 history.put("updatedAt", rs.getDate("updated_at"));
+                history.put("point", rs.getInt("point")); // Mới thêm
 
                 changeHistory.add(history);
             }
@@ -812,39 +871,39 @@ public class DAOUser extends DBConnection {
         }
         return stats;
     }
-     public int getUserPoints(int userId) {
-        int points = 0;
-        String sql = "SELECT point FROM Users WHERE id = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                points = rs.getInt("point");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return points;
-    }
-     public void updateUserPoint(int userId, int newPoint) {
-        String sql = "UPDATE Users SET point = ? WHERE id = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, newPoint);
-            ps.setInt(2, userId);
-
-            int rows = ps.executeUpdate();
-            System.out.println("Updated user point. Rows affected = " + rows);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+//     public int getUserPoints(int userId) {
+//        int points = 0;
+//        String sql = "SELECT point FROM Users WHERE id = ?";
+//        try {
+//            PreparedStatement ps = conn.prepareStatement(sql);
+//            ps.setInt(1, userId);
+//            ResultSet rs = ps.executeQuery();
+//            if(rs.next()){
+//                points = rs.getInt("point");
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return points;
+//    }
+//     public void updateUserPoint(int userId, int newPoint) {
+//        String sql = "UPDATE Users SET point = ? WHERE id = ?";
+//        try {
+//            PreparedStatement ps = conn.prepareStatement(sql);
+//            ps.setInt(1, newPoint);
+//            ps.setInt(2, userId);
+//
+//            int rows = ps.executeUpdate();
+//            System.out.println("Updated user point. Rows affected = " + rows);
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
 
     public static void main(String[] args) {
-
+        // Test DAO here if needed
     }
 }
