@@ -113,6 +113,7 @@ public class OrderController extends HttpServlet {
             DAOOrderDetail daoOrderDetail = new DAOOrderDetail();
             DAOPayment daoPayment = new DAOPayment();
             DAOCartItem daoCartItem = new DAOCartItem();
+            DAOUserVoucher daoUV = new DAOUserVoucher();
             DAOProductVariant daoProductVariant = new DAOProductVariant();
             double totalAmount = 0;
             for (CartItem ci : selectedCartItems) {
@@ -120,6 +121,8 @@ public class OrderController extends HttpServlet {
             }
             if (intVoucherId == null) {
                 discountedTotal = BigDecimal.valueOf(totalAmount);
+            } else {
+                daoUV.deleteUserVoucher(user.getId(), intVoucherId);
             }
             Date now = new Date();
             Order newOrder = new Order();

@@ -104,7 +104,7 @@ public class CustomerOrderController extends HttpServlet {
         }
 
         if (service.equals("displayAllOrders")) {
-            List<OrderInformation> allFlat = daoOdInf.getAllOrderInformation();
+            List<OrderInformation> allFlat = daoOdInf.getAllOrderInformation(user.getId());
 
             // Đánh dấu feedbackExists cho từng OrderDetail
             for (OrderInformation o : allFlat) {
@@ -361,19 +361,19 @@ public class CustomerOrderController extends HttpServlet {
 
         } else if (service.equals("confirmDelivered")) {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
-            // Lấy order
+            // Get order
             Order order = new DAOOrder().getOrderById(orderId);
 
-            // Lấy user từ session
+            // Get user from session
             user = (User) session.getAttribute("user");
 
-            // Tính điểm, ví dụ: tổng tiền / 100000
+            // Calculate points, for example: total price / 100000
             int point = (int) order.getTotalPrice() / 100000;
 
-            // Tạo JSON trả về
+            // Create JSON response
             JSONObject json = new JSONObject();
 
-            // Kiểm tra các điều kiện
+            // Check conditions
             if (order == null) {
                 json.put("success", false);
                 json.put("message", "Order not found.");
@@ -381,23 +381,21 @@ public class CustomerOrderController extends HttpServlet {
                 json.put("success", false);
                 json.put("message", "You can only confirm orders that are in Delivered status.");
             } else {
-                // Update trạng thái sang Completed
+                // Update status to Completed
                 boolean updated = new DAOOrder().updateStatus(orderId, "Completed");
                 if (updated) {
-                    // ========== CỘNG ĐIỂM CHO USER ==========
-                    // 1) Cộng điểm trên session
                     int oldPoint = user.getPoint();
                     int newPoint = oldPoint + point;
                     user.setPoint(newPoint);
-
-                    // 2) Cập nhật DB (nếu bạn có bảng Users)
-                    //    Ví dụ gọi DAOUser để update
                     DAOUser daoUser = new DAOUser();
                     daoUser.updateUserPoint(user.getId(), newPoint);
 
                     json.put("success", true);
                     json.put("message", "Order confirmed as completed successfully.");
                     json.put("newlyCompleted", orderId);
+                    // Include current points and points added in the JSON response
+                    json.put("currentPoints", newPoint);
+                    json.put("pointsAdded", point);
                 } else {
                     json.put("success", false);
                     json.put("message", "Unable to confirm order due to an internal error.");

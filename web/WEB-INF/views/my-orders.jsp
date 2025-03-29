@@ -622,7 +622,6 @@
                                     <!-- Feedback logic cho sp đầu tiên -->
                                     <c:set var="feedbackKeyName" value="feedbackExists_${first.orderDetailID}" />
                                     <c:set var="feedbackKey" value="${requestScope[feedbackKeyName]}" />
-                                    <p>${feedbackKey} </p>
 
                                     <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
                                         <c:choose>
@@ -1395,10 +1394,9 @@
                                                                                dataType: "json",
                                                                                success: function (response) {
                                                                                    if (response.success) {
-                                                                                       alert(response.message);
-                                                                                       // Reload => sang tab completed => pageCompleted=1 => newlyCompleted
-                                                                                       window.location.href =
-                                                                                               "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
+                                                                                       alert(response.message + "\nCurrent points: " + response.currentPoints + "\nPoints added: " + response.pointsAdded);
+                                                                                       // Reload page: switch to 'completed' tab with updated order
+                                                                                       window.location.href = "CustomerOrderController?service=displayAllOrders&activeTab=completed&pageCompleted=1&newlyCompleted=" + orderId;
                                                                                    } else {
                                                                                        alert(response.message);
                                                                                    }
@@ -1409,6 +1407,7 @@
                                                                            });
                                                                        }
                                                                    });
+
                                                                });
 
                                                                // ========== FEEDBACK FUNCTIONS (tab Delivered) ==========

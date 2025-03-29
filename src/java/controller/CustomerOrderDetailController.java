@@ -22,9 +22,9 @@ public class CustomerOrderDetailController extends HttpServlet {
 
     // Giả sử bạn bổ sung phương thức sau trong DAOOrderInformation
     // Nếu chưa có, bạn có thể lọc từ danh sách getAllOrderInformation
-    private List<OrderInformation> getOrderInformationByOrderId(int orderId) {
+    private List<OrderInformation> getOrderInformationByOrderId(int orderId, int userId) {
         DAOOrderInformation daoOI = new DAOOrderInformation();
-        List<OrderInformation> allInfo = daoOI.getAllOrderInformation();
+        List<OrderInformation> allInfo = daoOI.getAllOrderInformation(userId);
         List<OrderInformation> details = new ArrayList<>();
         for (OrderInformation info : allInfo) {
             if (info.getId() == orderId) {
@@ -56,7 +56,7 @@ public class CustomerOrderDetailController extends HttpServlet {
         }
         
         // Lấy danh sách OrderInformation cho đơn hàng theo orderID
-        List<OrderInformation> orderDetails = getOrderInformationByOrderId(orderID);
+        List<OrderInformation> orderDetails = getOrderInformationByOrderId(orderID, user.getId());
         if (orderDetails.isEmpty()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Order not found.");
             return;

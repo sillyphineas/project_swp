@@ -18,51 +18,15 @@ import jakarta.servlet.http.HttpSession;
 import model.DAOUser;
 
 /**
- *
- * @author HP
+ * Xử lý xác thực mã đăng ký, tạo tài khoản mới (bao gồm set point = 0).
  */
-    @WebServlet(name = "VerifyAccountController", urlPatterns = {"/VerifyAccountController"})
+@WebServlet(name = "VerifyAccountController", urlPatterns = {"/VerifyAccountController"})
 public class VerifyAccountController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet VerifyAccountController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet VerifyAccountController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Authorize
+        // Authorize
         HttpSession session = request.getSession(false);
         User user = null;
         if (session != null) {
@@ -72,54 +36,73 @@ public class VerifyAccountController extends HttpServlet {
             request.getRequestDispatcher("WEB-INF/views/404.jsp").forward(request, response);
             return;
         }
+
         String service = request.getParameter("service");
         if (service.equals("forward")) {
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/verify-account.jsp");
             rd.forward(request, response);
         }
-        
+
         if (service.equals("confirmRegister")) {
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/success-registered.jsp");
             rd.forward(request, response);
         }
-        
+
         if (service.equals("cancel")) {
             RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/404.jsp");
             rd.forward(request, response);
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         HttpSession session = request.getSession();
+
         String enteredCode = request.getParameter("code");
         String storedCode = (String) session.getAttribute("verificationCode");
+
         String email = (String) session.getAttribute("email");
         String hashedPassword = (String) session.getAttribute("password");
+
+        String name = (String) session.getAttribute("name");
+        String genderParam = (String) session.getAttribute("gender");
+        String phoneNumber = (String) session.getAttribute("phoneNumber");
+        String dateOfBirthStr = (String) session.getAttribute("dateOfBirth");
+        
+        System.out.println("name" + name);
+        System.out.println("genderParam" + genderParam);
+        System.out.println("phoneNumber" + phoneNumber);
+        System.out.println("dateOfBirthStr" + dateOfBirthStr);
 
         response.setContentType("text/plain");
 
         if (enteredCode != null && enteredCode.equals(storedCode)) {
             DAOUser daoUser = new DAOUser();
-            User user = new User();
-            user.setEmail(email);
-            user.setPassHash(hashedPassword);
-            user.setRoleId(5);
-            user.setIsDisabled(false);
-            user.setUpdatedBy(1);
+            User newUser = new User();
 
-            if (daoUser.addUser2(user) != 0) {
+            newUser.setEmail(email);
+            newUser.setPassHash(hashedPassword);
+            newUser.setRoleId(5);
+            newUser.setIsDisabled(false);
+            newUser.setUpdatedBy(1);
+            newUser.setName(name);
+            boolean gender = "1".equals(genderParam);
+            newUser.setGender(gender);
+            newUser.setPhoneNumber(phoneNumber);
+
+            if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
+                try {
+                    newUser.setDateOfBirth(java.sql.Date.valueOf(dateOfBirthStr));
+                } catch (Exception e) {
+                    newUser.setDateOfBirth(null);
+                }
+            }
+            newUser.setPoint(0);
+
+            if (daoUser.addUser2(newUser) != 0) {
                 session.removeAttribute("verificationCode");
-
                 response.sendRedirect("VerifyAccountController?service=confirmRegister");
             } else {
                 response.sendRedirect("/WEB-INF/views/404.jsp");
@@ -131,14 +114,8 @@ public class VerifyAccountController extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
 }
