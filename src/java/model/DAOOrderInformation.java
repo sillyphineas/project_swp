@@ -17,7 +17,7 @@ public class DAOOrderInformation extends DBConnection {
         // Câu lệnh SELECT với placeholder cho buyerId
         String sql = """
                  SELECT o.id, o.orderTime, o.orderStatus, 
-                        o.totalPrice, pt.paymentName, pm.paymentStatus, o.recipientName,
+                        o.totalPrice, o.discountedPrice, pt.paymentName, pm.paymentStatus, o.recipientName,
                         o.recipientPhone, od.quantity, s.ShippingStatus, 
                         s.ShippingDate, s.EstimatedArrival, s.ActualArrival,
                         cl.colorName, str.capacity, pv.price, p.name,
@@ -47,6 +47,7 @@ public class DAOOrderInformation extends DBConnection {
                     Timestamp orderTime = rs.getTimestamp("orderTime");
                     String orderStatus = rs.getString("orderStatus");
                     double totalPrice = rs.getDouble("totalPrice");
+                    double discountPrice = rs.getDouble("discountedPrice");
                     String paymentName = rs.getString("paymentName");
                     String paymentStatus = rs.getString("paymentStatus");
                     String recipientName = rs.getString("recipientName");
@@ -74,6 +75,7 @@ public class DAOOrderInformation extends DBConnection {
                             orderTime,
                             orderStatus,
                             totalPrice,
+                            discountPrice,
                             paymentName,
                             paymentStatus,
                             recipientName,

@@ -359,7 +359,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page" />
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
 
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
@@ -461,7 +461,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -548,7 +548,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -712,7 +712,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page" />
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
                                 <!-- Confirm Delivered button for orders in Delivered status -->
@@ -886,7 +886,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
@@ -966,7 +966,7 @@
                                         <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                     </c:forEach>
                                     <div class="total-price">
-                                        <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                        <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                     </div>
                                     <a href="ProductController" class="buy-again-btn">Buy Again</a>
                                     <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
@@ -1057,7 +1057,7 @@
                                     <c:set var="sum" value="${sum + lineTotal}" scope="page"/>
                                 </c:forEach>
                                 <div class="total-price">
-                                    <fmt:formatNumber value="${sum}" type="number" groupingUsed="true"/> ₫
+                                    <fmt:formatNumber value="${first.discountPrice}" type="number" groupingUsed="true"/> ₫
                                 </div>
                                 <a href="CustomerOrderDetailController?orderID=${entry.key}" class="btn-link">View Order Details</a>
 
